@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriPro · Planificador de Nutrición Clínica</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<!-- Supabase JS Client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<!-- Fonts -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
+
+<style>
+  :root { --primary: #0d9488; --bg: #f8fafc; }
+  * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+  body { background: var(--bg); margin: 0; padding: 0; }
+  .gradient-hero { background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #0284c7 100%); }
+  .nav-btn.active { background: white; color: #0d9488; box-shadow: 0 4px 12px rgba(13,148,136,0.2); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  .fade-in { animation: fadeIn 0.4s ease-out; }
+  .metric-card { transition: all 0.3s ease; }
+  .metric-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+  .meal-card { transition: all 0.3s ease; }
+  .meal-card:hover { transform: scale(1.02); }
+  .food-item { transition: all 0.2s ease; cursor: pointer; position: relative; }
+  .food-item:hover { background: rgba(13,148,136,0.08); transform: translateX(2px); }
+  .food-item:hover .swap-icon { opacity: 1; transform: translateX(0); }
+  .swap-icon { opacity: 0; transform: translateX(-5px); transition: all 0.2s ease; }
+  .food-item.substituted { background: linear-gradient(90deg, rgba(245,158,11,0.08), transparent); border-left: 3px solid #f59e0b; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+  .alert-warning { background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; }
+  .alert-success { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-left: 4px solid #10b981; }
+  .alert-danger { background: linear-gradient(135deg, #fee2e2, #fecaca); border-left: 4px solid #ef4444; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; animation: fadeIn 0.2s ease-out; }
+  .modal-content { background: white; border-radius: 1.5rem; max-width: 560px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+  .sub-option { transition: all 0.2s ease; cursor: pointer; }
+  .sub-option:hover { background: linear-gradient(135deg, #f0fdfa, #ecfeff); border-color: #0d9488; transform: translateX(4px); }
+  .sub-option.current { background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-color: #10b981; }
+  .macro-chip { display: inline-flex; align-items: center; gap: 2px; font-size: 10px; padding: 2px 6px; border-radius: 999px; font-weight: 600; }
+  .auth-screen { min-height: 100vh; background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #0284c7 100%); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+  .auth-card { background: white; border-radius: 1.5rem; max-width: 440px; width: 100%; padding: 2.5rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); }
+  .auth-tabs { display: flex; background: #f1f5f9; border-radius: 0.75rem; padding: 4px; margin-bottom: 1.5rem; }
+  .auth-tab { flex: 1; padding: 0.6rem; text-align: center; border-radius: 0.6rem; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: all 0.2s; color: #64748b; }
+  .auth-tab.active { background: white; color: #0d9488; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+  .ad-space { background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1px dashed #cbd5e1; border-radius: 0.75rem; padding: 1rem; text-align: center; position: relative; color: #94a3b8; font-size: 0.75rem; margin: 1rem 0; }
+  .ad-space::before { content: 'Publicidad'; position: absolute; top: 4px; right: 8px; font-size: 0.625rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+  .user-menu { position: relative; }
+  .user-dropdown { position: absolute; top: calc(100% + 8px); right: 0; background: white; border-radius: 1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.15); min-width: 240px; padding: 0.5rem; z-index: 60; display: none; }
+  .user-dropdown.show { display: block; animation: fadeIn 0.2s ease-out; }
+  .user-dropdown-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.8rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; color: #334155; transition: background 0.15s; }
+  .user-dropdown-item:hover { background: #f1f5f9; }
+  .user-dropdown-divider { height: 1px; background: #e2e8f0; margin: 0.4rem 0; }
+  .comment-card { background: white; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1rem; transition: all 0.2s; }
+  .comment-card:hover { border-color: #0d9488; box-shadow: 0 4px 12px rgba(13,148,136,0.08); }
+  .admin-reply { background: linear-gradient(135deg, #f0fdfa, #ecfeff); border-left: 3px solid #0d9488; padding: 0.75rem; border-radius: 0.5rem; margin-top: 0.75rem; }
+  .admin-stat { background: white; border-radius: 1rem; padding: 1.5rem; border: 1px solid #e2e8f0; }
+  .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; }
+  .btn-pdf { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; transition: all 0.2s; }
+  .btn-pdf:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(239,68,68,0.3); }
+  .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #0d9488; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ============ AUTH SCREEN ============ -->
+<div id="authScreen" class="auth-screen hidden">
+  <div class="auth-card">
+    <div class="text-center mb-6">
+      <div class="inline-flex w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl items-center justify-center text-3xl mb-3 shadow-lg">🥗</div>
+      <h1 class="text-2xl font-bold text-slate-800">NutriPro</h1>
+      <p class="text-sm text-slate-500 mt-1">Nutrición Clínica · Déficit Sostenible</p>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" data-auth="login">Iniciar sesión</div>
+      <div class="auth-tab" data-auth="register">Crear cuenta</div>
+    </div>
+    <form id="formLogin" class="space-y-4">
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1">Correo electrónico</label>
+        <input type="email" id="loginEmail" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="tu@email.com">
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1">Contraseña</label>
+        <input type="password" id="loginPassword" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="••••••••">
+      </div>
+      <div id="loginError" class="hidden alert-danger p-3 rounded-lg text-sm"></div>
+      <button type="submit" class="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all">Acceder →</button>
+      <div class="text-center text-xs text-slate-500 mt-3 p-3 bg-slate-50 rounded-lg">
+        <strong>Admin demo:</strong> Usa tu cuenta de Supabase y cámbiala a admin en la BD.
+      </div>
+    </form>
+    <form id="formRegister" class="space-y-4 hidden">
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre completo</label>
+        <input type="text" id="regName" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="Tu nombre">
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1">Correo electrónico</label>
+        <input type="email" id="regEmail" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="tu@email.com">
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1">Contraseña (mín. 6 caracteres)</label>
+        <input type="password" id="regPassword" required minlength="6" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="••••••••">
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1">Confirmar contraseña</label>
+        <input type="password" id="regPassword2" required minlength="6" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="••••••••">
+      </div>
+      <label class="flex items-start gap-2 text-xs text-slate-600">
+        <input type="checkbox" id="regTerms" required class="mt-0.5 accent-teal-600">
+        <span>Acepto los términos. Entiendo que esta herramienta no sustituye la consulta médica.</span>
+      </label>
+      <div id="regError" class="hidden alert-danger p-3 rounded-lg text-sm"></div>
+      <button type="submit" class="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all">Crear mi cuenta →</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ BLOCKED SCREEN ============ -->
+<div id="blockedScreen" class="auth-screen hidden">
+  <div class="auth-card text-center">
+    <div class="text-6xl mb-4">🚫</div>
+    <h2 class="text-2xl font-bold text-slate-800 mb-2">Cuenta bloqueada</h2>
+    <p id="blockedMsg" class="text-slate-600 mb-6">Tu acceso ha sido suspendido por el administrador.</p>
+    <button onclick="cerrarSesion()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-2.5 rounded-lg font-semibold">Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div id="mainApp" class="hidden">
+<header class="gradient-hero text-white shadow-xl sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center text-2xl">🥗</div>
+        <div>
+          <h1 class="text-2xl font-bold">NutriPro</h1>
+          <p class="text-xs text-teal-100">Nutrición Clínica · Déficit Sostenible</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="hidden md:flex items-center gap-2 text-xs">
+          <span class="px-3 py-1 bg-white/15 rounded-full">🔬 Evidencia</span>
+          <span class="px-3 py-1 bg-white/15 rounded-full">☁️ Cloud Sync</span>
+        </div>
+        <div class="user-menu">
+          <button id="userBtn" class="flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all">
+            <div id="userAvatar" class="w-7 h-7 bg-white text-teal-600 rounded-full flex items-center justify-center font-bold text-sm">U</div>
+            <span id="userName" class="text-sm font-semibold hidden sm:inline">Usuario</span>
+            <span class="text-xs opacity-70">▼</span>
+          </button>
+          <div id="userDropdown" class="user-dropdown">
+            <div class="px-3 py-2 border-b border-slate-100">
+              <div id="dropdownName" class="font-semibold text-slate-800 text-sm">Usuario</div>
+              <div id="dropdownEmail" class="text-xs text-slate-500">email@example.com</div>
+              <div id="dropdownRole" class="mt-1"></div>
+            </div>
+            <div id="adminMenuItem" class="hidden">
+              <div class="user-dropdown-item" onclick="switchTab('admin')"><span>⚙️</span> <span>Panel Admin</span></div>
+              <div class="user-dropdown-divider"></div>
+            </div>
+            <div class="user-dropdown-item" onclick="switchTab('perfil')"><span>👤</span> <span>Mi perfil</span></div>
+            <div class="user-dropdown-item" onclick="switchTab('comentarios')"><span>💬</span> <span>Comunidad</span></div>
+            <div class="user-dropdown-divider"></div>
+            <div class="user-dropdown-item text-red-600" onclick="cerrarSesion()"><span>🚪</span> <span>Cerrar sesión</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- AD SPACE 1: TOP BANNER -->
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="ad-space py-2 my-2">
+      <span>📢 Espacio publicitario superior · Tu anuncio aquí</span>
+    </div>
+  </div>
+
+  <nav class="max-w-7xl mx-auto px-6 pb-3">
+    <div class="flex gap-2 overflow-x-auto">
+      <button class="nav-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all" data-tab="evaluacion">📋 Evaluación</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard">📊 Dashboard</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="menu">🍽️ Menú</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra">🛒 Compra</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="seguimiento">📈 Seguimiento</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
+    </div>
+  </nav>
+</header>
+
+<main class="max-w-7xl mx-auto px-6 py-8">
+
+<!-- EVALUACIÓN -->
+<section id="evaluacion" class="tab-content active">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-slate-800">Evaluación Inicial</h2>
+    <p class="text-slate-600 mt-2">Comienza con una valoración completa. La reeducación alimentaria es un proceso, no una carrera.</p>
+  </div>
+  <div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-8 border border-slate-100">
+      <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+        <span class="w-8 h-8 bg-teal-100 text-teal-700 rounded-lg flex items-center justify-center">1</span>
+        Datos Personales
+      </h3>
+      <form id="formEvaluacion" class="space-y-5">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Edad (años)</label>
+            <input type="number" id="edad" min="14" max="90" value="30" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Sexo biológico</label>
+            <select id="sexo" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+              <option value="hombre">Hombre</option>
+              <option value="mujer">Mujer</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Peso actual (kg)</label>
+            <input type="number" id="peso" min="35" max="250" step="0.1" value="75" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Altura (cm)</label>
+            <input type="number" id="altura" min="130" max="220" value="175" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Nivel de actividad física diaria</label>
+          <select id="actividad" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+            <option value="1.2">Sedentario (poco o ningún ejercicio)</option>
+            <option value="1.375" selected>Ligero (1-3 días/semana)</option>
+            <option value="1.55">Moderado (3-5 días/semana)</option>
+            <option value="1.725">Activo (6-7 días/semana)</option>
+            <option value="1.9">Muy activo (atleta/doble sesión)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Objetivo realista</label>
+          <select id="objetivo" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+            <option value="perder">Perder grasa (déficit 500 kcal)</option>
+            <option value="perderSuave">Perder grasa gradual (déficit 300 kcal)</option>
+            <option value="mantener">Mantener peso (recomposición)</option>
+            <option value="ganar">Ganar masa muscular (superávit 300 kcal)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Preferencias alimentarias</label>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50"><input type="checkbox" class="pref" value="sinLactosa"> <span class="text-sm">Sin lactosa</span></label>
+            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50"><input type="checkbox" class="pref" value="sinGluten"> <span class="text-sm">Sin gluten</span></label>
+            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50"><input type="checkbox" class="pref" value="vegetariano"> <span class="text-sm">Vegetariano</span></label>
+            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50"><input type="checkbox" class="pref" value="vegano"> <span class="text-sm">Vegano</span></label>
+          </div>
+        </div>
+        <button type="submit" class="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-bold py-4 rounded-xl hover:shadow-lg transition-all">Calcular mi plan personalizado →</button>
+      </form>
+    </div>
+    <div class="space-y-4">
+      <!-- AD SPACE 2: SIDEBAR -->
+      <div class="ad-space py-8">
+        <div class="text-3xl mb-2">📢</div>
+        <div class="font-semibold text-slate-500">Espacio publicitario lateral</div>
+        <div class="text-xs mt-1">No interfiere con la navegación</div>
+      </div>
+      <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100">
+        <div class="text-3xl mb-2">🎯</div>
+        <h4 class="font-bold text-slate-800 mb-2">Filosofía NutriPro</h4>
+        <p class="text-sm text-slate-600 leading-relaxed">Rechazamos las dietas milagro. Nuestro enfoque se basa en el <strong>Déficit Calórico Sostenible</strong> y la <strong>Reeducación Alimentaria</strong>.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 border border-slate-100">
+        <div class="text-3xl mb-2">🔄</div>
+        <h4 class="font-bold text-slate-800 mb-2">Sustituciones inteligentes</h4>
+        <p class="text-sm text-slate-600 leading-relaxed">¿No encuentras un ingrediente? Haz clic sobre él y te sugeriremos <strong>alternativas con aporte nutricional equivalente</strong>.</p>
+      </div>
+      <div class="alert-warning rounded-xl p-4">
+        <p class="text-xs text-amber-900"><strong>⚕️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="tab-content">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-slate-800">Dashboard Metabólico</h2>
+    <p class="text-slate-600 mt-2">Tus cifras clave calculadas con base científica.</p>
+  </div>
+  <div id="dashboardNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100">
+    <div class="text-6xl mb-4">📊</div>
+    <h3 class="text-xl font-bold text-slate-800 mb-2">Aún no has completado la evaluación</h3>
+    <p class="text-slate-600 mb-6">Ve a la sección de Evaluación para calcular tus métricas.</p>
+    <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
+  </div>
+  <div id="dashboardContent" class="hidden space-y-6">
+    <div class="grid md:grid-cols-4 gap-4">
+      <div class="metric-card bg-white rounded-2xl p-6 border border-slate-100">
+        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide">TMB</div>
+        <div class="text-3xl font-bold text-slate-800 mt-2" id="metricTMB">—</div>
+        <div class="text-xs text-slate-500 mt-1">kcal/día en reposo</div>
+      </div>
+      <div class="metric-card bg-white rounded-2xl p-6 border border-slate-100">
+        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide">GETD</div>
+        <div class="text-3xl font-bold text-teal-600 mt-2" id="metricGETD">—</div>
+        <div class="text-xs text-slate-500 mt-1">Gasto total diario</div>
+      </div>
+      <div class="metric-card bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
+        <div class="text-xs font-semibold text-teal-100 uppercase tracking-wide">Objetivo Calórico</div>
+        <div class="text-3xl font-bold mt-2" id="metricObjetivo">—</div>
+        <div class="text-xs text-teal-100 mt-1" id="metricDeficit">Déficit aplicado</div>
+      </div>
+      <div class="metric-card bg-white rounded-2xl p-6 border border-slate-100">
+        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide">IMC</div>
+        <div class="text-3xl font-bold text-slate-800 mt-2" id="metricIMC">—</div>
+        <div class="text-xs text-slate-500 mt-1" id="metricIMCCat">Categoría</div>
+      </div>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-6">
+      <div class="bg-white rounded-2xl p-6 border border-slate-100">
+        <h3 class="text-lg font-bold text-slate-800 mb-4">Distribución de Macronutrientes</h3>
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700">🥩 Proteínas</span><span class="text-sm font-bold text-teal-600" id="macroProt">—</span></div>
+            <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div id="barProt" class="h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full transition-all" style="width:0%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700">🍚 Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
+            <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div id="barCarb" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all" style="width:0%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700">🥑 Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
+            <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div id="barGrasas" class="h-full bg-gradient-to-r from-rose-400 to-rose-500 rounded-full transition-all" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl p-6 border border-slate-100">
+        <h3 class="text-lg font-bold text-slate-800 mb-4">Proyección de Pérdida</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-600">Pérdida semanal estimada</span><span class="font-bold text-teal-600" id="perdidaSem">—</span></div>
+          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-600">Pérdida mensual estimada</span><span class="font-bold text-teal-600" id="perdidaMes">—</span></div>
+          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-600">Déficit diario aplicado</span><span class="font-bold text-amber-600" id="deficitDiario">—</span></div>
+          <div id="alertaSeguridad" class="hidden mt-3 p-3 rounded-lg text-sm"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MENÚ -->
+<section id="menu" class="tab-content">
+  <div class="flex justify-between items-start mb-6 flex-wrap gap-4">
+    <div>
+      <h2 class="text-3xl font-bold text-slate-800">Menú Semanal Rotatorio</h2>
+      <p class="text-slate-600 mt-2">Haz clic en cualquier alimento para sustituirlo. <strong>Exporta tu menú a PDF.</strong></p>
+    </div>
+    <div class="flex gap-2 flex-wrap">
+      <button onclick="exportarMenuPDF()" class="btn-pdf px-4 py-3 rounded-lg font-semibold flex items-center gap-2 text-sm">📄 PDF Menú</button>
+      <button onclick="resetSustituciones()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-lg font-semibold hover:bg-slate-200 text-sm">↺ Reset</button>
+      <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2">🔄 Regenerar</button>
+    </div>
+  </div>
+  <div id="menuNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100">
+    <div class="text-6xl mb-4">🍽️</div>
+    <h3 class="text-xl font-bold text-slate-800 mb-2">Completa tu evaluación primero</h3>
+  </div>
+  <div id="menuContent" class="hidden grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+</section>
+
+<!-- COMPRA -->
+<section id="compra" class="tab-content">
+  <div class="flex justify-between items-start mb-6 flex-wrap gap-4">
+    <div>
+      <h2 class="text-3xl font-bold text-slate-800">Lista de la Compra</h2>
+      <p class="text-slate-600 mt-2">Organizada por categorías. Se actualiza con tus sustituciones. <strong>Imprímela en PDF.</strong></p>
+    </div>
+    <button onclick="exportarCompraPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📄 PDF Lista de compra</button>
+  </div>
+  <div id="compraNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100">
+    <div class="text-6xl mb-4">🛒</div>
+    <h3 class="text-xl font-bold text-slate-800 mb-2">Genera primero tu menú semanal</h3>
+  </div>
+  <div id="compraContent" class="hidden grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+</section>
+
+<!-- SEGUIMIENTO -->
+<section id="seguimiento" class="tab-content">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-slate-800">Seguimiento de Peso</h2>
+    <p class="text-slate-600 mt-2">Media móvil de 7 días para eliminar el ruido de la retención de líquidos.</p>
+  </div>
+  
+  <!-- AD SPACE 3: INLINE -->
+  <div class="ad-space py-6 mb-6">
+    <div class="flex items-center justify-center gap-4 flex-wrap">
+      <span class="text-2xl">🏋️</span>
+      <div class="text-left">
+        <div class="font-bold text-slate-600">¿Buscas suplementación deportiva?</div>
+        <div class="text-xs">Descubre nuestra selección de productos recomendados</div>
+      </div>
+      <span class="text-2xl">💊</span>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-100">
+      <h3 class="text-lg font-bold text-slate-800 mb-4">Curva de Tendencia</h3>
+      <canvas id="chartPeso" height="180"></canvas>
+      <div class="flex gap-4 mt-4 text-xs">
+        <div class="flex items-center gap-2"><span class="w-3 h-3 bg-teal-500 rounded-full"></span>Peso real</div>
+        <div class="flex items-center gap-2"><span class="w-3 h-3 bg-amber-500 rounded-full"></span>Media móvil 7 días</div>
+      </div>
+    </div>
+    <div class="space-y-4">
+      <div class="bg-white rounded-2xl p-6 border border-slate-100">
+        <h3 class="text-lg font-bold text-slate-800 mb-4">Registrar peso</h3>
+        <div class="space-y-3">
+          <div>
+            <label class="text-sm font-semibold text-slate-700">Fecha</label>
+            <input type="date" id="fechaPeso" class="w-full px-3 py-2 border border-slate-200 rounded-lg mt-1">
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-slate-700">Peso (kg)</label>
+            <input type="number" id="valorPeso" step="0.1" placeholder="75.0" class="w-full px-3 py-2 border border-slate-200 rounded-lg mt-1">
+          </div>
+          <button onclick="agregarPeso()" class="w-full bg-teal-600 text-white py-2 rounded-lg font-semibold hover:bg-teal-700">+ Añadir registro</button>
+        </div>
+      </div>
+      <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100">
+        <div class="text-2xl mb-2">💬</div>
+        <p class="text-sm text-slate-700" id="feedbackTexto">Registra tu primer peso para comenzar el análisis.</p>
+      </div>
+    </div>
+  </div>
+  <div class="mt-6 bg-white rounded-2xl p-6 border border-slate-100">
+    <h3 class="text-lg font-bold text-slate-800 mb-4">Historial de registros</h3>
+    <div id="historialPeso" class="space-y-2"><p class="text-slate-500 text-sm">Sin registros aún.</p></div>
+  </div>
+</section>
+
+<!-- EJERCICIO -->
+<section id="ejercicio" class="tab-content">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-slate-800">Rutina de Fuerza en Casa</h2>
+    <p class="text-slate-600 mt-2">Adaptada a tu edad. Sin gimnasio, sin excusas.</p>
+  </div>
+  <div id="ejercicioNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100">
+    <div class="text-6xl mb-4">💪</div>
+    <h3 class="text-xl font-bold text-slate-800 mb-2">Completa tu evaluación primero</h3>
+  </div>
+  <div id="ejercicioContent" class="hidden space-y-6">
+    <div class="bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="text-4xl" id="ejIconoEdad">🏋️</div>
+        <div>
+          <h3 class="text-xl font-bold" id="ejTituloEdad">Grupo de edad</h3>
+          <p class="text-teal-100 text-sm" id="ejFocoEdad">Enfoque principal</p>
+        </div>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4" id="ejerciciosList"></div>
+    <div class="bg-white rounded-2xl p-6 border border-slate-100">
+      <h3 class="text-lg font-bold text-slate-800 mb-4">📅 Planificación semanal</h3>
+      <div id="planSemanal" class="grid md:grid-cols-7 gap-2"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ANÁLISIS -->
+<section id="analisis" class="tab-content">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-slate-800">Análisis de Progreso</h2>
+    <p class="text-slate-600 mt-2">Comparativa semanal y proyección para el próximo mes.</p>
+  </div>
+  <div id="analisisNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100">
+    <div class="text-6xl mb-4">🎯</div>
+    <h3 class="text-xl font-bold text-slate-800 mb-2">Necesitas al menos 4 semanas de datos</h3>
+    <p class="text-slate-600">Registra tu peso semanalmente para obtener un análisis completo.</p>
+  </div>
+  <div id="analisisContent" class="hidden space-y-6">
+    <div class="grid md:grid-cols-3 gap-4">
+      <div class="metric-card bg-white rounded-2xl p-6 border border-slate-100">
+        <div class="text-xs font-semibold text-slate-500 uppercase">Peso Semana 1</div>
+        <div class="text-3xl font-bold text-slate-800 mt-2" id="anS1">—</div>
+      </div>
+      <div class="metric-card bg-white rounded-2xl p-6 border border-slate-100">
+        <div class="text-xs font-semibold text-slate-500 uppercase">Peso Semana 4</div>
+        <div class="text-3xl font-bold text-slate-800 mt-2" id="anS4">—</div>
+      </div>
+      <div class="metric-card bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
+        <div class="text-xs font-semibold text-teal-100 uppercase">Cambio total</div>
+        <div class="text-3xl font-bold mt-2" id="anCambio">—</div>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl p-6 border border-slate-100">
+      <h3 class="text-lg font-bold text-slate-800 mb-4">Evolución por semanas</h3>
+      <canvas id="chartSemanal" height="120"></canvas>
+    </div>
+    <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100">
+      <h3 class="text-lg font-bold text-slate-800 mb-3">🔮 Proyección próximo mes</h3>
+      <div id="proyeccionTexto" class="text-slate-700"></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMENTARIOS -->
+<section id="comentarios" class="tab-content">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-slate-800">💬 Comunidad NutriPro</h2>
+    <p class="text-slate-600 mt-2">Comparte tu experiencia, dudas o consejos.</p>
+  </div>
+  <div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-4">
+      <div class="bg-white rounded-2xl p-6 border border-slate-100">
+        <h3 class="font-bold text-slate-800 mb-3">Deja tu comentario</h3>
+        <textarea id="nuevoComentario" rows="3" placeholder="Comparte tu experiencia, dudas o logros..." class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 resize-none"></textarea>
+        <div class="flex justify-between items-center mt-3">
+          <label class="flex items-center gap-2 text-sm text-slate-600">
+            <input type="checkbox" id="comentarioAnonimo" class="accent-teal-600">
+            Publicar anónimamente
+          </label>
+          <button onclick="publicarComentario()" class="bg-teal-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-teal-700">Publicar →</button>
+        </div>
+      </div>
+      <div id="listaComentarios" class="space-y-3">
+        <div class="loading-spinner"></div>
+      </div>
+    </div>
+    <div class="space-y-4">
+      <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100">
+        <div class="text-3xl mb-2">🤝</div>
+        <h4 class="font-bold text-slate-800 mb-2">Normas de la comunidad</h4>
+        <ul class="text-sm text-slate-600 space-y-1">
+          <li>✓ Sé respetuoso con los demás</li>
+          <li>✓ Comparte experiencias reales</li>
+          <li>✗ No compartas datos médicos personales</li>
+          <li>✗ Evita promocionar dietas milagro</li>
+        </ul>
+      </div>
+      <!-- AD SPACE 4: SIDEBAR COMMENTS -->
+      <div class="ad-space py-8">
+        <div class="text-3xl mb-2">📢</div>
+        <div class="font-semibold text-slate-500">Espacio publicitario inferior</div>
+        <div class="text-xs mt-1">300 × 250</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PERFIL -->
+<section id="perfil" class="tab-content">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-slate-800">Mi Perfil</h2>
+    <p class="text-slate-600 mt-2">Gestiona tu información personal y contraseña.</p>
+  </div>
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="bg-white rounded-2xl p-6 border border-slate-100">
+      <h3 class="font-bold text-slate-800 mb-4">Información personal</h3>
+      <form id="formPerfil" class="space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre</label>
+          <input type="text" id="perfilNombre" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Correo (no editable)</label>
+          <input type="email" id="perfilEmail" disabled class="w-full px-4 py-2.5 border border-slate-200 rounded-lg bg-slate-50 text-slate-500">
+        </div>
+        <button type="submit" class="w-full bg-teal-600 text-white py-2.5 rounded-lg font-semibold hover:bg-teal-700">Guardar cambios</button>
+      </form>
+    </div>
+    <div class="bg-white rounded-2xl p-6 border border-slate-100">
+      <h3 class="font-bold text-slate-800 mb-4">Cambiar contraseña</h3>
+      <form id="formPassword" class="space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Contraseña actual</label>
+          <input type="password" id="passActual" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Nueva contraseña</label>
+          <input type="password" id="passNueva" minlength="6" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Confirmar nueva contraseña</label>
+          <input type="password" id="passConfirm" minlength="6" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+        </div>
+        <button type="submit" class="w-full bg-slate-800 text-white py-2.5 rounded-lg font-semibold hover:bg-slate-900">Cambiar contraseña</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN -->
+<section id="admin" class="tab-content">
+  <div class="mb-6">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-2xl">⚙️</div>
+      <div>
+        <h2 class="text-3xl font-bold text-slate-800">Panel de Administrador</h2>
+        <p class="text-slate-600 mt-1">Gestiona usuarios, comentarios y configuración.</p>
+      </div>
+    </div>
+  </div>
+  <div class="grid md:grid-cols-4 gap-4 mb-6">
+    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 uppercase">Usuarios totales</div><div class="text-3xl font-bold text-slate-800 mt-2" id="statUsuarios">0</div></div>
+    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 uppercase">Usuarios activos</div><div class="text-3xl font-bold text-green-600 mt-2" id="statActivos">0</div></div>
+    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 uppercase">Usuarios bloqueados</div><div class="text-3xl font-bold text-red-600 mt-2" id="statBloqueados">0</div></div>
+    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 uppercase">Comentarios</div><div class="text-3xl font-bold text-teal-600 mt-2" id="statComentarios">0</div></div>
+  </div>
+  <div class="flex gap-2 mb-4 border-b border-slate-200">
+    <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600" data-atab="usuarios">👥 Usuarios</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700" data-atab="comentarios">💬 Comentarios</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700" data-atab="config">⚙️ Configuración</button>
+  </div>
+  <div id="admin-usuarios" class="admin-panel">
+    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+      <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2">
+        <h3 class="font-bold text-slate-800">Gestión de usuarios (Supabase Auth)</h3>
+        <p class="text-xs text-slate-500">Para gestionar usuarios reales, usa el panel de Supabase > Authentication.</p>
+      </div>
+      <div class="p-6 text-center text-slate-500">
+        La gestión avanzada de usuarios se realiza directamente en el dashboard de Supabase para mayor seguridad.
+      </div>
+    </div>
+  </div>
+  <div id="admin-comentarios" class="admin-panel hidden">
+    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+      <div class="p-4 border-b border-slate-100"><h3 class="font-bold text-slate-800">Moderación de comentarios</h3></div>
+      <div id="listaComentariosAdmin" class="p-4 space-y-3"></div>
+    </div>
+  </div>
+  <div id="admin-config" class="admin-panel hidden">
+    <div class="bg-white rounded-2xl p-6 border border-slate-100">
+      <h3 class="font-bold text-slate-800 mb-4">Estado del Sistema</h3>
+      <p class="text-sm text-slate-600">Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="max-w-7xl mx-auto px-6 py-8 mt-4 border-t border-slate-200">
+  <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-slate-500">
+    <div>🥗 NutriPro · Nutrición basada en evidencia científica</div>
+    <div>⚕️ Esta herramienta no sustituye la consulta médica profesional</div>
+  </div>
+</footer>
+</div>
+
+<!-- MODAL SUSTITUCIÓN -->
+<div id="modalSustitucion" class="modal-overlay hidden">
+  <div class="modal-content">
+    <div class="p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10">
+      <div class="flex justify-between items-start">
+        <div>
+          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">Sustitución inteligente</div>
+          <h3 class="text-xl font-bold text-slate-800" id="modalTitulo">Elige una alternativa</h3>
+          <p class="text-sm text-slate-500 mt-1" id="modalSubtitulo">Alimentos con aporte nutricional equivalente</p>
+        </div>
+        <button onclick="cerrarModal()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600">✕</button>
+      </div>
+    </div>
+    <div id="modalOpciones" class="p-6 space-y-2"></div>
+    <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-3xl">
+      <button onclick="cerrarModal()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-semibold">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ CONFIGURACIÓN SUPABASE ============
+const SUPABASE_URL = 'https://xsuqqesjetgzxtyqqqje.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzdXFxZXNqZXRnenh0eXFxcWplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NTg5NjUsImV4cCI6MjEwMDEzNDk2NX0.OdQddq33d-dsz3fRpTp_xLs6bDJn2_fyFCKmENcs_t8';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let userData = null;
+let menuData = null;
+let pesos = [];
+let sustituciones = {};
+let chartPeso = null;
+let chartSemanal = null;
+let currentSwap = null;
+
+// ============ AUTH SYSTEM CON SUPABASE ============
+
+async function checkAuth() {
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    showAuthScreen();
+    return;
+  }
+
+  // Obtener perfil completo
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', session.user.id)
+    .single();
+
+  if (error || !profile) {
+    // Si no tiene perfil aún, lo creamos automáticamente
+    await createProfile(session.user);
+    location.reload(); 
+    return;
+  }
+
+  if (profile.bloqueado) {
+    showBlockedScreen('Tu cuenta ha sido bloqueada por el administrador.');
+    return;
+  }
+
+  currentUser = {
+    id: session.user.id,
+    email: session.user.email,
+    nombre: profile.nombre,
+    rol: profile.rol
+  };
+
+  showMainApp();
+  loadUserDataFromDB();
+}
+
+async function createProfile(user) {
+  await supabase.from('profiles').insert({
+    id: user.id,
+    nombre: user.email.split('@')[0],
+    rol: 'user'
+  });
+}
+
+function showAuthScreen() {
+  document.getElementById('authScreen').classList.remove('hidden');
+  document.getElementById('blockedScreen').classList.add('hidden');
+  document.getElementById('mainApp').classList.add('hidden');
+}
+
+function showBlockedScreen(msg) {
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('blockedScreen').classList.remove('hidden');
+  document.getElementById('mainApp').classList.add('hidden');
+  document.getElementById('blockedMsg').textContent = msg;
+}
+
+function showMainApp() {
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('blockedScreen').classList.add('hidden');
+  document.getElementById('mainApp').classList.remove('hidden');
+  updateUserUI();
+}
+
+function updateUserUI() {
+  if (!currentUser) return;
+  document.getElementById('userName').textContent = currentUser.nombre.split(' ')[0];
+  document.getElementById('userAvatar').textContent = currentUser.nombre.charAt(0).toUpperCase();
+  document.getElementById('dropdownName').textContent = currentUser.nombre;
+  document.getElementById('dropdownEmail').textContent = currentUser.email;
+  
+  const roleEl = document.getElementById('dropdownRole');
+  if (currentUser.rol === 'admin') {
+    roleEl.innerHTML = '<span class="status-badge bg-purple-100 text-purple-700">⚙️ Administrador</span>';
+    document.getElementById('adminMenuItem').classList.remove('hidden');
+  } else {
+    roleEl.innerHTML = '<span class="status-badge bg-teal-100 text-teal-700">✓ Usuario</span>';
+    document.getElementById('adminMenuItem').classList.add('hidden');
+  }
+  document.getElementById('perfilNombre').value = currentUser.nombre;
+  document.getElementById('perfilEmail').value = currentUser.email;
+}
+
+async function cerrarSesion() {
+  await supabase.auth.signOut();
+  currentUser = null;
+  document.getElementById('userDropdown').classList.remove('show');
+  showAuthScreen();
+}
+
+// Login
+document.getElementById('formLogin').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPassword').value;
+  const err = document.getElementById('loginError');
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: pass,
+  });
+
+  if (error) {
+    err.textContent = '❌ ' + error.message;
+    err.classList.remove('hidden');
+  } else {
+    location.reload();
+  }
+});
+
+// Registro
+document.getElementById('formRegister').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const nombre = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  const pass = document.getElementById('regPassword').value;
+  const pass2 = document.getElementById('regPassword2').value;
+  const err = document.getElementById('regError');
+
+  if (pass !== pass2) {
+    err.textContent = '❌ Las contraseñas no coinciden';
+    err.classList.remove('hidden');
+    return;
+  }
+
+  const { data, error } = await supabase.auth.signUp({
+    email: email,
+    password: pass,
+    options: {
+      data: { nombre: nombre }
+    }
+  });
+
+  if (error) {
+    err.textContent = '❌ ' + error.message;
+    err.classList.remove('hidden');
+  } else {
+    alert('✅ Cuenta creada. Por favor inicia sesión.');
+    document.querySelector('.auth-tab[data-auth="login"]').click();
+  }
+});
+
+// ============ GESTIÓN DE DATOS ============
+
+async function loadUserDataFromDB() {
+  // Cargar datos metabólicos
+  const { data: uData, error: uErr } = await supabase
+    .from('user_data')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .single();
+    
+  if (uData) {
+    userData = uData;
+    actualizarDashboard();
+    generarMenu();
+    generarListaCompra();
+    generarEjercicio();
+  }
+
+  // Cargar pesos
+  const { data: wData, error: wErr } = await supabase
+    .from('weight_logs')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('fecha', { ascending: true });
+    
+  if (wData) {
+    pesos = wData.map(w => ({ fecha: w.fecha, valor: w.valor }));
+    renderSeguimiento();
+  }
+  
+  renderComentarios();
+}
+
+async function saveUserDataToDB() {
+  if (!userData || !currentUser) return;
+  
+  const { error } = await supabase
+    .from('user_data')
+    .upsert({
+      user_id: currentUser.id,
+      ...userData,
+      updated_at: new Date()
+    });
+    
+  if (error) console.error('Error guardando datos:', error);
+}
+
+// Evaluación Form
+document.getElementById('formEvaluacion').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const edad = parseInt(document.getElementById('edad').value);
+  const sexo = document.getElementById('sexo').value;
+  const peso = parseFloat(document.getElementById('peso').value);
+  const altura = parseFloat(document.getElementById('altura').value);
+  const factor = parseFloat(document.getElementById('actividad').value);
+  const objetivo = document.getElementById('objetivo').value;
+  const prefs = Array.from(document.querySelectorAll('.pref:checked')).map(c => c.value);
+
+  const tmb = calcularTMB(peso, altura, edad, sexo);
+  const getd = calcularGETD(tmb, factor);
+  const imc = calcularIMC(peso, altura);
+
+  let deficit = 0;
+  if (objetivo === 'perder') deficit = 500;
+  else if (objetivo === 'perderSuave') deficit = 300;
+  else if (objetivo === 'ganar') deficit = -300;
+  if (deficit > 750) deficit = 750;
+
+  const caloriasObjetivo = Math.round(getd - deficit);
+  const protG = Math.round(peso * 1.8);
+  const protKcal = protG * 4;
+  const grasasG = Math.max(Math.round(peso * 0.9), 50);
+  const grasasKcal = grasasG * 9;
+  const carbKcal = caloriasObjetivo - protKcal - grasasKcal;
+  const carbG = Math.round(carbKcal / 4);
+
+  userData = { 
+    edad, sexo, peso, altura, factor, objetivo, prefs, 
+    tmb: Math.round(tmb), getd: Math.round(getd), 
+    imc: imc.toFixed(1), deficit, caloriasObjetivo, 
+    protG, grasasG, carbG 
+  };
+
+  await saveUserDataToDB();
+  actualizarDashboard();
+  generarMenu();
+  generarListaCompra();
+  generarEjercicio();
+  switchTab('dashboard');
+});
+
+// Guardar Peso
+async function agregarPeso() {
+  const fecha = document.getElementById('fechaPeso').value;
+  const valor = parseFloat(document.getElementById('valorPeso').value);
+  if (!fecha || isNaN(valor)) { alert('Introduce fecha y peso válido'); return; }
+
+  const { error } = await supabase
+    .from('weight_logs')
+    .insert({ user_id: currentUser.id, fecha: fecha, valor: valor });
+
+  if (!error) {
+    pesos.push({ fecha, valor });
+    pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+    document.getElementById('valorPeso').value = '';
+    renderSeguimiento();
+    mostrarToast('✅ Peso registrado en la nube');
+  } else {
+    alert('Error al guardar peso');
+  }
+}
+
+// Comentarios
+async function publicarComentario() {
+  const texto = document.getElementById('nuevoComentario').value.trim();
+  if (!texto) return;
+  const anonimo = document.getElementById('comentarioAnonimo').checked;
+
+  const { error } = await supabase
+    .from('comments')
+    .insert({
+      user_id: currentUser.id,
+      user_name: anonimo ? 'Anónimo' : currentUser.nombre,
+      texto: texto,
+      is_anonymous: anonimo
+    });
+
+  if (!error) {
+    document.getElementById('nuevoComentario').value = '';
+    renderComentarios();
+    mostrarToast('💬 Comentario publicado');
+  }
+}
+
+async function renderComentarios() {
+  const { data: comments, error } = await supabase
+    .from('comments')
+    .select('*')
+    .order('created_at', { ascending: false });
+    
+  if (error) return;
+
+  const cont = document.getElementById('listaComentarios');
+  if (!comments || comments.length === 0) {
+    cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500">Sé el primero en compartir tu experiencia 💬</div>';
+    return;
+  }
+
+  cont.innerHTML = comments.map(c => {
+    const isAdmin = currentUser && currentUser.rol === 'admin';
+    const fecha = new Date(c.created_at).toLocaleDateString('es-ES');
+    const respuestas = (c.respuestas || []).map(r => `
+      <div class="admin-reply">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-xs font-bold text-teal-700">⚙️ Equipo NutriPro</span>
+          <span class="text-xs text-slate-400">${new Date(r.fecha).toLocaleDateString()}</span>
+        </div>
+        <p class="text-sm text-slate-700">${r.texto}</p>
+      </div>
+    `).join('');
+
+    return `
+      <div class="comment-card">
+        <div class="flex justify-between items-start mb-2">
+          <div class="flex items-center gap-2">
+            <div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${c.user_name.charAt(0).toUpperCase()}</div>
+            <div>
+              <div class="font-semibold text-slate-800 text-sm">${c.user_name}</div>
+              <div class="text-xs text-slate-400">${fecha}</div>
+            </div>
+          </div>
+          ${isAdmin ? `
+            <div class="flex gap-1">
+              <button onclick="responderComentario(${c.id})" class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200">↩ Responder</button>
+              <button onclick="eliminarComentario(${c.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200">🗑</button>
+            </div>
+          ` : ''}
+        </div>
+        <p class="text-slate-700 text-sm leading-relaxed">${c.texto}</p>
+        ${respuestas}
+      </div>
+    `;
+  }).join('');
+}
+
+// ============ RESTO DEL CÓDIGO (Lógica Local) ============
+
+function calcularTMB(peso, altura, edad, sexo) {
+  if (sexo === 'hombre') return 10 * peso + 6.25 * altura - 5 * edad + 5;
+  return 10 * peso + 6.25 * altura - 5 * edad - 161;
+}
+function calcularGETD(tmb, factor) { return tmb * factor; }
+function calcularIMC(peso, alturaCm) { return peso / Math.pow(alturaCm / 100, 2); }
+function categoriaIMC(imc) {
+  if (imc < 18.5) return { texto: 'Bajo peso', color: 'text-blue-600' };
+  if (imc < 25) return { texto: 'Normopeso', color: 'text-green-600' };
+  if (imc < 30) return { texto: 'Sobrepeso', color: 'text-amber-600' };
+  return { texto: 'Obesidad', color: 'text-red-600' };
+}
+
+function actualizarDashboard() {
+  if (!userData) return;
+  document.getElementById('dashboardNoData').classList.add('hidden');
+  document.getElementById('dashboardContent').classList.remove('hidden');
+  document.getElementById('metricTMB').textContent = userData.tmb;
+  document.getElementById('metricGETD').textContent = userData.getd;
+  document.getElementById('metricObjetivo').textContent = userData.caloriasObjetivo;
+  document.getElementById('metricDeficit').textContent = userData.deficit > 0 ? `Déficit: ${userData.deficit} kcal` : (userData.deficit < 0 ? `Superávit: ${Math.abs(userData.deficit)} kcal` : 'Mantenimiento');
+  document.getElementById('metricIMC').textContent = userData.imc;
+  const catIMC = categoriaIMC(parseFloat(userData.imc));
+  document.getElementById('metricIMCCat').textContent = catIMC.texto;
+  document.getElementById('metricIMCCat').className = `text-xs font-semibold mt-1 ${catIMC.color}`;
+  const totalKcal = userData.protG * 4 + userData.grasasG * 9 + userData.carbG * 4;
+  const pctProt = Math.round((userData.protG * 4 / totalKcal) * 100);
+  const pctCarb = Math.round((userData.carbG * 4 / totalKcal) * 100);
+  const pctGrasas = 100 - pctProt - pctCarb;
+  document.getElementById('macroProt').textContent = `${userData.protG}g (${pctProt}%)`;
+  document.getElementById('macroCarb').textContent = `${userData.carbG}g (${pctCarb}%)`;
+  document.getElementById('macroGrasas').textContent = `${userData.grasasG}g (${pctGrasas}%)`;
+  document.getElementById('barProt').style.width = pctProt + '%';
+  document.getElementById('barCarb').style.width = pctCarb + '%';
+  document.getElementById('barGrasas').style.width = pctGrasas + '%';
+  const perdidaSemKg = (userData.deficit * 7 / 7700).toFixed(2);
+  const perdidaMesKg = (userData.deficit * 30 / 7700).toFixed(2);
+  document.getElementById('perdidaSem').textContent = `${perdidaSemKg} kg/sem`;
+  document.getElementById('perdidaMes').textContent = `${perdidaMesKg} kg/mes`;
+  document.getElementById('deficitDiario').textContent = `${userData.deficit} kcal/día`;
+  const alerta = document.getElementById('alertaSeguridad');
+  if (perdidaSemKg > userData.peso * 0.01) {
+    alerta.className = 'mt-3 p-3 rounded-lg text-sm alert-danger';
+    alerta.innerHTML = `<strong>⚠️ Alerta:</strong> La pérdida supera el 1% semanal. Considera aumentar calorías.`;
+    alerta.classList.remove('hidden');
+  } else if (perdidaSemKg >= 0.2 && perdidaSemKg <= 0.5) {
+    alerta.className = 'mt-3 p-3 rounded-lg text-sm alert-success';
+    alerta.innerHTML = `<strong>✅ Excelente:</strong> Ritmo estable y sostenible.`;
+    alerta.classList.remove('hidden');
+  } else { alerta.classList.add('hidden'); }
+}
+
+// Base de Datos de Alimentos (Local)
+const GRUPO_PROTEINAS = [
+  { id: 'p1', grupo: 'prot', nombre: 'Pechuga de pollo a la plancha', kcal: 165, prot: 31, ing: ['pollo'] },
+  { id: 'p2', grupo: 'prot', nombre: 'Pavo a la plancha', kcal: 135, prot: 29, ing: ['pavo'] },
+  { id: 'p3', grupo: 'prot', nombre: 'Salmón al horno', kcal: 208, prot: 22, ing: ['salmón'] },
+  { id: 'p4', grupo: 'prot', nombre: 'Merluza a la plancha', kcal: 90, prot: 20, ing: ['merluza'] },
+  { id: 'p5', grupo: 'prot', nombre: 'Atún fresco', kcal: 144, prot: 23, ing: ['atún'] },
+  { id: 'p6', grupo: 'prot', nombre: 'Bacalao al horno', kcal: 100, prot: 22, ing: ['bacalao'] },
+  { id: 'p7', grupo: 'prot', nombre: 'Dorada a la plancha', kcal: 120, prot: 22, ing: ['dorada'] },
+  { id: 'p8', grupo: 'prot', nombre: 'Gambas al ajillo', kcal: 110, prot: 24, ing: ['gambas'] },
+  { id: 'p9', grupo: 'prot', nombre: 'Huevos cocidos (2 uds)', kcal: 155, prot: 13, ing: ['huevos'] },
+  { id: 'p10', grupo: 'prot', nombre: 'Tortilla francesa (2 huevos)', kcal: 180, prot: 14, ing: ['huevos'] },
+  { id: 'p11', grupo: 'prot', nombre: 'Tofu salteado', kcal: 144, prot: 15, ing: ['tofu'] },
+  { id: 'p12', grupo: 'prot', nombre: 'Tempeh marinado', kcal: 160, prot: 18, ing: ['tempeh'] },
+  { id: 'p13', grupo: 'prot', nombre: 'Lentejas estofadas', kcal: 180, prot: 12, ing: ['lentejas'] },
+  { id: 'p14', grupo: 'prot', nombre: 'Garbanzos guisados', kcal: 190, prot: 11, ing: ['garbanzos'] },
+  { id: 'p15', grupo: 'prot', nombre: 'Alubias con verduras', kcal: 175, prot: 10, ing: ['alubias'] },
+  { id: 'p16', grupo: 'prot', nombre: 'Solomillo de ternera', kcal: 180, prot: 28, ing: ['ternera'] },
+  { id: 'p17', grupo: 'prot', nombre: 'Muslos de pollo al horno', kcal: 190, prot: 26, ing: ['pollo'] },
+  { id: 'p18', grupo: 'prot', nombre: 'Conejo a la plancha', kcal: 150, prot: 25, ing: ['conejo'] }
+];
+const GRUPO_CARBOS = [
+  { id: 'c1', grupo: 'carb', nombre: 'Arroz integral', kcal: 220, ing: ['arroz integral'] },
+  { id: 'c2', grupo: 'carb', nombre: 'Arroz basmati', kcal: 215, ing: ['arroz basmati'] },
+  { id: 'c3', grupo: 'carb', nombre: 'Quinoa', kcal: 222, ing: ['quinoa'] },
+  { id: 'c4', grupo: 'carb', nombre: 'Mijo', kcal: 210, ing: ['mijo'] },
+  { id: 'c5', grupo: 'carb', nombre: 'Pasta integral', kcal: 230, ing: ['pasta integral'] },
+  { id: 'c6', grupo: 'carb', nombre: 'Pasta de espelta', kcal: 225, ing: ['pasta de espelta'] },
+  { id: 'c7', grupo: 'carb', nombre: 'Batata asada', kcal: 180, ing: ['batata'] },
+  { id: 'c8', grupo: 'carb', nombre: 'Patata cocida', kcal: 160, ing: ['patatas'] },
+  { id: 'c9', grupo: 'carb', nombre: 'Boniato al horno', kcal: 175, ing: ['boniato'] },
+  { id: 'c10', grupo: 'carb', nombre: 'Avena', kcal: 190, ing: ['avena'] },
+  { id: 'c11', grupo: 'carb', nombre: 'Pan integral', kcal: 170, ing: ['pan integral'] },
+  { id: 'c12', grupo: 'carb', nombre: 'Pan de centeno', kcal: 175, ing: ['pan de centeno'] },
+  { id: 'c13', grupo: 'carb', nombre: 'Cuscús integral', kcal: 210, ing: ['cuscús'] },
+  { id: 'c14', grupo: 'carb', nombre: 'Trigo sarraceno', kcal: 205, ing: ['trigo sarraceno'] },
+  { id: 'c15', grupo: 'carb', nombre: 'Bulgur', kcal: 200, ing: ['bulgur'] }
+];
+const GRUPO_VERDURAS = [
+  { id: 'v1', grupo: 'verd', nombre: 'Brócoli al vapor', kcal: 55, ing: ['brócoli'] },
+  { id: 'v2', grupo: 'verd', nombre: 'Coliflor al horno', kcal: 50, ing: ['coliflor'] },
+  { id: 'v3', grupo: 'verd', nombre: 'Espinacas salteadas', kcal: 45, ing: ['espinacas'] },
+  { id: 'v4', grupo: 'verd', nombre: 'Acelgas al vapor', kcal: 40, ing: ['acelgas'] },
+  { id: 'v5', grupo: 'verd', nombre: 'Ensalada mixta', kcal: 35, ing: ['lechuga', 'tomate', 'pepino'] },
+  { id: 'v6', grupo: 'verd', nombre: 'Pimientos asados', kcal: 50, ing: ['pimientos'] },
+  { id: 'v7', grupo: 'verd', nombre: 'Calabacín a la plancha', kcal: 40, ing: ['calabacín'] },
+  { id: 'v8', grupo: 'verd', nombre: 'Berenjena asada', kcal: 45, ing: ['berenjena'] },
+  { id: 'v9', grupo: 'verd', nombre: 'Tomate aliñado', kcal: 30, ing: ['tomate'] },
+  { id: 'v10', grupo: 'verd', nombre: 'Judías verdes', kcal: 45, ing: ['judías verdes'] },
+  { id: 'v11', grupo: 'verd', nombre: 'Zanahoria cocida', kcal: 50, ing: ['zanahoria'] },
+  { id: 'v12', grupo: 'verd', nombre: 'Espárragos trigueros', kcal: 40, ing: ['espárragos'] },
+  { id: 'v13', grupo: 'verd', nombre: 'Champiñones salteados', kcal: 35, ing: ['champiñones'] },
+  { id: 'v14', grupo: 'verd', nombre: 'Cebolla morada asada', kcal: 45, ing: ['cebolla'] },
+  { id: 'v15', grupo: 'verd', nombre: 'Kale salteado', kcal: 50, ing: ['kale'] }
+];
+const GRUPO_GRASAS = [
+  { id: 'g1', grupo: 'grasa', nombre: 'Aguacate', kcal: 160, ing: ['aguacate'] },
+  { id: 'g2', grupo: 'grasa', nombre: 'Aceite de oliva virgen extra (1 cda)', kcal: 120, ing: ['aceite de oliva'] },
+  { id: 'g3', grupo: 'grasa', nombre: 'Almendras (20g)', kcal: 120, ing: ['almendras'] },
+  { id: 'g4', grupo: 'grasa', nombre: 'Nueces (15g)', kcal: 100, ing: ['nueces'] },
+  { id: 'g5', grupo: 'grasa', nombre: 'Semillas de chía (15g)', kcal: 80, ing: ['semillas de chía'] },
+  { id: 'g6', grupo: 'grasa', nombre: 'Semillas de lino (15g)', kcal: 75, ing: ['semillas de lino'] },
+  { id: 'g7', grupo: 'grasa', nombre: 'Semillas de calabaza (15g)', kcal: 85, ing: ['semillas de calabaza'] },
+  { id: 'g8', grupo: 'grasa', nombre: 'Pistachos (15g)', kcal: 95, ing: ['pistachos'] },
+  { id: 'g9', grupo: 'grasa', nombre: 'Anacardos (15g)', kcal: 100, ing: ['anacardos'] },
+  { id: 'g10', grupo: 'grasa', nombre: 'Aceitunas negras (30g)', kcal: 115, ing: ['aceitunas'] }
+];
+const GRUPO_DESAYUNOS = [
+  { id: 'd1', grupo: 'des', nombre: 'Avena con frutas y nueces', kcal: 380, prot: 12, ing: ['avena', 'plátano', 'nueces', 'canela'] },
+  { id: 'd2', grupo: 'des', nombre: 'Tostadas integrales con aguacate y huevo', kcal: 420, prot: 18, ing: ['pan integral', 'aguacate', 'huevos'] },
+  { id: 'd3', grupo: 'des', nombre: 'Yogur griego con granola y frutos rojos', kcal: 350, prot: 20, ing: ['yogur griego', 'granola', 'frutos rojos'] },
+  { id: 'd4', grupo: 'des', nombre: 'Tortilla de claras con espinacas', kcal: 300, prot: 25, ing: ['huevos', 'espinacas'] },
+  { id: 'd5', grupo: 'des', nombre: 'Smoothie bowl de proteína', kcal: 380, prot: 22, ing: ['plátano', 'proteína', 'semillas de chía'] },
+  { id: 'd6', grupo: 'des', nombre: 'Tostadas con queso fresco y tomate', kcal: 340, prot: 16, ing: ['pan integral', 'queso fresco', 'tomate'] },
+  { id: 'd7', grupo: 'des', nombre: 'Porridge con manzana y canela', kcal: 360, prot: 10, ing: ['avena', 'manzana', 'canela'] },
+  { id: 'd8', grupo: 'des', nombre: 'Tostada de pan de centeno con salmón', kcal: 390, prot: 20, ing: ['pan de centeno', 'salmón'] },
+  { id: 'd9', grupo: 'des', nombre: 'Chía pudding con frutas', kcal: 340, prot: 9, ing: ['semillas de chía', 'leche', 'frutos rojos'] }
+];
+const GRUPO_MERIENDAS = [
+  { id: 'm1', grupo: 'mer', nombre: 'Fruta + puñado de almendras', kcal: 200, prot: 6, ing: ['manzana', 'almendras'] },
+  { id: 'm2', grupo: 'mer', nombre: 'Yogur natural con nueces', kcal: 180, prot: 8, ing: ['yogur natural', 'nueces'] },
+  { id: 'm3', grupo: 'mer', nombre: 'Hummus con zanahoria', kcal: 160, prot: 6, ing: ['hummus', 'zanahoria'] },
+  { id: 'm4', grupo: 'mer', nombre: 'Queso fresco con membrillo', kcal: 170, prot: 10, ing: ['queso fresco', 'membrillo'] },
+  { id: 'm5', grupo: 'mer', nombre: 'Plátano con mantequilla de cacahuete', kcal: 220, prot: 6, ing: ['plátano', 'cacahuete'] },
+  { id: 'm6', grupo: 'mer', nombre: 'Batido de proteínas casero', kcal: 200, prot: 20, ing: ['plátano', 'leche', 'cacao'] },
+  { id: 'm7', grupo: 'mer', nombre: 'Tostada de arroz con aguacate', kcal: 190, prot: 4, ing: ['tostadas de arroz', 'aguacate'] },
+  { id: 'm8', grupo: 'mer', nombre: 'Mix de frutos secos (30g)', kcal: 210, prot: 6, ing: ['almendras', 'nueces', 'pasas'] },
+  { id: 'm9', grupo: 'mer', nombre: 'Kéfir con canela', kcal: 150, prot: 9, ing: ['kéfir', 'canela'] }
+];
+
+const MAPA_ALIMENTOS = {};
+[...GRUPO_PROTEINAS, ...GRUPO_CARBOS, ...GRUPO_VERDURAS, ...GRUPO_GRASAS, ...GRUPO_DESAYUNOS, ...GRUPO_MERIENDAS].forEach(a => MAPA_ALIMENTOS[a.id] = a);
+
+function getGrupoById(id) {
+  const a = MAPA_ALIMENTOS[id];
+  if (!a) return [];
+  const map = { 'prot': GRUPO_PROTEINAS, 'carb': GRUPO_CARBOS, 'verd': GRUPO_VERDURAS, 'grasa': GRUPO_GRASAS, 'des': GRUPO_DESAYUNOS, 'mer': GRUPO_MERIENDAS };
+  return map[a.grupo] || [];
+}
+function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function generarMenu() {
+  if (!userData) return;
+  document.getElementById('menuNoData').classList.add('hidden');
+  document.getElementById('menuContent').classList.remove('hidden');
+  const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  const menu = [];
+  dias.forEach((dia) => {
+    const desayuno = pickRandom(GRUPO_DESAYUNOS);
+    const comida_prot = pickRandom(GRUPO_PROTEINAS);
+    const comida_carb = pickRandom(GRUPO_CARBOS);
+    const comida_verd = pickRandom(GRUPO_VERDURAS);
+    const comida_grasa = pickRandom(GRUPO_GRASAS);
+    const merienda = pickRandom(GRUPO_MERIENDAS);
+    const cena_prot = pickRandom(GRUPO_PROTEINAS.filter(p => p.id !== comida_prot.id));
+    const cena_verd = pickRandom(GRUPO_VERDURAS.filter(v => v.id !== comida_verd.id));
+    menu.push({
+      dia, desayuno: { ...desayuno },
+      comida: { prot: { ...comida_prot }, carb: { ...comida_carb }, verdura: { ...comida_verd }, grasa: { ...comida_grasa } },
+      merienda: { ...merienda },
+      cena: { prot: { ...cena_prot }, verdura: { ...cena_verd } }
+    });
+  });
+  menuData = { menu };
+  aplicarSustitucionesGuardadas();
+  renderMenu();
+  renderListaCompra();
+}
+
+function aplicarSustitucionesGuardadas() {
+  if (!menuData) return;
+  Object.keys(sustituciones).forEach(key => {
+    const [diaIdx, path] = key.split('|');
+    const nuevoId = sustituciones[key];
+    const nuevo = MAPA_ALIMENTOS[nuevoId];
+    if (!nuevo) return;
+    const dia = menuData.menu[parseInt(diaIdx)];
+    if (!dia) return;
+    const partes = path.split('.');
+    let obj = dia;
+    for (let i = 0; i < partes.length - 1; i++) obj = obj[partes[i]];
+    obj[partes[partes.length - 1]] = { ...nuevo };
+  });
+}
+
+function calcularKcalDia(dia) {
+  return Math.round(dia.desayuno.kcal + dia.comida.prot.kcal + dia.comida.carb.kcal + dia.comida.verdura.kcal + dia.comida.grasa.kcal + dia.merienda.kcal + dia.cena.prot.kcal + dia.cena.verdura.kcal);
+}
+
+function regenerarMenu() { sustituciones = {}; generarMenu(); }
+function resetSustituciones() {
+  if (!confirm('¿Restaurar el menú original?')) return;
+  sustituciones = {}; generarMenu();
+}
+
+function renderMenu() {
+  const cont = document.getElementById('menuContent');
+  cont.innerHTML = '';
+  menuData.menu.forEach((dia, diaIdx) => {
+    const kcalTotales = calcularKcalDia(dia);
+    const card = document.createElement('div');
+    card.className = 'meal-card bg-white rounded-2xl p-5 border border-slate-100 shadow-sm';
+    const foodItemHTML = (item, path, label, color, emoji) => {
+      const key = `${diaIdx}|${path}`;
+      const isSub = sustituciones[key] !== undefined;
+      return `
+        <div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')">
+          <div class="flex justify-between items-start gap-2">
+            <div class="flex-1 min-w-0">
+              <div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div>
+              <div class="text-slate-700 text-sm font-medium leading-snug">${item.nombre}</div>
+              <div class="flex gap-1 mt-1.5 flex-wrap">
+                <span class="macro-chip bg-white/70 text-slate-700">🔥 ${item.kcal} kcal</span>
+                ${item.prot ? `<span class="macro-chip bg-teal-100 text-teal-700">P ${item.prot}g</span>` : ''}
+              </div>
+            </div>
+            <div class="swap-icon flex-shrink-0 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200" title="Sustituir"><span class="text-sm">🔄</span></div>
+          </div>
+          ${isSub ? `<div class="text-xs text-amber-700 mt-2 font-semibold">✓ Sustituido</div>` : ''}
+        </div>
+      `;
+    };
+    card.innerHTML = `
+      <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100">
+        <div>
+          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div>
+          <div class="text-lg font-bold text-slate-800">Menú completo</div>
+        </div>
+        <div class="text-right">
+          <div class="text-xs text-slate-500">Total</div>
+          <div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div>
+        </div>
+      </div>
+      <div class="space-y-2">
+        ${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 text-amber-800', '☀️')}
+        ${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 text-orange-800', '🥩')}
+        ${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 text-yellow-800', '🍚')}
+        ${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 text-green-800', '🥦')}
+        ${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 text-emerald-800', '🥑')}
+        ${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 text-pink-800', '🍎')}
+        ${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 text-indigo-800', '🐟')}
+        ${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 text-violet-800', '🥬')}
+      </div>
+    `;
+    cont.appendChild(card);
+  });
+}
+
+function abrirModalSustitucion(diaIdx, path, currentId) {
+  const current = MAPA_ALIMENTOS[currentId];
+  if (!current) return;
+  const grupo = getGrupoById(currentId);
+  if (grupo.length <= 1) return;
+  currentSwap = { diaIdx, path, currentId };
+  document.getElementById('modalTitulo').textContent = `Sustituir: ${current.nombre}`;
+  const grupoNombre = { 'prot': 'Proteínas', 'carb': 'Carbohidratos', 'verd': 'Verduras', 'grasa': 'Grasas', 'des': 'Desayunos', 'mer': 'Meriendas' };
+  document.getElementById('modalSubtitulo').textContent = `Grupo: ${grupoNombre[current.grupo]} · ${grupo.length} alternativas`;
+  const cont = document.getElementById('modalOpciones');
+  cont.innerHTML = '';
+  const ordenados = [...grupo].sort((a, b) => {
+    if (a.id === currentId) return -1;
+    if (b.id === currentId) return 1;
+    return Math.abs(a.kcal - current.kcal) - Math.abs(b.kcal - current.kcal);
+  });
+  ordenados.forEach(alim => {
+    const isCurrent = alim.id === currentId;
+    const diffKcal = alim.kcal - current.kcal;
+    const opt = document.createElement('div');
+    opt.className = `sub-option p-4 border-2 rounded-xl ${isCurrent ? 'current border-green-300' : 'border-slate-200'}`;
+    opt.innerHTML = `
+      <div class="flex justify-between items-start gap-3">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1 flex-wrap">
+            <span class="font-bold text-slate-800">${alim.nombre}</span>
+            ${isCurrent ? '<span class="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">ACTUAL</span>' : ''}
+          </div>
+          <div class="flex gap-1.5 flex-wrap mt-2">
+            <span class="macro-chip bg-slate-100 text-slate-700">🔥 ${alim.kcal} kcal</span>
+            ${alim.prot ? `<span class="macro-chip bg-teal-100 text-teal-700">P ${alim.prot}g</span>` : ''}
+            ${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}
+          </div>
+        </div>
+        ${!isCurrent ? `<button class="flex-shrink-0 bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir →</button>` : ''}
+      </div>
+    `;
+    if (!isCurrent) opt.addEventListener('click', () => aplicarSustitucion(alim.id));
+    cont.appendChild(opt);
+  });
+  document.getElementById('modalSustitucion').classList.remove('hidden');
+}
+
+function cerrarModal() {
+  document.getElementById('modalSustitucion').classList.add('hidden');
+  currentSwap = null;
+}
+
+function aplicarSustitucion(nuevoId) {
+  if (!currentSwap || !menuData) return;
+  const { diaIdx, path } = currentSwap;
+  const nuevo = MAPA_ALIMENTOS[nuevoId];
+  const dia = menuData.menu[diaIdx];
+  const partes = path.split('.');
+  let obj = dia;
+  for (let i = 0; i < partes.length - 1; i++) obj = obj[partes[i]];
+  obj[partes[partes.length - 1]] = { ...nuevo };
+  const key = `${diaIdx}|${path}`;
+  sustituciones[key] = nuevoId;
+  cerrarModal();
+  renderMenu();
+  renderListaCompra();
+  mostrarToast(`✓ ${nuevo.nombre} sustituido`);
+}
+
+function mostrarToast(mensaje) {
+  const toast = document.createElement('div');
+  toast.className = 'fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl z-[200] font-semibold text-sm';
+  toast.style.animation = 'fadeIn 0.3s ease-out';
+  toast.textContent = mensaje;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s';
+    setTimeout(() => toast.remove(), 300);
+  }, 2200);
+}
+
+document.getElementById('modalSustitucion').addEventListener('click', (e) => {
+  if (e.target.id === 'modalSustitucion') cerrarModal();
+});
+
+function categorizarIngrediente(ing) {
+  const lower = ing.toLowerCase();
+  if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|tempeh|lentejas|garbanzos|alubias|yogur|queso|bacalao|dorada|gambas|ternera|conejo|kéfir/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
+  if (/arroz|quinoa|pasta|batata|patata|avena|pan|cuscús|mijo|bulgur|trigo|espelta|boniato|tostadas/.test(lower)) return { cat: '🍚 Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
+  if (/aceite|aguacate|almendra|nueces|chía|lino|cacahuete|pistacho|anacardo|calabaza|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
+  if (/manzana|plátano|frutos rojos|membrillo|naranja|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
+  if (/brócoli|espinaca|tomate|pepino|zanahoria|pimiento|calabacín|judía|coliflor|espárrago|cebolla|lechuga|acelgas|berenjena|champiñón|kale|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
+  return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
+}
+
+function generarListaCompra() {
+  if (!menuData) return;
+  document.getElementById('compraNoData').classList.add('hidden');
+  document.getElementById('compraContent').classList.remove('hidden');
+  renderListaCompra();
+}
+
+function obtenerIngredientes() {
+  const ingredientesTotales = {};
+  menuData.menu.forEach(dia => {
+    const items = [dia.desayuno.ing, dia.comida.prot.ing, dia.comida.carb.ing, dia.comida.verdura.ing, dia.comida.grasa.ing, dia.merienda.ing, dia.cena.prot.ing, dia.cena.verdura.ing];
+    items.forEach(lista => {
+      if (!lista) return;
+      lista.forEach(ing => { ingredientesTotales[ing] = (ingredientesTotales[ing] || 0) + 1; });
+    });
+  });
+  return ingredientesTotales;
+}
+
+function renderListaCompra() {
+  if (!menuData) return;
+  const ingredientesTotales = obtenerIngredientes();
+  const cont = document.getElementById('compraContent');
+  cont.innerHTML = '';
+  const categorias = {};
+  Object.keys(ingredientesTotales).forEach(ing => {
+    const { cat, color } = categorizarIngrediente(ing);
+    if (!categorias[cat]) categorias[cat] = { color, items: [] };
+    categorias[cat].items.push({ nombre: ing, cantidad: ingredientesTotales[ing] });
+  });
+  Object.keys(categorias).sort().forEach(cat => {
+    const data = categorias[cat];
+    const card = document.createElement('div');
+    card.className = 'bg-white rounded-2xl border border-slate-100 overflow-hidden';
+    card.innerHTML = `
+      <div class="bg-gradient-to-r ${data.color} text-white p-4">
+        <h3 class="font-bold">${cat}</h3>
+        <p class="text-xs opacity-90">${data.items.length} productos</p>
+      </div>
+      <ul class="p-4 space-y-2">
+        ${data.items.map(item => `
+          <li class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg cursor-pointer">
+            <input type="checkbox" class="w-4 h-4 accent-teal-600">
+            <span class="flex-1 text-sm text-slate-700">${item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1)}</span>
+            <span class="text-xs text-slate-400">×${item.cantidad}</span>
+          </li>
+        `).join('')}
+      </ul>
+    `;
+    cont.appendChild(card);
+  });
+}
+
+function exportarMenuPDF() {
+  if (!menuData) { alert('Primero genera tu menú'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFillColor(13, 148, 136);
+  doc.rect(0, 0, 210, 25, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text('NutriPro · Menú Semanal', 14, 16);
+  doc.setTextColor(50, 50, 50);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Generado para: ${currentUser.nombre} · ${new Date().toLocaleDateString('es-ES')}`, 14, 32);
+  if (userData) doc.text(`Objetivo: ${userData.caloriasObjetivo} kcal/día`, 14, 38);
+  let yPos = 48;
+  menuData.menu.forEach((dia) => {
+    if (yPos > 250) { doc.addPage(); yPos = 20; }
+    const kcalTotales = calcularKcalDia(dia);
+    doc.setFillColor(240, 253, 250);
+    doc.rect(14, yPos - 5, 182, 8, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(13, 148, 136);
+    doc.text(`${dia.dia} · ${kcalTotales} kcal`, 16, yPos);
+    yPos += 6;
+    const rows = [
+      ['Desayuno', dia.desayuno.nombre, dia.desayuno.kcal + ' kcal'],
+      ['Comida (prot)', dia.comida.prot.nombre, dia.comida.prot.kcal + ' kcal'],
+      ['Comida (carb)', dia.comida.carb.nombre, dia.comida.carb.kcal + ' kcal'],
+      ['Comida (verdura)', dia.comida.verdura.nombre, dia.comida.verdura.kcal + ' kcal'],
+      ['Comida (grasa)', dia.comida.grasa.nombre, dia.comida.grasa.kcal + ' kcal'],
+      ['Merienda', dia.merienda.nombre, dia.merienda.kcal + ' kcal'],
+      ['Cena (prot)', dia.cena.prot.nombre, dia.cena.prot.kcal + ' kcal'],
+      ['Cena (verdura)', dia.cena.verdura.nombre, dia.cena.verdura.kcal + ' kcal']
+    ];
+    doc.autoTable({
+      startY: yPos, head: [['Momento', 'Alimento', 'Calorías']], body: rows,
+      theme: 'striped', headStyles: { fillColor: [13, 148, 136], fontSize: 9 },
+      bodyStyles: { fontSize: 8.5 }, margin: { left: 14, right: 14 },
+      columnStyles: { 0: { cellWidth: 35 }, 2: { cellWidth: 25, halign: 'right' } }
+    });
+    yPos = doc.lastAutoTable.finalY + 6;
+  });
+  doc.save(`Menu_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
+  mostrarToast('📄 Menú exportado a PDF');
+}
+
+function exportarCompraPDF() {
+  if (!menuData) { alert('Primero genera tu menú'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const ingredientes = obtenerIngredientes();
+  doc.setFillColor(13, 148, 136);
+  doc.rect(0, 0, 210, 25, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text('NutriPro · Lista de la Compra', 14, 16);
+  doc.setTextColor(50, 50, 50);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Generada: ${new Date().toLocaleDateString('es-ES')} · ${currentUser.nombre}`, 14, 32);
+  const categorias = {};
+  Object.keys(ingredientes).forEach(ing => {
+    const { cat } = categorizarIngrediente(ing);
+    if (!categorias[cat]) categorias[cat] = [];
+    categorias[cat].push({ nombre: ing, cantidad: ingredientes[ing] });
+  });
+  let yPos = 45;
+  Object.keys(categorias).sort().forEach(cat => {
+    if (yPos > 260) { doc.addPage(); yPos = 20; }
+    doc.setFillColor(240, 253, 250);
+    doc.rect(14, yPos - 5, 182, 8, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(13, 148, 136);
+    doc.text(cat, 16, yPos);
+    yPos += 5;
+    const rows = categorias[cat].map(i => ['', i.nombre.charAt(0).toUpperCase() + i.nombre.slice(1), `×${i.cantidad}`, '☐']);
+    doc.autoTable({
+      startY: yPos, head: [['✓', 'Producto', 'Cant.', '']], body: rows,
+      theme: 'plain', headStyles: { fillColor: [226, 232, 240], textColor: [51, 65, 85], fontSize: 9 },
+      bodyStyles: { fontSize: 9 }, margin: { left: 14, right: 14 },
+      columnStyles: { 0: { cellWidth: 10 }, 2: { cellWidth: 15, halign: 'center' }, 3: { cellWidth: 10, halign: 'center' } }
+    });
+    yPos = doc.lastAutoTable.finalY + 5;
+  });
+  doc.save(`Lista_Compra_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
+  mostrarToast('📄 Lista exportada a PDF');
+}
+
+function mediaMovil(arr, ventana = 7) {
+  return arr.map((p, i) => {
+    const inicio = Math.max(0, i - ventana + 1);
+    const slice = arr.slice(inicio, i + 1);
+    const avg = slice.reduce((s, x) => s + x.valor, 0) / slice.length;
+    return { fecha: p.fecha, valor: parseFloat(avg.toFixed(2)) };
+  });
+}
+
+function renderSeguimiento() {
+  const hist = document.getElementById('historialPeso');
+  if (pesos.length === 0) {
+    hist.innerHTML = '<p class="text-slate-500 text-sm">Sin registros aún.</p>';
+  } else {
+    hist.innerHTML = pesos.slice().reverse().slice(0, 10).map(p => `
+      <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+        <span class="text-sm text-slate-600">${new Date(p.fecha).toLocaleDateString('es-ES')}</span>
+        <span class="font-bold text-slate-800">${p.valor} kg</span>
+      </div>
+    `).join('');
+  }
+  const feedback = document.getElementById('feedbackTexto');
+  if (pesos.length < 2) {
+    feedback.textContent = 'Registra tu primer peso para comenzar el análisis.';
+  } else {
+    const mm = mediaMovil(pesos);
+    const diff = (mm[mm.length - 1].valor - mm[0].valor).toFixed(2);
+    if (diff < -0.5) feedback.innerHTML = `<strong>✅ ¡Excelente tendencia!</strong> Has perdido ${Math.abs(diff)} kg.`;
+    else if (diff > 0.5) feedback.innerHTML = `<strong>⚠️ Revisa el plan.</strong> Tendencia de +${diff} kg.`;
+    else feedback.innerHTML = `<strong>📊 Estabilidad.</strong> Variación de ${diff} kg.`;
+  }
+  renderChartPeso();
+}
+
+function renderChartPeso() {
+  const ctx = document.getElementById('chartPeso').getContext('2d');
+  if (chartPeso) chartPeso.destroy();
+  if (pesos.length === 0) return;
+  const labels = pesos.map(p => new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
+  chartPeso = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Peso real', data: pesos.map(p => p.valor), borderColor: '#0d9488', backgroundColor: 'rgba(13,148,136,0.1)', tension: 0.3, fill: true, pointRadius: 4, pointBackgroundColor: '#0d9488' },
+        { label: 'Media móvil 7 días', data: mediaMovil(pesos).map(p => p.valor), borderColor: '#f59e0b', borderDash: [5, 5], tension: 0.4, pointRadius: 0, fill: false }
+      ]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
+  });
+}
+
+function generarEjercicio() {
+  if (!userData) return;
+  document.getElementById('ejercicioNoData').classList.add('hidden');
+  document.getElementById('ejercicioContent').classList.remove('hidden');
+  const edad = userData.edad;
+  let icono, foco, ejercicios, plan;
+  if (edad >= 18 && edad <= 35) {
+    icono = '🏋️'; foco = 'Hipertrofia y Resistencia · 18-35 años';
+    ejercicios = [
+      { nombre: 'Sentadillas búlgaras', reps: '3x12 por pierna', foco: 'Piernas' },
+      { nombre: 'Flexiones diamante', reps: '3x10-15', foco: 'Pecho/Tríceps' },
+      { nombre: 'Zancadas con salto', reps: '3x10 por pierna', foco: 'Piernas/Cardio' },
+      { nombre: 'Remo con mochila', reps: '3x12', foco: 'Espalda' },
+      { nombre: 'Plancha lateral', reps: '3x30s por lado', foco: 'Core' },
+      { nombre: 'Burpees modificados', reps: '3x8', foco: 'HIIT' },
+      { nombre: 'Puente de glúteos', reps: '3x15', foco: 'Glúteos' },
+      { nombre: 'Flexiones declinadas', reps: '3x10', foco: 'Pecho superior' }
+    ];
+    plan = ['Fuerza A', 'HIIT', 'Fuerza B', 'Descanso', 'Fuerza A', 'Cardio', 'Descanso'];
+  } else if (edad >= 36 && edad <= 55) {
+    icono = '🧘'; foco = 'Salud Metabólica · 36-55 años';
+    ejercicios = [
+      { nombre: 'Sentadilla a la silla', reps: '3x12', foco: 'Piernas' },
+      { nombre: 'Flexiones en pared', reps: '3x12', foco: 'Pecho' },
+      { nombre: 'Puente de glúteos', reps: '3x15', foco: 'Glúteos/Core' },
+      { nombre: 'Remo con bandas', reps: '3x12', foco: 'Espalda' },
+      { nombre: 'Plancha frontal', reps: '3x20-30s', foco: 'Core' },
+      { nombre: 'Caminata rápida', reps: '30-45 min', foco: 'Cardio' },
+      { nombre: 'Yoga / movilidad', reps: '20 min', foco: 'Flexibilidad' },
+      { nombre: 'Elevación de talones', reps: '3x15', foco: 'Gemelos' }
+    ];
+    plan = ['Fuerza', 'Caminata', 'Yoga', 'Fuerza', 'Caminata', 'Pilates', 'Descanso'];
+  } else {
+    icono = '🌊'; foco = 'Densidad Ósea y Movilidad · 55+';
+    ejercicios = [
+      { nombre: 'Sentadilla asistida', reps: '3x10', foco: 'Piernas' },
+      { nombre: 'Ejercicios con bandas', reps: '3x12', foco: 'Fuerza general' },
+      { nombre: 'Equilibrio a una pierna', reps: '3x20s por lado', foco: 'Equilibrio' },
+      { nombre: 'Flexiones en pared', reps: '3x10', foco: 'Pecho' },
+      { nombre: 'Natación / aquagym', reps: '30 min', foco: 'Cardio suave' },
+      { nombre: 'Tai Chi / movilidad', reps: '20 min', foco: 'Movilidad' },
+      { nombre: 'Caminata suave', reps: '20-30 min', foco: 'Cardio' },
+      { nombre: 'Elevaciones laterales', reps: '3x10', foco: 'Hombros' }
+    ];
+    plan = ['Bandas', 'Caminata', 'Equilibrio', 'Descanso', 'Bandas', 'Natación', 'Descanso'];
+  }
+  document.getElementById('ejIconoEdad').textContent = icono;
+  document.getElementById('ejTituloEdad').textContent = foco;
+  document.getElementById('ejFocoEdad').textContent = 'Entrenamiento adaptado en casa';
+  document.getElementById('ejerciciosList').innerHTML = ejercicios.map((ej, i) => `
+    <div class="bg-white rounded-2xl p-5 border border-slate-100 relative group">
+      <div class="flex justify-between items-start mb-2">
+        <div class="w-8 h-8 bg-teal-100 text-teal-700 rounded-lg flex items-center justify-center font-bold text-sm">${i+1}</div>
+        <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded">${ej.foco}</span>
+      </div>
+      <h4 class="font-bold text-slate-800 mb-1">${ej.nombre}</h4>
+      <p class="text-sm text-teal-600 font-semibold mb-3">${ej.reps}</p>
+      <button onclick="buscarVideo('${ej.nombre}')" class="w-full bg-blue-50 text-blue-600 hover:bg-blue-100 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors">
+        <span>▶️</span> Ver tutorial en YouTube
+      </button>
+    </div>
+  `).join('');
+  const diasSemana = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+  document.getElementById('planSemanal').innerHTML = plan.map((p, i) => {
+    const isDescanso = p.toLowerCase().includes('descanso');
+    return `<div class="p-3 rounded-xl text-center ${isDescanso ? 'bg-slate-100 text-slate-500' : 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white'}">
+      <div class="text-xs font-bold opacity-80">${diasSemana[i]}</div>
+      <div class="text-sm font-semibold mt-1">${p}</div>
+    </div>`;
+  }).join('');
+}
+
+function buscarVideo(nombreEjercicio) {
+  const query = encodeURIComponent(`como hacer ${nombreEjercicio} tecnica correcta`);
+  window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank');
+}
+
+function renderAnalisis() {
+  if (pesos.length < 4) {
+    document.getElementById('analisisNoData').classList.remove('hidden');
+    document.getElementById('analisisContent').classList.add('hidden');
+    return;
+  }
+  document.getElementById('analisisNoData').classList.add('hidden');
+  document.getElementById('analisisContent').classList.remove('hidden');
+  const semanas = [];
+  for (let i = 0; i < pesos.length; i += 7) {
+    const slice = pesos.slice(i, i + 7);
+    semanas.push(parseFloat((slice.reduce((s, p) => s + p.valor, 0) / slice.length).toFixed(2)));
+  }
+  const s1 = semanas[0];
+  const s4 = semanas[Math.min(3, semanas.length - 1)];
+  const cambio = (s4 - s1).toFixed(2);
+  document.getElementById('anS1').textContent = `${s1} kg`;
+  document.getElementById('anS4').textContent = `${s4} kg`;
+  document.getElementById('anCambio').textContent = `${cambio > 0 ? '+' : ''}${cambio} kg`;
+  const ritmoSem = parseFloat(cambio) / Math.min(4, semanas.length);
+  const proyeccionMes = (ritmoSem * 4).toFixed(2);
+  const proy = document.getElementById('proyeccionTexto');
+  if (ritmoSem < -0.5) {
+    proy.innerHTML = `<p class="mb-2">⚠️ <strong>Ritmo acelerado:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. Considera aumentar calorías.</p>`;
+  } else if (ritmoSem >= -0.5 && ritmoSem <= -0.2) {
+    proy.innerHTML = `<p class="mb-2">✅ <strong>Ritmo ideal:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. ¡Sigue así!</p>`;
+  } else if (ritmoSem > -0.2 && ritmoSem < 0.2) {
+    proy.innerHTML = `<p class="mb-2">📊 <strong>Estancamiento.</strong> Revisa el cumplimiento del plan.</p>`;
+  } else {
+    proy.innerHTML = `<p class="mb-2">📈 <strong>Tendencia alciana:</strong> +${ritmoSem.toFixed(2)} kg/sem.</p><p>Revisa porciones y actividad física.</p>`;
+  }
+  const ctx = document.getElementById('chartSemanal').getContext('2d');
+  if (chartSemanal) chartSemanal.destroy();
+  chartSemanal = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: semanas.map((_, i) => `Sem ${i+1}`),
+      datasets: [{ label: 'Peso medio (kg)', data: semanas, backgroundColor: semanas.map((v, i) => i === 0 ? '#0d9488' : (i === semanas.length - 1 ? '#f59e0b' : '#94a3b8')), borderRadius: 8 }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
+  });
+}
+
+function responderComentario(id) {
+  const texto = prompt('Escribe tu respuesta como administrador:');
+  if (!texto || !texto.trim()) return;
+  // Nota: Para producción real, esto debería actualizar la tabla 'comments' en Supabase
+  alert('Funcionalidad de respuesta simulada. En producción, esto actualizaría la base de datos.');
+}
+
+function eliminarComentario(id) {
+  if (!confirm('¿Eliminar este comentario?')) return;
+  // Nota: Para producción real, esto debería borrar de Supabase
+  alert('Funcionalidad de borrado simulada. En producción, esto borraría de la base de datos.');
+}
+
+document.getElementById('formPerfil').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const nombre = document.getElementById('perfilNombre').value.trim();
+  if (!nombre) return;
+  
+  const { error } = await supabase
+    .from('profiles')
+    .update({ nombre: nombre })
+    .eq('id', currentUser.id);
+    
+  if (!error) {
+    currentUser.nombre = nombre;
+    updateUserUI();
+    mostrarToast('✓ Perfil actualizado en la nube');
+  }
+});
+
+document.getElementById('formPassword').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const nueva = document.getElementById('passNueva').value;
+  const conf = document.getElementById('passConfirm').value;
+  
+  if (nueva !== conf) { alert('❌ Las contraseñas nuevas no coinciden'); return; }
+  if (nueva.length < 6) { alert('❌ Mínimo 6 caracteres'); return; }
+  
+  const { error } = await supabase.auth.updateUser({ password: nueva });
+  if (error) {
+    alert('❌ Error: ' + error.message);
+  } else {
+    document.getElementById('formPassword').reset();
+    mostrarToast('✓ Contraseña cambiada');
+  }
+});
+
+// Navegación
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+function switchTab(tab) {
+  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert('⛔ Acceso restringido'); return; }
+  document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-white/80'); });
+  const section = document.getElementById(tab);
+  if (section) section.classList.add('active');
+  const btn = document.querySelector(`.nav-btn[data-tab="${tab}"]`);
+  if (btn) { btn.classList.add('active'); btn.classList.remove('text-white/80'); }
+  document.getElementById('userDropdown').classList.remove('show');
+  if (tab === 'comentarios') renderComentarios();
+  if (tab === 'analisis') renderAnalisis();
+  if (tab === 'seguimiento') renderSeguimiento();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.querySelectorAll('.admin-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.admin-tab').forEach(t => {
+      t.classList.remove('active', 'border-teal-600', 'text-teal-600');
+      t.classList.add('border-transparent', 'text-slate-500');
+    });
+    tab.classList.add('active', 'border-teal-600', 'text-teal-600');
+    tab.classList.remove('border-transparent', 'text-slate-500');
+    document.querySelectorAll('.admin-panel').forEach(p => p.classList.add('hidden'));
+    document.getElementById('admin-' + tab.dataset.atab).classList.remove('hidden');
+  });
+});
+
+document.getElementById('userBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.getElementById('userDropdown').classList.toggle('show');
+});
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.user-menu')) document.getElementById('userDropdown').classList.remove('show');
+});
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { cerrarModal(); } });
+
+// Inicialización
+checkAuth();
+</script>
+</body>
+</html>
