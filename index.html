@@ -4,15 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NutriPro · Planificador de Nutrición Clínica</title>
+
 <!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
+
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <!-- jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-<!-- Supabase JS Client -->
+
+<!-- Supabase JS Client (SOLO UNA VEZ) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
 <!-- Fonts -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.css">
@@ -133,7 +138,7 @@
 <!-- ============ BLOCKED SCREEN ============ -->
 <div id="blockedScreen" class="auth-screen hidden">
   <div class="auth-card text-center">
-    <div class="text-6xl mb-4">🚫</div>
+    <div class="text-6xl mb-4"></div>
     <h2 class="text-2xl font-bold text-slate-800 mb-2">Cuenta bloqueada</h2>
     <p id="blockedMsg" class="text-slate-600 mb-6">Tu acceso ha sido suspendido por el administrador.</p>
     <button onclick="cerrarSesion()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-2.5 rounded-lg font-semibold">Cerrar sesión</button>
@@ -146,7 +151,7 @@
   <div class="max-w-7xl mx-auto px-6 py-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center text-2xl">🥗</div>
+        <div class="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center text-2xl"></div>
         <div>
           <h1 class="text-2xl font-bold">NutriPro</h1>
           <p class="text-xs text-teal-100">Nutrición Clínica · Déficit Sostenible</p>
@@ -154,7 +159,7 @@
       </div>
       <div class="flex items-center gap-3">
         <div class="hidden md:flex items-center gap-2 text-xs">
-          <span class="px-3 py-1 bg-white/15 rounded-full">🔬 Evidencia</span>
+          <span class="px-3 py-1 bg-white/15 rounded-full"> Evidencia</span>
           <span class="px-3 py-1 bg-white/15 rounded-full">☁️ Cloud Sync</span>
         </div>
         <div class="user-menu">
@@ -170,13 +175,13 @@
               <div id="dropdownRole" class="mt-1"></div>
             </div>
             <div id="adminMenuItem" class="hidden">
-              <div class="user-dropdown-item" onclick="switchTab('admin')"><span>⚙️</span> <span>Panel Admin</span></div>
+              <div class="user-dropdown-item" onclick="switchTab('admin')"><span>️</span> <span>Panel Admin</span></div>
               <div class="user-dropdown-divider"></div>
             </div>
             <div class="user-dropdown-item" onclick="switchTab('perfil')"><span>👤</span> <span>Mi perfil</span></div>
             <div class="user-dropdown-item" onclick="switchTab('comentarios')"><span>💬</span> <span>Comunidad</span></div>
             <div class="user-dropdown-divider"></div>
-            <div class="user-dropdown-item text-red-600" onclick="cerrarSesion()"><span>🚪</span> <span>Cerrar sesión</span></div>
+            <div class="user-dropdown-item text-red-600" onclick="cerrarSesion()"><span></span> <span>Cerrar sesión</span></div>
           </div>
         </div>
       </div>
@@ -195,7 +200,7 @@
       <button class="nav-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all" data-tab="evaluacion">📋 Evaluación</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard">📊 Dashboard</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="menu">🍽️ Menú</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra">🛒 Compra</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra"> Compra</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="seguimiento">📈 Seguimiento</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
@@ -339,11 +344,11 @@
             <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div id="barProt" class="h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700">🍚 Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700"> Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
             <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div id="barCarb" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700">🥑 Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700"> Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
             <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div id="barGrasas" class="h-full bg-gradient-to-r from-rose-400 to-rose-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
         </div>
@@ -487,7 +492,7 @@
     <p class="text-slate-600 mt-2">Comparativa semanal y proyección para el próximo mes.</p>
   </div>
   <div id="analisisNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100">
-    <div class="text-6xl mb-4">🎯</div>
+    <div class="text-6xl mb-4"></div>
     <h3 class="text-xl font-bold text-slate-800 mb-2">Necesitas al menos 4 semanas de datos</h3>
     <p class="text-slate-600">Registra tu peso semanalmente para obtener un análisis completo.</p>
   </div>
@@ -542,7 +547,7 @@
     </div>
     <div class="space-y-4">
       <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100">
-        <div class="text-3xl mb-2">🤝</div>
+        <div class="text-3xl mb-2"></div>
         <h4 class="font-bold text-slate-800 mb-2">Normas de la comunidad</h4>
         <ul class="text-sm text-slate-600 space-y-1">
           <li>✓ Sé respetuoso con los demás</li>
@@ -622,7 +627,7 @@
   </div>
   <div class="flex gap-2 mb-4 border-b border-slate-200">
     <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600" data-atab="usuarios">👥 Usuarios</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700" data-atab="comentarios">💬 Comentarios</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700" data-atab="comentarios"> Comentarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700" data-atab="config">⚙️ Configuración</button>
   </div>
   <div id="admin-usuarios" class="admin-panel">
@@ -654,7 +659,7 @@
 
 <footer class="max-w-7xl mx-auto px-6 py-8 mt-4 border-t border-slate-200">
   <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-slate-500">
-    <div>🥗 NutriPro · Nutrición basada en evidencia científica</div>
+    <div> NutriPro · Nutrición basada en evidencia científica</div>
     <div>⚕️ Esta herramienta no sustituye la consulta médica profesional</div>
   </div>
 </footer>
@@ -681,9 +686,11 @@
 </div>
 
 <script>
-// ============ CONFIGURACIÓN SUPABASE ============
+// ============ CONFIGURACIÓN SUPABASE (DECLARACIÓN ÚNICA) ============
 const SUPABASE_URL = 'https://xsuqqesjetgzxtyqqqje.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzdXFxZXNqZXRnenh0eXFxcWplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NTg5NjUsImV4cCI6MjEwMDEzNDk2NX0.OdQddq33d-dsz3fRpTp_xLs6bDJn2_fyFCKmENcs_t8';
+
+// Inicialización única del cliente
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
@@ -802,7 +809,7 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
   });
 
   if (error) {
-    err.textContent = '❌ ' + error.message;
+    err.textContent = ' ' + error.message;
     err.classList.remove('hidden');
   } else {
     location.reload();
@@ -995,7 +1002,7 @@ async function renderComentarios() {
     const respuestas = (c.respuestas || []).map(r => `
       <div class="admin-reply">
         <div class="flex items-center gap-2 mb-1">
-          <span class="text-xs font-bold text-teal-700">⚙️ Equipo NutriPro</span>
+          <span class="text-xs font-bold text-teal-700">️ Equipo NutriPro</span>
           <span class="text-xs text-slate-400">${new Date(r.fecha).toLocaleDateString()}</span>
         </div>
         <p class="text-sm text-slate-700">${r.texto}</p>
@@ -1278,10 +1285,10 @@ function renderMenu() {
         ${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 text-orange-800', '🥩')}
         ${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 text-yellow-800', '🍚')}
         ${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 text-green-800', '🥦')}
-        ${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 text-emerald-800', '🥑')}
+        ${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 text-emerald-800', '')}
         ${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 text-pink-800', '🍎')}
-        ${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 text-indigo-800', '🐟')}
-        ${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 text-violet-800', '🥬')}
+        ${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 text-indigo-800', '')}
+        ${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 text-violet-800', '')}
       </div>
     `;
     cont.appendChild(card);
@@ -1317,7 +1324,7 @@ function abrirModalSustitucion(diaIdx, path, currentId) {
             ${isCurrent ? '<span class="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">ACTUAL</span>' : ''}
           </div>
           <div class="flex gap-1.5 flex-wrap mt-2">
-            <span class="macro-chip bg-slate-100 text-slate-700">🔥 ${alim.kcal} kcal</span>
+            <span class="macro-chip bg-slate-100 text-slate-700"> ${alim.kcal} kcal</span>
             ${alim.prot ? `<span class="macro-chip bg-teal-100 text-teal-700">P ${alim.prot}g</span>` : ''}
             ${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}
           </div>
@@ -1373,7 +1380,7 @@ document.getElementById('modalSustitucion').addEventListener('click', (e) => {
 function categorizarIngrediente(ing) {
   const lower = ing.toLowerCase();
   if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|tempeh|lentejas|garbanzos|alubias|yogur|queso|bacalao|dorada|gambas|ternera|conejo|kéfir/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
-  if (/arroz|quinoa|pasta|batata|patata|avena|pan|cuscús|mijo|bulgur|trigo|espelta|boniato|tostadas/.test(lower)) return { cat: '🍚 Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
+  if (/arroz|quinoa|pasta|batata|patata|avena|pan|cuscús|mijo|bulgur|trigo|espelta|boniato|tostadas/.test(lower)) return { cat: ' Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
   if (/aceite|aguacate|almendra|nueces|chía|lino|cacahuete|pistacho|anacardo|calabaza|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
   if (/manzana|plátano|frutos rojos|membrillo|naranja|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
   if (/brócoli|espinaca|tomate|pepino|zanahoria|pimiento|calabacín|judía|coliflor|espárrago|cebolla|lechuga|acelgas|berenjena|champiñón|kale|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
@@ -1478,7 +1485,7 @@ function exportarMenuPDF() {
     yPos = doc.lastAutoTable.finalY + 6;
   });
   doc.save(`Menu_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast('📄 Menú exportado a PDF');
+  mostrarToast(' Menú exportado a PDF');
 }
 
 function exportarCompraPDF() {
@@ -1677,7 +1684,7 @@ function renderAnalisis() {
   const proyeccionMes = (ritmoSem * 4).toFixed(2);
   const proy = document.getElementById('proyeccionTexto');
   if (ritmoSem < -0.5) {
-    proy.innerHTML = `<p class="mb-2">⚠️ <strong>Ritmo acelerado:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. Considera aumentar calorías.</p>`;
+    proy.innerHTML = `<p class="mb-2">️ <strong>Ritmo acelerado:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. Considera aumentar calorías.</p>`;
   } else if (ritmoSem >= -0.5 && ritmoSem <= -0.2) {
     proy.innerHTML = `<p class="mb-2">✅ <strong>Ritmo ideal:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. ¡Sigue así!</p>`;
   } else if (ritmoSem > -0.2 && ritmoSem < 0.2) {
@@ -1700,13 +1707,11 @@ function renderAnalisis() {
 function responderComentario(id) {
   const texto = prompt('Escribe tu respuesta como administrador:');
   if (!texto || !texto.trim()) return;
-  // Nota: Para producción real, esto debería actualizar la tabla 'comments' en Supabase
   alert('Funcionalidad de respuesta simulada. En producción, esto actualizaría la base de datos.');
 }
 
 function eliminarComentario(id) {
   if (!confirm('¿Eliminar este comentario?')) return;
-  // Nota: Para producción real, esto debería borrar de Supabase
   alert('Funcionalidad de borrado simulada. En producción, esto borraría de la base de datos.');
 }
 
@@ -1732,7 +1737,7 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
   const nueva = document.getElementById('passNueva').value;
   const conf = document.getElementById('passConfirm').value;
   
-  if (nueva !== conf) { alert('❌ Las contraseñas nuevas no coinciden'); return; }
+  if (nueva !== conf) { alert(' Las contraseñas nuevas no coinciden'); return; }
   if (nueva.length < 6) { alert('❌ Mínimo 6 caracteres'); return; }
   
   const { error } = await supabase.auth.updateUser({ password: nueva });
