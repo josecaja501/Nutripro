@@ -15,7 +15,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
-<!-- Supabase JS Client (CARGA ÚNICA) -->
+<!-- Supabase JS Client -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <!-- Fonts -->
@@ -24,59 +24,114 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
 
 <style>
-  :root { --primary: #0d9488; --bg: #f8fafc; }
-  * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
-  body { background: var(--bg); margin: 0; padding: 0; }
+  :root { 
+    --primary: #0d9488; 
+    --bg: #f8fafc; 
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+  }
+
+  /* TEMA OSCURO */
+  .dark {
+    --bg: #0f172a;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --card-bg: #1e293b;
+    --border-color: #334155;
+    --input-bg: #1e293b;
+    --input-border: #475569;
+  }
+
+  * { font-family: 'Inter', sans-serif; box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+  
+  body { background: var(--bg); margin: 0; padding: 0; color: var(--text-main); }
+  
   .gradient-hero { background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #0284c7 100%); }
   .nav-btn.active { background: white; color: #0d9488; box-shadow: 0 4px 12px rgba(13,148,136,0.2); }
+  
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
   .fade-in { animation: fadeIn 0.4s ease-out; }
-  .metric-card { transition: all 0.3s ease; }
+  
+  .metric-card, .meal-card, .comment-card, .admin-stat, .auth-card, .modal-content { 
+    background: var(--card-bg); 
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+  }
+  
   .metric-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
-  .meal-card { transition: all 0.3s ease; }
   .meal-card:hover { transform: scale(1.02); }
+  
   .food-item { transition: all 0.2s ease; cursor: pointer; position: relative; }
   .food-item:hover { background: rgba(13,148,136,0.08); transform: translateX(2px); }
   .food-item:hover .swap-icon { opacity: 1; transform: translateX(0); }
   .swap-icon { opacity: 0; transform: translateX(-5px); transition: all 0.2s ease; }
   .food-item.substituted { background: linear-gradient(90deg, rgba(245,158,11,0.08), transparent); border-left: 3px solid #f59e0b; }
+  
   .tab-content { display: none; }
   .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+  
   ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
-  .alert-warning { background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; }
-  .alert-success { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-left: 4px solid #10b981; }
-  .alert-danger { background: linear-gradient(135deg, #fee2e2, #fecaca); border-left: 4px solid #ef4444; }
+  
+  .alert-warning { background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; color: #92400e; }
+  .alert-success { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-left: 4px solid #10b981; color: #065f46; }
+  .alert-danger { background: linear-gradient(135deg, #fee2e2, #fecaca); border-left: 4px solid #ef4444; color: #991b1b; }
+  
   .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; animation: fadeIn 0.2s ease-out; }
-  .modal-content { background: white; border-radius: 1.5rem; max-width: 560px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+  .modal-content { border-radius: 1.5rem; max-width: 560px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+  
   .sub-option { transition: all 0.2s ease; cursor: pointer; }
   .sub-option:hover { background: linear-gradient(135deg, #f0fdfa, #ecfeff); border-color: #0d9488; transform: translateX(4px); }
   .sub-option.current { background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-color: #10b981; }
+  
   .macro-chip { display: inline-flex; align-items: center; gap: 2px; font-size: 10px; padding: 2px 6px; border-radius: 999px; font-weight: 600; }
+  
   .auth-screen { min-height: 100vh; background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #0284c7 100%); display: flex; align-items: center; justify-content: center; padding: 1rem; }
-  .auth-card { background: white; border-radius: 1.5rem; max-width: 440px; width: 100%; padding: 2.5rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); }
+  .auth-card { border-radius: 1.5rem; max-width: 440px; width: 100%; padding: 2.5rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); }
+  
   .auth-tabs { display: flex; background: #f1f5f9; border-radius: 0.75rem; padding: 4px; margin-bottom: 1.5rem; }
   .auth-tab { flex: 1; padding: 0.6rem; text-align: center; border-radius: 0.6rem; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: all 0.2s; color: #64748b; }
   .auth-tab.active { background: white; color: #0d9488; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+  
   .ad-space { background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1px dashed #cbd5e1; border-radius: 0.75rem; padding: 1rem; text-align: center; position: relative; color: #94a3b8; font-size: 0.75rem; margin: 1rem 0; }
   .ad-space::before { content: 'Publicidad'; position: absolute; top: 4px; right: 8px; font-size: 0.625rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+  
   .user-menu { position: relative; }
-  .user-dropdown { position: absolute; top: calc(100% + 8px); right: 0; background: white; border-radius: 1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.15); min-width: 240px; padding: 0.5rem; z-index: 60; display: none; }
+  .user-dropdown { position: absolute; top: calc(100% + 8px); right: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.15); min-width: 240px; padding: 0.5rem; z-index: 60; display: none; }
   .user-dropdown.show { display: block; animation: fadeIn 0.2s ease-out; }
-  .user-dropdown-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.8rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; color: #334155; transition: background 0.15s; }
-  .user-dropdown-item:hover { background: #f1f5f9; }
-  .user-dropdown-divider { height: 1px; background: #e2e8f0; margin: 0.4rem 0; }
-  .comment-card { background: white; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1rem; transition: all 0.2s; }
+  .user-dropdown-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.8rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; color: var(--text-main); transition: background 0.15s; }
+  .user-dropdown-item:hover { background: rgba(13,148,136,0.1); }
+  .user-dropdown-divider { height: 1px; background: var(--border-color); margin: 0.4rem 0; }
+  
+  .comment-card { border-radius: 1rem; padding: 1rem; transition: all 0.2s; }
   .comment-card:hover { border-color: #0d9488; box-shadow: 0 4px 12px rgba(13,148,136,0.08); }
   .admin-reply { background: linear-gradient(135deg, #f0fdfa, #ecfeff); border-left: 3px solid #0d9488; padding: 0.75rem; border-radius: 0.5rem; margin-top: 0.75rem; }
-  .admin-stat { background: white; border-radius: 1rem; padding: 1.5rem; border: 1px solid #e2e8f0; }
+  
+  .admin-stat { border-radius: 1rem; padding: 1.5rem; }
   .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; }
+  
   .btn-pdf { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; transition: all 0.2s; }
   .btn-pdf:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(239,68,68,0.3); }
+  
   .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #0d9488; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+  /* Inputs y Selects en Modo Oscuro */
+  .dark input, .dark select, .dark textarea {
+    background: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+    color: var(--text-main) !important;
+  }
+  
+  /* Botones de navegación en modo oscuro */
+  .dark .nav-btn:not(.active) { color: rgba(255,255,255,0.7); }
+  .dark .nav-btn:not(.active):hover { background: rgba(255,255,255,0.1); }
 </style>
 </head>
 <body class="min-h-screen">
@@ -86,8 +141,8 @@
   <div class="auth-card">
     <div class="text-center mb-6">
       <div class="inline-flex w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl items-center justify-center text-3xl mb-3 shadow-lg">🥗</div>
-      <h1 class="text-2xl font-bold text-slate-800">NutriPro</h1>
-      <p class="text-sm text-slate-500 mt-1">Nutrición Clínica · Déficit Sostenible</p>
+      <h1 class="text-2xl font-bold text-slate-800 dark:text-white">NutriPro</h1>
+      <p class="text-sm text-slate-500 mt-1 dark:text-slate-400">Nutrición Clínica · Déficit Sostenible</p>
     </div>
     <div class="auth-tabs">
       <div class="auth-tab active" data-auth="login">Iniciar sesión</div>
@@ -95,37 +150,37 @@
     </div>
     <form id="formLogin" class="space-y-4">
       <div>
-        <label class="block text-sm font-semibold text-slate-700 mb-1">Correo electrónico</label>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Correo electrónico</label>
         <input type="email" id="loginEmail" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="tu@email.com">
       </div>
       <div>
-        <label class="block text-sm font-semibold text-slate-700 mb-1">Contraseña</label>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Contraseña</label>
         <input type="password" id="loginPassword" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="••••••••">
       </div>
       <div id="loginError" class="hidden alert-danger p-3 rounded-lg text-sm"></div>
       <button type="submit" class="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all">Acceder →</button>
-      <div class="text-center text-xs text-slate-500 mt-3 p-3 bg-slate-50 rounded-lg">
+      <div class="text-center text-xs text-slate-500 mt-3 p-3 bg-slate-50 rounded-lg dark:bg-slate-800 dark:text-slate-400">
         <strong>Admin demo:</strong> Usa tu cuenta de Supabase y cámbiala a admin en la BD.
       </div>
     </form>
     <form id="formRegister" class="space-y-4 hidden">
       <div>
-        <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre completo</label>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nombre completo</label>
         <input type="text" id="regName" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="Tu nombre">
       </div>
       <div>
-        <label class="block text-sm font-semibold text-slate-700 mb-1">Correo electrónico</label>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Correo electrónico</label>
         <input type="email" id="regEmail" required class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="tu@email.com">
       </div>
       <div>
-        <label class="block text-sm font-semibold text-slate-700 mb-1">Contraseña (mín. 6 caracteres)</label>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Contraseña (mín. 6 caracteres)</label>
         <input type="password" id="regPassword" required minlength="6" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="••••••••">
       </div>
       <div>
-        <label class="block text-sm font-semibold text-slate-700 mb-1">Confirmar contraseña</label>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Confirmar contraseña</label>
         <input type="password" id="regPassword2" required minlength="6" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500" placeholder="••••••••">
       </div>
-      <label class="flex items-start gap-2 text-xs text-slate-600">
+      <label class="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400">
         <input type="checkbox" id="regTerms" required class="mt-0.5 accent-teal-600">
         <span>Acepto los términos. Entiendo que esta herramienta no sustituye la consulta médica.</span>
       </label>
@@ -139,8 +194,8 @@
 <div id="blockedScreen" class="auth-screen hidden">
   <div class="auth-card text-center">
     <div class="text-6xl mb-4"></div>
-    <h2 class="text-2xl font-bold text-slate-800 mb-2">Cuenta bloqueada</h2>
-    <p id="blockedMsg" class="text-slate-600 mb-6">Tu acceso ha sido suspendido por el administrador.</p>
+    <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Cuenta bloqueada</h2>
+    <p id="blockedMsg" class="text-slate-600 dark:text-slate-400 mb-6">Tu acceso ha sido suspendido por el administrador.</p>
     <button onclick="cerrarSesion()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-2.5 rounded-lg font-semibold">Cerrar sesión</button>
   </div>
 </div>
@@ -158,9 +213,14 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
+        <!-- TOGGLE MODO OSCURO -->
+        <button id="darkModeToggle" class="w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Cambiar tema">
+          <span id="darkModeIcon">🌙</span>
+        </button>
+
         <div class="hidden md:flex items-center gap-2 text-xs">
           <span class="px-3 py-1 bg-white/15 rounded-full"> Evidencia</span>
-          <span class="px-3 py-1 bg-white/15 rounded-full">️ Cloud Sync</span>
+          <span class="px-3 py-1 bg-white/15 rounded-full">☁️ Cloud Sync</span>
         </div>
         <div class="user-menu">
           <button id="userBtn" class="flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all">
@@ -169,9 +229,9 @@
             <span class="text-xs opacity-70">▼</span>
           </button>
           <div id="userDropdown" class="user-dropdown">
-            <div class="px-3 py-2 border-b border-slate-100">
-              <div id="dropdownName" class="font-semibold text-slate-800 text-sm">Usuario</div>
-              <div id="dropdownEmail" class="text-xs text-slate-500">email@example.com</div>
+            <div class="px-3 py-2 border-b border-slate-100 dark:border-slate-700">
+              <div id="dropdownName" class="font-semibold text-slate-800 dark:text-white text-sm">Usuario</div>
+              <div id="dropdownEmail" class="text-xs text-slate-500 dark:text-slate-400">email@example.com</div>
               <div id="dropdownRole" class="mt-1"></div>
             </div>
             <div id="adminMenuItem" class="hidden">
@@ -190,7 +250,7 @@
   
   <!-- AD SPACE 1: TOP BANNER -->
   <div class="max-w-7xl mx-auto px-6">
-    <div class="ad-space py-2 my-2">
+    <div class="ad-space py-2 my-2" data-pos="top">
       <span>📢 Espacio publicitario superior · Tu anuncio aquí</span>
     </div>
   </div>
@@ -203,7 +263,7 @@
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra">🛒 Compra</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="seguimiento">📈 Seguimiento</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis"> Análisis</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
     </div>
   </nav>
@@ -214,39 +274,39 @@
 <!-- EVALUACIÓN -->
 <section id="evaluacion" class="tab-content active">
   <div class="mb-6">
-    <h2 class="text-3xl font-bold text-slate-800">Evaluación Inicial</h2>
-    <p class="text-slate-600 mt-2">Comienza con una valoración completa. La reeducación alimentaria es un proceso, no una carrera.</p>
+    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Evaluación Inicial</h2>
+    <p class="text-slate-600 dark:text-slate-400 mt-2">Comienza con una valoración completa. La reeducación alimentaria es un proceso, no una carrera.</p>
   </div>
   <div class="grid lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-8 border border-slate-100">
-      <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+    <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-8 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
         <span class="w-8 h-8 bg-teal-100 text-teal-700 rounded-lg flex items-center justify-center">1</span>
         Datos Personales
       </h3>
       <form id="formEvaluacion" class="space-y-5">
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Edad (años)</label>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Edad (años)</label>
             <input type="number" id="edad" min="14" max="90" value="30" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
           </div>
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Sexo biológico</label>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Sexo biológico</label>
             <select id="sexo" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
               <option value="hombre">Hombre</option>
               <option value="mujer">Mujer</option>
             </select>
           </div>
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Peso actual (kg)</label>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Peso actual (kg)</label>
             <input type="number" id="peso" min="35" max="250" step="0.1" value="75" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
           </div>
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Altura (cm)</label>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Altura (cm)</label>
             <input type="number" id="altura" min="130" max="220" value="175" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
           </div>
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2">Nivel de actividad física diaria</label>
+          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Nivel de actividad física diaria</label>
           <select id="actividad" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
             <option value="1.2">Sedentario (poco o ningún ejercicio)</option>
             <option value="1.375" selected>Ligero (1-3 días/semana)</option>
@@ -256,7 +316,7 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2">Objetivo realista</label>
+          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Objetivo realista</label>
           <select id="objetivo" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
             <option value="perder">Perder grasa (déficit 500 kcal)</option>
             <option value="perderSuave">Perder grasa gradual (déficit 300 kcal)</option>
@@ -265,12 +325,12 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2">Preferencias alimentarias</label>
+          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Preferencias alimentarias</label>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50"><input type="checkbox" class="pref" value="sinLactosa"> <span class="text-sm">Sin lactosa</span></label>
-            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50"><input type="checkbox" class="pref" value="sinGluten"> <span class="text-sm">Sin gluten</span></label>
-            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50"><input type="checkbox" class="pref" value="vegetariano"> <span class="text-sm">Vegetariano</span></label>
-            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50"><input type="checkbox" class="pref" value="vegano"> <span class="text-sm">Vegano</span></label>
+            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700"><input type="checkbox" class="pref" value="sinLactosa"> <span class="text-sm">Sin lactosa</span></label>
+            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700"><input type="checkbox" class="pref" value="sinGluten"> <span class="text-sm">Sin gluten</span></label>
+            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700"><input type="checkbox" class="pref" value="vegetariano"> <span class="text-sm">Vegetariano</span></label>
+            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700"><input type="checkbox" class="pref" value="vegano"> <span class="text-sm">Vegano</span></label>
           </div>
         </div>
         <button type="submit" class="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-bold py-4 rounded-xl hover:shadow-lg transition-all">Calcular mi plan personalizado →</button>
@@ -278,23 +338,23 @@
     </div>
     <div class="space-y-4">
       <!-- AD SPACE 2: SIDEBAR -->
-      <div class="ad-space py-8">
+      <div class="ad-space py-8" data-pos="sidebar">
         <div class="text-3xl mb-2">📢</div>
         <div class="font-semibold text-slate-500">Espacio publicitario lateral</div>
         <div class="text-xs mt-1">No interfiere con la navegación</div>
       </div>
-      <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100">
+      <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
         <div class="text-3xl mb-2"></div>
-        <h4 class="font-bold text-slate-800 mb-2">Filosofía NutriPro</h4>
-        <p class="text-sm text-slate-600 leading-relaxed">Rechazamos las dietas milagro. Nuestro enfoque se basa en el <strong>Déficit Calórico Sostenible</strong> y la <strong>Reeducación Alimentaria</strong>.</p>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-2">Filosofía NutriPro</h4>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Rechazamos las dietas milagro. Nuestro enfoque se basa en el <strong>Déficit Calórico Sostenible</strong> y la <strong>Reeducación Alimentaria</strong>.</p>
       </div>
-      <div class="bg-white rounded-2xl p-6 border border-slate-100">
+      <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
         <div class="text-3xl mb-2">🔄</div>
-        <h4 class="font-bold text-slate-800 mb-2">Sustituciones inteligentes</h4>
-        <p class="text-sm text-slate-600 leading-relaxed">¿No encuentras un ingrediente? Haz clic sobre él y te sugeriremos <strong>alternativas con aporte nutricional equivalente</strong>.</p>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-2">Sustituciones inteligentes</h4>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">¿No encuentras un ingrediente? Haz clic sobre él y te sugeriremos <strong>alternativas con aporte nutricional equivalente</strong>.</p>
       </div>
       <div class="alert-warning rounded-xl p-4">
-        <p class="text-xs text-amber-900"><strong>️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
+        <p class="text-xs"><strong>️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
       </div>
     </div>
   </div>
@@ -303,62 +363,62 @@
 <!-- DASHBOARD -->
 <section id="dashboard" class="tab-content">
   <div class="mb-6">
-    <h2 class="text-3xl font-bold text-slate-800">Dashboard Metabólico</h2>
-    <p class="text-slate-600 mt-2">Tus cifras clave calculadas con base científica.</p>
+    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Dashboard Metabólico</h2>
+    <p class="text-slate-600 dark:text-slate-400 mt-2">Tus cifras clave calculadas con base científica.</p>
   </div>
-  <div id="dashboardNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100">
+  <div id="dashboardNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
     <div class="text-6xl mb-4">📊</div>
-    <h3 class="text-xl font-bold text-slate-800 mb-2">Aún no has completado la evaluación</h3>
-    <p class="text-slate-600 mb-6">Ve a la sección de Evaluación para calcular tus métricas.</p>
+    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Aún no has completado la evaluación</h3>
+    <p class="text-slate-600 dark:text-slate-400 mb-6">Ve a la sección de Evaluación para calcular tus métricas.</p>
     <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
   </div>
   <div id="dashboardContent" class="hidden space-y-6">
     <div class="grid md:grid-cols-4 gap-4">
-      <div class="metric-card bg-white rounded-2xl p-6 border border-slate-100">
-        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide">TMB</div>
-        <div class="text-3xl font-bold text-slate-800 mt-2" id="metricTMB">—</div>
-        <div class="text-xs text-slate-500 mt-1">kcal/día en reposo</div>
+      <div class="metric-card rounded-2xl p-6">
+        <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">TMB</div>
+        <div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="metricTMB">—</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">kcal/día en reposo</div>
       </div>
-      <div class="metric-card bg-white rounded-2xl p-6 border border-slate-100">
-        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide">GETD</div>
+      <div class="metric-card rounded-2xl p-6">
+        <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">GETD</div>
         <div class="text-3xl font-bold text-teal-600 mt-2" id="metricGETD">—</div>
-        <div class="text-xs text-slate-500 mt-1">Gasto total diario</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Gasto total diario</div>
       </div>
       <div class="metric-card bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
         <div class="text-xs font-semibold text-teal-100 uppercase tracking-wide">Objetivo Calórico</div>
         <div class="text-3xl font-bold mt-2" id="metricObjetivo">—</div>
         <div class="text-xs text-teal-100 mt-1" id="metricDeficit">Déficit aplicado</div>
       </div>
-      <div class="metric-card bg-white rounded-2xl p-6 border border-slate-100">
-        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide">IMC</div>
-        <div class="text-3xl font-bold text-slate-800 mt-2" id="metricIMC">—</div>
-        <div class="text-xs text-slate-500 mt-1" id="metricIMCCat">Categoría</div>
+      <div class="metric-card rounded-2xl p-6">
+        <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">IMC</div>
+        <div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="metricIMC">—</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="metricIMCCat">Categoría</div>
       </div>
     </div>
     <div class="grid lg:grid-cols-2 gap-6">
-      <div class="bg-white rounded-2xl p-6 border border-slate-100">
-        <h3 class="text-lg font-bold text-slate-800 mb-4">Distribución de Macronutrientes</h3>
+      <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Distribución de Macronutrientes</h3>
         <div class="space-y-4">
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700"> Proteínas</span><span class="text-sm font-bold text-teal-600" id="macroProt">—</span></div>
-            <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div id="barProt" class="h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full transition-all" style="width:0%"></div></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Proteínas</span><span class="text-sm font-bold text-teal-600" id="macroProt">—</span></div>
+            <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barProt" class="h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700"> Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
-            <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div id="barCarb" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all" style="width:0%"></div></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
+            <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barCarb" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700"> Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
-            <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div id="barGrasas" class="h-full bg-gradient-to-r from-rose-400 to-rose-500 rounded-full transition-all" style="width:0%"></div></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
+            <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barGrasas" class="h-full bg-gradient-to-r from-rose-400 to-rose-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
         </div>
       </div>
-      <div class="bg-white rounded-2xl p-6 border border-slate-100">
-        <h3 class="text-lg font-bold text-slate-800 mb-4">Proyección de Pérdida</h3>
+      <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Proyección de Pérdida</h3>
         <div class="space-y-3">
-          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-600">Pérdida semanal estimada</span><span class="font-bold text-teal-600" id="perdidaSem">—</span></div>
-          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-600">Pérdida mensual estimada</span><span class="font-bold text-teal-600" id="perdidaMes">—</span></div>
-          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-600">Déficit diario aplicado</span><span class="font-bold text-amber-600" id="deficitDiario">—</span></div>
+          <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"><span class="text-sm text-slate-600 dark:text-slate-300">Pérdida semanal estimada</span><span class="font-bold text-teal-600" id="perdidaSem">—</span></div>
+          <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"><span class="text-sm text-slate-600 dark:text-slate-300">Pérdida mensual estimada</span><span class="font-bold text-teal-600" id="perdidaMes">—</span></div>
+          <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"><span class="text-sm text-slate-600 dark:text-slate-300">Déficit diario aplicado</span><span class="font-bold text-amber-600" id="deficitDiario">—</span></div>
           <div id="alertaSeguridad" class="hidden mt-3 p-3 rounded-lg text-sm"></div>
         </div>
       </div>
@@ -370,18 +430,18 @@
 <section id="menu" class="tab-content">
   <div class="flex justify-between items-start mb-6 flex-wrap gap-4">
     <div>
-      <h2 class="text-3xl font-bold text-slate-800">Menú Semanal Rotatorio</h2>
-      <p class="text-slate-600 mt-2">Haz clic en cualquier alimento para sustituirlo. <strong>Exporta tu menú a PDF.</strong></p>
+      <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Menú Semanal Rotatorio</h2>
+      <p class="text-slate-600 dark:text-slate-400 mt-2">Haz clic en cualquier alimento para sustituirlo. <strong>Exporta tu menú a PDF.</strong></p>
     </div>
     <div class="flex gap-2 flex-wrap">
-      <button onclick="exportarMenuPDF()" class="btn-pdf px-4 py-3 rounded-lg font-semibold flex items-center gap-2 text-sm">📄 PDF Menú</button>
-      <button onclick="resetSustituciones()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-lg font-semibold hover:bg-slate-200 text-sm"> Reset</button>
+      <button onclick="exportarMenuPDF()" class="btn-pdf px-4 py-3 rounded-lg font-semibold flex items-center gap-2 text-sm"> PDF Menú</button>
+      <button onclick="resetSustituciones()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-lg font-semibold hover:bg-slate-200 text-sm dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600"> Reset</button>
       <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2">🔄 Regenerar</button>
     </div>
   </div>
-  <div id="menuNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100">
+  <div id="menuNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
     <div class="text-6xl mb-4">🍽️</div>
-    <h3 class="text-xl font-bold text-slate-800 mb-2">Completa tu evaluación primero</h3>
+    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
   </div>
   <div id="menuContent" class="hidden grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
 </section>
@@ -390,14 +450,14 @@
 <section id="compra" class="tab-content">
   <div class="flex justify-between items-start mb-6 flex-wrap gap-4">
     <div>
-      <h2 class="text-3xl font-bold text-slate-800">Lista de la Compra</h2>
-      <p class="text-slate-600 mt-2">Organizada por categorías. Se actualiza con tus sustituciones. <strong>Imprímela en PDF.</strong></p>
+      <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Lista de la Compra</h2>
+      <p class="text-slate-600 dark:text-slate-400 mt-2">Organizada por categorías. Se actualiza con tus sustituciones. <strong>Imprímela en PDF.</strong></p>
     </div>
     <button onclick="exportarCompraPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📄 PDF Lista de compra</button>
   </div>
-  <div id="compraNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100">
+  <div id="compraNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
     <div class="text-6xl mb-4">🛒</div>
-    <h3 class="text-xl font-bold text-slate-800 mb-2">Genera primero tu menú semanal</h3>
+    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Genera primero tu menú semanal</h3>
   </div>
   <div id="compraContent" class="hidden grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 </section>
@@ -405,16 +465,16 @@
 <!-- SEGUIMIENTO -->
 <section id="seguimiento" class="tab-content">
   <div class="mb-6">
-    <h2 class="text-3xl font-bold text-slate-800">Seguimiento de Peso</h2>
-    <p class="text-slate-600 mt-2">Media móvil de 7 días para eliminar el ruido de la retención de líquidos.</p>
+    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Seguimiento de Peso</h2>
+    <p class="text-slate-600 dark:text-slate-400 mt-2">Media móvil de 7 días para eliminar el ruido de la retención de líquidos.</p>
   </div>
   
   <!-- AD SPACE 3: INLINE -->
-  <div class="ad-space py-6 mb-6">
+  <div class="ad-space py-6 mb-6" data-pos="inline">
     <div class="flex items-center justify-center gap-4 flex-wrap">
       <span class="text-2xl">🏋️</span>
       <div class="text-left">
-        <div class="font-bold text-slate-600">¿Buscas suplementación deportiva?</div>
+        <div class="font-bold text-slate-600 dark:text-slate-400">¿Buscas suplementación deportiva?</div>
         <div class="text-xs">Descubre nuestra selección de productos recomendados</div>
       </div>
       <span class="text-2xl">💊</span>
@@ -422,8 +482,8 @@
   </div>
 
   <div class="grid lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-100">
-      <h3 class="text-lg font-bold text-slate-800 mb-4">Curva de Tendencia</h3>
+    <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Curva de Tendencia</h3>
       <canvas id="chartPeso" height="180"></canvas>
       <div class="flex gap-4 mt-4 text-xs">
         <div class="flex items-center gap-2"><span class="w-3 h-3 bg-teal-500 rounded-full"></span>Peso real</div>
@@ -431,41 +491,41 @@
       </div>
     </div>
     <div class="space-y-4">
-      <div class="bg-white rounded-2xl p-6 border border-slate-100">
-        <h3 class="text-lg font-bold text-slate-800 mb-4">Registrar peso</h3>
+      <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Registrar peso</h3>
         <div class="space-y-3">
           <div>
-            <label class="text-sm font-semibold text-slate-700">Fecha</label>
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Fecha</label>
             <input type="date" id="fechaPeso" class="w-full px-3 py-2 border border-slate-200 rounded-lg mt-1">
           </div>
           <div>
-            <label class="text-sm font-semibold text-slate-700">Peso (kg)</label>
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Peso (kg)</label>
             <input type="number" id="valorPeso" step="0.1" placeholder="75.0" class="w-full px-3 py-2 border border-slate-200 rounded-lg mt-1">
           </div>
           <button onclick="agregarPeso()" class="w-full bg-teal-600 text-white py-2 rounded-lg font-semibold hover:bg-teal-700">+ Añadir registro</button>
         </div>
       </div>
-      <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100">
+      <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
         <div class="text-2xl mb-2">💬</div>
-        <p class="text-sm text-slate-700" id="feedbackTexto">Registra tu primer peso para comenzar el análisis.</p>
+        <p class="text-sm text-slate-700 dark:text-slate-300" id="feedbackTexto">Registra tu primer peso para comenzar el análisis.</p>
       </div>
     </div>
   </div>
-  <div class="mt-6 bg-white rounded-2xl p-6 border border-slate-100">
-    <h3 class="text-lg font-bold text-slate-800 mb-4">Historial de registros</h3>
-    <div id="historialPeso" class="space-y-2"><p class="text-slate-500 text-sm">Sin registros aún.</p></div>
+  <div class="mt-6 bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Historial de registros</h3>
+    <div id="historialPeso" class="space-y-2"><p class="text-slate-500 dark:text-slate-400 text-sm">Sin registros aún.</p></div>
   </div>
 </section>
 
 <!-- EJERCICIO -->
 <section id="ejercicio" class="tab-content">
   <div class="mb-6">
-    <h2 class="text-3xl font-bold text-slate-800">Rutina de Fuerza en Casa</h2>
-    <p class="text-slate-600 mt-2">Adaptada a tu edad. Sin gimnasio, sin excusas.</p>
+    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Rutina de Fuerza en Casa</h2>
+    <p class="text-slate-600 dark:text-slate-400 mt-2">Adaptada a tu edad. Sin gimnasio, sin excusas.</p>
   </div>
-  <div id="ejercicioNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100">
+  <div id="ejercicioNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
     <div class="text-6xl mb-4"></div>
-    <h3 class="text-xl font-bold text-slate-800 mb-2">Completa tu evaluación primero</h3>
+    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
   </div>
   <div id="ejercicioContent" class="hidden space-y-6">
     <div class="bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
@@ -478,8 +538,8 @@
       </div>
     </div>
     <div class="grid md:grid-cols-2 gap-4" id="ejerciciosList"></div>
-    <div class="bg-white rounded-2xl p-6 border border-slate-100">
-      <h3 class="text-lg font-bold text-slate-800 mb-4">📅 Planificación semanal</h3>
+    <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">📅 Planificación semanal</h3>
       <div id="planSemanal" class="grid md:grid-cols-7 gap-2"></div>
     </div>
   </div>
@@ -488,36 +548,36 @@
 <!-- ANÁLISIS -->
 <section id="analisis" class="tab-content">
   <div class="mb-6">
-    <h2 class="text-3xl font-bold text-slate-800">Análisis de Progreso</h2>
-    <p class="text-slate-600 mt-2">Comparativa semanal y proyección para el próximo mes.</p>
+    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Análisis de Progreso</h2>
+    <p class="text-slate-600 dark:text-slate-400 mt-2">Comparativa semanal y proyección para el próximo mes.</p>
   </div>
-  <div id="analisisNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100">
+  <div id="analisisNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
     <div class="text-6xl mb-4">🎯</div>
-    <h3 class="text-xl font-bold text-slate-800 mb-2">Necesitas al menos 4 semanas de datos</h3>
-    <p class="text-slate-600">Registra tu peso semanalmente para obtener un análisis completo.</p>
+    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Necesitas al menos 4 semanas de datos</h3>
+    <p class="text-slate-600 dark:text-slate-400">Registra tu peso semanalmente para obtener un análisis completo.</p>
   </div>
   <div id="analisisContent" class="hidden space-y-6">
     <div class="grid md:grid-cols-3 gap-4">
-      <div class="metric-card bg-white rounded-2xl p-6 border border-slate-100">
-        <div class="text-xs font-semibold text-slate-500 uppercase">Peso Semana 1</div>
-        <div class="text-3xl font-bold text-slate-800 mt-2" id="anS1">—</div>
+      <div class="metric-card rounded-2xl p-6">
+        <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Peso Semana 1</div>
+        <div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="anS1">—</div>
       </div>
-      <div class="metric-card bg-white rounded-2xl p-6 border border-slate-100">
-        <div class="text-xs font-semibold text-slate-500 uppercase">Peso Semana 4</div>
-        <div class="text-3xl font-bold text-slate-800 mt-2" id="anS4">—</div>
+      <div class="metric-card rounded-2xl p-6">
+        <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Peso Semana 4</div>
+        <div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="anS4">—</div>
       </div>
       <div class="metric-card bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
         <div class="text-xs font-semibold text-teal-100 uppercase">Cambio total</div>
         <div class="text-3xl font-bold mt-2" id="anCambio">—</div>
       </div>
     </div>
-    <div class="bg-white rounded-2xl p-6 border border-slate-100">
-      <h3 class="text-lg font-bold text-slate-800 mb-4">Evolución por semanas</h3>
+    <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Evolución por semanas</h3>
       <canvas id="chartSemanal" height="120"></canvas>
     </div>
-    <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100">
-      <h3 class="text-lg font-bold text-slate-800 mb-3">🔮 Proyección próximo mes</h3>
-      <div id="proyeccionTexto" class="text-slate-700"></div>
+    <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
+      <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-3">🔮 Proyección próximo mes</h3>
+      <div id="proyeccionTexto" class="text-slate-700 dark:text-slate-300"></div>
     </div>
   </div>
 </section>
@@ -525,16 +585,16 @@
 <!-- COMENTARIOS -->
 <section id="comentarios" class="tab-content">
   <div class="mb-6">
-    <h2 class="text-3xl font-bold text-slate-800">💬 Comunidad NutriPro</h2>
-    <p class="text-slate-600 mt-2">Comparte tu experiencia, dudas o consejos.</p>
+    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">💬 Comunidad NutriPro</h2>
+    <p class="text-slate-600 dark:text-slate-400 mt-2">Comparte tu experiencia, dudas o consejos.</p>
   </div>
   <div class="grid lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2 space-y-4">
-      <div class="bg-white rounded-2xl p-6 border border-slate-100">
-        <h3 class="font-bold text-slate-800 mb-3">Deja tu comentario</h3>
+      <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+        <h3 class="font-bold text-slate-800 dark:text-white mb-3">Deja tu comentario</h3>
         <textarea id="nuevoComentario" rows="3" placeholder="Comparte tu experiencia, dudas o logros..." class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 resize-none"></textarea>
         <div class="flex justify-between items-center mt-3">
-          <label class="flex items-center gap-2 text-sm text-slate-600">
+          <label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
             <input type="checkbox" id="comentarioAnonimo" class="accent-teal-600">
             Publicar anónimamente
           </label>
@@ -546,10 +606,10 @@
       </div>
     </div>
     <div class="space-y-4">
-      <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100">
+      <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
         <div class="text-3xl mb-2">🤝</div>
-        <h4 class="font-bold text-slate-800 mb-2">Normas de la comunidad</h4>
-        <ul class="text-sm text-slate-600 space-y-1">
+        <h4 class="font-bold text-slate-800 dark:text-white mb-2">Normas de la comunidad</h4>
+        <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
           <li>✓ Sé respetuoso con los demás</li>
           <li>✓ Comparte experiencias reales</li>
           <li>✗ No compartas datos médicos personales</li>
@@ -569,40 +629,40 @@
 <!-- PERFIL -->
 <section id="perfil" class="tab-content">
   <div class="mb-6">
-    <h2 class="text-3xl font-bold text-slate-800">Mi Perfil</h2>
-    <p class="text-slate-600 mt-2">Gestiona tu información personal y contraseña.</p>
+    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Mi Perfil</h2>
+    <p class="text-slate-600 dark:text-slate-400 mt-2">Gestiona tu información personal y contraseña.</p>
   </div>
   <div class="grid md:grid-cols-2 gap-6">
-    <div class="bg-white rounded-2xl p-6 border border-slate-100">
-      <h3 class="font-bold text-slate-800 mb-4">Información personal</h3>
+    <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      <h3 class="font-bold text-slate-800 dark:text-white mb-4">Información personal</h3>
       <form id="formPerfil" class="space-y-4">
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre</label>
+          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nombre</label>
           <input type="text" id="perfilNombre" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Correo (no editable)</label>
-          <input type="email" id="perfilEmail" disabled class="w-full px-4 py-2.5 border border-slate-200 rounded-lg bg-slate-50 text-slate-500">
+          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Correo (no editable)</label>
+          <input type="email" id="perfilEmail" disabled class="w-full px-4 py-2.5 border border-slate-200 rounded-lg bg-slate-50 text-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400">
         </div>
         <button type="submit" class="w-full bg-teal-600 text-white py-2.5 rounded-lg font-semibold hover:bg-teal-700">Guardar cambios</button>
       </form>
     </div>
-    <div class="bg-white rounded-2xl p-6 border border-slate-100">
-      <h3 class="font-bold text-slate-800 mb-4">Cambiar contraseña</h3>
+    <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      <h3 class="font-bold text-slate-800 dark:text-white mb-4">Cambiar contraseña</h3>
       <form id="formPassword" class="space-y-4">
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Contraseña actual</label>
+          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Contraseña actual</label>
           <input type="password" id="passActual" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Nueva contraseña</label>
+          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nueva contraseña</label>
           <input type="password" id="passNueva" minlength="6" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Confirmar nueva contraseña</label>
+          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Confirmar nueva contraseña</label>
           <input type="password" id="passConfirm" minlength="6" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
         </div>
-        <button type="submit" class="w-full bg-slate-800 text-white py-2.5 rounded-lg font-semibold hover:bg-slate-900">Cambiar contraseña</button>
+        <button type="submit" class="w-full bg-slate-800 text-white py-2.5 rounded-lg font-semibold hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600">Cambiar contraseña</button>
       </form>
     </div>
   </div>
@@ -614,51 +674,51 @@
     <div class="flex items-center gap-3">
       <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-2xl">⚙️</div>
       <div>
-        <h2 class="text-3xl font-bold text-slate-800">Panel de Administrador</h2>
-        <p class="text-slate-600 mt-1">Gestiona usuarios, comentarios y configuración.</p>
+        <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Panel de Administrador</h2>
+        <p class="text-slate-600 dark:text-slate-400 mt-1">Gestiona usuarios, comentarios y configuración.</p>
       </div>
     </div>
   </div>
   <div class="grid md:grid-cols-4 gap-4 mb-6">
-    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 uppercase">Usuarios totales</div><div class="text-3xl font-bold text-slate-800 mt-2" id="statUsuarios">0</div></div>
-    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 uppercase">Usuarios activos</div><div class="text-3xl font-bold text-green-600 mt-2" id="statActivos">0</div></div>
-    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 uppercase">Usuarios bloqueados</div><div class="text-3xl font-bold text-red-600 mt-2" id="statBloqueados">0</div></div>
-    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 uppercase">Comentarios</div><div class="text-3xl font-bold text-teal-600 mt-2" id="statComentarios">0</div></div>
+    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios totales</div><div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="statUsuarios">0</div></div>
+    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios activos</div><div class="text-3xl font-bold text-green-600 mt-2" id="statActivos">0</div></div>
+    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios bloqueados</div><div class="text-3xl font-bold text-red-600 mt-2" id="statBloqueados">0</div></div>
+    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Comentarios</div><div class="text-3xl font-bold text-teal-600 mt-2" id="statComentarios">0</div></div>
   </div>
-  <div class="flex gap-2 mb-4 border-b border-slate-200">
+  <div class="flex gap-2 mb-4 border-b border-slate-200 dark:border-slate-700">
     <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600" data-atab="usuarios">👥 Usuarios</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700" data-atab="comentarios">💬 Comentarios</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700" data-atab="config">️ Configuración</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="comentarios">💬 Comentarios</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="config">️ Configuración</button>
   </div>
   <div id="admin-usuarios" class="admin-panel">
-    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-      <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2">
-        <h3 class="font-bold text-slate-800">Gestión de usuarios (Supabase Auth)</h3>
-        <p class="text-xs text-slate-500">Para gestionar usuarios reales, usa el panel de Supabase > Authentication.</p>
+    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
+      <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700">
+        <h3 class="font-bold text-slate-800 dark:text-white">Gestión de usuarios (Supabase Auth)</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Para gestionar usuarios reales, usa el panel de Supabase > Authentication.</p>
       </div>
-      <div class="p-6 text-center text-slate-500">
+      <div class="p-6 text-center text-slate-500 dark:text-slate-400">
         La gestión avanzada de usuarios se realiza directamente en el dashboard de Supabase para mayor seguridad.
       </div>
     </div>
   </div>
   <div id="admin-comentarios" class="admin-panel hidden">
-    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-      <div class="p-4 border-b border-slate-100"><h3 class="font-bold text-slate-800">Moderación de comentarios</h3></div>
+    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
+      <div class="p-4 border-b border-slate-100 dark:border-slate-700"><h3 class="font-bold text-slate-800 dark:text-white">Moderación de comentarios</h3></div>
       <div id="listaComentariosAdmin" class="p-4 space-y-3"></div>
     </div>
   </div>
   <div id="admin-config" class="admin-panel hidden">
-    <div class="bg-white rounded-2xl p-6 border border-slate-100">
-      <h3 class="font-bold text-slate-800 mb-4">Estado del Sistema</h3>
-      <p class="text-sm text-slate-600">Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
+    <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      <h3 class="font-bold text-slate-800 dark:text-white mb-4">Estado del Sistema</h3>
+      <p class="text-sm text-slate-600 dark:text-slate-400">Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
     </div>
   </div>
 </section>
 
 </main>
 
-<footer class="max-w-7xl mx-auto px-6 py-8 mt-4 border-t border-slate-200">
-  <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-slate-500">
+<footer class="max-w-7xl mx-auto px-6 py-8 mt-4 border-t border-slate-200 dark:border-slate-700">
+  <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
     <div> NutriPro · Nutrición basada en evidencia científica</div>
     <div>⚕️ Esta herramienta no sustituye la consulta médica profesional</div>
   </div>
@@ -668,19 +728,19 @@
 <!-- MODAL SUSTITUCIÓN -->
 <div id="modalSustitucion" class="modal-overlay hidden">
   <div class="modal-content">
-    <div class="p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10">
+    <div class="p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10 dark:bg-slate-800 dark:border-slate-700">
       <div class="flex justify-between items-start">
         <div>
           <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">Sustitución inteligente</div>
-          <h3 class="text-xl font-bold text-slate-800" id="modalTitulo">Elige una alternativa</h3>
-          <p class="text-sm text-slate-500 mt-1" id="modalSubtitulo">Alimentos con aporte nutricional equivalente</p>
+          <h3 class="text-xl font-bold text-slate-800 dark:text-white" id="modalTitulo">Elige una alternativa</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1" id="modalSubtitulo">Alimentos con aporte nutricional equivalente</p>
         </div>
-        <button onclick="cerrarModal()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600"></button>
+        <button onclick="cerrarModal()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300"></button>
       </div>
     </div>
     <div id="modalOpciones" class="p-6 space-y-2"></div>
-    <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-3xl">
-      <button onclick="cerrarModal()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-semibold">Cancelar</button>
+    <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-3xl dark:bg-slate-900 dark:border-slate-700">
+      <button onclick="cerrarModal()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-semibold dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white">Cancelar</button>
     </div>
   </div>
 </div>
@@ -706,6 +766,32 @@ let sustituciones = {};
 let chartPeso = null;
 let chartSemanal = null;
 let currentSwap = null;
+
+// ============ MODO OSCURO ============
+function initDarkMode() {
+  const toggle = document.getElementById('darkModeToggle');
+  const icon = document.getElementById('darkModeIcon');
+  const html = document.documentElement;
+  
+  // Cargar preferencia guardada
+  const savedTheme = localStorage.getItem('nutripro-theme');
+  if (savedTheme === 'dark') {
+    html.classList.add('dark');
+    icon.textContent = '☀️';
+  }
+  
+  // Toggle event
+  toggle.addEventListener('click', () => {
+    html.classList.toggle('dark');
+    const isDark = html.classList.contains('dark');
+    icon.textContent = isDark ? '☀️' : '🌙';
+    localStorage.setItem('nutripro-theme', isDark ? 'dark' : 'light');
+    
+    // Actualizar gráficos si existen
+    if (chartPeso) renderChartPeso();
+    if (chartSemanal) renderAnalisis();
+  });
+}
 
 // ============ AUTH SYSTEM CON SUPABASE ============
 
@@ -745,6 +831,7 @@ async function checkAuth() {
 
   showMainApp();
   loadUserDataFromDB();
+  initDarkMode(); // Inicializar modo oscuro tras autenticar
 }
 
 async function createProfile(user) {
@@ -997,7 +1084,7 @@ async function renderComentarios() {
 
   const cont = document.getElementById('listaComentarios');
   if (!comments || comments.length === 0) {
-    cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500">Sé el primero en compartir tu experiencia 💬</div>';
+    cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia 💬</div>';
     return;
   }
 
@@ -1010,7 +1097,7 @@ async function renderComentarios() {
           <span class="text-xs font-bold text-teal-700">️ Equipo NutriPro</span>
           <span class="text-xs text-slate-400">${new Date(r.fecha).toLocaleDateString()}</span>
         </div>
-        <p class="text-sm text-slate-700">${r.texto}</p>
+        <p class="text-sm text-slate-700 dark:text-slate-300">${r.texto}</p>
       </div>
     `).join('');
 
@@ -1020,7 +1107,7 @@ async function renderComentarios() {
           <div class="flex items-center gap-2">
             <div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${c.user_name.charAt(0).toUpperCase()}</div>
             <div>
-              <div class="font-semibold text-slate-800 text-sm">${c.user_name}</div>
+              <div class="font-semibold text-slate-800 dark:text-white text-sm">${c.user_name}</div>
               <div class="text-xs text-slate-400">${fecha}</div>
             </div>
           </div>
@@ -1031,7 +1118,7 @@ async function renderComentarios() {
             </div>
           ` : ''}
         </div>
-        <p class="text-slate-700 text-sm leading-relaxed">${c.texto}</p>
+        <p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${c.texto}</p>
         ${respuestas}
       </div>
     `;
@@ -1253,7 +1340,7 @@ function renderMenu() {
   menuData.menu.forEach((dia, diaIdx) => {
     const kcalTotales = calcularKcalDia(dia);
     const card = document.createElement('div');
-    card.className = 'meal-card bg-white rounded-2xl p-5 border border-slate-100 shadow-sm';
+    card.className = 'meal-card rounded-2xl p-5 shadow-sm';
     const foodItemHTML = (item, path, label, color, emoji) => {
       const key = `${diaIdx}|${path}`;
       const isSub = sustituciones[key] !== undefined;
@@ -1262,38 +1349,38 @@ function renderMenu() {
           <div class="flex justify-between items-start gap-2">
             <div class="flex-1 min-w-0">
               <div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div>
-              <div class="text-slate-700 text-sm font-medium leading-snug">${item.nombre}</div>
+              <div class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-snug">${item.nombre}</div>
               <div class="flex gap-1 mt-1.5 flex-wrap">
-                <span class="macro-chip bg-white/70 text-slate-700">🔥 ${item.kcal} kcal</span>
-                ${item.prot ? `<span class="macro-chip bg-teal-100 text-teal-700">P ${item.prot}g</span>` : ''}
+                <span class="macro-chip bg-white/70 dark:bg-slate-700 text-slate-700 dark:text-slate-300"> ${item.kcal} kcal</span>
+                ${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}
               </div>
             </div>
-            <div class="swap-icon flex-shrink-0 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200" title="Sustituir"><span class="text-sm">🔄</span></div>
+            <div class="swap-icon flex-shrink-0 w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm">🔄</span></div>
           </div>
-          ${isSub ? `<div class="text-xs text-amber-700 mt-2 font-semibold">✓ Sustituido</div>` : ''}
+          ${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}
         </div>
       `;
     };
     card.innerHTML = `
-      <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100">
+      <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
         <div>
           <div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div>
-          <div class="text-lg font-bold text-slate-800">Menú completo</div>
+          <div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div>
         </div>
         <div class="text-right">
-          <div class="text-xs text-slate-500">Total</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400">Total</div>
           <div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div>
         </div>
       </div>
       <div class="space-y-2">
-        ${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 text-amber-800', '️')}
-        ${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 text-orange-800', '🥩')}
-        ${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 text-yellow-800', '')}
-        ${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 text-green-800', '🥦')}
-        ${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 text-emerald-800', '')}
-        ${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 text-pink-800', '🍎')}
-        ${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 text-indigo-800', '')}
-        ${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 text-violet-800', '')}
+        ${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300', '️')}
+        ${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300', '🥩')}
+        ${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '')}
+        ${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '')}
+        ${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '')}
+        ${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '🍎')}
+        ${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '')}
+        ${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '')}
       </div>
     `;
     cont.appendChild(card);
@@ -1320,18 +1407,18 @@ function abrirModalSustitucion(diaIdx, path, currentId) {
     const isCurrent = alim.id === currentId;
     const diffKcal = alim.kcal - current.kcal;
     const opt = document.createElement('div');
-    opt.className = `sub-option p-4 border-2 rounded-xl ${isCurrent ? 'current border-green-300' : 'border-slate-200'}`;
+    opt.className = `sub-option p-4 border-2 rounded-xl ${isCurrent ? 'current border-green-300' : 'border-slate-200 dark:border-slate-700'}`;
     opt.innerHTML = `
       <div class="flex justify-between items-start gap-3">
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 mb-1 flex-wrap">
-            <span class="font-bold text-slate-800">${alim.nombre}</span>
+            <span class="font-bold text-slate-800 dark:text-white">${alim.nombre}</span>
             ${isCurrent ? '<span class="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">ACTUAL</span>' : ''}
           </div>
           <div class="flex gap-1.5 flex-wrap mt-2">
-            <span class="macro-chip bg-slate-100 text-slate-700"> ${alim.kcal} kcal</span>
-            ${alim.prot ? `<span class="macro-chip bg-teal-100 text-teal-700">P ${alim.prot}g</span>` : ''}
-            ${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}
+            <span class="macro-chip bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300"> ${alim.kcal} kcal</span>
+            ${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}
+            ${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' : 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}
           </div>
         </div>
         ${!isCurrent ? `<button class="flex-shrink-0 bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir →</button>` : ''}
@@ -1425,7 +1512,7 @@ function renderListaCompra() {
   Object.keys(categorias).sort().forEach(cat => {
     const data = categorias[cat];
     const card = document.createElement('div');
-    card.className = 'bg-white rounded-2xl border border-slate-100 overflow-hidden';
+    card.className = 'bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700';
     card.innerHTML = `
       <div class="bg-gradient-to-r ${data.color} text-white p-4">
         <h3 class="font-bold">${cat}</h3>
@@ -1433,9 +1520,9 @@ function renderListaCompra() {
       </div>
       <ul class="p-4 space-y-2">
         ${data.items.map(item => `
-          <li class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg cursor-pointer">
+          <li class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer">
             <input type="checkbox" class="w-4 h-4 accent-teal-600">
-            <span class="flex-1 text-sm text-slate-700">${item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1)}</span>
+            <span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1)}</span>
             <span class="text-xs text-slate-400">×${item.cantidad}</span>
           </li>
         `).join('')}
@@ -1549,12 +1636,12 @@ function mediaMovil(arr, ventana = 7) {
 function renderSeguimiento() {
   const hist = document.getElementById('historialPeso');
   if (pesos.length === 0) {
-    hist.innerHTML = '<p class="text-slate-500 text-sm">Sin registros aún.</p>';
+    hist.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm">Sin registros aún.</p>';
   } else {
     hist.innerHTML = pesos.slice().reverse().slice(0, 10).map(p => `
-      <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-        <span class="text-sm text-slate-600">${new Date(p.fecha).toLocaleDateString('es-ES')}</span>
-        <span class="font-bold text-slate-800">${p.valor} kg</span>
+      <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
+        <span class="text-sm text-slate-600 dark:text-slate-300">${new Date(p.fecha).toLocaleDateString('es-ES')}</span>
+        <span class="font-bold text-slate-800 dark:text-white">${p.valor} kg</span>
       </div>
     `).join('');
   }
@@ -1575,6 +1662,11 @@ function renderChartPeso() {
   const ctx = document.getElementById('chartPeso').getContext('2d');
   if (chartPeso) chartPeso.destroy();
   if (pesos.length === 0) return;
+  
+  const isDark = document.documentElement.classList.contains('dark');
+  const gridColor = isDark ? '#334155' : '#f1f5f9';
+  const textColor = isDark ? '#94a3b8' : '#64748b';
+  
   const labels = pesos.map(p => new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
   chartPeso = new Chart(ctx, {
     type: 'line',
@@ -1585,7 +1677,14 @@ function renderChartPeso() {
         { label: 'Media móvil 7 días', data: mediaMovil(pesos).map(p => p.valor), borderColor: '#f59e0b', borderDash: [5, 5], tension: 0.4, pointRadius: 0, fill: false }
       ]
     },
-    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
+    options: { 
+      responsive: true, 
+      plugins: { legend: { display: false } }, 
+      scales: { 
+        y: { beginAtZero: false, grid: { color: gridColor }, ticks: { color: textColor } }, 
+        x: { grid: { display: false }, ticks: { color: textColor } } 
+      } 
+    }
   });
 }
 
@@ -1639,14 +1738,14 @@ function generarEjercicio() {
   document.getElementById('ejTituloEdad').textContent = foco;
   document.getElementById('ejFocoEdad').textContent = 'Entrenamiento adaptado en casa';
   document.getElementById('ejerciciosList').innerHTML = ejercicios.map((ej, i) => `
-    <div class="bg-white rounded-2xl p-5 border border-slate-100 relative group">
+    <div class="bg-white rounded-2xl p-5 border border-slate-100 relative group dark:bg-slate-800 dark:border-slate-700">
       <div class="flex justify-between items-start mb-2">
-        <div class="w-8 h-8 bg-teal-100 text-teal-700 rounded-lg flex items-center justify-center font-bold text-sm">${i+1}</div>
-        <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded">${ej.foco}</span>
+        <div class="w-8 h-8 bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 rounded-lg flex items-center justify-center font-bold text-sm">${i+1}</div>
+        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">${ej.foco}</span>
       </div>
-      <h4 class="font-bold text-slate-800 mb-1">${ej.nombre}</h4>
+      <h4 class="font-bold text-slate-800 dark:text-white mb-1">${ej.nombre}</h4>
       <p class="text-sm text-teal-600 font-semibold mb-3">${ej.reps}</p>
-      <button onclick="buscarVideo('${ej.nombre}')" class="w-full bg-blue-50 text-blue-600 hover:bg-blue-100 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors">
+      <button onclick="buscarVideo('${ej.nombre}')" class="w-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors">
         <span>▶️</span> Ver tutorial en YouTube
       </button>
     </div>
@@ -1654,7 +1753,7 @@ function generarEjercicio() {
   const diasSemana = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   document.getElementById('planSemanal').innerHTML = plan.map((p, i) => {
     const isDescanso = p.toLowerCase().includes('descanso');
-    return `<div class="p-3 rounded-xl text-center ${isDescanso ? 'bg-slate-100 text-slate-500' : 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white'}">
+    return `<div class="p-3 rounded-xl text-center ${isDescanso ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400' : 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white'}">
       <div class="text-xs font-bold opacity-80">${diasSemana[i]}</div>
       <div class="text-sm font-semibold mt-1">${p}</div>
     </div>`;
@@ -1695,17 +1794,30 @@ function renderAnalisis() {
   } else if (ritmoSem > -0.2 && ritmoSem < 0.2) {
     proy.innerHTML = `<p class="mb-2"> <strong>Estancamiento.</strong> Revisa el cumplimiento del plan.</p>`;
   } else {
-    proy.innerHTML = `<p class="mb-2">📈 <strong>Tendencia alciana:</strong> +${ritmoSem.toFixed(2)} kg/sem.</p><p>Revisa porciones y actividad física.</p>`;
+    proy.innerHTML = `<p class="mb-2"> <strong>Tendencia alciana:</strong> +${ritmoSem.toFixed(2)} kg/sem.</p><p>Revisa porciones y actividad física.</p>`;
   }
+  
   const ctx = document.getElementById('chartSemanal').getContext('2d');
   if (chartSemanal) chartSemanal.destroy();
+  
+  const isDark = document.documentElement.classList.contains('dark');
+  const gridColor = isDark ? '#334155' : '#f1f5f9';
+  const textColor = isDark ? '#94a3b8' : '#64748b';
+  
   chartSemanal = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: semanas.map((_, i) => `Sem ${i+1}`),
       datasets: [{ label: 'Peso medio (kg)', data: semanas, backgroundColor: semanas.map((v, i) => i === 0 ? '#0d9488' : (i === semanas.length - 1 ? '#f59e0b' : '#94a3b8')), borderRadius: 8 }]
     },
-    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
+    options: { 
+      responsive: true, 
+      plugins: { legend: { display: false } }, 
+      scales: { 
+        y: { beginAtZero: false, grid: { color: gridColor }, ticks: { color: textColor } }, 
+        x: { grid: { display: false }, ticks: { color: textColor } } 
+      } 
+    }
   });
 }
 
