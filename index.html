@@ -33,11 +33,10 @@
     --border-color: #e2e8f0;
     --input-bg: #ffffff;
     --input-border: #cbd5e1;
-    --checkbox-bg: #f1f5f9; /* Fondo suave para checkboxes en modo claro */
-    --sidebar-card-bg: #f8fafc; /* Fondo sutil para tarjetas laterales en modo claro */
+    --checkbox-bg: #f1f5f9;
+    --sidebar-card-bg: #f8fafc;
   }
 
-  /* TEMA OSCURO (Por defecto gracias a class="dark" en html) */
   .dark {
     --bg: #0f172a;
     --text-main: #f8fafc;
@@ -126,24 +125,20 @@
   .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #0d9488; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-  /* Inputs y Selects */
   input, select, textarea {
     background: var(--input-bg);
     border-color: var(--input-border);
     color: var(--text-main);
   }
   
-  /* Checkboxes y Labels de preferencias */
   label.flex.items-center.gap-2.p-2.border {
     background: var(--checkbox-bg);
   }
 
-  /* Tarjetas laterales de información */
   .info-card {
     background: var(--sidebar-card-bg);
   }
   
-  /* Botones de navegación en modo oscuro */
   .dark .nav-btn:not(.active) { color: rgba(255,255,255,0.7); }
   .dark .nav-btn:not(.active):hover { background: rgba(255,255,255,0.1); }
 </style>
@@ -472,7 +467,7 @@
       <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Lista de la Compra</h2>
       <p class="text-slate-600 dark:text-slate-400 mt-2">Organizada por categorías. Se actualiza con tus sustituciones. <strong>Imprímela en PDF.</strong></p>
     </div>
-    <button onclick="exportarCompraPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📄 PDF Lista de compra</button>
+    <button onclick="exportarCompraPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2"> PDF Lista de compra</button>
   </div>
   <div id="compraNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
     <div class="text-6xl mb-4">🛒</div>
@@ -549,7 +544,7 @@
   <div id="ejercicioContent" class="hidden space-y-6">
     <div class="bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
       <div class="flex items-center gap-3 mb-3">
-        <div class="text-4xl" id="ejIconoEdad">🏋️</div>
+        <div class="text-4xl" id="ejIconoEdad">️</div>
         <div>
           <h3 class="text-xl font-bold" id="ejTituloEdad">Grupo de edad</h3>
           <p class="text-teal-100 text-sm" id="ejFocoEdad">Enfoque principal</p>
@@ -626,7 +621,7 @@
     </div>
     <div class="space-y-4">
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-        <div class="text-3xl mb-2">🤝</div>
+        <div class="text-3xl mb-2"></div>
         <h4 class="font-bold text-slate-800 dark:text-white mb-2">Normas de la comunidad</h4>
         <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
           <li>✓ Sé respetuoso con los demás</li>
@@ -637,7 +632,7 @@
       </div>
       <!-- AD SPACE 4: SIDEBAR COMMENTS -->
       <div class="ad-space py-8">
-        <div class="text-3xl mb-2">📢</div>
+        <div class="text-3xl mb-2"></div>
         <div class="font-semibold text-slate-500">Espacio publicitario inferior</div>
         <div class="text-xs mt-1">300 × 250</div>
       </div>
@@ -691,7 +686,7 @@
 <section id="admin" class="tab-content">
   <div class="mb-6">
     <div class="flex items-center gap-3">
-      <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-2xl">⚙️</div>
+      <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-2xl">️</div>
       <div>
         <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Panel de Administrador</h2>
         <p class="text-slate-600 dark:text-slate-400 mt-1">Gestiona usuarios, comentarios y configuración.</p>
@@ -769,7 +764,6 @@
 const SUPABASE_URL = 'https://xsuqqesjetgzxtyqqqje.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzdXFxZXNqZXRnenh0eXFxcWplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NTg5NjUsImV4cCI6MjEwMDEzNDk2NX0.OdQddq33d-dsz3fRpTp_xLs6bDJn2_fyFCKmENcs_t8';
 
-// Verificamos que la librería se cargó antes de crear el cliente
 let sb = null;
 if (typeof supabase !== 'undefined') {
     sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -786,34 +780,36 @@ let chartPeso = null;
 let chartSemanal = null;
 let currentSwap = null;
 
+// ============ SEGURIDAD: CERRAR SESIÓN AL CERRAR NAVEGADOR ============
+window.addEventListener('beforeunload', async () => {
+  if (sb && currentUser) {
+    await sb.auth.signOut();
+  }
+});
+
 // ============ MODO OSCURO ============
 function initDarkMode() {
   const toggle = document.getElementById('darkModeToggle');
   const icon = document.getElementById('darkModeIcon');
   const html = document.documentElement;
   
-  // Cargar preferencia guardada (por defecto es oscuro si no hay nada guardado)
   const savedTheme = localStorage.getItem('nutripro-theme');
   
-  // Si NO hay nada guardado, forzamos oscuro por defecto
   if (!savedTheme || savedTheme === 'dark') {
     html.classList.add('dark');
     icon.textContent = '☀️';
     localStorage.setItem('nutripro-theme', 'dark');
   } else {
-    // Si el usuario guardó 'light', lo aplicamos
     html.classList.remove('dark');
     icon.textContent = '🌙';
   }
   
-  // Toggle event
   toggle.addEventListener('click', () => {
     html.classList.toggle('dark');
     const isDark = html.classList.contains('dark');
     icon.textContent = isDark ? '☀️' : '🌙';
     localStorage.setItem('nutripro-theme', isDark ? 'dark' : 'light');
     
-    // Actualizar gráficos si existen
     if (chartPeso) renderChartPeso();
     if (chartSemanal) renderAnalisis();
   });
@@ -829,7 +825,6 @@ async function checkAuth() {
     return;
   }
 
-  // Obtener perfil completo
   const { data: profile, error } = await sb
     .from('profiles')
     .select('*')
@@ -837,7 +832,6 @@ async function checkAuth() {
     .single();
 
   if (error || !profile) {
-    // Si no tiene perfil aún, lo creamos automáticamente
     await createProfile(session.user);
     location.reload(); 
     return;
@@ -857,7 +851,7 @@ async function checkAuth() {
 
   showMainApp();
   loadUserDataFromDB();
-  initDarkMode(); // Inicializar modo oscuro tras autenticar
+  initDarkMode();
 }
 
 async function createProfile(user) {
@@ -914,7 +908,6 @@ async function cerrarSesion() {
   showAuthScreen();
 }
 
-// Login
 document.getElementById('formLogin').addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('loginEmail').value;
@@ -934,7 +927,6 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
   }
 });
 
-// Registro
 document.getElementById('formRegister').addEventListener('submit', async (e) => {
   e.preventDefault();
   const nombre = document.getElementById('regName').value;
@@ -969,7 +961,6 @@ document.getElementById('formRegister').addEventListener('submit', async (e) => 
 // ============ GESTIÓN DE DATOS ============
 
 async function loadUserDataFromDB() {
-  // Cargar datos metabólicos
   const { data: uData, error: uErr } = await sb
     .from('user_data')
     .select('*')
@@ -984,7 +975,6 @@ async function loadUserDataFromDB() {
     generarEjercicio();
   }
 
-  // Cargar pesos
   const { data: wData, error: wErr } = await sb
     .from('weight_logs')
     .select('*')
@@ -1013,7 +1003,6 @@ async function saveUserDataToDB() {
   if (error) console.error('Error guardando datos:', error);
 }
 
-// Evaluación Form
 document.getElementById('formEvaluacion').addEventListener('submit', async (e) => {
   e.preventDefault();
   const edad = parseInt(document.getElementById('edad').value);
@@ -1057,7 +1046,6 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
   switchTab('dashboard');
 });
 
-// Guardar Peso
 async function agregarPeso() {
   const fecha = document.getElementById('fechaPeso').value;
   const valor = parseFloat(document.getElementById('valorPeso').value);
@@ -1078,7 +1066,6 @@ async function agregarPeso() {
   }
 }
 
-// Comentarios
 async function publicarComentario() {
   const texto = document.getElementById('nuevoComentario').value.trim();
   if (!texto) return;
@@ -1151,7 +1138,7 @@ async function renderComentarios() {
   }).join('');
 }
 
-// ============ RESTO DEL CÓDIGO (Lógica Local) ============
+// ============ LÓGICA LOCAL ============
 
 function calcularTMB(peso, altura, edad, sexo) {
   if (sexo === 'hombre') return 10 * peso + 6.25 * altura - 5 * edad + 5;
@@ -1205,7 +1192,6 @@ function actualizarDashboard() {
   } else { alerta.classList.add('hidden'); }
 }
 
-// Base de Datos de Alimentos (Local)
 const GRUPO_PROTEINAS = [
   { id: 'p1', grupo: 'prot', nombre: 'Pechuga de pollo a la plancha', kcal: 165, prot: 31, ing: ['pollo'] },
   { id: 'p2', grupo: 'prot', nombre: 'Pavo a la plancha', kcal: 135, prot: 29, ing: ['pavo'] },
@@ -1678,7 +1664,7 @@ function renderSeguimiento() {
     const mm = mediaMovil(pesos);
     const diff = (mm[mm.length - 1].valor - mm[0].valor).toFixed(2);
     if (diff < -0.5) feedback.innerHTML = `<strong>✅ ¡Excelente tendencia!</strong> Has perdido ${Math.abs(diff)} kg.`;
-    else if (diff > 0.5) feedback.innerHTML = `<strong>⚠️ Revisa el plan.</strong> Tendencia de +${diff} kg.`;
+    else if (diff > 0.5) feedback.innerHTML = `<strong>️ Revisa el plan.</strong> Tendencia de +${diff} kg.`;
     else feedback.innerHTML = `<strong> Estabilidad.</strong> Variación de ${diff} kg.`;
   }
   renderChartPeso();
@@ -1880,7 +1866,7 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
   const nueva = document.getElementById('passNueva').value;
   const conf = document.getElementById('passConfirm').value;
   
-  if (nueva !== conf) { alert('❌ Las contraseñas nuevas no coinciden'); return; }
+  if (nueva !== conf) { alert(' Las contraseñas nuevas no coinciden'); return; }
   if (nueva.length < 6) { alert('❌ Mínimo 6 caracteres'); return; }
   
   const { error } = await sb.auth.updateUser({ password: nueva });
@@ -1892,7 +1878,6 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
   }
 });
 
-// Navegación
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => switchTab(btn.dataset.tab));
 });
@@ -1934,7 +1919,6 @@ document.addEventListener('click', (e) => {
 
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { cerrarModal(); } });
 
-// Inicialización
 checkAuth();
 </script>
 </body>
