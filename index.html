@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,17 +33,21 @@
     --border-color: #e2e8f0;
     --input-bg: #ffffff;
     --input-border: #cbd5e1;
+    --checkbox-bg: #f1f5f9; /* Fondo suave para checkboxes en modo claro */
+    --sidebar-card-bg: #f8fafc; /* Fondo sutil para tarjetas laterales en modo claro */
   }
 
-  /* TEMA OSCURO */
+  /* TEMA OSCURO (Por defecto gracias a class="dark" en html) */
   .dark {
     --bg: #0f172a;
     --text-main: #f8fafc;
     --text-muted: #94a3b8;
     --card-bg: #1e293b;
     --border-color: #334155;
-    --input-bg: #1e293b;
+    --input-bg: #334155;
     --input-border: #475569;
+    --checkbox-bg: #334155;
+    --sidebar-card-bg: #1e293b;
   }
 
   * { font-family: 'Inter', sans-serif; box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
@@ -122,11 +126,21 @@
   .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #0d9488; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-  /* Inputs y Selects en Modo Oscuro */
-  .dark input, .dark select, .dark textarea {
-    background: var(--input-bg) !important;
-    border-color: var(--input-border) !important;
-    color: var(--text-main) !important;
+  /* Inputs y Selects */
+  input, select, textarea {
+    background: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-main);
+  }
+  
+  /* Checkboxes y Labels de preferencias */
+  label.flex.items-center.gap-2.p-2.border {
+    background: var(--checkbox-bg);
+  }
+
+  /* Tarjetas laterales de información */
+  .info-card {
+    background: var(--sidebar-card-bg);
   }
   
   /* Botones de navegación en modo oscuro */
@@ -140,7 +154,7 @@
 <div id="authScreen" class="auth-screen hidden">
   <div class="auth-card">
     <div class="text-center mb-6">
-      <div class="inline-flex w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl items-center justify-center text-3xl mb-3 shadow-lg">🥗</div>
+      <div class="inline-flex w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl items-center justify-center text-3xl mb-3 shadow-lg"></div>
       <h1 class="text-2xl font-bold text-slate-800 dark:text-white">NutriPro</h1>
       <p class="text-sm text-slate-500 mt-1 dark:text-slate-400">Nutrición Clínica · Déficit Sostenible</p>
     </div>
@@ -215,7 +229,7 @@
       <div class="flex items-center gap-3">
         <!-- TOGGLE MODO OSCURO -->
         <button id="darkModeToggle" class="w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Cambiar tema">
-          <span id="darkModeIcon">🌙</span>
+          <span id="darkModeIcon">☀️</span>
         </button>
 
         <div class="hidden md:flex items-center gap-2 text-xs">
@@ -343,16 +357,21 @@
         <div class="font-semibold text-slate-500">Espacio publicitario lateral</div>
         <div class="text-xs mt-1">No interfiere con la navegación</div>
       </div>
-      <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
+      
+      <!-- Tarjeta Filosofía -->
+      <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
         <div class="text-3xl mb-2"></div>
         <h4 class="font-bold text-slate-800 dark:text-white mb-2">Filosofía NutriPro</h4>
         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Rechazamos las dietas milagro. Nuestro enfoque se basa en el <strong>Déficit Calórico Sostenible</strong> y la <strong>Reeducación Alimentaria</strong>.</p>
       </div>
-      <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      
+      <!-- Tarjeta Sustituciones -->
+      <div class="info-card bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
         <div class="text-3xl mb-2">🔄</div>
         <h4 class="font-bold text-slate-800 dark:text-white mb-2">Sustituciones inteligentes</h4>
         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">¿No encuentras un ingrediente? Haz clic sobre él y te sugeriremos <strong>alternativas con aporte nutricional equivalente</strong>.</p>
       </div>
+      
       <div class="alert-warning rounded-xl p-4">
         <p class="text-xs"><strong>️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
       </div>
@@ -367,7 +386,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Tus cifras clave calculadas con base científica.</p>
   </div>
   <div id="dashboardNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4">📊</div>
+    <div class="text-6xl mb-4"></div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Aún no has completado la evaluación</h3>
     <p class="text-slate-600 dark:text-slate-400 mb-6">Ve a la sección de Evaluación para calcular tus métricas.</p>
     <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
@@ -505,7 +524,7 @@
           <button onclick="agregarPeso()" class="w-full bg-teal-600 text-white py-2 rounded-lg font-semibold hover:bg-teal-700">+ Añadir registro</button>
         </div>
       </div>
-      <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
+      <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
         <div class="text-2xl mb-2">💬</div>
         <p class="text-sm text-slate-700 dark:text-slate-300" id="feedbackTexto">Registra tu primer peso para comenzar el análisis.</p>
       </div>
@@ -552,7 +571,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Comparativa semanal y proyección para el próximo mes.</p>
   </div>
   <div id="analisisNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4">🎯</div>
+    <div class="text-6xl mb-4"></div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Necesitas al menos 4 semanas de datos</h3>
     <p class="text-slate-600 dark:text-slate-400">Registra tu peso semanalmente para obtener un análisis completo.</p>
   </div>
@@ -575,7 +594,7 @@
       <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Evolución por semanas</h3>
       <canvas id="chartSemanal" height="120"></canvas>
     </div>
-    <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
+    <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
       <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-3">🔮 Proyección próximo mes</h3>
       <div id="proyeccionTexto" class="text-slate-700 dark:text-slate-300"></div>
     </div>
@@ -606,7 +625,7 @@
       </div>
     </div>
     <div class="space-y-4">
-      <div class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
+      <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
         <div class="text-3xl mb-2">🤝</div>
         <h4 class="font-bold text-slate-800 dark:text-white mb-2">Normas de la comunidad</h4>
         <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
@@ -720,7 +739,7 @@
 <footer class="max-w-7xl mx-auto px-6 py-8 mt-4 border-t border-slate-200 dark:border-slate-700">
   <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
     <div> NutriPro · Nutrición basada en evidencia científica</div>
-    <div>⚕️ Esta herramienta no sustituye la consulta médica profesional</div>
+    <div>️ Esta herramienta no sustituye la consulta médica profesional</div>
   </div>
 </footer>
 </div>
@@ -773,11 +792,18 @@ function initDarkMode() {
   const icon = document.getElementById('darkModeIcon');
   const html = document.documentElement;
   
-  // Cargar preferencia guardada
+  // Cargar preferencia guardada (por defecto es oscuro si no hay nada guardado)
   const savedTheme = localStorage.getItem('nutripro-theme');
-  if (savedTheme === 'dark') {
+  
+  // Si NO hay nada guardado, forzamos oscuro por defecto
+  if (!savedTheme || savedTheme === 'dark') {
     html.classList.add('dark');
     icon.textContent = '☀️';
+    localStorage.setItem('nutripro-theme', 'dark');
+  } else {
+    // Si el usuario guardó 'light', lo aplicamos
+    html.classList.remove('dark');
+    icon.textContent = '🌙';
   }
   
   // Toggle event
@@ -1355,7 +1381,7 @@ function renderMenu() {
                 ${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}
               </div>
             </div>
-            <div class="swap-icon flex-shrink-0 w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm">🔄</span></div>
+            <div class="swap-icon flex-shrink-0 w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm"></span></div>
           </div>
           ${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}
         </div>
@@ -1378,7 +1404,7 @@ function renderMenu() {
         ${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '')}
         ${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '')}
         ${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '')}
-        ${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '🍎')}
+        ${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '')}
         ${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '')}
         ${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '')}
       </div>
@@ -1472,7 +1498,7 @@ document.getElementById('modalSustitucion').addEventListener('click', (e) => {
 function categorizarIngrediente(ing) {
   const lower = ing.toLowerCase();
   if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|tempeh|lentejas|garbanzos|alubias|yogur|queso|bacalao|dorada|gambas|ternera|conejo|kéfir/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
-  if (/arroz|quinoa|pasta|batata|patata|avena|pan|cuscús|mijo|bulgur|trigo|espelta|boniato|tostadas/.test(lower)) return { cat: '🍚 Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
+  if (/arroz|quinoa|pasta|batata|patata|avena|pan|cuscús|mijo|bulgur|trigo|espelta|boniato|tostadas/.test(lower)) return { cat: ' Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
   if (/aceite|aguacate|almendra|nueces|chía|lino|cacahuete|pistacho|anacardo|calabaza|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
   if (/manzana|plátano|frutos rojos|membrillo|naranja|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
   if (/brócoli|espinaca|tomate|pepino|zanahoria|pimiento|calabacín|judía|coliflor|espárrago|cebolla|lechuga|acelgas|berenjena|champiñón|kale|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
@@ -1577,7 +1603,7 @@ function exportarMenuPDF() {
     yPos = doc.lastAutoTable.finalY + 6;
   });
   doc.save(`Menu_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast('📄 Menú exportado a PDF');
+  mostrarToast(' Menú exportado a PDF');
 }
 
 function exportarCompraPDF() {
