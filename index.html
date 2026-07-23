@@ -396,7 +396,6 @@
         <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">IMC</div>
         <div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="metricIMC">—</div>
         <div class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="metricIMCCat">Categoría</div>
-        <!-- PESO IDEAL: IMC ideal 22 → peso ideal ± 1.5 kg -->
         <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-600">
           <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Peso Ideal <span class="normal-case font-normal">(IMC 22 ± 1.5 kg)</span></div>
           <div class="text-sm font-bold text-teal-600" id="metricPesoIdeal">—</div>
@@ -452,7 +451,6 @@
     <div class="text-6xl mb-4">️</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
   </div>
-  <!-- INDICADOR DE SEMANA DEL MENÚ -->
   <div id="weekIndicator" class="hidden mb-6 p-4 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-xl text-center">
     <span class="text-lg font-bold text-teal-700 dark:text-teal-300" id="weekText">Semana X de 4</span>
     <p class="text-sm text-teal-600 dark:text-teal-400 mt-1">Este menú rota automáticamente cada semana</p>
@@ -465,7 +463,7 @@
   <div class="flex justify-between items-start mb-6 flex-wrap gap-4">
     <div>
       <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Lista de la Compra</h2>
-      <p class="text-slate-600 dark:text-slate-400 mt-2">Organizada por categorías. Se actualiza con tus sustituciones. <strong>Imprímela en PDF.</strong></p>
+      <p class="text-slate-600 dark:text-slate-400 mt-2">Marca con ✓ los productos que <strong>te faltan en casa</strong>. El PDF incluirá <strong>únicamente los marcados</strong>.</p>
     </div>
     <button onclick="exportarCompraPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2"> PDF Lista de compra</button>
   </div>
@@ -988,13 +986,6 @@ function actualizarDashboard() {
   const catIMC = categoriaIMC(parseFloat(userData.imc));
   document.getElementById('metricIMCCat').textContent = catIMC.texto;
   document.getElementById('metricIMCCat').className = `text-xs font-semibold mt-1 ${catIMC.color}`;
-  
-  // =============================================
-  // PESO IDEAL CORREGIDO
-  // 1. IMC ideal = 22 (punto medio del rango saludable 18.5-24.9)
-  // 2. Peso ideal = IMC_ideal × altura²
-  // 3. Horquilla = peso_ideal ± 1.5 kg
-  // =============================================
   const alturaM = userData.altura / 100;
   const IMC_IDEAL = 22;
   const pesoIdeal = IMC_IDEAL * alturaM * alturaM;
@@ -1002,7 +993,6 @@ function actualizarDashboard() {
   const pesoIdealMax = (pesoIdeal + 1.5).toFixed(1);
   document.getElementById('metricPesoIdeal').textContent = `${pesoIdealMin} – ${pesoIdealMax} kg`;
   document.getElementById('metricPesoIdealDetalle').textContent = `Objetivo: ${pesoIdeal.toFixed(1)} kg (IMC ${IMC_IDEAL})`;
-
   const totalKcal = userData.protG * 4 + userData.grasasG * 9 + userData.carbG * 4;
   const pctProt = Math.round((userData.protG * 4 / totalKcal) * 100);
   const pctCarb = Math.round((userData.carbG * 4 / totalKcal) * 100);
@@ -1280,6 +1270,7 @@ function generarListaCompra() {
   renderListaCompra();
 }
 
+// TODOS los ingredientes del menú (para pintar la lista visual con checkboxes)
 function obtenerIngredientes() {
   const ingredientesTotales = {};
   menuData.menu.forEach(dia => {
@@ -1287,6 +1278,17 @@ function obtenerIngredientes() {
     items.forEach(lista => { if (!lista) return; lista.forEach(ing => { ingredientesTotales[ing] = (ingredientesTotales[ing] || 0) + 1; }); });
   });
   return ingredientesTotales;
+}
+
+// SOLO los ingredientes MARCADOS con el checkbox (= me faltan, los compro)
+function obtenerIngredientesParaCompra() {
+  const cantidades = obtenerIngredientes();
+  const resultado = {};
+  Object.keys(cantidades).forEach(ing => {
+    const chk = document.getElementById(`chk-${ing.replace(/\s+/g, '-')}`);
+    if (chk && chk.checked) resultado[ing] = cantidades[ing];
+  });
+  return resultado;
 }
 
 function renderListaCompra() {
@@ -1304,7 +1306,7 @@ function renderListaCompra() {
     const data = categorias[cat];
     const card = document.createElement('div');
     card.className = 'bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700';
-    card.innerHTML = `<div class="bg-gradient-to-r ${data.color} text-white p-4"><h3 class="font-bold">${cat}</h3><p class="text-xs opacity-90">${data.items.length} productos</p></div><ul class="p-4 space-y-2">${data.items.map(item => `<li class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-teal-600"><span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1)}</span><span class="text-xs text-slate-400">×${item.cantidad}</span></li>`).join('')}</ul>`;
+    card.innerHTML = `<div class="bg-gradient-to-r ${data.color} text-white p-4"><h3 class="font-bold">${cat}</h3><p class="text-xs opacity-90">${data.items.length} productos</p></div><ul class="p-4 space-y-2">${data.items.map(item => `<li class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer"><input type="checkbox" id="chk-${item.nombre.replace(/\s+/g, '-')}" class="w-4 h-4 accent-teal-600"><span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1)}</span><span class="text-xs text-slate-400">×${item.cantidad}</span></li>`).join('')}</ul>`;
     cont.appendChild(card);
   });
 }
@@ -1352,11 +1354,16 @@ function exportarMenuPDF() {
   mostrarToast(' Menú exportado a PDF');
 }
 
+// PDF DE COMPRA: SOLO los productos MARCADOS (los que te faltan)
 function exportarCompraPDF() {
   if (!menuData) { alert('Primero genera tu menú'); return; }
+  const ingredientes = obtenerIngredientesParaCompra();
+  if (Object.keys(ingredientes).length === 0) {
+    alert('No has marcado ningún producto. Marca con ✓ los productos que te faltan en casa para generar tu lista de la compra.');
+    return;
+  }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  const ingredientes = obtenerIngredientes();
   doc.setFillColor(13, 148, 136);
   doc.rect(0, 0, 210, 25, 'F');
   doc.setTextColor(255, 255, 255);
