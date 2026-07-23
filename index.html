@@ -1270,7 +1270,7 @@ function generarListaCompra() {
   renderListaCompra();
 }
 
-// TODOS los ingredientes del menú (para pintar la lista visual con checkboxes)
+// Lista visual: muestra TODOS los ingredientes del menú para que puedas marcar los que te faltan.
 function obtenerIngredientes() {
   const ingredientesTotales = {};
   menuData.menu.forEach(dia => {
@@ -1280,13 +1280,26 @@ function obtenerIngredientes() {
   return ingredientesTotales;
 }
 
-// SOLO los ingredientes MARCADOS con el checkbox (= me faltan, los compro)
+/* COMPRA_V3_DOM: el PDF incluye SOLO los ingredientes cuyo checkbox está marcado.
+   Lee DIRECTAMENTE del DOM (sin depender de ids con tildes/ñ), por lo que es
+   imposible que se desincronice: lo que marcas = lo que va al PDF. */
 function obtenerIngredientesParaCompra() {
-  const cantidades = obtenerIngredientes();
   const resultado = {};
-  Object.keys(cantidades).forEach(ing => {
-    const chk = document.getElementById(`chk-${ing.replace(/\s+/g, '-')}`);
-    if (chk && chk.checked) resultado[ing] = cantidades[ing];
+  const cont = document.getElementById('compraContent');
+  if (!cont) return resultado;
+  const checks = cont.querySelectorAll('input[type="checkbox"]');
+  checks.forEach(chk => {
+    if (!chk.checked) return;                 // solo los MARCADOS
+    const li = chk.closest('li');
+    if (!li) return;
+    const spanNombre = li.querySelector('span.flex-1');
+    if (!spanNombre) return;
+    const nombre = spanNombre.textContent.trim().toLowerCase(); // el texto visible, en minúsculas
+    if (!nombre) return;
+    const spanCant = li.querySelector('span.text-xs');
+    let cant = 1;
+    if (spanCant) { const m = spanCant.textContent.match(/×?\s*(\d+)/); if (m) cant = parseInt(m[1], 10) || 1; }
+    resultado[nombre] = (resultado[nombre] || 0) + cant;
   });
   return resultado;
 }
@@ -1306,7 +1319,7 @@ function renderListaCompra() {
     const data = categorias[cat];
     const card = document.createElement('div');
     card.className = 'bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700';
-    card.innerHTML = `<div class="bg-gradient-to-r ${data.color} text-white p-4"><h3 class="font-bold">${cat}</h3><p class="text-xs opacity-90">${data.items.length} productos</p></div><ul class="p-4 space-y-2">${data.items.map(item => `<li class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer"><input type="checkbox" id="chk-${item.nombre.replace(/\s+/g, '-')}" class="w-4 h-4 accent-teal-600"><span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1)}</span><span class="text-xs text-slate-400">×${item.cantidad}</span></li>`).join('')}</ul>`;
+    card.innerHTML = `<div class="bg-gradient-to-r ${data.color} text-white p-4"><h3 class="font-bold">${cat}</h3><p class="text-xs opacity-90">${data.items.length} productos</p></div><ul class="p-4 space-y-2">${data.items.map(item => `<li class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer"><input type="checkbox" class="compra-chk w-4 h-4 accent-teal-600"><span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1)}</span><span class="text-xs text-slate-400">×${item.cantidad}</span></li>`).join('')}</ul>`;
     cont.appendChild(card);
   });
 }
@@ -1354,7 +1367,7 @@ function exportarMenuPDF() {
   mostrarToast(' Menú exportado a PDF');
 }
 
-// PDF DE COMPRA: SOLO los productos MARCADOS (los que te faltan)
+// PDF DE COMPRA: SOLO los productos MARCADOS (los que te faltan).
 function exportarCompraPDF() {
   if (!menuData) { alert('Primero genera tu menú'); return; }
   const ingredientes = obtenerIngredientesParaCompra();
