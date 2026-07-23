@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NutriPro · Planificador de Nutrición Clínica</title>
+<title>NutriPro</title>
+
+<!-- 🟢 Logo, favicon y configuración de app móvil -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230d9488' rx='16'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle'%3E🥗%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230d9488' rx='16'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle'%3E🥗%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#0d9488">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NutriPro">
 
 <!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -606,7 +614,7 @@
   </div>
 </section>
 
-<!-- SALUD Y HÁBITOS (NUEVA PESTAÑA) -->
+<!-- SALUD Y HÁBITOS -->
 <section id="salud" class="tab-content">
   <div class="mb-6">
     <h2 class="text-3xl font-bold text-slate-800 dark:text-white">❤️ Salud y Hábitos</h2>
@@ -1306,7 +1314,6 @@ function obtenerIngredientes() {
   return ingredientesTotales;
 }
 
-/* COMPRA_V3_DOM: el PDF incluye SOLO los ingredientes cuyo checkbox está marcado. */
 function obtenerIngredientesParaCompra() {
   const resultado = {};
   const cont = document.getElementById('compraContent');
@@ -1458,7 +1465,7 @@ function exportarProgresoPDF() {
   try {
     const canvas = document.getElementById('chartPeso');
     if (canvas) {
-      const chartImage = canvas.toBase64Image();
+      const chartImage = canvas.toDataURL('image/png');
       doc.addImage(chartImage, 'PNG', 14, yPos + 50, 182, 100);
       yPos += 160;
     }
@@ -1473,9 +1480,6 @@ function exportarProgresoPDF() {
   mostrarToast('📈 Reporte de progreso exportado');
 }
 
-/* =====================================================================
-   ADICIÓN: EXPORTACIÓN AVANZADA DE PDF CON GRÁFICOS
-   ===================================================================== */
 function crearGraficoBase64(buildConfig, w, h) {
   try {
     if (typeof Chart === 'undefined') return null;
@@ -1587,9 +1591,6 @@ function exportarInformeCompletoPDF() {
   mostrarToast('📊 Informe completo exportado');
 }
 
-/* =====================================================================
-   ADICIÓN: SECCIÓN SALUD Y HÁBITOS (8 tarjetas con vídeos por búsqueda)
-   ===================================================================== */
 const HABITOS_SALUD = [
   { icon: '🚭', titulo: 'Dejar de fumar',
     texto: 'El tabaco daña prácticamente todos los órganos: aumenta el riesgo cardiovascular y de cáncer, reduce la capacidad pulmonar y empeora el gusto y el olfato. Dejarlo mejora la circulación en pocas semanas y reduce el riesgo a largo plazo. Además, fumar altera el apetito y la ansiedad, lo que dificulta seguir un plan nutricional.',
