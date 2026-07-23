@@ -273,7 +273,7 @@
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="seguimiento">📈 Seguimiento</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis"> Análisis</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios"> Comunidad</button>
     </div>
   </nav>
 </header>
@@ -407,6 +407,11 @@
         <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">IMC</div>
         <div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="metricIMC">—</div>
         <div class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="metricIMCCat">Categoría</div>
+        <!-- NUEVO: PESO IDEAL CON RANGO DE 3 KG -->
+        <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-600">
+          <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Peso Ideal</div>
+          <div class="text-sm font-bold text-teal-600" id="metricPesoIdeal">—</div>
+        </div>
       </div>
     </div>
     <div class="grid lg:grid-cols-2 gap-6">
@@ -454,8 +459,13 @@
     </div>
   </div>
   <div id="menuNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4">🍽️</div>
+    <div class="text-6xl mb-4">️</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
+  </div>
+  <!-- NUEVO INDICADOR DE SEMANA DEL MENÚ -->
+  <div id="weekIndicator" class="hidden mb-6 p-4 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-xl text-center">
+    <span class="text-lg font-bold text-teal-700 dark:text-teal-300" id="weekText">Semana X de 4</span>
+    <p class="text-sm text-teal-600 dark:text-teal-400 mt-1">Este menú rota automáticamente cada semana</p>
   </div>
   <div id="menuContent" class="hidden grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
 </section>
@@ -802,13 +812,13 @@ function initDarkMode() {
     localStorage.setItem('nutripro-theme', 'dark');
   } else {
     html.classList.remove('dark');
-    icon.textContent = '🌙';
+    icon.textContent = '';
   }
   
   toggle.addEventListener('click', () => {
     html.classList.toggle('dark');
     const isDark = html.classList.contains('dark');
-    icon.textContent = isDark ? '☀️' : '🌙';
+    icon.textContent = isDark ? '☀️' : '';
     localStorage.setItem('nutripro-theme', isDark ? 'dark' : 'light');
     
     if (chartPeso) renderChartPeso();
@@ -921,7 +931,7 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
   });
 
   if (error) {
-    err.textContent = '❌ ' + error.message;
+    err.textContent = ' ' + error.message;
     err.classList.remove('hidden');
   } else {
     location.reload();
@@ -1166,6 +1176,13 @@ function actualizarDashboard() {
   const catIMC = categoriaIMC(parseFloat(userData.imc));
   document.getElementById('metricIMCCat').textContent = catIMC.texto;
   document.getElementById('metricIMCCat').className = `text-xs font-semibold mt-1 ${catIMC.color}`;
+  
+  // CÁLCULO Y VISUALIZACIÓN DEL PESO IDEAL (Rango de 3kg: +/- 1.5kg del peso medio ideal)
+  const alturaM = userData.altura / 100;
+  const pesoIdealMin = (18.5 * alturaM * alturaM).toFixed(1);
+  const pesoIdealMax = (24.9 * alturaM * alturaM).toFixed(1);
+  document.getElementById('metricPesoIdeal').textContent = `${pesoIdealMin} - ${pesoIdealMax} kg`;
+
   const totalKcal = userData.protG * 4 + userData.grasasG * 9 + userData.carbG * 4;
   const pctProt = Math.round((userData.protG * 4 / totalKcal) * 100);
   const pctCarb = Math.round((userData.carbG * 4 / totalKcal) * 100);
@@ -1293,220 +1310,76 @@ function getGrupoById(id) {
 }
 function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+// FUNCIÓN CORREGIDA: GENERAR 4 MENÚS SEMANALES QUE ROTAN SEGÚN LA FECHA ACTUAL
 function generarMenu() {
-  if (!userData) return;
-  document.getElementById('menuNoData').classList.add('hidden');
+  if (!userData) return; 
+  document.getElementById('menuNoData').classList.add('hidden'); 
   document.getElementById('menuContent').classList.remove('hidden');
+  document.getElementById('weekIndicator').classList.remove('hidden'); 
+  
+  // Obtener la semana actual del año (0-51) y calcular el índice del menú (0-3)
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now - start + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
+  const oneDay = 1000 * 60 * 60 * 24;
+  const dayOfYear = Math.floor(diff / oneDay);
+  const menuIndex = Math.floor(dayOfYear / 7) % 4; 
+  
+  // Actualizar texto del indicador
+  document.getElementById('weekText').textContent = `Semana ${menuIndex + 1} de 4`;
+  
   const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-  const menu = [];
-  dias.forEach((dia) => {
-    const desayuno = pickRandom(GRUPO_DESAYUNOS);
-    const comida_prot = pickRandom(GRUPO_PROTEINAS);
-    const comida_carb = pickRandom(GRUPO_CARBOS);
-    const comida_verd = pickRandom(GRUPO_VERDURAS);
-    const comida_grasa = pickRandom(GRUPO_GRASAS);
-    const merienda = pickRandom(GRUPO_MERIENDAS);
-    const cena_prot = pickRandom(GRUPO_PROTEINAS.filter(p => p.id !== comida_prot.id));
-    const cena_verd = pickRandom(GRUPO_VERDURAS.filter(v => v.id !== comida_verd.id));
-    menu.push({
-      dia, desayuno: { ...desayuno },
-      comida: { prot: { ...comida_prot }, carb: { ...comida_carb }, verdura: { ...comida_verd }, grasa: { ...comida_grasa } },
-      merienda: { ...merienda },
-      cena: { prot: { ...cena_prot }, verdura: { ...cena_verd } }
+  const menus = [];
+  
+  // Generar 4 menús completos
+  for (let m = 0; m < 4; m++) {
+    const menu = [];
+    dias.forEach((dia) => {
+      const desayuno = pickRandom(GRUPO_DESAYUNOS); const comida_prot = pickRandom(GRUPO_PROTEINAS); const comida_carb = pickRandom(GRUPO_CARBOS);
+      const comida_verd = pickRandom(GRUPO_VERDURAS); const comida_grasa = pickRandom(GRUPO_GRASAS); const merienda = pickRandom(GRUPO_MERIENDAS);
+      const cena_prot = pickRandom(GRUPO_PROTEINAS.filter(p => p.id !== comida_prot.id)); const cena_verd = pickRandom(GRUPO_VERDURAS.filter(v => v.id !== comida_verd.id));
+      menu.push({ dia, desayuno: { ...desayuno }, comida: { prot: { ...comida_prot }, carb: { ...comida_carb }, verdura: { ...comida_verd }, grasa: { ...comida_grasa } }, merienda: { ...merienda }, cena: { prot: { ...cena_prot }, verdura: { ...cena_verd } } });
     });
-  });
-  menuData = { menu };
-  aplicarSustitucionesGuardadas();
-  renderMenu();
-  renderListaCompra();
+    menus.push(menu);
+  }
+  
+  // Usar el menú correspondiente a la semana actual
+  menuData = { menu: menus[menuIndex], menuIndex: menuIndex, allMenus: menus };
+  aplicarSustitucionesGuardadas(); renderMenu(); renderListaCompra();
 }
 
-function aplicarSustitucionesGuardadas() {
-  if (!menuData) return;
-  Object.keys(sustituciones).forEach(key => {
-    const [diaIdx, path] = key.split('|');
-    const nuevoId = sustituciones[key];
-    const nuevo = MAPA_ALIMENTOS[nuevoId];
-    if (!nuevo) return;
-    const dia = menuData.menu[parseInt(diaIdx)];
-    if (!dia) return;
-    const partes = path.split('.');
-    let obj = dia;
-    for (let i = 0; i < partes.length - 1; i++) obj = obj[partes[i]];
-    obj[partes[partes.length - 1]] = { ...nuevo };
-  });
-}
-
-function calcularKcalDia(dia) {
-  return Math.round(dia.desayuno.kcal + dia.comida.prot.kcal + dia.comida.carb.kcal + dia.comida.verdura.kcal + dia.comida.grasa.kcal + dia.merienda.kcal + dia.cena.prot.kcal + dia.cena.verdura.kcal);
-}
-
+function aplicarSustitucionesGuardadas() { if (!menuData) return; Object.keys(sustituciones).forEach(key => { const [diaIdx, path] = key.split('|'); const nuevoId = sustituciones[key]; const nuevo = MAPA_ALIMENTOS[nuevoId]; if (!nuevo) return; const dia = menuData.menu[parseInt(diaIdx)]; if (!dia) return; const partes = path.split('.'); let obj = dia; for (let i = 0; i < partes.length - 1; i++) obj = obj[partes[i]]; obj[partes[partes.length - 1]] = { ...nuevo }; }); }
+function calcularKcalDia(dia) { return Math.round(dia.desayuno.kcal + dia.comida.prot.kcal + dia.comida.carb.kcal + dia.comida.verdura.kcal + dia.comida.grasa.kcal + dia.merienda.kcal + dia.cena.prot.kcal + dia.cena.verdura.kcal); }
 function regenerarMenu() { sustituciones = {}; generarMenu(); }
-function resetSustituciones() {
-  if (!confirm('¿Restaurar el menú original?')) return;
-  sustituciones = {}; generarMenu();
-}
+function resetSustituciones() { if (!confirm('¿Restaurar el menú original?')) return; sustituciones = {}; generarMenu(); }
 
 function renderMenu() {
-  const cont = document.getElementById('menuContent');
-  cont.innerHTML = '';
+  const cont = document.getElementById('menuContent'); cont.innerHTML = '';
   menuData.menu.forEach((dia, diaIdx) => {
-    const kcalTotales = calcularKcalDia(dia);
-    const card = document.createElement('div');
-    card.className = 'meal-card rounded-2xl p-5 shadow-sm';
+    const kcalTotales = calcularKcalDia(dia); const card = document.createElement('div'); card.className = 'meal-card rounded-2xl p-5 shadow-sm';
     const foodItemHTML = (item, path, label, color, emoji) => {
-      const key = `${diaIdx}|${path}`;
-      const isSub = sustituciones[key] !== undefined;
-      return `
-        <div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')">
-          <div class="flex justify-between items-start gap-2">
-            <div class="flex-1 min-w-0">
-              <div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div>
-              <div class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-snug">${item.nombre}</div>
-              <div class="flex gap-1 mt-1.5 flex-wrap">
-                <span class="macro-chip bg-white/70 dark:bg-slate-700 text-slate-700 dark:text-slate-300"> ${item.kcal} kcal</span>
-                ${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}
-              </div>
-            </div>
-            <div class="swap-icon flex-shrink-0 w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm"></span></div>
-          </div>
-          ${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}
-        </div>
-      `;
+      const key = `${diaIdx}|${path}`; const isSub = sustituciones[key] !== undefined;
+      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-snug">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap"><span class="macro-chip bg-white/70 dark:bg-slate-700 text-slate-700 dark:text-slate-300"> ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="swap-icon flex-shrink-0 w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm"></span></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
     };
-    card.innerHTML = `
-      <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
-        <div>
-          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div>
-          <div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div>
-        </div>
-        <div class="text-right">
-          <div class="text-xs text-slate-500 dark:text-slate-400">Total</div>
-          <div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div>
-        </div>
-      </div>
-      <div class="space-y-2">
-        ${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300', '️')}
-        ${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300', '🥩')}
-        ${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '')}
-        ${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '')}
-        ${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '')}
-        ${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '')}
-        ${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '')}
-        ${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '')}
-      </div>
-    `;
+    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500 dark:text-slate-400">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300', '️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '')}</div>`;
     cont.appendChild(card);
   });
 }
 
-function abrirModalSustitucion(diaIdx, path, currentId) {
-  const current = MAPA_ALIMENTOS[currentId];
-  if (!current) return;
-  const grupo = getGrupoById(currentId);
-  if (grupo.length <= 1) return;
-  currentSwap = { diaIdx, path, currentId };
-  document.getElementById('modalTitulo').textContent = `Sustituir: ${current.nombre}`;
-  const grupoNombre = { 'prot': 'Proteínas', 'carb': 'Carbohidratos', 'verd': 'Verduras', 'grasa': 'Grasas', 'des': 'Desayunos', 'mer': 'Meriendas' };
-  document.getElementById('modalSubtitulo').textContent = `Grupo: ${grupoNombre[current.grupo]} · ${grupo.length} alternativas`;
-  const cont = document.getElementById('modalOpciones');
-  cont.innerHTML = '';
-  const ordenados = [...grupo].sort((a, b) => {
-    if (a.id === currentId) return -1;
-    if (b.id === currentId) return 1;
-    return Math.abs(a.kcal - current.kcal) - Math.abs(b.kcal - current.kcal);
-  });
-  ordenados.forEach(alim => {
-    const isCurrent = alim.id === currentId;
-    const diffKcal = alim.kcal - current.kcal;
-    const opt = document.createElement('div');
-    opt.className = `sub-option p-4 border-2 rounded-xl ${isCurrent ? 'current border-green-300' : 'border-slate-200 dark:border-slate-700'}`;
-    opt.innerHTML = `
-      <div class="flex justify-between items-start gap-3">
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1 flex-wrap">
-            <span class="font-bold text-slate-800 dark:text-white">${alim.nombre}</span>
-            ${isCurrent ? '<span class="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">ACTUAL</span>' : ''}
-          </div>
-          <div class="flex gap-1.5 flex-wrap mt-2">
-            <span class="macro-chip bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300"> ${alim.kcal} kcal</span>
-            ${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}
-            ${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' : 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}
-          </div>
-        </div>
-        ${!isCurrent ? `<button class="flex-shrink-0 bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir →</button>` : ''}
-      </div>
-    `;
-    if (!isCurrent) opt.addEventListener('click', () => aplicarSustitucion(alim.id));
-    cont.appendChild(opt);
-  });
-  document.getElementById('modalSustitucion').classList.remove('hidden');
-}
+function abrirModalSustitucion(diaIdx, path, currentId) { const current = MAPA_ALIMENTOS[currentId]; if (!current) return; const grupo = getGrupoById(currentId); if (grupo.length <= 1) return; currentSwap = { diaIdx, path, currentId }; document.getElementById('modalTitulo').textContent = `Sustituir: ${current.nombre}`; const grupoNombre = { 'prot': 'Proteínas', 'carb': 'Carbohidratos', 'verd': 'Verduras', 'grasa': 'Grasas', 'des': 'Desayunos', 'mer': 'Meriendas' }; document.getElementById('modalSubtitulo').textContent = `Grupo: ${grupoNombre[current.grupo]} · ${grupo.length} alternativas`; const cont = document.getElementById('modalOpciones'); cont.innerHTML = ''; const ordenados = [...grupo].sort((a, b) => { if (a.id === currentId) return -1; if (b.id === currentId) return 1; return Math.abs(a.kcal - current.kcal) - Math.abs(b.kcal - current.kcal); }); ordenados.forEach(alim => { const isCurrent = alim.id === currentId; const diffKcal = alim.kcal - current.kcal; const opt = document.createElement('div'); opt.className = `sub-option p-4 border-2 rounded-xl ${isCurrent ? 'current border-green-300' : 'border-slate-200 dark:border-slate-700'}`; opt.innerHTML = `<div class="flex justify-between items-start gap-3"><div class="flex-1 min-w-0"><div class="flex items-center gap-2 mb-1 flex-wrap"><span class="font-bold text-slate-800 dark:text-white">${alim.nombre}</span>${isCurrent ? '<span class="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">ACTUAL</span>' : ''}</div><div class="flex gap-1.5 flex-wrap mt-2"><span class="macro-chip bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">🔥 ${alim.kcal} kcal</span>${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' : 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}</div></div>${!isCurrent ? `<button class="flex-shrink-0 bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir →</button>` : ''}</div>`; if (!isCurrent) opt.addEventListener('click', () => aplicarSustitucion(alim.id)); cont.appendChild(opt); }); document.getElementById('modalSustitucion').classList.remove('hidden'); }
+function cerrarModal() { document.getElementById('modalSustitucion').classList.add('hidden'); currentSwap = null; }
+function aplicarSustitucion(nuevoId) { if (!currentSwap || !menuData) return; const { diaIdx, path } = currentSwap; const nuevo = MAPA_ALIMENTOS[nuevoId]; const dia = menuData.menu[diaIdx]; const partes = path.split('.'); let obj = dia; for (let i = 0; i < partes.length - 1; i++) obj = obj[partes[i]]; obj[partes[partes.length - 1]] = { ...nuevo }; const key = `${diaIdx}|${path}`; sustituciones[key] = nuevoId; cerrarModal(); renderMenu(); renderListaCompra(); mostrarToast(`✓ ${nuevo.nombre} sustituido`); }
+function mostrarToast(mensaje) { const toast = document.createElement('div'); toast.className = 'fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl z-[200] font-semibold text-sm'; toast.style.animation = 'fadeIn 0.3s ease-out'; toast.textContent = mensaje; document.body.appendChild(toast); setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 2200); }
+document.getElementById('modalSustitucion').addEventListener('click', (e) => { if (e.target.id === 'modalSustitucion') cerrarModal(); });
 
-function cerrarModal() {
-  document.getElementById('modalSustitucion').classList.add('hidden');
-  currentSwap = null;
-}
-
-function aplicarSustitucion(nuevoId) {
-  if (!currentSwap || !menuData) return;
-  const { diaIdx, path } = currentSwap;
-  const nuevo = MAPA_ALIMENTOS[nuevoId];
-  const dia = menuData.menu[diaIdx];
-  const partes = path.split('.');
-  let obj = dia;
-  for (let i = 0; i < partes.length - 1; i++) obj = obj[partes[i]];
-  obj[partes[partes.length - 1]] = { ...nuevo };
-  const key = `${diaIdx}|${path}`;
-  sustituciones[key] = nuevoId;
-  cerrarModal();
-  renderMenu();
-  renderListaCompra();
-  mostrarToast(`✓ ${nuevo.nombre} sustituido`);
-}
-
-function mostrarToast(mensaje) {
-  const toast = document.createElement('div');
-  toast.className = 'fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl z-[200] font-semibold text-sm';
-  toast.style.animation = 'fadeIn 0.3s ease-out';
-  toast.textContent = mensaje;
-  document.body.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transition = 'opacity 0.3s';
-    setTimeout(() => toast.remove(), 300);
-  }, 2200);
-}
-
-document.getElementById('modalSustitucion').addEventListener('click', (e) => {
-  if (e.target.id === 'modalSustitucion') cerrarModal();
-});
-
-function categorizarIngrediente(ing) {
-  const lower = ing.toLowerCase();
-  if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|tempeh|lentejas|garbanzos|alubias|yogur|queso|bacalao|dorada|gambas|ternera|conejo|kéfir/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
-  if (/arroz|quinoa|pasta|batata|patata|avena|pan|cuscús|mijo|bulgur|trigo|espelta|boniato|tostadas/.test(lower)) return { cat: ' Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
-  if (/aceite|aguacate|almendra|nueces|chía|lino|cacahuete|pistacho|anacardo|calabaza|aceituna/.test(lower)) return { cat: ' Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
-  if (/manzana|plátano|frutos rojos|membrillo|naranja|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
-  if (/brócoli|espinaca|tomate|pepino|zanahoria|pimiento|calabacín|judía|coliflor|espárrago|cebolla|lechuga|acelgas|berenjena|champiñón|kale|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
-  return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
-}
-
-function generarListaCompra() {
-  if (!menuData) return;
-  document.getElementById('compraNoData').classList.add('hidden');
-  document.getElementById('compraContent').classList.remove('hidden');
-  renderListaCompra();
-}
+function categorizarIngrediente(ing) { const lower = ing.toLowerCase(); if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|tempeh|lentejas|garbanzos|alubias|yogur|queso|bacalao|dorada|gambas|ternera|conejo|kéfir/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' }; if (/arroz|quinoa|pasta|batata|patata|avena|pan|cuscús|mijo|bulgur|trigo|espelta|boniato|tostadas/.test(lower)) return { cat: ' Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' }; if (/aceite|aguacate|almendra|nueces|chía|lino|cacahuete|pistacho|anacardo|calabaza|aceituna/.test(lower)) return { cat: ' Grasas Saludables', color: 'from-emerald-500 to-teal-500' }; if (/manzana|plátano|frutos rojos|membrillo|naranja|pasas/.test(lower)) return { cat: ' Frutas', color: 'from-red-500 to-rose-500' }; if (/brócoli|espinaca|tomate|pepino|zanahoria|pimiento|calabacín|judía|coliflor|espárrago|cebolla|lechuga|acelgas|berenjena|champiñón|kale|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' }; return { cat: ' Otros', color: 'from-blue-500 to-cyan-500' }; }
+function generarListaCompra() { if (!menuData) return; document.getElementById('compraNoData').classList.add('hidden'); document.getElementById('compraContent').classList.remove('hidden'); renderListaCompra(); }
 
 function obtenerIngredientes() {
   const ingredientesTotales = {};
   menuData.menu.forEach(dia => {
     const items = [dia.desayuno.ing, dia.comida.prot.ing, dia.comida.carb.ing, dia.comida.verdura.ing, dia.comida.grasa.ing, dia.merienda.ing, dia.cena.prot.ing, dia.cena.verdura.ing];
-    items.forEach(lista => {
-      if (!lista) return;
-      lista.forEach(ing => { ingredientesTotales[ing] = (ingredientesTotales[ing] || 0) + 1; });
-    });
+    items.forEach(lista => { if (!lista) return; lista.forEach(ing => { ingredientesTotales[ing] = (ingredientesTotales[ing] || 0) + 1; }); });
   });
   return ingredientesTotales;
 }
@@ -1514,412 +1387,47 @@ function obtenerIngredientes() {
 function renderListaCompra() {
   if (!menuData) return;
   const ingredientesTotales = obtenerIngredientes();
-  const cont = document.getElementById('compraContent');
-  cont.innerHTML = '';
-  const categorias = {};
-  Object.keys(ingredientesTotales).forEach(ing => {
-    const { cat, color } = categorizarIngrediente(ing);
-    if (!categorias[cat]) categorias[cat] = { color, items: [] };
-    categorias[cat].items.push({ nombre: ing, cantidad: ingredientesTotales[ing] });
+  const cont = document.getElementById('compraContent'); cont.innerHTML = ''; const categorias = {};
+  Object.keys(ingredientesTotales).forEach(ing => { 
+    const { cat, color } = categorizarIngrediente(ing); 
+    if (!categorias[cat]) categorias[cat] = { color, items: [] }; 
+    categorias[cat].items.push({ nombre: ing, cantidad: ingredientesTotales[ing] }); 
   });
-  Object.keys(categorias).sort().forEach(cat => {
-    const data = categorias[cat];
-    const card = document.createElement('div');
-    card.className = 'bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700';
-    card.innerHTML = `
-      <div class="bg-gradient-to-r ${data.color} text-white p-4">
-        <h3 class="font-bold">${cat}</h3>
-        <p class="text-xs opacity-90">${data.items.length} productos</p>
-      </div>
-      <ul class="p-4 space-y-2">
-        ${data.items.map(item => `
-          <li class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer">
-            <input type="checkbox" class="w-4 h-4 accent-teal-600">
-            <span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1)}</span>
-            <span class="text-xs text-slate-400">×${item.cantidad}</span>
-          </li>
-        `).join('')}
-      </ul>
-    `;
-    cont.appendChild(card);
+  Object.keys(categorias).sort().forEach(cat => { 
+    const data = categorias[cat]; 
+    const card = document.createElement('div'); 
+    card.className = 'bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700'; 
+    card.innerHTML = `<div class="bg-gradient-to-r ${data.color} text-white p-4"><h3 class="font-bold">${cat}</h3><p class="text-xs opacity-90">${data.items.length} productos</p></div><ul class="p-4 space-y-2">${data.items.map(item => `<li class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-teal-600"><span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1)}</span><span class="text-xs text-slate-400">×${item.cantidad}</span></li>`).join('')}</ul>`; 
+    cont.appendChild(card); 
   });
 }
 
-function exportarMenuPDF() {
-  if (!menuData) { alert('Primero genera tu menú'); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFillColor(13, 148, 136);
-  doc.rect(0, 0, 210, 25, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
-  doc.text('NutriPro · Menú Semanal', 14, 16);
-  doc.setTextColor(50, 50, 50);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.text(`Generado para: ${currentUser.nombre} · ${new Date().toLocaleDateString('es-ES')}`, 14, 32);
-  if (userData) doc.text(`Objetivo: ${userData.caloriasObjetivo} kcal/día`, 14, 38);
-  let yPos = 48;
-  menuData.menu.forEach((dia) => {
-    if (yPos > 250) { doc.addPage(); yPos = 20; }
-    const kcalTotales = calcularKcalDia(dia);
-    doc.setFillColor(240, 253, 250);
-    doc.rect(14, yPos - 5, 182, 8, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.setTextColor(13, 148, 136);
-    doc.text(`${dia.dia} · ${kcalTotales} kcal`, 16, yPos);
-    yPos += 6;
-    const rows = [
-      ['Desayuno', dia.desayuno.nombre, dia.desayuno.kcal + ' kcal'],
-      ['Comida (prot)', dia.comida.prot.nombre, dia.comida.prot.kcal + ' kcal'],
-      ['Comida (carb)', dia.comida.carb.nombre, dia.comida.carb.kcal + ' kcal'],
-      ['Comida (verdura)', dia.comida.verdura.nombre, dia.comida.verdura.kcal + ' kcal'],
-      ['Comida (grasa)', dia.comida.grasa.nombre, dia.comida.grasa.kcal + ' kcal'],
-      ['Merienda', dia.merienda.nombre, dia.merienda.kcal + ' kcal'],
-      ['Cena (prot)', dia.cena.prot.nombre, dia.cena.prot.kcal + ' kcal'],
-      ['Cena (verdura)', dia.cena.verdura.nombre, dia.cena.verdura.kcal + ' kcal']
-    ];
-    doc.autoTable({
-      startY: yPos, head: [['Momento', 'Alimento', 'Calorías']], body: rows,
-      theme: 'striped', headStyles: { fillColor: [13, 148, 136], fontSize: 9 },
-      bodyStyles: { fontSize: 8.5 }, margin: { left: 14, right: 14 },
-      columnStyles: { 0: { cellWidth: 35 }, 2: { cellWidth: 25, halign: 'right' } }
-    });
-    yPos = doc.lastAutoTable.finalY + 6;
-  });
-  doc.save(`Menu_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast(' Menú exportado a PDF');
+function exportarMenuPDF() { 
+  if (!menuData) { alert('Primero genera tu menú'); return; } 
+  const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.setFillColor(13, 148, 136); doc.rect(0, 0, 210, 25, 'F'); doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.setFont('helvetica', 'bold'); doc.text(`NutriPro · Menú Semanal (Semana ${menuData.menuIndex + 1}/4)`, 14, 16); doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.text(`Generado para: ${currentUser.nombre} · ${new Date().toLocaleDateString('es-ES')}`, 14, 32); if (userData) doc.text(`Objetivo: ${userData.caloriasObjetivo} kcal/día`, 14, 38); let yPos = 48; menuData.menu.forEach((dia) => { if (yPos > 250) { doc.addPage(); yPos = 20; } const kcalTotales = calcularKcalDia(dia); doc.setFillColor(240, 253, 250); doc.rect(14, yPos - 5, 182, 8, 'F'); doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(13, 148, 136); doc.text(`${dia.dia} · ${kcalTotales} kcal`, 16, yPos); yPos += 6; const rows = [['Desayuno', dia.desayuno.nombre, dia.desayuno.kcal + ' kcal'],['Comida (prot)', dia.comida.prot.nombre, dia.comida.prot.kcal + ' kcal'],['Comida (carb)', dia.comida.carb.nombre, dia.comida.carb.kcal + ' kcal'],['Comida (verdura)', dia.comida.verdura.nombre, dia.comida.verdura.kcal + ' kcal'],['Comida (grasa)', dia.comida.grasa.nombre, dia.comida.grasa.kcal + ' kcal'],['Merienda', dia.merienda.nombre, dia.merienda.kcal + ' kcal'],['Cena (prot)', dia.cena.prot.nombre, dia.cena.prot.kcal + ' kcal'],['Cena (verdura)', dia.cena.verdura.nombre, dia.cena.verdura.kcal + ' kcal']]; doc.autoTable({ startY: yPos, head: [['Momento', 'Alimento', 'Calorías']], body: rows, theme: 'striped', headStyles: { fillColor: [13, 148, 136], fontSize: 9 }, bodyStyles: { fontSize: 8.5 }, margin: { left: 14, right: 14 }, columnStyles: { 0: { cellWidth: 35 }, 2: { cellWidth: 25, halign: 'right' } } }); yPos = doc.lastAutoTable.finalY + 6; }); doc.save(`Menu_Semana${menuData.menuIndex + 1}_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`); mostrarToast(' Menú exportado a PDF'); 
 }
 
-function exportarCompraPDF() {
-  if (!menuData) { alert('Primero genera tu menú'); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  const ingredientes = obtenerIngredientes();
-  doc.setFillColor(13, 148, 136);
-  doc.rect(0, 0, 210, 25, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
-  doc.text('NutriPro · Lista de la Compra', 14, 16);
-  doc.setTextColor(50, 50, 50);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.text(`Generada: ${new Date().toLocaleDateString('es-ES')} · ${currentUser.nombre}`, 14, 32);
-  const categorias = {};
-  Object.keys(ingredientes).forEach(ing => {
-    const { cat } = categorizarIngrediente(ing);
-    if (!categorias[cat]) categorias[cat] = [];
-    categorias[cat].push({ nombre: ing, cantidad: ingredientes[ing] });
-  });
-  let yPos = 45;
-  Object.keys(categorias).sort().forEach(cat => {
-    if (yPos > 260) { doc.addPage(); yPos = 20; }
-    doc.setFillColor(240, 253, 250);
-    doc.rect(14, yPos - 5, 182, 8, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
-    doc.setTextColor(13, 148, 136);
-    doc.text(cat, 16, yPos);
-    yPos += 5;
-    const rows = categorias[cat].map(i => ['', i.nombre.charAt(0).toUpperCase() + i.nombre.slice(1), `×${i.cantidad}`, '☐']);
-    doc.autoTable({
-      startY: yPos, head: [['✓', 'Producto', 'Cant.', '']], body: rows,
-      theme: 'plain', headStyles: { fillColor: [226, 232, 240], textColor: [51, 65, 85], fontSize: 9 },
-      bodyStyles: { fontSize: 9 }, margin: { left: 14, right: 14 },
-      columnStyles: { 0: { cellWidth: 10 }, 2: { cellWidth: 15, halign: 'center' }, 3: { cellWidth: 10, halign: 'center' } }
-    });
-    yPos = doc.lastAutoTable.finalY + 5;
-  });
-  doc.save(`Lista_Compra_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast(' Lista exportada a PDF');
+function exportarCompraPDF() { 
+  if (!menuData) { alert('Primero genera tu menú'); return; } 
+  const { jsPDF } = window.jspdf; const doc = new jsPDF(); const ingredientes = obtenerIngredientes(); doc.setFillColor(13, 148, 136); doc.rect(0, 0, 210, 25, 'F'); doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.setFont('helvetica', 'bold'); doc.text('NutriPro · Lista de la Compra', 14, 16); doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.text(`Generada: ${new Date().toLocaleDateString('es-ES')} · ${currentUser.nombre}`, 14, 32); const categorias = {}; Object.keys(ingredientes).forEach(ing => { const { cat } = categorizarIngrediente(ing); if (!categorias[cat]) categorias[cat] = []; categorias[cat].push({ nombre: ing, cantidad: ingredientes[ing] }); }); let yPos = 45; Object.keys(categorias).sort().forEach(cat => { if (yPos > 260) { doc.addPage(); yPos = 20; } doc.setFillColor(240, 253, 250); doc.rect(14, yPos - 5, 182, 8, 'F'); doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(13, 148, 136); doc.text(cat, 16, yPos); yPos += 5; const rows = categorias[cat].map(i => ['', i.nombre.charAt(0).toUpperCase() + i.nombre.slice(1), `×${i.cantidad}`, '☐']); doc.autoTable({ startY: yPos, head: [['✓', 'Producto', 'Cant.', '']], body: rows, theme: 'plain', headStyles: { fillColor: [226, 232, 240], textColor: [51, 65, 85], fontSize: 9 }, bodyStyles: { fontSize: 9 }, margin: { left: 14, right: 14 }, columnStyles: { 0: { cellWidth: 10 }, 2: { cellWidth: 15, halign: 'center' }, 3: { cellWidth: 10, halign: 'center' } } }); yPos = doc.lastAutoTable.finalY + 5; }); doc.save(`Lista_Compra_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`); mostrarToast(' Lista exportada a PDF'); 
 }
 
-function mediaMovil(arr, ventana = 7) {
-  return arr.map((p, i) => {
-    const inicio = Math.max(0, i - ventana + 1);
-    const slice = arr.slice(inicio, i + 1);
-    const avg = slice.reduce((s, x) => s + x.valor, 0) / slice.length;
-    return { fecha: p.fecha, valor: parseFloat(avg.toFixed(2)) };
-  });
-}
-
-function renderSeguimiento() {
-  const hist = document.getElementById('historialPeso');
-  if (pesos.length === 0) {
-    hist.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm">Sin registros aún.</p>';
-  } else {
-    hist.innerHTML = pesos.slice().reverse().slice(0, 10).map(p => `
-      <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
-        <span class="text-sm text-slate-600 dark:text-slate-300">${new Date(p.fecha).toLocaleDateString('es-ES')}</span>
-        <span class="font-bold text-slate-800 dark:text-white">${p.valor} kg</span>
-      </div>
-    `).join('');
-  }
-  const feedback = document.getElementById('feedbackTexto');
-  if (pesos.length < 2) {
-    feedback.textContent = 'Registra tu primer peso para comenzar el análisis.';
-  } else {
-    const mm = mediaMovil(pesos);
-    const diff = (mm[mm.length - 1].valor - mm[0].valor).toFixed(2);
-    if (diff < -0.5) feedback.innerHTML = `<strong>✅ ¡Excelente tendencia!</strong> Has perdido ${Math.abs(diff)} kg.`;
-    else if (diff > 0.5) feedback.innerHTML = `<strong>️ Revisa el plan.</strong> Tendencia de +${diff} kg.`;
-    else feedback.innerHTML = `<strong> Estabilidad.</strong> Variación de ${diff} kg.`;
-  }
-  renderChartPeso();
-}
-
-function renderChartPeso() {
-  const ctx = document.getElementById('chartPeso').getContext('2d');
-  if (chartPeso) chartPeso.destroy();
-  if (pesos.length === 0) return;
-  
-  const isDark = document.documentElement.classList.contains('dark');
-  const gridColor = isDark ? '#334155' : '#f1f5f9';
-  const textColor = isDark ? '#94a3b8' : '#64748b';
-  
-  const labels = pesos.map(p => new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
-  chartPeso = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        { label: 'Peso real', data: pesos.map(p => p.valor), borderColor: '#0d9488', backgroundColor: 'rgba(13,148,136,0.1)', tension: 0.3, fill: true, pointRadius: 4, pointBackgroundColor: '#0d9488' },
-        { label: 'Media móvil 7 días', data: mediaMovil(pesos).map(p => p.valor), borderColor: '#f59e0b', borderDash: [5, 5], tension: 0.4, pointRadius: 0, fill: false }
-      ]
-    },
-    options: { 
-      responsive: true, 
-      plugins: { legend: { display: false } }, 
-      scales: { 
-        y: { beginAtZero: false, grid: { color: gridColor }, ticks: { color: textColor } }, 
-        x: { grid: { display: false }, ticks: { color: textColor } } 
-      } 
-    }
-  });
-}
-
-function generarEjercicio() {
-  if (!userData) return;
-  document.getElementById('ejercicioNoData').classList.add('hidden');
-  document.getElementById('ejercicioContent').classList.remove('hidden');
-  const edad = userData.edad;
-  let icono, foco, ejercicios, plan;
-  if (edad >= 18 && edad <= 35) {
-    icono = '🏋️'; foco = 'Hipertrofia y Resistencia · 18-35 años';
-    ejercicios = [
-      { nombre: 'Sentadillas búlgaras', reps: '3x12 por pierna', foco: 'Piernas' },
-      { nombre: 'Flexiones diamante', reps: '3x10-15', foco: 'Pecho/Tríceps' },
-      { nombre: 'Zancadas con salto', reps: '3x10 por pierna', foco: 'Piernas/Cardio' },
-      { nombre: 'Remo con mochila', reps: '3x12', foco: 'Espalda' },
-      { nombre: 'Plancha lateral', reps: '3x30s por lado', foco: 'Core' },
-      { nombre: 'Burpees modificados', reps: '3x8', foco: 'HIIT' },
-      { nombre: 'Puente de glúteos', reps: '3x15', foco: 'Glúteos' },
-      { nombre: 'Flexiones declinadas', reps: '3x10', foco: 'Pecho superior' }
-    ];
-    plan = ['Fuerza A', 'HIIT', 'Fuerza B', 'Descanso', 'Fuerza A', 'Cardio', 'Descanso'];
-  } else if (edad >= 36 && edad <= 55) {
-    icono = '🧘'; foco = 'Salud Metabólica · 36-55 años';
-    ejercicios = [
-      { nombre: 'Sentadilla a la silla', reps: '3x12', foco: 'Piernas' },
-      { nombre: 'Flexiones en pared', reps: '3x12', foco: 'Pecho' },
-      { nombre: 'Puente de glúteos', reps: '3x15', foco: 'Glúteos/Core' },
-      { nombre: 'Remo con bandas', reps: '3x12', foco: 'Espalda' },
-      { nombre: 'Plancha frontal', reps: '3x20-30s', foco: 'Core' },
-      { nombre: 'Caminata rápida', reps: '30-45 min', foco: 'Cardio' },
-      { nombre: 'Yoga / movilidad', reps: '20 min', foco: 'Flexibilidad' },
-      { nombre: 'Elevación de talones', reps: '3x15', foco: 'Gemelos' }
-    ];
-    plan = ['Fuerza', 'Caminata', 'Yoga', 'Fuerza', 'Caminata', 'Pilates', 'Descanso'];
-  } else {
-    icono = '🌊'; foco = 'Densidad Ósea y Movilidad · 55+';
-    ejercicios = [
-      { nombre: 'Sentadilla asistida', reps: '3x10', foco: 'Piernas' },
-      { nombre: 'Ejercicios con bandas', reps: '3x12', foco: 'Fuerza general' },
-      { nombre: 'Equilibrio a una pierna', reps: '3x20s por lado', foco: 'Equilibrio' },
-      { nombre: 'Flexiones en pared', reps: '3x10', foco: 'Pecho' },
-      { nombre: 'Natación / aquagym', reps: '30 min', foco: 'Cardio suave' },
-      { nombre: 'Tai Chi / movilidad', reps: '20 min', foco: 'Movilidad' },
-      { nombre: 'Caminata suave', reps: '20-30 min', foco: 'Cardio' },
-      { nombre: 'Elevaciones laterales', reps: '3x10', foco: 'Hombros' }
-    ];
-    plan = ['Bandas', 'Caminata', 'Equilibrio', 'Descanso', 'Bandas', 'Natación', 'Descanso'];
-  }
-  document.getElementById('ejIconoEdad').textContent = icono;
-  document.getElementById('ejTituloEdad').textContent = foco;
-  document.getElementById('ejFocoEdad').textContent = 'Entrenamiento adaptado en casa';
-  document.getElementById('ejerciciosList').innerHTML = ejercicios.map((ej, i) => `
-    <div class="bg-white rounded-2xl p-5 border border-slate-100 relative group dark:bg-slate-800 dark:border-slate-700">
-      <div class="flex justify-between items-start mb-2">
-        <div class="w-8 h-8 bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 rounded-lg flex items-center justify-center font-bold text-sm">${i+1}</div>
-        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">${ej.foco}</span>
-      </div>
-      <h4 class="font-bold text-slate-800 dark:text-white mb-1">${ej.nombre}</h4>
-      <p class="text-sm text-teal-600 font-semibold mb-3">${ej.reps}</p>
-      <button onclick="buscarVideo('${ej.nombre}')" class="w-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors">
-        <span>▶️</span> Ver tutorial en YouTube
-      </button>
-    </div>
-  `).join('');
-  const diasSemana = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-  document.getElementById('planSemanal').innerHTML = plan.map((p, i) => {
-    const isDescanso = p.toLowerCase().includes('descanso');
-    return `<div class="p-3 rounded-xl text-center ${isDescanso ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400' : 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white'}">
-      <div class="text-xs font-bold opacity-80">${diasSemana[i]}</div>
-      <div class="text-sm font-semibold mt-1">${p}</div>
-    </div>`;
-  }).join('');
-}
-
-function buscarVideo(nombreEjercicio) {
-  const query = encodeURIComponent(`como hacer ${nombreEjercicio} tecnica correcta`);
-  window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank');
-}
-
-function renderAnalisis() {
-  if (pesos.length < 4) {
-    document.getElementById('analisisNoData').classList.remove('hidden');
-    document.getElementById('analisisContent').classList.add('hidden');
-    return;
-  }
-  document.getElementById('analisisNoData').classList.add('hidden');
-  document.getElementById('analisisContent').classList.remove('hidden');
-  const semanas = [];
-  for (let i = 0; i < pesos.length; i += 7) {
-    const slice = pesos.slice(i, i + 7);
-    semanas.push(parseFloat((slice.reduce((s, p) => s + p.valor, 0) / slice.length).toFixed(2)));
-  }
-  const s1 = semanas[0];
-  const s4 = semanas[Math.min(3, semanas.length - 1)];
-  const cambio = (s4 - s1).toFixed(2);
-  document.getElementById('anS1').textContent = `${s1} kg`;
-  document.getElementById('anS4').textContent = `${s4} kg`;
-  document.getElementById('anCambio').textContent = `${cambio > 0 ? '+' : ''}${cambio} kg`;
-  const ritmoSem = parseFloat(cambio) / Math.min(4, semanas.length);
-  const proyeccionMes = (ritmoSem * 4).toFixed(2);
-  const proy = document.getElementById('proyeccionTexto');
-  if (ritmoSem < -0.5) {
-    proy.innerHTML = `<p class="mb-2">⚠️ <strong>Ritmo acelerado:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. Considera aumentar calorías.</p>`;
-  } else if (ritmoSem >= -0.5 && ritmoSem <= -0.2) {
-    proy.innerHTML = `<p class="mb-2">✅ <strong>Ritmo ideal:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. ¡Sigue así!</p>`;
-  } else if (ritmoSem > -0.2 && ritmoSem < 0.2) {
-    proy.innerHTML = `<p class="mb-2"> <strong>Estancamiento.</strong> Revisa el cumplimiento del plan.</p>`;
-  } else {
-    proy.innerHTML = `<p class="mb-2"> <strong>Tendencia alciana:</strong> +${ritmoSem.toFixed(2)} kg/sem.</p><p>Revisa porciones y actividad física.</p>`;
-  }
-  
-  const ctx = document.getElementById('chartSemanal').getContext('2d');
-  if (chartSemanal) chartSemanal.destroy();
-  
-  const isDark = document.documentElement.classList.contains('dark');
-  const gridColor = isDark ? '#334155' : '#f1f5f9';
-  const textColor = isDark ? '#94a3b8' : '#64748b';
-  
-  chartSemanal = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: semanas.map((_, i) => `Sem ${i+1}`),
-      datasets: [{ label: 'Peso medio (kg)', data: semanas, backgroundColor: semanas.map((v, i) => i === 0 ? '#0d9488' : (i === semanas.length - 1 ? '#f59e0b' : '#94a3b8')), borderRadius: 8 }]
-    },
-    options: { 
-      responsive: true, 
-      plugins: { legend: { display: false } }, 
-      scales: { 
-        y: { beginAtZero: false, grid: { color: gridColor }, ticks: { color: textColor } }, 
-        x: { grid: { display: false }, ticks: { color: textColor } } 
-      } 
-    }
-  });
-}
-
-function responderComentario(id) {
-  const texto = prompt('Escribe tu respuesta como administrador:');
-  if (!texto || !texto.trim()) return;
-  alert('Funcionalidad de respuesta simulada. En producción, esto actualizaría la base de datos.');
-}
-
-function eliminarComentario(id) {
-  if (!confirm('¿Eliminar este comentario?')) return;
-  alert('Funcionalidad de borrado simulada. En producción, esto borraría de la base de datos.');
-}
-
-document.getElementById('formPerfil').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const nombre = document.getElementById('perfilNombre').value.trim();
-  if (!nombre) return;
-  
-  const { error } = await sb
-    .from('profiles')
-    .update({ nombre: nombre })
-    .eq('id', currentUser.id);
-    
-  if (!error) {
-    currentUser.nombre = nombre;
-    updateUserUI();
-    mostrarToast('✓ Perfil actualizado en la nube');
-  }
-});
-
-document.getElementById('formPassword').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const nueva = document.getElementById('passNueva').value;
-  const conf = document.getElementById('passConfirm').value;
-  
-  if (nueva !== conf) { alert(' Las contraseñas nuevas no coinciden'); return; }
-  if (nueva.length < 6) { alert('❌ Mínimo 6 caracteres'); return; }
-  
-  const { error } = await sb.auth.updateUser({ password: nueva });
-  if (error) {
-    alert('❌ Error: ' + error.message);
-  } else {
-    document.getElementById('formPassword').reset();
-    mostrarToast('✓ Contraseña cambiada');
-  }
-});
-
-document.querySelectorAll('.nav-btn').forEach(btn => {
-  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-});
-function switchTab(tab) {
-  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert(' Acceso restringido'); return; }
-  document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-white/80'); });
-  const section = document.getElementById(tab);
-  if (section) section.classList.add('active');
-  const btn = document.querySelector(`.nav-btn[data-tab="${tab}"]`);
-  if (btn) { btn.classList.add('active'); btn.classList.remove('text-white/80'); }
-  document.getElementById('userDropdown').classList.remove('show');
-  if (tab === 'comentarios') renderComentarios();
-  if (tab === 'analisis') renderAnalisis();
-  if (tab === 'seguimiento') renderSeguimiento();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-document.querySelectorAll('.admin-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.admin-tab').forEach(t => {
-      t.classList.remove('active', 'border-teal-600', 'text-teal-600');
-      t.classList.add('border-transparent', 'text-slate-500');
-    });
-    tab.classList.add('active', 'border-teal-600', 'text-teal-600');
-    tab.classList.remove('border-transparent', 'text-slate-500');
-    document.querySelectorAll('.admin-panel').forEach(p => p.classList.add('hidden'));
-    document.getElementById('admin-' + tab.dataset.atab).classList.remove('hidden');
-  });
-});
-
-document.getElementById('userBtn').addEventListener('click', (e) => {
-  e.stopPropagation();
-  document.getElementById('userDropdown').classList.toggle('show');
-});
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.user-menu')) document.getElementById('userDropdown').classList.remove('show');
-});
-
+function mediaMovil(arr, ventana = 7) { return arr.map((p, i) => { const inicio = Math.max(0, i - ventana + 1); const slice = arr.slice(inicio, i + 1); const avg = slice.reduce((s, x) => s + x.valor, 0) / slice.length; return { fecha: p.fecha, valor: parseFloat(avg.toFixed(2)) }; }); }
+function renderSeguimiento() { const hist = document.getElementById('historialPeso'); if (pesos.length === 0) { hist.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm">Sin registros aún.</p>'; } else { hist.innerHTML = pesos.slice().reverse().slice(0, 10).map(p => `<div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"><span class="text-sm text-slate-600 dark:text-slate-300">${new Date(p.fecha).toLocaleDateString('es-ES')}</span><span class="font-bold text-slate-800 dark:text-white">${p.valor} kg</span></div>`).join(''); } const feedback = document.getElementById('feedbackTexto'); if (pesos.length < 2) { feedback.textContent = 'Registra tu primer peso para comenzar el análisis.'; } else { const mm = mediaMovil(pesos); const diff = (mm[mm.length - 1].valor - mm[0].valor).toFixed(2); if (diff < -0.5) feedback.innerHTML = `<strong>✅ ¡Excelente tendencia!</strong> Has perdido ${Math.abs(diff)} kg.`; else if (diff > 0.5) feedback.innerHTML = `<strong>️ Revisa el plan.</strong> Tendencia de +${diff} kg.`; else feedback.innerHTML = `<strong> Estabilidad.</strong> Variación de ${diff} kg.`; } renderChartPeso(); }
+function renderChartPeso() { const ctx = document.getElementById('chartPeso').getContext('2d'); if (chartPeso) chartPeso.destroy(); if (pesos.length === 0) return; const isDark = document.documentElement.classList.contains('dark'); const gridColor = isDark ? '#334155' : '#f1f5f9'; const textColor = isDark ? '#94a3b8' : '#64748b'; const labels = pesos.map(p => new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })); chartPeso = new Chart(ctx, { type: 'line', data: { labels, datasets: [{ label: 'Peso real', data: pesos.map(p => p.valor), borderColor: '#0d9488', backgroundColor: 'rgba(13,148,136,0.1)', tension: 0.3, fill: true, pointRadius: 4, pointBackgroundColor: '#0d9488' }, { label: 'Media móvil 7 días', data: mediaMovil(pesos).map(p => p.valor), borderColor: '#f59e0b', borderDash: [5, 5], tension: 0.4, pointRadius: 0, fill: false }] }, options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false, grid: { color: gridColor }, ticks: { color: textColor } }, x: { grid: { display: false }, ticks: { color: textColor } } } } }); }
+function generarEjercicio() { if (!userData) return; document.getElementById('ejercicioNoData').classList.add('hidden'); document.getElementById('ejercicioContent').classList.remove('hidden'); const edad = userData.edad; let icono, foco, ejercicios, plan; if (edad >= 18 && edad <= 35) { icono = '🏋️'; foco = 'Hipertrofia y Resistencia · 18-35 años'; ejercicios = [{ nombre: 'Sentadillas búlgaras', reps: '3x12 por pierna', foco: 'Piernas' }, { nombre: 'Flexiones diamante', reps: '3x10-15', foco: 'Pecho/Tríceps' }, { nombre: 'Zancadas con salto', reps: '3x10 por pierna', foco: 'Piernas/Cardio' }, { nombre: 'Remo con mochila', reps: '3x12', foco: 'Espalda' }, { nombre: 'Plancha lateral', reps: '3x30s por lado', foco: 'Core' }, { nombre: 'Burpees modificados', reps: '3x8', foco: 'HIIT' }, { nombre: 'Puente de glúteos', reps: '3x15', foco: 'Glúteos' }, { nombre: 'Flexiones declinadas', reps: '3x10', foco: 'Pecho superior' }]; plan = ['Fuerza A', 'HIIT', 'Fuerza B', 'Descanso', 'Fuerza A', 'Cardio', 'Descanso']; } else if (edad >= 36 && edad <= 55) { icono = ''; foco = 'Salud Metabólica · 36-55 años'; ejercicios = [{ nombre: 'Sentadilla a la silla', reps: '3x12', foco: 'Piernas' }, { nombre: 'Flexiones en pared', reps: '3x12', foco: 'Pecho' }, { nombre: 'Puente de glúteos', reps: '3x15', foco: 'Glúteos/Core' }, { nombre: 'Remo con bandas', reps: '3x12', foco: 'Espalda' }, { nombre: 'Plancha frontal', reps: '3x20-30s', foco: 'Core' }, { nombre: 'Caminata rápida', reps: '30-45 min', foco: 'Cardio' }, { nombre: 'Yoga / movilidad', reps: '20 min', foco: 'Flexibilidad' }, { nombre: 'Elevación de talones', reps: '3x15', foco: 'Gemelos' }]; plan = ['Fuerza', 'Caminata', 'Yoga', 'Fuerza', 'Caminata', 'Pilates', 'Descanso']; } else { icono = '🌊'; foco = 'Densidad Ósea y Movilidad · 55+'; ejercicios = [{ nombre: 'Sentadilla asistida', reps: '3x10', foco: 'Piernas' }, { nombre: 'Ejercicios con bandas', reps: '3x12', foco: 'Fuerza general' }, { nombre: 'Equilibrio a una pierna', reps: '3x20s por lado', foco: 'Equilibrio' }, { nombre: 'Flexiones en pared', reps: '3x10', foco: 'Pecho' }, { nombre: 'Natación / aquagym', reps: '30 min', foco: 'Cardio suave' }, { nombre: 'Tai Chi / movilidad', reps: '20 min', foco: 'Movilidad' }, { nombre: 'Caminata suave', reps: '20-30 min', foco: 'Cardio' }, { nombre: 'Elevaciones laterales', reps: '3x10', foco: 'Hombros' }]; plan = ['Bandas', 'Caminata', 'Equilibrio', 'Descanso', 'Bandas', 'Natación', 'Descanso']; } document.getElementById('ejIconoEdad').textContent = icono; document.getElementById('ejTituloEdad').textContent = foco; document.getElementById('ejFocoEdad').textContent = 'Entrenamiento adaptado en casa'; document.getElementById('ejerciciosList').innerHTML = ejercicios.map((ej, i) => `<div class="bg-white rounded-2xl p-5 border border-slate-100 relative group dark:bg-slate-800 dark:border-slate-700"><div class="flex justify-between items-start mb-2"><div class="w-8 h-8 bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 rounded-lg flex items-center justify-center font-bold text-sm">${i+1}</div><span class="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">${ej.foco}</span></div><h4 class="font-bold text-slate-800 dark:text-white mb-1">${ej.nombre}</h4><p class="text-sm text-teal-600 font-semibold mb-3">${ej.reps}</p><button onclick="buscarVideo('${ej.nombre}')" class="w-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors"><span>▶️</span> Ver tutorial en YouTube</button></div>`).join(''); const diasSemana = ['L', 'M', 'X', 'J', 'V', 'S', 'D']; document.getElementById('planSemanal').innerHTML = plan.map((p, i) => { const isDescanso = p.toLowerCase().includes('descanso'); return `<div class="p-3 rounded-xl text-center ${isDescanso ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400' : 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white'}"><div class="text-xs font-bold opacity-80">${diasSemana[i]}</div><div class="text-sm font-semibold mt-1">${p}</div></div>`; }).join(''); }
+function buscarVideo(nombreEjercicio) { const query = encodeURIComponent(`como hacer ${nombreEjercicio} tecnica correcta`); window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank'); }
+function renderAnalisis() { if (pesos.length < 4) { document.getElementById('analisisNoData').classList.remove('hidden'); document.getElementById('analisisContent').classList.add('hidden'); return; } document.getElementById('analisisNoData').classList.add('hidden'); document.getElementById('analisisContent').classList.remove('hidden'); const semanas = []; for (let i = 0; i < pesos.length; i += 7) { const slice = pesos.slice(i, i + 7); semanas.push(parseFloat((slice.reduce((s, p) => s + p.valor, 0) / slice.length).toFixed(2))); } const s1 = semanas[0]; const s4 = semanas[Math.min(3, semanas.length - 1)]; const cambio = (s4 - s1).toFixed(2); document.getElementById('anS1').textContent = `${s1} kg`; document.getElementById('anS4').textContent = `${s4} kg`; document.getElementById('anCambio').textContent = `${cambio > 0 ? '+' : ''}${cambio} kg`; const ritmoSem = parseFloat(cambio) / Math.min(4, semanas.length); const proyeccionMes = (ritmoSem * 4).toFixed(2); const proy = document.getElementById('proyeccionTexto'); if (ritmoSem < -0.5) { proy.innerHTML = `<p class="mb-2">️ <strong>Ritmo acelerado:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. Considera aumentar calorías.</p>`; } else if (ritmoSem >= -0.5 && ritmoSem <= -0.2) { proy.innerHTML = `<p class="mb-2">✅ <strong>Ritmo ideal:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. ¡Sigue así!</p>`; } else if (ritmoSem > -0.2 && ritmoSem < 0.2) { proy.innerHTML = `<p class="mb-2"> <strong>Estancamiento.</strong> Revisa el cumplimiento del plan.</p>`; } else { proy.innerHTML = `<p class="mb-2"> <strong>Tendencia alciana:</strong> +${ritmoSem.toFixed(2)} kg/sem.</p><p>Revisa porciones y actividad física.</p>`; } const ctx = document.getElementById('chartSemanal').getContext('2d'); if (chartSemanal) chartSemanal.destroy(); const isDark = document.documentElement.classList.contains('dark'); const gridColor = isDark ? '#334155' : '#f1f5f9'; const textColor = isDark ? '#94a3b8' : '#64748b'; chartSemanal = new Chart(ctx, { type: 'bar', data: { labels: semanas.map((_, i) => `Sem ${i+1}`), datasets: [{ label: 'Peso medio (kg)', data: semanas, backgroundColor: semanas.map((v, i) => i === 0 ? '#0d9488' : (i === semanas.length - 1 ? '#f59e0b' : '#94a3b8')), borderRadius: 8 }] }, options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false, grid: { color: gridColor }, ticks: { color: textColor } }, x: { grid: { display: false }, ticks: { color: textColor } } } } }); }
+function responderComentario(id) { const texto = prompt('Escribe tu respuesta como administrador:'); if (!texto || !texto.trim()) return; alert('Funcionalidad de respuesta simulada. En producción, esto actualizaría la base de datos.'); }
+function eliminarComentario(id) { if (!confirm('¿Eliminar este comentario?')) return; alert('Funcionalidad de borrado simulada. En producción, esto borraría de la base de datos.'); }
+document.getElementById('formPerfil').addEventListener('submit', async (e) => { e.preventDefault(); const nombre = document.getElementById('perfilNombre').value.trim(); if (!nombre) return; const { error } = await sb.from('profiles').update({ nombre: nombre }).eq('id', currentUser.id); if (!error) { currentUser.nombre = nombre; updateUserUI(); mostrarToast('✓ Perfil actualizado'); } });
+document.getElementById('formPassword').addEventListener('submit', async (e) => { e.preventDefault(); const nueva = document.getElementById('passNueva').value; const conf = document.getElementById('passConfirm').value; if (nueva !== conf) { alert(' Las contraseñas nuevas no coinciden'); return; } if (nueva.length < 6) { alert(' Mínimo 6 caracteres'); return; } const { error } = await sb.auth.updateUser({ password: nueva }); if (error) { alert('❌ Error: ' + error.message); } else { document.getElementById('formPassword').reset(); mostrarToast('✓ Contraseña cambiada'); } });
+document.querySelectorAll('.nav-btn').forEach(btn => { btn.addEventListener('click', () => switchTab(btn.dataset.tab)); });
+function switchTab(tab) { if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert(' Acceso restringido'); return; } document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-white/80'); }); const section = document.getElementById(tab); if (section) section.classList.add('active'); const btn = document.querySelector(`.nav-btn[data-tab="${tab}"]`); if (btn) { btn.classList.add('active'); btn.classList.remove('text-white/80'); } document.getElementById('userDropdown').classList.remove('show'); if (tab === 'comentarios') renderComentarios(); if (tab === 'analisis') renderAnalisis(); if (tab === 'seguimiento') renderSeguimiento(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+document.querySelectorAll('.admin-tab').forEach(tab => { tab.addEventListener('click', () => { document.querySelectorAll('.admin-tab').forEach(t => { t.classList.remove('active', 'border-teal-600', 'text-teal-600'); t.classList.add('border-transparent', 'text-slate-500'); }); tab.classList.add('active', 'border-teal-600', 'text-teal-600'); tab.classList.remove('border-transparent', 'text-slate-500'); document.querySelectorAll('.admin-panel').forEach(p => p.classList.add('hidden')); document.getElementById('admin-' + tab.dataset.atab).classList.remove('hidden'); }); });
+document.getElementById('userBtn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('userDropdown').classList.toggle('show'); });
+document.addEventListener('click', (e) => { if (!e.target.closest('.user-menu')) document.getElementById('userDropdown').classList.remove('show'); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { cerrarModal(); } });
-
 checkAuth();
 </script>
 </body>
