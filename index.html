@@ -138,6 +138,14 @@
   .info-card {
     background: var(--sidebar-card-bg);
   }
+
+  /* Tarjetas de hábitos saludables */
+  .habit-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1.25rem; padding: 1.5rem; transition: all 0.2s ease; }
+  .habit-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+  .habit-video-btn { display: inline-flex; align-items: center; gap: 0.4rem; background: #eff6ff; color: #2563eb; padding: 0.45rem 0.75rem; border-radius: 0.6rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .habit-video-btn:hover { background: #dbeafe; }
+  .dark .habit-video-btn { background: rgba(37,99,235,0.18); color: #93c5fd; }
+  .dark .habit-video-btn:hover { background: rgba(37,99,235,0.30); }
   
   .dark .nav-btn:not(.active) { color: rgba(255,255,255,0.7); }
   .dark .nav-btn:not(.active):hover { background: rgba(255,255,255,0.1); }
@@ -149,7 +157,7 @@
 <div id="authScreen" class="auth-screen hidden">
   <div class="auth-card">
     <div class="text-center mb-6">
-      <div class="inline-flex w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl items-center justify-center text-3xl mb-3 shadow-lg"></div>
+      <div class="inline-flex w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl items-center justify-center text-3xl mb-3 shadow-lg">🥗</div>
       <h1 class="text-2xl font-bold text-slate-800 dark:text-white">NutriPro</h1>
       <p class="text-sm text-slate-500 mt-1 dark:text-slate-400">Nutrición Clínica · Déficit Sostenible</p>
     </div>
@@ -202,7 +210,7 @@
 <!-- ============ BLOCKED SCREEN ============ -->
 <div id="blockedScreen" class="auth-screen hidden">
   <div class="auth-card text-center">
-    <div class="text-6xl mb-4"></div>
+    <div class="text-6xl mb-4">🚫</div>
     <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Cuenta bloqueada</h2>
     <p id="blockedMsg" class="text-slate-600 dark:text-slate-400 mb-6">Tu acceso ha sido suspendido por el administrador.</p>
     <button onclick="cerrarSesion()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-2.5 rounded-lg font-semibold">Cerrar sesión</button>
@@ -226,7 +234,7 @@
           <span id="darkModeIcon">☀️</span>
         </button>
         <div class="hidden md:flex items-center gap-2 text-xs">
-          <span class="px-3 py-1 bg-white/15 rounded-full"> Evidencia</span>
+          <span class="px-3 py-1 bg-white/15 rounded-full">🔬 Evidencia</span>
           <span class="px-3 py-1 bg-white/15 rounded-full">☁️ Cloud Sync</span>
         </div>
         <div class="user-menu">
@@ -246,9 +254,9 @@
               <div class="user-dropdown-divider"></div>
             </div>
             <div class="user-dropdown-item" onclick="switchTab('perfil')"><span>👤</span> <span>Mi perfil</span></div>
-            <div class="user-dropdown-item" onclick="switchTab('comentarios')"><span></span> <span>Comunidad</span></div>
+            <div class="user-dropdown-item" onclick="switchTab('comentarios')"><span>💬</span> <span>Comunidad</span></div>
             <div class="user-dropdown-divider"></div>
-            <div class="user-dropdown-item text-red-600" onclick="cerrarSesion()"><span></span> <span>Cerrar sesión</span></div>
+            <div class="user-dropdown-item text-red-600" onclick="cerrarSesion()"><span>🚪</span> <span>Cerrar sesión</span></div>
           </div>
         </div>
       </div>
@@ -261,14 +269,15 @@
   </div>
   <nav class="max-w-7xl mx-auto px-6 pb-3">
     <div class="flex gap-2 overflow-x-auto">
-      <button class="nav-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all" data-tab="evaluacion"> Evaluación</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard"> Dashboard</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="menu">️ Menú</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra"> Compra</button>
+      <button class="nav-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all" data-tab="evaluacion">📋 Evaluación</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard">📊 Dashboard</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="menu">🍽️ Menú</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra">🛒 Compra</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="seguimiento">📈 Seguimiento</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis"> Análisis</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios"> Comunidad</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="salud">❤️ Salud</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
     </div>
   </nav>
 </header>
@@ -347,7 +356,7 @@
         <div class="text-xs mt-1">No interfiere con la navegación</div>
       </div>
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-        <div class="text-3xl mb-2"></div>
+        <div class="text-3xl mb-2">🧠</div>
         <h4 class="font-bold text-slate-800 dark:text-white mb-2">Filosofía NutriPro</h4>
         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Rechazamos las dietas milagro. Nuestro enfoque se basa en el <strong>Déficit Calórico Sostenible</strong> y la <strong>Reeducación Alimentaria</strong>.</p>
       </div>
@@ -357,7 +366,7 @@
         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">¿No encuentras un ingrediente? Haz clic sobre él y te sugeriremos <strong>alternativas con aporte nutricional equivalente</strong>.</p>
       </div>
       <div class="alert-warning rounded-xl p-4">
-        <p class="text-xs"><strong>️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
+        <p class="text-xs"><strong>⚕️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
       </div>
     </div>
   </div>
@@ -370,7 +379,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Tus cifras clave calculadas con base científica.</p>
   </div>
   <div id="dashboardNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4"></div>
+    <div class="text-6xl mb-4">📊</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Aún no has completado la evaluación</h3>
     <p class="text-slate-600 dark:text-slate-400 mb-6">Ve a la sección de Evaluación para calcular tus métricas.</p>
     <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
@@ -412,11 +421,11 @@
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barProt" class="h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🍞 Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barCarb" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🥑 Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barGrasas" class="h-full bg-gradient-to-r from-rose-400 to-rose-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
         </div>
@@ -442,13 +451,13 @@
       <p class="text-slate-600 dark:text-slate-400 mt-2">Haz clic en cualquier alimento para sustituirlo. <strong>Exporta tu menú a PDF.</strong></p>
     </div>
     <div class="flex gap-2 flex-wrap">
-      <button onclick="exportarMenuPDF()" class="btn-pdf px-4 py-3 rounded-lg font-semibold flex items-center gap-2 text-sm"> PDF Menú</button>
-      <button onclick="resetSustituciones()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-lg font-semibold hover:bg-slate-200 text-sm dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600"> Reset</button>
-      <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2"> Regenerar</button>
+      <button onclick="exportarMenuPDF()" class="btn-pdf px-4 py-3 rounded-lg font-semibold flex items-center gap-2 text-sm">📄 PDF Menú</button>
+      <button onclick="resetSustituciones()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-lg font-semibold hover:bg-slate-200 text-sm dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600">🔄 Reset</button>
+      <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2">🔄 Regenerar</button>
     </div>
   </div>
   <div id="menuNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4">️</div>
+    <div class="text-6xl mb-4">🍽️</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
   </div>
   <div id="weekIndicator" class="hidden mb-6 p-4 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-xl text-center">
@@ -465,7 +474,7 @@
       <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Lista de la Compra</h2>
       <p class="text-slate-600 dark:text-slate-400 mt-2">Marca con ✓ los productos que <strong>te faltan en casa</strong>. El PDF incluirá <strong>únicamente los marcados</strong>.</p>
     </div>
-    <button onclick="exportarCompraPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2"> PDF Lista de compra</button>
+    <button onclick="exportarCompraPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📄 PDF Lista de compra</button>
   </div>
   <div id="compraNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
     <div class="text-6xl mb-4">🛒</div>
@@ -476,9 +485,15 @@
 
 <!-- SEGUIMIENTO -->
 <section id="seguimiento" class="tab-content">
-  <div class="mb-6">
-    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Seguimiento de Peso</h2>
-    <p class="text-slate-600 dark:text-slate-400 mt-2">Media móvil de 7 días para eliminar el ruido de la retención de líquidos.</p>
+  <div class="flex justify-between items-start mb-6 flex-wrap gap-4">
+    <div>
+      <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Seguimiento de Peso</h2>
+      <p class="text-slate-600 dark:text-slate-400 mt-2">Media móvil de 7 días para eliminar el ruido de la retención de líquidos.</p>
+    </div>
+    <div class="flex gap-2 flex-wrap">
+      <button onclick="exportarProgresoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📈 PDF Progreso</button>
+      <button onclick="exportarInformeCompletoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📊 Informe completo</button>
+    </div>
   </div>
   <div class="ad-space py-6 mb-6" data-pos="inline">
     <div class="flex items-center justify-center gap-4 flex-wrap">
@@ -515,7 +530,7 @@
         </div>
       </div>
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-        <div class="text-2xl mb-2"></div>
+        <div class="text-2xl mb-2">💬</div>
         <p class="text-sm text-slate-700 dark:text-slate-300" id="feedbackTexto">Registra tu primer peso para comenzar el análisis.</p>
       </div>
     </div>
@@ -533,13 +548,13 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Adaptada a tu edad. Sin gimnasio, sin excusas.</p>
   </div>
   <div id="ejercicioNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4"></div>
+    <div class="text-6xl mb-4">💪</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
   </div>
   <div id="ejercicioContent" class="hidden space-y-6">
     <div class="bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
       <div class="flex items-center gap-3 mb-3">
-        <div class="text-4xl" id="ejIconoEdad">️</div>
+        <div class="text-4xl" id="ejIconoEdad">🏋️</div>
         <div>
           <h3 class="text-xl font-bold" id="ejTituloEdad">Grupo de edad</h3>
           <p class="text-teal-100 text-sm" id="ejFocoEdad">Enfoque principal</p>
@@ -561,7 +576,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Comparativa semanal y proyección para el próximo mes.</p>
   </div>
   <div id="analisisNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4"></div>
+    <div class="text-6xl mb-4">🎯</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Necesitas al menos 4 semanas de datos</h3>
     <p class="text-slate-600 dark:text-slate-400">Registra tu peso semanalmente para obtener un análisis completo.</p>
   </div>
@@ -585,16 +600,28 @@
       <canvas id="chartSemanal" height="120"></canvas>
     </div>
     <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-      <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-3"> Proyección próximo mes</h3>
+      <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-3">🔮 Proyección próximo mes</h3>
       <div id="proyeccionTexto" class="text-slate-700 dark:text-slate-300"></div>
     </div>
   </div>
 </section>
 
+<!-- SALUD Y HÁBITOS (NUEVA PESTAÑA) -->
+<section id="salud" class="tab-content">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">❤️ Salud y Hábitos</h2>
+    <p class="text-slate-600 dark:text-slate-400 mt-2">La nutrición es solo una pieza. Estos hábitos, respaldados por consenso clínico (OMS), multiplican tu progreso y tu salud. Cada tarjeta incluye vídeos explicativos.</p>
+  </div>
+  <div class="alert-warning rounded-xl p-4 mb-6">
+    <p class="text-xs"><strong>⚕️ Aviso:</strong> La información es orientativa y de divulgación. Para dejar de fumar, reducir el alcohol o cualquier cambio de salud, apóyate en tu médico o en recursos sanitarios oficiales.</p>
+  </div>
+  <div class="grid md:grid-cols-2 gap-6" id="saludCards"></div>
+</section>
+
 <!-- COMENTARIOS -->
 <section id="comentarios" class="tab-content">
   <div class="mb-6">
-    <h2 class="text-3xl font-bold text-slate-800 dark:text-white"> Comunidad NutriPro</h2>
+    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">💬 Comunidad NutriPro</h2>
     <p class="text-slate-600 dark:text-slate-400 mt-2">Comparte tu experiencia, dudas o consejos.</p>
   </div>
   <div class="grid lg:grid-cols-3 gap-6">
@@ -616,7 +643,7 @@
     </div>
     <div class="space-y-4">
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-        <div class="text-3xl mb-2"></div>
+        <div class="text-3xl mb-2">🤝</div>
         <h4 class="font-bold text-slate-800 dark:text-white mb-2">Normas de la comunidad</h4>
         <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
           <li>✓ Sé respetuoso con los demás</li>
@@ -626,7 +653,7 @@
         </ul>
       </div>
       <div class="ad-space py-8">
-        <div class="text-3xl mb-2"></div>
+        <div class="text-3xl mb-2">📢</div>
         <div class="font-semibold text-slate-500">Espacio publicitario inferior</div>
         <div class="text-xs mt-1">300 × 250</div>
       </div>
@@ -680,7 +707,7 @@
 <section id="admin" class="tab-content">
   <div class="mb-6">
     <div class="flex items-center gap-3">
-      <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-2xl">️</div>
+      <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-2xl">⚙️</div>
       <div>
         <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Panel de Administrador</h2>
         <p class="text-slate-600 dark:text-slate-400 mt-1">Gestiona usuarios, comentarios y configuración.</p>
@@ -696,7 +723,7 @@
   <div class="flex gap-2 mb-4 border-b border-slate-200 dark:border-slate-700">
     <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600" data-atab="usuarios">👥 Usuarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="comentarios">💬 Comentarios</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="config">️ Configuración</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="config">⚙️ Configuración</button>
   </div>
   <div id="admin-usuarios" class="admin-panel">
     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
@@ -727,8 +754,8 @@
 
 <footer class="max-w-7xl mx-auto px-6 py-8 mt-4 border-t border-slate-200 dark:border-slate-700">
   <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-    <div> NutriPro · Nutrición basada en evidencia científica</div>
-    <div>️ Esta herramienta no sustituye la consulta médica profesional</div>
+    <div>🥗 NutriPro · Nutrición basada en evidencia científica</div>
+    <div>⚕️ Esta herramienta no sustituye la consulta médica profesional</div>
   </div>
 </footer>
 </div>
@@ -743,7 +770,7 @@
           <h3 class="text-xl font-bold text-slate-800 dark:text-white" id="modalTitulo">Elige una alternativa</h3>
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-1" id="modalSubtitulo">Alimentos con aporte nutricional equivalente</p>
         </div>
-        <button onclick="cerrarModal()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300"></button>
+        <button onclick="cerrarModal()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300">✕</button>
       </div>
     </div>
     <div id="modalOpciones" class="p-6 space-y-2"></div>
@@ -791,12 +818,12 @@ function initDarkMode() {
     localStorage.setItem('nutripro-theme', 'dark');
   } else {
     html.classList.remove('dark');
-    icon.textContent = '';
+    icon.textContent = '🌙';
   }
   toggle.addEventListener('click', () => {
     html.classList.toggle('dark');
     const isDark = html.classList.contains('dark');
-    icon.textContent = isDark ? '☀️' : '';
+    icon.textContent = isDark ? '☀️' : '🌙';
     localStorage.setItem('nutripro-theme', isDark ? 'dark' : 'light');
     if (chartPeso) renderChartPeso();
     if (chartSemanal) renderAnalisis();
@@ -870,7 +897,7 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
   const pass = document.getElementById('loginPassword').value;
   const err = document.getElementById('loginError');
   const { data, error } = await sb.auth.signInWithPassword({ email: email, password: pass });
-  if (error) { err.textContent = ' ' + error.message; err.classList.remove('hidden'); } else { location.reload(); }
+  if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } else { location.reload(); }
 });
 
 document.getElementById('formRegister').addEventListener('submit', async (e) => {
@@ -952,12 +979,12 @@ async function renderComentarios() {
   const { data: comments, error } = await sb.from('comments').select('*').order('created_at', { ascending: false });
   if (error) return;
   const cont = document.getElementById('listaComentarios');
-  if (!comments || comments.length === 0) { cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia </div>'; return; }
+  if (!comments || comments.length === 0) { cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia 💬</div>'; return; }
   cont.innerHTML = comments.map(c => {
     const isAdmin = currentUser && currentUser.rol === 'admin';
     const fecha = new Date(c.created_at).toLocaleDateString('es-ES');
-    const respuestas = (c.respuestas || []).map(r => `<div class="admin-reply"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold text-teal-700">️ Equipo NutriPro</span><span class="text-xs text-slate-400">${new Date(r.fecha).toLocaleDateString()}</span></div><p class="text-sm text-slate-700 dark:text-slate-300">${r.texto}</p></div>`).join('');
-    return `<div class="comment-card"><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${c.user_name.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${c.user_name}</div><div class="text-xs text-slate-400">${fecha}</div></div></div>${isAdmin ? `<div class="flex gap-1"><button onclick="responderComentario(${c.id})" class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200">↩ Responder</button><button onclick="eliminarComentario(${c.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200"></button></div>` : ''}</div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${c.texto}</p>${respuestas}</div>`;
+    const respuestas = (c.respuestas || []).map(r => `<div class="admin-reply"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold text-teal-700">🛡️ Equipo NutriPro</span><span class="text-xs text-slate-400">${new Date(r.fecha).toLocaleDateString()}</span></div><p class="text-sm text-slate-700 dark:text-slate-300">${r.texto}</p></div>`).join('');
+    return `<div class="comment-card"><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${c.user_name.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${c.user_name}</div><div class="text-xs text-slate-400">${fecha}</div></div></div>${isAdmin ? `<div class="flex gap-1"><button onclick="responderComentario(${c.id})" class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200">↩ Responder</button><button onclick="eliminarComentario(${c.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200">🗑</button></div>` : ''}</div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${c.texto}</p>${respuestas}</div>`;
   }).join('');
 }
 
@@ -1188,9 +1215,9 @@ function renderMenu() {
     const foodItemHTML = (item, path, label, color, emoji) => {
       const key = `${diaIdx}|${path}`;
       const isSub = sustituciones[key] !== undefined;
-      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-snug">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap"><span class="macro-chip bg-white/70 dark:bg-slate-700 text-slate-700 dark:text-slate-300"> ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="swap-icon flex-shrink-0 w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm"></span></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
+      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-snug">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap"><span class="macro-chip bg-white/70 dark:bg-slate-700 text-slate-700 dark:text-slate-300">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="swap-icon flex-shrink-0 w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm">🔄</span></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
     };
-    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500 dark:text-slate-400">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300', '️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '')}</div>`;
+    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500 dark:text-slate-400">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '🥬')}</div>`;
     cont.appendChild(card);
   });
 }
@@ -1256,11 +1283,11 @@ document.getElementById('modalSustitucion').addEventListener('click', (e) => { i
 function categorizarIngrediente(ing) {
   const lower = ing.toLowerCase();
   if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|tempeh|lentejas|garbanzos|alubias|yogur|queso|bacalao|dorada|gambas|ternera|conejo|kéfir/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
-  if (/arroz|quinoa|pasta|batata|patata|avena|pan|cuscús|mijo|bulgur|trigo|espelta|boniato|tostadas/.test(lower)) return { cat: ' Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
-  if (/aceite|aguacate|almendra|nueces|chía|lino|cacahuete|pistacho|anacardo|calabaza|aceituna/.test(lower)) return { cat: ' Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
-  if (/manzana|plátano|frutos rojos|membrillo|naranja|pasas/.test(lower)) return { cat: ' Frutas', color: 'from-red-500 to-rose-500' };
+  if (/arroz|quinoa|pasta|batata|patata|avena|pan|cuscús|mijo|bulgur|trigo|espelta|boniato|tostadas/.test(lower)) return { cat: '🍚 Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
+  if (/aceite|aguacate|almendra|nueces|chía|lino|cacahuete|pistacho|anacardo|calabaza|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
+  if (/manzana|plátano|frutos rojos|membrillo|naranja|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
   if (/brócoli|espinaca|tomate|pepino|zanahoria|pimiento|calabacín|judía|coliflor|espárrago|cebolla|lechuga|acelgas|berenjena|champiñón|kale|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
-  return { cat: ' Otros', color: 'from-blue-500 to-cyan-500' };
+  return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
 }
 
 function generarListaCompra() {
@@ -1270,7 +1297,6 @@ function generarListaCompra() {
   renderListaCompra();
 }
 
-// Lista visual: muestra TODOS los ingredientes del menú para que puedas marcar los que te faltan.
 function obtenerIngredientes() {
   const ingredientesTotales = {};
   menuData.menu.forEach(dia => {
@@ -1280,21 +1306,19 @@ function obtenerIngredientes() {
   return ingredientesTotales;
 }
 
-/* COMPRA_V3_DOM: el PDF incluye SOLO los ingredientes cuyo checkbox está marcado.
-   Lee DIRECTAMENTE del DOM (sin depender de ids con tildes/ñ), por lo que es
-   imposible que se desincronice: lo que marcas = lo que va al PDF. */
+/* COMPRA_V3_DOM: el PDF incluye SOLO los ingredientes cuyo checkbox está marcado. */
 function obtenerIngredientesParaCompra() {
   const resultado = {};
   const cont = document.getElementById('compraContent');
   if (!cont) return resultado;
   const checks = cont.querySelectorAll('input[type="checkbox"]');
   checks.forEach(chk => {
-    if (!chk.checked) return;                 // solo los MARCADOS
+    if (!chk.checked) return;
     const li = chk.closest('li');
     if (!li) return;
     const spanNombre = li.querySelector('span.flex-1');
     if (!spanNombre) return;
-    const nombre = spanNombre.textContent.trim().toLowerCase(); // el texto visible, en minúsculas
+    const nombre = spanNombre.textContent.trim().toLowerCase();
     if (!nombre) return;
     const spanCant = li.querySelector('span.text-xs');
     let cant = 1;
@@ -1364,10 +1388,9 @@ function exportarMenuPDF() {
     yPos = doc.lastAutoTable.finalY + 6;
   });
   doc.save(`Menu_Semana${menuData.menuIndex + 1}_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast(' Menú exportado a PDF');
+  mostrarToast('📄 Menú exportado a PDF');
 }
 
-// PDF DE COMPRA: SOLO los productos MARCADOS (los que te faltan).
 function exportarCompraPDF() {
   if (!menuData) { alert('Primero genera tu menú'); return; }
   const ingredientes = obtenerIngredientesParaCompra();
@@ -1408,7 +1431,212 @@ function exportarCompraPDF() {
     yPos = doc.lastAutoTable.finalY + 5;
   });
   doc.save(`Lista_Compra_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast(' Lista exportada a PDF');
+  mostrarToast('📄 Lista exportada a PDF');
+}
+
+function exportarProgresoPDF() {
+  if (pesos.length === 0) { alert('No hay datos de peso para exportar.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFillColor(13, 148, 136);
+  doc.rect(0, 0, 210, 30, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont('helvetica', 'bold');
+  doc.text('NutriPro · Reporte de Progreso', 14, 20);
+  doc.setTextColor(50, 50, 50);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'normal');
+  let yPos = 45;
+  doc.text(`Usuario: ${currentUser.nombre}`, 14, yPos);
+  doc.text(`Fecha del reporte: ${new Date().toLocaleDateString('es-ES')}`, 14, yPos + 8);
+  if (userData) {
+    doc.text(`Peso Actual: ${userData.peso} kg`, 14, yPos + 20);
+    doc.text(`IMC: ${userData.imc}`, 14, yPos + 28);
+    doc.text(`Objetivo Calórico: ${userData.caloriasObjetivo} kcal/día`, 14, yPos + 36);
+  }
+  try {
+    const canvas = document.getElementById('chartPeso');
+    if (canvas) {
+      const chartImage = canvas.toBase64Image();
+      doc.addImage(chartImage, 'PNG', 14, yPos + 50, 182, 100);
+      yPos += 160;
+    }
+  } catch (e) { console.error('Error al capturar el gráfico:', e); doc.text('(Error al cargar el gráfico)', 14, yPos + 50); yPos += 70; }
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Historial de Registros Recientes', 14, yPos);
+  yPos += 10;
+  const historialRows = pesos.slice(-10).reverse().map(p => [new Date(p.fecha).toLocaleDateString('es-ES'), `${p.valor} kg`]);
+  doc.autoTable({ startY: yPos, head: [['Fecha', 'Peso']], body: historialRows, theme: 'striped', headStyles: { fillColor: [13, 148, 136] }, margin: { left: 14, right: 14 } });
+  doc.save(`Progreso_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
+  mostrarToast('📈 Reporte de progreso exportado');
+}
+
+/* =====================================================================
+   ADICIÓN: EXPORTACIÓN AVANZADA DE PDF CON GRÁFICOS
+   ===================================================================== */
+function crearGraficoBase64(buildConfig, w, h) {
+  try {
+    if (typeof Chart === 'undefined') return null;
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, w, h);
+    const cfg = buildConfig();
+    cfg.options = cfg.options || {};
+    cfg.options.responsive = false;
+    cfg.options.animation = false;
+    const chart = new Chart(ctx, cfg);
+    const url = c.toDataURL('image/png');
+    chart.destroy();
+    return url;
+  } catch (e) { console.error('Error generando gráfico para PDF:', e); return null; }
+}
+
+function exportarInformeCompletoPDF() {
+  if (!currentUser) { alert('Inicia sesión para generar el informe.'); return; }
+  if (!userData) { alert('Completa primero la evaluación para generar el informe.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const PW = 210, M = 14, CW = PW - M * 2;
+  const PH = doc.internal.pageSize.getHeight();
+  let y = 0;
+  const need = (h) => { if (y + h > PH - 14) { doc.addPage(); y = 18; } };
+
+  doc.setFillColor(13, 148, 136); doc.rect(0, 0, PW, 28, 'F');
+  doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
+  doc.text('NutriPro - Informe de Progreso Completo', M, 14);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+  doc.text(`${currentUser.nombre} - ${new Date().toLocaleDateString('es-ES')}`, M, 22);
+  y = 36;
+
+  doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
+  doc.text('Resumen metabolico', M, y); y += 6;
+  const catIMC = categoriaIMC(parseFloat(userData.imc));
+  const alturaM = userData.altura / 100; const pi = 22 * alturaM * alturaM;
+  const deficitTxt = userData.deficit > 0 ? `Deficit ${userData.deficit} kcal` : (userData.deficit < 0 ? `Superavit ${Math.abs(userData.deficit)} kcal` : 'Mantenimiento');
+  const lineas = [
+    ['TMB (reposo)', `${userData.tmb} kcal/dia`],
+    ['Gasto total (GETD)', `${userData.getd} kcal/dia`],
+    ['Objetivo calorico', `${userData.caloriasObjetivo} kcal/dia`],
+    ['Deficit / superavit', deficitTxt],
+    ['IMC', `${userData.imc} (${catIMC.texto})`],
+    ['Peso ideal (IMC 22 +/-1.5 kg)', `${(pi - 1.5).toFixed(1)} - ${(pi + 1.5).toFixed(1)} kg`],
+    ['Peso actual', `${userData.peso} kg`],
+    ['Macros objetivo', `P ${userData.protG}g  C ${userData.carbG}g  G ${userData.grasasG}g`],
+  ];
+  doc.autoTable({ startY: y, body: lineas, theme: 'plain', styles: { fontSize: 10, cellPadding: 2, textColor: [40, 40, 40] }, columnStyles: { 0: { fontStyle: 'bold', cellWidth: 72 } }, margin: { left: M, right: M } });
+  y = doc.lastAutoTable.finalY + 8;
+
+  const macrosImg = crearGraficoBase64(() => ({
+    type: 'doughnut',
+    data: { labels: ['Proteínas', 'Carbohidratos', 'Grasas'], datasets: [{ data: [userData.protG * 4, userData.carbG * 4, userData.grasasG * 9], backgroundColor: ['#0d9488', '#f59e0b', '#f43f5e'], borderWidth: 0 }] },
+    options: { plugins: { legend: { position: 'bottom', labels: { font: { size: 12 } } }, title: { display: true, text: 'Distribución de macronutrientes (kcal)', font: { size: 13 } } } }
+  }), 760, 440);
+  if (macrosImg) { need(86); doc.addImage(macrosImg, 'PNG', M, y, CW, 82); y += 88; }
+
+  if (pesos && pesos.length >= 2) {
+    const labels = pesos.map(p => new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
+    const mm = mediaMovil(pesos);
+    const pesoImg = crearGraficoBase64(() => ({
+      type: 'line',
+      data: { labels, datasets: [
+        { label: 'Peso real', data: pesos.map(p => p.valor), borderColor: '#0d9488', backgroundColor: 'rgba(13,148,136,0.10)', tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: '#0d9488' },
+        { label: 'Media móvil 7d', data: mm.map(p => p.valor), borderColor: '#f59e0b', borderDash: [5, 5], tension: 0.4, pointRadius: 0, fill: false }
+      ] },
+      options: { plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Evolución del peso (kg)', font: { size: 13 } } }, scales: { y: { beginAtZero: false } } }
+    }), 900, 440);
+    if (pesoImg) { need(86); doc.addImage(pesoImg, 'PNG', M, y, CW, 82); y += 88; }
+  }
+
+  if (pesos && pesos.length >= 4) {
+    const semanas = [];
+    for (let i = 0; i < pesos.length; i += 7) { const s = pesos.slice(i, i + 7); semanas.push(parseFloat((s.reduce((a, p) => a + p.valor, 0) / s.length).toFixed(2))); }
+    const semImg = crearGraficoBase64(() => ({
+      type: 'bar',
+      data: { labels: semanas.map((_, i) => `Sem ${i + 1}`), datasets: [{ label: 'Peso medio (kg)', data: semanas, backgroundColor: semanas.map((v, i) => i === 0 ? '#0d9488' : (i === semanas.length - 1 ? '#f59e0b' : '#94a3b8')), borderRadius: 6 }] },
+      options: { plugins: { legend: { display: false }, title: { display: true, text: 'Peso medio por semana', font: { size: 13 } } }, scales: { y: { beginAtZero: false } } }
+    }), 900, 400);
+    if (semImg) { need(80); doc.addImage(semImg, 'PNG', M, y, CW, 74); y += 80; }
+  }
+
+  if (pesos && pesos.length) {
+    need(34);
+    doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
+    doc.text('Ultimos registros de peso', M, y); y += 4;
+    const rows = pesos.slice(-10).reverse().map(p => [new Date(p.fecha).toLocaleDateString('es-ES'), `${p.valor} kg`]);
+    doc.autoTable({ startY: y, head: [['Fecha', 'Peso']], body: rows, theme: 'striped', headStyles: { fillColor: [13, 148, 136], fontSize: 9 }, bodyStyles: { fontSize: 9 }, margin: { left: M, right: M } });
+    y = doc.lastAutoTable.finalY + 8;
+  }
+
+  if (menuData && menuData.menu) {
+    need(34);
+    doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
+    doc.text(`Menu de la semana ${menuData.menuIndex + 1} de 4`, M, y); y += 4;
+    const rows = menuData.menu.map(d => [d.dia, `${d.desayuno.nombre} / ${d.comida.prot.nombre} / ${d.cena.prot.nombre}`, `${calcularKcalDia(d)} kcal`]);
+    doc.autoTable({ startY: y, head: [['Dia', 'Resumen (desayuno / prot. comida / prot. cena)', 'Total']], body: rows, theme: 'striped', headStyles: { fillColor: [13, 148, 136], fontSize: 9 }, bodyStyles: { fontSize: 8 }, margin: { left: M, right: M }, columnStyles: { 1: { cellWidth: 120 }, 2: { cellWidth: 25, halign: 'right' } } });
+    y = doc.lastAutoTable.finalY + 8;
+  }
+
+  doc.setFont('helvetica', 'italic'); doc.setFontSize(8); doc.setTextColor(120, 120, 120);
+  doc.text('Informe orientativo. No sustituye la consulta con un medico o nutricionista clinico.', M, PH - 8);
+
+  doc.save(`Informe_Completo_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
+  mostrarToast('📊 Informe completo exportado');
+}
+
+/* =====================================================================
+   ADICIÓN: SECCIÓN SALUD Y HÁBITOS (8 tarjetas con vídeos por búsqueda)
+   ===================================================================== */
+const HABITOS_SALUD = [
+  { icon: '🚭', titulo: 'Dejar de fumar',
+    texto: 'El tabaco daña prácticamente todos los órganos: aumenta el riesgo cardiovascular y de cáncer, reduce la capacidad pulmonar y empeora el gusto y el olfato. Dejarlo mejora la circulación en pocas semanas y reduce el riesgo a largo plazo. Además, fumar altera el apetito y la ansiedad, lo que dificulta seguir un plan nutricional.',
+    videos: ['daño del tabaco en el cuerpo humano', 'beneficios de dejar de fumar con el tiempo', 'cómo controlar la ansiedad al dejar de fumar'] },
+  { icon: '🍷', titulo: 'Reducir o evitar el alcohol',
+    texto: 'El alcohol aporta calorías "vacías" (sin nutrientes) que se suman a tu total y sabotean el déficit. También afecta al hígado, empeora la calidad del sueño y altera hormonas relacionadas con el hambre y la recuperación. Reducirlo o eliminarlo facilita perder grasa y dormir mejor.',
+    videos: ['efecto del alcohol en el cuerpo', 'alcohol y pérdida de grasa', 'qué hace el alcohol en el hígado'] },
+  { icon: '😴', titulo: 'Dormir entre 7 y 9 horas',
+    texto: 'Un sueño suficiente regula las hormonas del hambre y la saciedad (grelina y leptina), reduce el cortisol y permite la recuperación muscular. Dormir mal aumenta los antojos y dificulta mantener el plan, aunque comas bien.',
+    videos: ['por qué dormir mal engorda', 'higiene del sueño para dormir mejor', 'rutina nocturna para dormir mejor'] },
+  { icon: '💧', titulo: 'Hidratación adecuada',
+    texto: 'Una hidratación adecuada mejora el rendimiento, la digestión y la saciedad. A veces la sed se confunde con hambre, lo que lleva a comer de más. Beber agua a lo largo del día ayuda a regular el apetito y el bienestar general.',
+    videos: ['cuánta agua beber al día', 'señales de deshidratación', 'agua y sensación de saciedad'] },
+  { icon: '🧘', titulo: 'Gestionar el estrés y el cortisol',
+    texto: 'El estrés crónico eleva el cortisol, lo que favorece los antojos y la acumulación de grasa, sobre todo abdominal. Gestionar el estrés con respiración, pausas y mindfulness protege tu progreso y tu salud.',
+    videos: ['cortisol y grasa abdominal', 'técnicas de respiración para el estrés', 'mindfulness para reducir el estrés'] },
+  { icon: '🚶', titulo: 'Moverse cada día (NEAT)',
+    texto: 'El NEAT es la actividad fuera del ejercicio: caminar, estar de pie, moverse por casa. Suma mucho al gasto diario sin necesidad de gimnasio y es clave para mantener el déficit sin pasar hambre.',
+    videos: ['qué es el NEAT y por qué importa', 'cómo aumentar los pasos diarios', 'moverse más sin ir al gimnasio'] },
+  { icon: '🥦', titulo: 'Comida real y de calidad',
+    texto: 'Priorizar comida real frente a ultraprocesados, asegurar fibra y proteína suficiente y montar platos equilibrados mejora la saciedad y la salud. Aprender a leer etiquetas te da control sobre lo que comes.',
+    videos: ['cómo leer etiquetas nutricionales', 'el plato saludable explicado', 'ultraprocesados qué le hacen al cuerpo'] },
+  { icon: '🔁', titulo: 'Constancia y creación de hábitos',
+    texto: 'El progreso real viene de hábitos sostenibles, no de esfuerzos puntuales. Empezar pequeño, diseñar tu entorno y repetir hasta automatizar es lo que funciona a largo plazo, mucho más que la fuerza de voluntad.',
+    videos: ['la ciencia de los hábitos', 'cómo crear hábitos que duren', 'la regla de los 2 minutos para hábitos'] },
+];
+
+function buscarVideoHabito(q) {
+  window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(q), '_blank');
+}
+
+function renderSalud() {
+  const cont = document.getElementById('saludCards');
+  if (!cont || cont.dataset.rendered === '1') return;
+  cont.innerHTML = HABITOS_SALUD.map(h => `
+    <div class="habit-card">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="text-3xl leading-none">${h.icon}</div>
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white leading-tight">${h.titulo}</h3>
+      </div>
+      <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">${h.texto}</p>
+      <div class="flex flex-wrap gap-2">
+        ${h.videos.map(v => `<button class="habit-video-btn" onclick="buscarVideoHabito('${v.replace(/'/g, "\\'")}')">▶️ ${v}</button>`).join('')}
+      </div>
+    </div>
+  `).join('');
+  cont.dataset.rendered = '1';
 }
 
 function mediaMovil(arr, ventana = 7) {
@@ -1426,7 +1654,7 @@ function renderSeguimiento() {
   else { hist.innerHTML = pesos.slice().reverse().slice(0, 10).map(p => `<div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"><span class="text-sm text-slate-600 dark:text-slate-300">${new Date(p.fecha).toLocaleDateString('es-ES')}</span><span class="font-bold text-slate-800 dark:text-white">${p.valor} kg</span></div>`).join(''); }
   const feedback = document.getElementById('feedbackTexto');
   if (pesos.length < 2) { feedback.textContent = 'Registra tu primer peso para comenzar el análisis.'; }
-  else { const mm = mediaMovil(pesos); const diff = (mm[mm.length - 1].valor - mm[0].valor).toFixed(2); if (diff < -0.5) feedback.innerHTML = `<strong>✅ ¡Excelente tendencia!</strong> Has perdido ${Math.abs(diff)} kg.`; else if (diff > 0.5) feedback.innerHTML = `<strong>️ Revisa el plan.</strong> Tendencia de +${diff} kg.`; else feedback.innerHTML = `<strong> Estabilidad.</strong> Variación de ${diff} kg.`; }
+  else { const mm = mediaMovil(pesos); const diff = (mm[mm.length - 1].valor - mm[0].valor).toFixed(2); if (diff < -0.5) feedback.innerHTML = `<strong>✅ ¡Excelente tendencia!</strong> Has perdido ${Math.abs(diff)} kg.`; else if (diff > 0.5) feedback.innerHTML = `<strong>⚠️ Revisa el plan.</strong> Tendencia de +${diff} kg.`; else feedback.innerHTML = `<strong>📊 Estabilidad.</strong> Variación de ${diff} kg.`; }
   renderChartPeso();
 }
 
@@ -1468,7 +1696,7 @@ function generarEjercicio() {
     ];
     plan = ['Fuerza A', 'HIIT', 'Fuerza B', 'Descanso', 'Fuerza A', 'Cardio', 'Descanso'];
   } else if (edad >= 36 && edad <= 55) {
-    icono = ''; foco = 'Salud Metabólica · 36-55 años';
+    icono = '🧘'; foco = 'Salud Metabólica · 36-55 años';
     ejercicios = [
       { nombre: 'Sentadilla a la silla', reps: '3x12', foco: 'Piernas' },
       { nombre: 'Flexiones en pared', reps: '3x12', foco: 'Pecho' },
@@ -1525,10 +1753,10 @@ function renderAnalisis() {
   const ritmoSem = parseFloat(cambio) / Math.min(4, semanas.length);
   const proyeccionMes = (ritmoSem * 4).toFixed(2);
   const proy = document.getElementById('proyeccionTexto');
-  if (ritmoSem < -0.5) { proy.innerHTML = `<p class="mb-2">️ <strong>Ritmo acelerado:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. Considera aumentar calorías.</p>`; }
+  if (ritmoSem < -0.5) { proy.innerHTML = `<p class="mb-2">⚠️ <strong>Ritmo acelerado:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. Considera aumentar calorías.</p>`; }
   else if (ritmoSem >= -0.5 && ritmoSem <= -0.2) { proy.innerHTML = `<p class="mb-2">✅ <strong>Ritmo ideal:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. ¡Sigue así!</p>`; }
-  else if (ritmoSem > -0.2 && ritmoSem < 0.2) { proy.innerHTML = `<p class="mb-2"> <strong>Estancamiento.</strong> Revisa el cumplimiento del plan.</p>`; }
-  else { proy.innerHTML = `<p class="mb-2"> <strong>Tendencia alciana:</strong> +${ritmoSem.toFixed(2)} kg/sem.</p><p>Revisa porciones y actividad física.</p>`; }
+  else if (ritmoSem > -0.2 && ritmoSem < 0.2) { proy.innerHTML = `<p class="mb-2">📊 <strong>Estancamiento.</strong> Revisa el cumplimiento del plan.</p>`; }
+  else { proy.innerHTML = `<p class="mb-2">📈 <strong>Tendencia al alza:</strong> +${ritmoSem.toFixed(2)} kg/sem.</p><p>Revisa porciones y actividad física.</p>`; }
   const ctx = document.getElementById('chartSemanal').getContext('2d');
   if (chartSemanal) chartSemanal.destroy();
   const isDark = document.documentElement.classList.contains('dark');
@@ -1556,15 +1784,15 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
   e.preventDefault();
   const nueva = document.getElementById('passNueva').value;
   const conf = document.getElementById('passConfirm').value;
-  if (nueva !== conf) { alert(' Las contraseñas nuevas no coinciden'); return; }
-  if (nueva.length < 6) { alert(' Mínimo 6 caracteres'); return; }
+  if (nueva !== conf) { alert('❌ Las contraseñas nuevas no coinciden'); return; }
+  if (nueva.length < 6) { alert('❌ Mínimo 6 caracteres'); return; }
   const { error } = await sb.auth.updateUser({ password: nueva });
   if (error) { alert('❌ Error: ' + error.message); } else { document.getElementById('formPassword').reset(); mostrarToast('✓ Contraseña cambiada'); }
 });
 
 document.querySelectorAll('.nav-btn').forEach(btn => { btn.addEventListener('click', () => switchTab(btn.dataset.tab)); });
 function switchTab(tab) {
-  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert(' Acceso restringido'); return; }
+  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert('⛔ Acceso restringido'); return; }
   document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-white/80'); });
   const section = document.getElementById(tab);
@@ -1575,6 +1803,7 @@ function switchTab(tab) {
   if (tab === 'comentarios') renderComentarios();
   if (tab === 'analisis') renderAnalisis();
   if (tab === 'seguimiento') renderSeguimiento();
+  if (tab === 'salud') renderSalud();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
