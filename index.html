@@ -240,7 +240,8 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <div id="connectionStatus" class="hidden items-center gap-1 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full animate-pulse">
+        <!-- 🟢 Indicador de Estado de Conexión (Corregido) -->
+        <div id="connectionStatus" class="hidden items-center gap-1 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">
           📴 Sin conexión
         </div>
         <button onclick="compartirApp()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold" title="Compartir aplicación">
@@ -311,7 +312,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Comienza con una valoración completa. La reeducación alimentaria es un proceso, no una carrera.</p>
   </div>
 
-  <!-- 🟢 NUEVO: Banner de estado de la evaluación -->
+  <!-- 🟢 Banner de estado de la evaluación -->
   <div id="evaluacionStatus" class="hidden mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <div>
       <h3 class="font-bold text-green-800 dark:text-green-300 flex items-center gap-2">✅ Evaluación completada y guardada</h3>
@@ -840,9 +841,10 @@ let chartSemanal = null;
 let currentSwap = null;
 
 // ==========================================
-// 📴 SISTEMA OFFLINE-FIRST Y SINCRONIZACIÓN
+// 📴 SISTEMA OFFLINE-FIRST Y DETECCIÓN REAL DE CONEXIÓN
 // ==========================================
 const OFFLINE_QUEUE_KEY = 'nutripro_offline_queue';
+let appIsOnline = navigator.onLine; // Valor inicial por defecto
 
 function getOfflineQueue() {
   try { return JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY)) || []; } 
@@ -858,6 +860,43 @@ function addToOfflineQueue(action, data) {
 
 function clearOfflineQueue() {
   localStorage.removeItem(OFFLINE_QUEUE_KEY);
+}
+
+// 🟢 NUEVO: Verificación REAL de conexión (evita falsos negativos del navegador)
+async function checkRealConnection() {
+  if (!navigator.onLine) {
+    appIsOnline = false;
+  } else {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      // Petición HEAD muy ligera a Supabase para confirmar conexión real
+      const response = await fetch('https://xsuqqesjetgzxtyqqqje.supabase.co/rest/v1/', { 
+        method: 'HEAD', 
+        signal: controller.signal,
+        cache: 'no-cache'
+      });
+      clearTimeout(timeoutId);
+      // Si responde (incluso con 401 Unauthorized, significa que el servidor es accesible)
+      appIsOnline = true; 
+    } catch (error) {
+      appIsOnline = false;
+    }
+  }
+  updateOnlineStatusUI();
+}
+
+function updateOnlineStatusUI() {
+  const statusEl = document.getElementById('connectionStatus');
+  if (statusEl) {
+    if (appIsOnline) { 
+      statusEl.classList.add('hidden'); 
+      statusEl.classList.remove('flex'); 
+    } else { 
+      statusEl.classList.remove('hidden'); 
+      statusEl.classList.add('flex'); 
+    }
+  }
 }
 
 async function processOfflineQueue() {
@@ -907,35 +946,29 @@ async function processOfflineQueue() {
   }
 }
 
-function updateOnlineStatusUI() {
-  const isOnline = navigator.onLine;
-  const statusEl = document.getElementById('connectionStatus');
-  if (statusEl) {
-    if (isOnline) { statusEl.classList.add('hidden'); statusEl.classList.remove('flex'); } 
-    else { statusEl.classList.remove('hidden'); statusEl.classList.add('flex'); }
-  }
-}
-
+// Event listeners robustos
 window.addEventListener('online', () => {
-  mostrarToast('🟢 Conexión restaurada. Sincronizando...');
+  appIsOnline = true;
+  mostrarToast('🟢 Conexión de red detectada. Verificando y sincronizando...');
   updateOnlineStatusUI();
-  if (currentUser) processOfflineQueue();
+  checkRealConnection().then(() => {
+    if (appIsOnline && currentUser) processOfflineQueue();
+  });
 });
 
 window.addEventListener('offline', () => {
+  appIsOnline = false;
   mostrarToast('🔴 Sin conexión a internet. Los datos se guardarán localmente.');
   updateOnlineStatusUI();
 });
 
-// 🟢 NUEVO: Funciones para manejar la persistencia y visualización de la evaluación
+// 🟢 Persistencia y visualización de la evaluación
 function saveUserDataToLocal(data) {
   localStorage.setItem('nutripro_user_data', JSON.stringify(data));
 }
 
 function cargarDatosEnFormularioEvaluacion() {
   if (!userData) return;
-  
-  // Rellenar campos
   document.getElementById('edad').value = userData.edad || 30;
   document.getElementById('sexo').value = userData.sexo || 'hombre';
   document.getElementById('peso').value = userData.peso || 75;
@@ -943,18 +976,15 @@ function cargarDatosEnFormularioEvaluacion() {
   document.getElementById('actividad').value = userData.factor || 1.375;
   document.getElementById('objetivo').value = userData.objetivo || 'perder';
 
-  // Rellenar checkboxes
   document.querySelectorAll('.pref').forEach(cb => {
     cb.checked = userData.prefs && userData.prefs.includes(cb.value);
   });
 
-  // Mostrar banner de estado
   document.getElementById('evaluacionStatus').classList.remove('hidden');
 }
 
 function mostrarFormularioEvaluacion() {
   document.getElementById('formEvaluacion').scrollIntoView({ behavior: 'smooth' });
-  // Opcional: podrías añadir una clase para resaltar el formulario temporalmente
 }
 
 function initDarkMode() {
@@ -1008,9 +1038,11 @@ async function checkAuth() {
     showMainApp();
     await loadUserDataFromDB();
     initDarkMode();
-    updateOnlineStatusUI();
     
-    if (navigator.onLine) { await processOfflineQueue(); }
+    // 🟢 Verificación real de conexión al iniciar
+    await checkRealConnection();
+    
+    if (appIsOnline) { await processOfflineQueue(); }
   } catch (err) {
     console.error('Error en checkAuth:', err);
     mostrarToast('⚠️ Error de conexión. Recarga la página.');
@@ -1148,8 +1180,7 @@ async function loadUserDataFromDB() {
   try {
     const { data: uData, error: uError } = await sb.from('user_data').select('*').eq('user_id', currentUser.id).single();
     
-    // 🟢 NUEVO: Fallback a localStorage si no hay datos en BD (modo offline o recarga)
-    if ((!uData || uError) && !navigator.onLine) {
+    if ((!uData || uError) && !appIsOnline) {
       const localData = localStorage.getItem('nutripro_user_data');
       if (localData) {
         userData = JSON.parse(localData);
@@ -1166,12 +1197,12 @@ async function loadUserDataFromDB() {
     
     if (uData) {
       userData = uData;
-      saveUserDataToLocal(userData); // Guardar copia local
+      saveUserDataToLocal(userData);
       actualizarDashboard();
       generarMenu();
       generarListaCompra();
       generarEjercicio();
-      cargarDatosEnFormularioEvaluacion(); // 🟢 NUEVO: Rellenar el formulario
+      cargarDatosEnFormularioEvaluacion();
     }
     
     const { data: wData, error: wError } = await sb.from('weight_logs').select('*').eq('user_id', currentUser.id).order('fecha', { ascending: true });
@@ -1215,7 +1246,7 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
   
   const newUserData = { edad, sexo, peso, altura, factor, objetivo, prefs, tmb: Math.round(tmb), getd: Math.round(getd), imc: imc.toFixed(1), deficit, caloriasObjetivo, protG, grasasG, carbG };
 
-  if (!navigator.onLine) {
+  if (!appIsOnline) {
     addToOfflineQueue('save_evaluation', newUserData);
     userData = newUserData;
     saveUserDataToLocal(userData);
@@ -1257,7 +1288,7 @@ async function agregarPeso() {
   
   const pesoData = { fecha, valor };
 
-  if (!navigator.onLine) {
+  if (!appIsOnline) {
     addToOfflineQueue('add_weight', pesoData);
     pesos.push(pesoData);
     pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
@@ -1286,7 +1317,7 @@ async function publicarComentario() {
   const anonimo = document.getElementById('comentarioAnonimo').checked;
   const commentData = { texto, anonimo };
   
-  if (!navigator.onLine) {
+  if (!appIsOnline) {
     addToOfflineQueue('add_comment', commentData);
     document.getElementById('nuevoComentario').value = '';
     mostrarToast('📴 Comentario guardado localmente. Se publicará al tener conexión.');
@@ -2050,7 +2081,7 @@ document.getElementById('formPerfil').addEventListener('submit', async (e) => {
   const nombre = document.getElementById('perfilNombre').value.trim();
   if (!nombre) return;
   
-  if (!navigator.onLine) {
+  if (!appIsOnline) {
     addToOfflineQueue('update_profile', { nombre });
     currentUser.nombre = nombre;
     updateUserUI();
@@ -2072,7 +2103,7 @@ document.getElementById('formPerfil').addEventListener('submit', async (e) => {
 
 document.getElementById('formPassword').addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (!navigator.onLine) { mostrarToast('⚠️ Se requiere conexión a internet para cambiar la contraseña.'); return; }
+  if (!appIsOnline) { mostrarToast('⚠️ Se requiere conexión a internet para cambiar la contraseña.'); return; }
   const nueva = document.getElementById('passNueva').value;
   const conf = document.getElementById('passConfirm').value;
   if (nueva !== conf) { mostrarToast('❌ Las contraseñas nuevas no coinciden'); return; }
