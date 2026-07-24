@@ -26,7 +26,7 @@
 <!-- Supabase JS Client -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-<!-- 🛡️ DOMPurify para prevenir ataques XSS (Mejora de Seguridad Paso 1) -->
+<!-- 🛡️ DOMPurify para prevenir ataques XSS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 
 <!-- Fonts -->
@@ -150,7 +150,6 @@
     background: var(--sidebar-card-bg);
   }
 
-  /* Tarjetas de hábitos saludables */
   .habit-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1.25rem; padding: 1.5rem; transition: all 0.2s ease; }
   .habit-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
   .habit-video-btn { display: inline-flex; align-items: center; gap: 0.4rem; background: #eff6ff; color: #2563eb; padding: 0.45rem 0.75rem; border-radius: 0.6rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
@@ -241,11 +240,9 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <!-- 📴 Indicador de Estado de Conexión -->
         <div id="connectionStatus" class="hidden items-center gap-1 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full animate-pulse">
           📴 Sin conexión
         </div>
-        <!-- 📤 Botón de Compartir (Mejora Paso 1) -->
         <button onclick="compartirApp()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold" title="Compartir aplicación">
           📤 Compartir
         </button>
@@ -313,6 +310,18 @@
     <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Evaluación Inicial</h2>
     <p class="text-slate-600 dark:text-slate-400 mt-2">Comienza con una valoración completa. La reeducación alimentaria es un proceso, no una carrera.</p>
   </div>
+
+  <!-- 🟢 NUEVO: Banner de estado de la evaluación -->
+  <div id="evaluacionStatus" class="hidden mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <h3 class="font-bold text-green-800 dark:text-green-300 flex items-center gap-2">✅ Evaluación completada y guardada</h3>
+      <p class="text-sm text-green-700 dark:text-green-400 mt-1">Tu plan está activo. Solo modifica estos datos si tu peso, altura u objetivos han cambiado recientemente.</p>
+    </div>
+    <button onclick="mostrarFormularioEvaluacion()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">
+      ✏️ Modificar datos
+    </button>
+  </div>
+
   <div class="grid lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-8 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
@@ -369,7 +378,7 @@
             <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700"><input type="checkbox" class="pref" value="vegano"> <span class="text-sm">Vegano</span></label>
           </div>
         </div>
-        <button type="submit" class="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-bold py-4 rounded-xl hover:shadow-lg transition-all">Calcular mi plan personalizado →</button>
+        <button type="submit" class="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-bold py-4 rounded-xl hover:shadow-lg transition-all">Guardar y actualizar mi plan →</button>
       </form>
     </div>
     <div class="space-y-4">
@@ -836,11 +845,8 @@ let currentSwap = null;
 const OFFLINE_QUEUE_KEY = 'nutripro_offline_queue';
 
 function getOfflineQueue() {
-  try {
-    return JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY)) || [];
-  } catch (e) {
-    return [];
-  }
+  try { return JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY)) || []; } 
+  catch (e) { return []; }
 }
 
 function addToOfflineQueue(action, data) {
@@ -866,67 +872,35 @@ async function processOfflineQueue() {
     try {
       let success = false;
       if (item.action === 'add_weight' && currentUser) {
-        const { error } = await sb.from('weight_logs').insert({ 
-          user_id: currentUser.id, 
-          fecha: item.data.fecha, 
-          valor: item.data.valor 
-        });
-        if (!error) success = true; // Ya está en el array local 'pesos', no lo añadimos de nuevo
+        const { error } = await sb.from('weight_logs').insert({ user_id: currentUser.id, fecha: item.data.fecha, valor: item.data.valor });
+        if (!error) success = true;
       } else if (item.action === 'add_comment' && currentUser) {
-        const { error } = await sb.from('comments').insert({
-          user_id: currentUser.id,
-          user_name: item.data.anonimo ? 'Anónimo' : currentUser.nombre,
-          texto: item.data.texto,
-          is_anonymous: item.data.anonimo
-        });
+        const { error } = await sb.from('comments').insert({ user_id: currentUser.id, user_name: item.data.anonimo ? 'Anónimo' : currentUser.nombre, texto: item.data.texto, is_anonymous: item.data.anonimo });
         if (!error) success = true;
       } else if (item.action === 'save_evaluation' && currentUser) {
-        const { error } = await sb.from('user_data').upsert({ 
-          user_id: currentUser.id, 
-          ...item.data, 
-          updated_at: new Date() 
-        });
-        if (!error) {
-          userData = item.data;
-          success = true;
-        }
+        const { error } = await sb.from('user_data').upsert({ user_id: currentUser.id, ...item.data, updated_at: new Date() });
+        if (!error) { userData = item.data; saveUserDataToLocal(userData); success = true; }
       } else if (item.action === 'update_profile' && currentUser) {
         const { error } = await sb.from('profiles').update({ nombre: item.data.nombre }).eq('id', currentUser.id);
-        if (!error) {
-          currentUser.nombre = item.data.nombre;
-          updateUserUI();
-          success = true;
-        }
+        if (!error) { currentUser.nombre = item.data.nombre; updateUserUI(); success = true; }
       }
 
-      if (success) {
-        successCount++;
-      } else {
-        newQueue.push(item); // Mantener los fallidos para el próximo intento
-      }
+      if (success) { successCount++; } 
+      else { newQueue.push(item); }
     } catch (err) {
       console.error('Error procesando cola offline:', err);
       newQueue.push(item);
     }
   }
   
-  if (newQueue.length === 0) {
-    clearOfflineQueue();
-  } else {
-    localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(newQueue));
-  }
+  if (newQueue.length === 0) { clearOfflineQueue(); } 
+  else { localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(newQueue)); }
 
   if (successCount > 0) {
     mostrarToast(`✅ ${successCount} registro(s) sincronizado(s) con éxito.`);
-    // Refrescar UI para asegurar consistencia
     pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
     renderSeguimiento();
-    if (userData) {
-      actualizarDashboard();
-      generarMenu();
-      generarListaCompra();
-      generarEjercicio();
-    }
+    if (userData) { actualizarDashboard(); generarMenu(); generarListaCompra(); generarEjercicio(); cargarDatosEnFormularioEvaluacion(); }
     renderComentarios();
   } else if (queue.length > 0) {
     mostrarToast('⚠️ No se pudo sincronizar todo. Revisa tu conexión.');
@@ -937,29 +911,51 @@ function updateOnlineStatusUI() {
   const isOnline = navigator.onLine;
   const statusEl = document.getElementById('connectionStatus');
   if (statusEl) {
-    if (isOnline) {
-      statusEl.classList.add('hidden');
-      statusEl.classList.remove('flex');
-    } else {
-      statusEl.classList.remove('hidden');
-      statusEl.classList.add('flex');
-    }
+    if (isOnline) { statusEl.classList.add('hidden'); statusEl.classList.remove('flex'); } 
+    else { statusEl.classList.remove('hidden'); statusEl.classList.add('flex'); }
   }
 }
 
-// Event listeners para online/offline
 window.addEventListener('online', () => {
   mostrarToast('🟢 Conexión restaurada. Sincronizando...');
   updateOnlineStatusUI();
-  if (currentUser) {
-    processOfflineQueue();
-  }
+  if (currentUser) processOfflineQueue();
 });
 
 window.addEventListener('offline', () => {
   mostrarToast('🔴 Sin conexión a internet. Los datos se guardarán localmente.');
   updateOnlineStatusUI();
 });
+
+// 🟢 NUEVO: Funciones para manejar la persistencia y visualización de la evaluación
+function saveUserDataToLocal(data) {
+  localStorage.setItem('nutripro_user_data', JSON.stringify(data));
+}
+
+function cargarDatosEnFormularioEvaluacion() {
+  if (!userData) return;
+  
+  // Rellenar campos
+  document.getElementById('edad').value = userData.edad || 30;
+  document.getElementById('sexo').value = userData.sexo || 'hombre';
+  document.getElementById('peso').value = userData.peso || 75;
+  document.getElementById('altura').value = userData.altura || 175;
+  document.getElementById('actividad').value = userData.factor || 1.375;
+  document.getElementById('objetivo').value = userData.objetivo || 'perder';
+
+  // Rellenar checkboxes
+  document.querySelectorAll('.pref').forEach(cb => {
+    cb.checked = userData.prefs && userData.prefs.includes(cb.value);
+  });
+
+  // Mostrar banner de estado
+  document.getElementById('evaluacionStatus').classList.remove('hidden');
+}
+
+function mostrarFormularioEvaluacion() {
+  document.getElementById('formEvaluacion').scrollIntoView({ behavior: 'smooth' });
+  // Opcional: podrías añadir una clase para resaltar el formulario temporalmente
+}
 
 function initDarkMode() {
   const toggle = document.getElementById('darkModeToggle');
@@ -985,10 +981,7 @@ function initDarkMode() {
 }
 
 async function checkAuth() {
-  if (!sb) {
-    console.error('Supabase no está inicializado correctamente.');
-    return;
-  }
+  if (!sb) { console.error('Supabase no está inicializado correctamente.'); return; }
   try {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { showAuthScreen(); return; }
@@ -997,13 +990,7 @@ async function checkAuth() {
     
     if (error || !profile) {
       const nombre = session.user.user_metadata?.nombre || session.user.email.split('@')[0];
-      const { error: insertError } = await sb.from('profiles').insert({
-        id: session.user.id,
-        nombre: nombre,
-        rol: 'user',
-        bloqueado: false
-      });
-
+      const { error: insertError } = await sb.from('profiles').insert({ id: session.user.id, nombre: nombre, rol: 'user', bloqueado: false });
       if (insertError) {
         console.error('Error creando perfil:', insertError);
         await sb.auth.signOut();
@@ -1023,10 +1010,7 @@ async function checkAuth() {
     initDarkMode();
     updateOnlineStatusUI();
     
-    // 🔄 Sincronizar datos pendientes al iniciar si hay conexión
-    if (navigator.onLine) {
-      await processOfflineQueue();
-    }
+    if (navigator.onLine) { await processOfflineQueue(); }
   } catch (err) {
     console.error('Error en checkAuth:', err);
     mostrarToast('⚠️ Error de conexión. Recarga la página.');
@@ -1091,12 +1075,8 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
   
   try {
     const { data, error } = await sb.auth.signInWithPassword({ email: email, password: pass });
-    if (error) {
-      err.textContent = '❌ ' + error.message;
-      err.classList.remove('hidden');
-    } else {
-      location.reload();
-    }
+    if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } 
+    else { location.reload(); }
   } catch (errCatch) {
     console.error('Error en login:', errCatch);
     err.textContent = '❌ Error de conexión. Verifica tu internet e intenta de nuevo.';
@@ -1121,33 +1101,18 @@ document.getElementById('formRegister').addEventListener('submit', async (e) => 
   if (pass !== pass2) { err.textContent = '❌ Las contraseñas no coinciden'; err.classList.remove('hidden'); return; }
   if (pass.length < 6) { err.textContent = '❌ La contraseña debe tener al menos 6 caracteres'; err.classList.remove('hidden'); return; }
 
-  if (!sb) {
-    err.textContent = '❌ Error de conexión con la base de datos. Recarga la página.';
-    err.classList.remove('hidden');
-    return;
-  }
+  if (!sb) { err.textContent = '❌ Error de conexión con la base de datos. Recarga la página.'; err.classList.remove('hidden'); return; }
 
   const originalBtnText = btn.textContent;
   btn.disabled = true;
   btn.textContent = 'Creando cuenta...';
 
   try {
-    const { data, error } = await sb.auth.signUp({
-      email: email,
-      password: pass,
-      options: {
-        data: { nombre: nombre }
-      }
-    });
-
-    if (error) {
-      err.textContent = '❌ ' + error.message;
-      err.classList.remove('hidden');
-    } else {
-      if (data.session) {
-        mostrarToast('✅ Cuenta creada. Inicializando...');
-        setTimeout(() => location.reload(), 1000);
-      } else {
+    const { data, error } = await sb.auth.signUp({ email: email, password: pass, options: { data: { nombre: nombre } } });
+    if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } 
+    else {
+      if (data.session) { mostrarToast('✅ Cuenta creada. Inicializando...'); setTimeout(() => location.reload(), 1000); } 
+      else {
         alert('✅ Cuenta creada exitosamente. Por favor, revisa tu correo electrónico (incluida la carpeta de spam) para confirmar tu cuenta antes de iniciar sesión.');
         document.querySelector('.auth-tab[data-auth="login"]').click();
       }
@@ -1166,7 +1131,6 @@ document.querySelectorAll('.auth-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-    
     const authType = tab.dataset.auth;
     if (authType === 'login') {
       document.getElementById('formLogin').classList.remove('hidden');
@@ -1183,23 +1147,35 @@ document.querySelectorAll('.auth-tab').forEach(tab => {
 async function loadUserDataFromDB() {
   try {
     const { data: uData, error: uError } = await sb.from('user_data').select('*').eq('user_id', currentUser.id).single();
-    if (uError && uError.code !== 'PGRST116') {
+    
+    // 🟢 NUEVO: Fallback a localStorage si no hay datos en BD (modo offline o recarga)
+    if ((!uData || uError) && !navigator.onLine) {
+      const localData = localStorage.getItem('nutripro_user_data');
+      if (localData) {
+        userData = JSON.parse(localData);
+        actualizarDashboard();
+        generarMenu();
+        generarListaCompra();
+        generarEjercicio();
+        cargarDatosEnFormularioEvaluacion();
+      }
+    } else if (uError && uError.code !== 'PGRST116') {
       console.error('Error cargando user_data:', uError);
       mostrarToast('⚠️ No se pudieron cargar tus datos.');
     }
+    
     if (uData) {
       userData = uData;
+      saveUserDataToLocal(userData); // Guardar copia local
       actualizarDashboard();
       generarMenu();
       generarListaCompra();
       generarEjercicio();
+      cargarDatosEnFormularioEvaluacion(); // 🟢 NUEVO: Rellenar el formulario
     }
     
     const { data: wData, error: wError } = await sb.from('weight_logs').select('*').eq('user_id', currentUser.id).order('fecha', { ascending: true });
-    if (wError) {
-      console.error('Error cargando weight_logs:', wError);
-      mostrarToast('⚠️ No se pudo cargar tu historial de peso.');
-    }
+    if (wError) { console.error('Error cargando weight_logs:', wError); mostrarToast('⚠️ No se pudo cargar tu historial de peso.'); }
     if (wData) {
       pesos = wData.map(w => ({ fecha: w.fecha, valor: w.valor }));
       renderSeguimiento();
@@ -1209,20 +1185,6 @@ async function loadUserDataFromDB() {
   } catch (err) {
     console.error('Error en loadUserDataFromDB:', err);
     mostrarToast('⚠️ Error al cargar datos. Recarga la página.');
-  }
-}
-
-async function saveUserDataToDB() {
-  if (!userData || !currentUser) return;
-  try {
-    const { error } = await sb.from('user_data').upsert({ user_id: currentUser.id, ...userData, updated_at: new Date() });
-    if (error) {
-      console.error('Error guardando datos:', error);
-      mostrarToast('⚠️ No se pudieron guardar tus datos.');
-    }
-  } catch (err) {
-    console.error('Error en saveUserDataToDB:', err);
-    mostrarToast('⚠️ Error al guardar datos.');
   }
 }
 
@@ -1256,12 +1218,13 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
   if (!navigator.onLine) {
     addToOfflineQueue('save_evaluation', newUserData);
     userData = newUserData;
+    saveUserDataToLocal(userData);
     actualizarDashboard();
     generarMenu();
     generarListaCompra();
     generarEjercicio();
+    cargarDatosEnFormularioEvaluacion();
     switchTab('dashboard');
-    mostrarToast('📴 Evaluación guardada localmente. Se sincronizará al tener conexión.');
     return;
   }
 
@@ -1272,12 +1235,14 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
       addToOfflineQueue('save_evaluation', newUserData);
     } else {
       userData = newUserData;
+      saveUserDataToLocal(userData);
       actualizarDashboard();
       generarMenu();
       generarListaCompra();
       generarEjercicio();
+      cargarDatosEnFormularioEvaluacion();
       switchTab('dashboard');
-      mostrarToast('✅ Evaluación guardada en la nube');
+      mostrarToast('✅ Evaluación actualizada y guardada en la nube');
     }
   } catch (err) {
     console.error('Error en formEvaluacion:', err);
@@ -1288,14 +1253,10 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
 async function agregarPeso() {
   const fecha = document.getElementById('fechaPeso').value;
   const valor = parseFloat(document.getElementById('valorPeso').value);
-  if (!fecha || isNaN(valor)) {
-    mostrarToast('⚠️ Introduce fecha y peso válido');
-    return;
-  }
+  if (!fecha || isNaN(valor)) { mostrarToast('⚠️ Introduce fecha y peso válido'); return; }
   
   const pesoData = { fecha, valor };
 
-  // Si no hay conexión, guardar en cola offline y actualizar UI localmente
   if (!navigator.onLine) {
     addToOfflineQueue('add_weight', pesoData);
     pesos.push(pesoData);
@@ -1307,11 +1268,7 @@ async function agregarPeso() {
 
   try {
     const { error } = await sb.from('weight_logs').insert({ user_id: currentUser.id, fecha: fecha, valor: valor });
-    if (error) {
-      console.error('Error guardando peso:', error);
-      addToOfflineQueue('add_weight', pesoData);
-      return;
-    }
+    if (error) { console.error('Error guardando peso:', error); addToOfflineQueue('add_weight', pesoData); return; }
     pesos.push(pesoData);
     pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
     document.getElementById('valorPeso').value = '';
@@ -1325,10 +1282,7 @@ async function agregarPeso() {
 
 async function publicarComentario() {
   const texto = document.getElementById('nuevoComentario').value.trim();
-  if (!texto) {
-    mostrarToast('⚠️ El comentario no puede estar vacío');
-    return;
-  }
+  if (!texto) { mostrarToast('⚠️ El comentario no puede estar vacío'); return; }
   const anonimo = document.getElementById('comentarioAnonimo').checked;
   const commentData = { texto, anonimo };
   
@@ -1340,19 +1294,8 @@ async function publicarComentario() {
   }
 
   try {
-    const { error } = await sb.from('comments').insert({
-      user_id: currentUser.id,
-      user_name: anonimo ? 'Anónimo' : currentUser.nombre,
-      texto: texto,
-      is_anonymous: anonimo
-    });
-    
-    if (error) {
-      console.error('Error publicando comentario:', error);
-      addToOfflineQueue('add_comment', commentData);
-      return;
-    }
-    
+    const { error } = await sb.from('comments').insert({ user_id: currentUser.id, user_name: anonimo ? 'Anónimo' : currentUser.nombre, texto: texto, is_anonymous: anonimo });
+    if (error) { console.error('Error publicando comentario:', error); addToOfflineQueue('add_comment', commentData); return; }
     document.getElementById('nuevoComentario').value = '';
     await renderComentarios();
     mostrarToast('💬 Comentario publicado');
@@ -1365,11 +1308,7 @@ async function publicarComentario() {
 async function renderComentarios() {
   try {
     const { data: comments, error } = await sb.from('comments').select('*').order('created_at', { ascending: false });
-    if (error) {
-      console.error('Error cargando comentarios:', error);
-      mostrarToast('⚠️ No se pudieron cargar los comentarios.');
-      return;
-    }
+    if (error) { console.error('Error cargando comentarios:', error); mostrarToast('⚠️ No se pudieron cargar los comentarios.'); return; }
     
     const cont = document.getElementById('listaComentarios');
     if (!comments || comments.length === 0) {
@@ -1380,11 +1319,8 @@ async function renderComentarios() {
     cont.innerHTML = comments.map(c => {
       const isAdmin = currentUser && currentUser.rol === 'admin';
       const fecha = new Date(c.created_at).toLocaleDateString('es-ES');
-      
-      // 🛡️ MEJORA DE SEGURIDAD PASO 1: Sanitización con DOMPurify
       const textoSeguro = DOMPurify.sanitize(c.texto);
       const nombreSeguro = DOMPurify.sanitize(c.user_name);
-      
       const respuestas = (c.respuestas || []).map(r => `<div class="admin-reply"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold text-teal-700">🛡️ Equipo NutriPro</span><span class="text-xs text-slate-400">${new Date(r.fecha).toLocaleDateString()}</span></div><p class="text-sm text-slate-700 dark:text-slate-300">${DOMPurify.sanitize(r.texto)}</p></div>`).join('');
       
       return `<div class="comment-card"><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${nombreSeguro.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${nombreSeguro}</div><div class="text-xs text-slate-400">${fecha}</div></div></div>${isAdmin ? `<div class="flex gap-1"><button onclick="responderComentario(${c.id})" class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200">↩ Responder</button><button onclick="eliminarComentario(${c.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200">🗑</button></div>` : ''}</div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${textoSeguro}</p>${respuestas}</div>`;
@@ -1687,29 +1623,13 @@ function mostrarToast(mensaje) {
 
 document.getElementById('modalSustitucion').addEventListener('click', (e) => { if (e.target.id === 'modalSustitucion') cerrarModal(); });
 
-// 📤 MEJORA DE COMPARTIR (Paso 1)
 async function compartirApp() {
-  const shareData = {
-    title: 'NutriPro - Nutrición Clínica',
-    text: '¡Estoy mejorando mi salud con NutriPro! Menús personalizados, seguimiento de peso y hábitos saludables. Pruébalo gratis aquí:',
-    url: window.location.href
-  };
-
-  // 1. Intentar usar la API nativa del sistema (Móvil: abre WhatsApp, Telegram, etc. directamente)
+  const shareData = { title: 'NutriPro - Nutrición Clínica', text: '¡Estoy mejorando mi salud con NutriPro! Menús personalizados, seguimiento de peso y hábitos saludables. Pruébalo gratis aquí:', url: window.location.href };
   if (navigator.share) {
-    try {
-      await navigator.share(shareData);
-      mostrarToast('✅ ¡Compartido con éxito!');
-    } catch (err) {
-      if (err.name !== 'AbortError') {
-        console.error('Error al compartir:', err);
-        mostrarToast('⚠️ No se pudo compartir.');
-      }
-    }
+    try { await navigator.share(shareData); mostrarToast('✅ ¡Compartido con éxito!'); } 
+    catch (err) { if (err.name !== 'AbortError') { console.error('Error al compartir:', err); mostrarToast('⚠️ No se pudo compartir.'); } }
   } else {
-    // 2. Fallback para escritorio: Abrir WhatsApp Web directamente
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(`https://wa.me/?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`, '_blank');
   }
 }
 
@@ -1784,28 +1704,19 @@ function exportarMenuPDF() {
   if (!menuData) { alert('Primero genera tu menú'); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  doc.setFillColor(13, 148, 136);
-  doc.rect(0, 0, 210, 25, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
+  doc.setFillColor(13, 148, 136); doc.rect(0, 0, 210, 25, 'F');
+  doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.setFont('helvetica', 'bold');
   doc.text(`NutriPro · Menú Semanal (Semana ${menuData.menuIndex + 1}/4)`, 14, 16);
-  doc.setTextColor(50, 50, 50);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.setFont('helvetica', 'normal');
   doc.text(`Generado para: ${currentUser.nombre} · ${new Date().toLocaleDateString('es-ES')}`, 14, 32);
   if (userData) doc.text(`Objetivo: ${userData.caloriasObjetivo} kcal/día`, 14, 38);
   let yPos = 48;
   menuData.menu.forEach((dia) => {
     if (yPos > 250) { doc.addPage(); yPos = 20; }
     const kcalTotales = calcularKcalDia(dia);
-    doc.setFillColor(240, 253, 250);
-    doc.rect(14, yPos - 5, 182, 8, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.setTextColor(13, 148, 136);
-    doc.text(`${dia.dia} · ${kcalTotales} kcal`, 16, yPos);
-    yPos += 6;
+    doc.setFillColor(240, 253, 250); doc.rect(14, yPos - 5, 182, 8, 'F');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(13, 148, 136);
+    doc.text(`${dia.dia} · ${kcalTotales} kcal`, 16, yPos); yPos += 6;
     const rows = [
       ['Desayuno', dia.desayuno.nombre, dia.desayuno.kcal + ' kcal'],
       ['Comida (prot)', dia.comida.prot.nombre, dia.comida.prot.kcal + ' kcal'],
@@ -1826,21 +1737,13 @@ function exportarMenuPDF() {
 function exportarCompraPDF() {
   if (!menuData) { alert('Primero genera tu menú'); return; }
   const ingredientes = obtenerIngredientesParaCompra();
-  if (Object.keys(ingredientes).length === 0) {
-    alert('No has marcado ningún producto. Marca con ✓ los productos que te faltan en casa para generar tu lista de la compra.');
-    return;
-  }
+  if (Object.keys(ingredientes).length === 0) { alert('No has marcado ningún producto. Marca con ✓ los productos que te faltan en casa para generar tu lista de la compra.'); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  doc.setFillColor(13, 148, 136);
-  doc.rect(0, 0, 210, 25, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
+  doc.setFillColor(13, 148, 136); doc.rect(0, 0, 210, 25, 'F');
+  doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.setFont('helvetica', 'bold');
   doc.text('NutriPro · Lista de la Compra', 14, 16);
-  doc.setTextColor(50, 50, 50);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.setFont('helvetica', 'normal');
   doc.text(`Generada: ${new Date().toLocaleDateString('es-ES')} · ${currentUser.nombre}`, 14, 32);
   const categorias = {};
   Object.keys(ingredientes).forEach(ing => {
@@ -1851,13 +1754,9 @@ function exportarCompraPDF() {
   let yPos = 45;
   Object.keys(categorias).sort().forEach(cat => {
     if (yPos > 260) { doc.addPage(); yPos = 20; }
-    doc.setFillColor(240, 253, 250);
-    doc.rect(14, yPos - 5, 182, 8, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
-    doc.setTextColor(13, 148, 136);
-    doc.text(cat, 16, yPos);
-    yPos += 5;
+    doc.setFillColor(240, 253, 250); doc.rect(14, yPos - 5, 182, 8, 'F');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(13, 148, 136);
+    doc.text(cat, 16, yPos); yPos += 5;
     const rows = categorias[cat].map(i => ['', i.nombre.charAt(0).toUpperCase() + i.nombre.slice(1), `×${i.cantidad}`, '☐']);
     doc.autoTable({ startY: yPos, head: [['✓', 'Producto', 'Cant.', '']], body: rows, theme: 'plain', headStyles: { fillColor: [226, 232, 240], textColor: [51, 65, 85], fontSize: 9 }, bodyStyles: { fontSize: 9 }, margin: { left: 14, right: 14 }, columnStyles: { 0: { cellWidth: 10 }, 2: { cellWidth: 15, halign: 'center' }, 3: { cellWidth: 10, halign: 'center' } } });
     yPos = doc.lastAutoTable.finalY + 5;
@@ -1870,15 +1769,10 @@ function exportarProgresoPDF() {
   if (pesos.length === 0) { alert('No hay datos de peso para exportar.'); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  doc.setFillColor(13, 148, 136);
-  doc.rect(0, 0, 210, 30, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(22);
-  doc.setFont('helvetica', 'bold');
+  doc.setFillColor(13, 148, 136); doc.rect(0, 0, 210, 30, 'F');
+  doc.setTextColor(255, 255, 255); doc.setFontSize(22); doc.setFont('helvetica', 'bold');
   doc.text('NutriPro · Reporte de Progreso', 14, 20);
-  doc.setTextColor(50, 50, 50);
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(50, 50, 50); doc.setFontSize(12); doc.setFont('helvetica', 'normal');
   let yPos = 45;
   doc.text(`Usuario: ${currentUser.nombre}`, 14, yPos);
   doc.text(`Fecha del reporte: ${new Date().toLocaleDateString('es-ES')}`, 14, yPos + 8);
@@ -1891,14 +1785,11 @@ function exportarProgresoPDF() {
     const canvas = document.getElementById('chartPeso');
     if (canvas) {
       const chartImage = canvas.toDataURL('image/png');
-      doc.addImage(chartImage, 'PNG', 14, yPos + 50, 182, 100);
-      yPos += 160;
+      doc.addImage(chartImage, 'PNG', 14, yPos + 50, 182, 100); yPos += 160;
     }
   } catch (e) { console.error('Error al capturar el gráfico:', e); doc.text('(Error al cargar el gráfico)', 14, yPos + 50); yPos += 70; }
-  doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Historial de Registros Recientes', 14, yPos);
-  yPos += 10;
+  doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+  doc.text('Historial de Registros Recientes', 14, yPos); yPos += 10;
   const historialRows = pesos.slice(-10).reverse().map(p => [new Date(p.fecha).toLocaleDateString('es-ES'), `${p.valor} kg`]);
   doc.autoTable({ startY: yPos, head: [['Fecha', 'Peso']], body: historialRows, theme: 'striped', headStyles: { fillColor: [13, 148, 136] }, margin: { left: 14, right: 14 } });
   doc.save(`Progreso_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
@@ -1908,18 +1799,11 @@ function exportarProgresoPDF() {
 function crearGraficoBase64(buildConfig, w, h) {
   try {
     if (typeof Chart === 'undefined') return null;
-    const c = document.createElement('canvas');
-    c.width = w; c.height = h;
-    const ctx = c.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, w, h);
-    const cfg = buildConfig();
-    cfg.options = cfg.options || {};
-    cfg.options.responsive = false;
-    cfg.options.animation = false;
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
+    const cfg = buildConfig(); cfg.options = cfg.options || {}; cfg.options.responsive = false; cfg.options.animation = false;
     const chart = new Chart(ctx, cfg);
-    const url = c.toDataURL('image/png');
-    chart.destroy();
+    const url = c.toDataURL('image/png'); chart.destroy();
     return url;
   } catch (e) { console.error('Error generando gráfico para PDF:', e); return null; }
 }
@@ -1929,8 +1813,7 @@ function exportarInformeCompletoPDF() {
   if (!userData) { alert('Completa primero la evaluación para generar el informe.'); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  const PW = 210, M = 14, CW = PW - M * 2;
-  const PH = doc.internal.pageSize.getHeight();
+  const PW = 210, M = 14, CW = PW - M * 2; const PH = doc.internal.pageSize.getHeight();
   let y = 0;
   const need = (h) => { if (y + h > PH - 14) { doc.addPage(); y = 18; } };
 
@@ -1938,8 +1821,7 @@ function exportarInformeCompletoPDF() {
   doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
   doc.text('NutriPro - Informe de Progreso Completo', M, 14);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
-  doc.text(`${currentUser.nombre} - ${new Date().toLocaleDateString('es-ES')}`, M, 22);
-  y = 36;
+  doc.text(`${currentUser.nombre} - ${new Date().toLocaleDateString('es-ES')}`, M, 22); y = 36;
 
   doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
   doc.text('Resumen metabolico', M, y); y += 6;
@@ -1947,21 +1829,16 @@ function exportarInformeCompletoPDF() {
   const alturaM = userData.altura / 100; const pi = 22 * alturaM * alturaM;
   const deficitTxt = userData.deficit > 0 ? `Deficit ${userData.deficit} kcal` : (userData.deficit < 0 ? `Superavit ${Math.abs(userData.deficit)} kcal` : 'Mantenimiento');
   const lineas = [
-    ['TMB (reposo)', `${userData.tmb} kcal/dia`],
-    ['Gasto total (GETD)', `${userData.getd} kcal/dia`],
-    ['Objetivo calorico', `${userData.caloriasObjetivo} kcal/dia`],
-    ['Deficit / superavit', deficitTxt],
-    ['IMC', `${userData.imc} (${catIMC.texto})`],
-    ['Peso ideal (IMC 22 +/-1.5 kg)', `${(pi - 1.5).toFixed(1)} - ${(pi + 1.5).toFixed(1)} kg`],
-    ['Peso actual', `${userData.peso} kg`],
-    ['Macros objetivo', `P ${userData.protG}g  C ${userData.carbG}g  G ${userData.grasasG}g`],
+    ['TMB (reposo)', `${userData.tmb} kcal/dia`], ['Gasto total (GETD)', `${userData.getd} kcal/dia`],
+    ['Objetivo calorico', `${userData.caloriasObjetivo} kcal/dia`], ['Deficit / superavit', deficitTxt],
+    ['IMC', `${userData.imc} (${catIMC.texto})`], ['Peso ideal (IMC 22 +/-1.5 kg)', `${(pi - 1.5).toFixed(1)} - ${(pi + 1.5).toFixed(1)} kg`],
+    ['Peso actual', `${userData.peso} kg`], ['Macros objetivo', `P ${userData.protG}g  C ${userData.carbG}g  G ${userData.grasasG}g`],
   ];
   doc.autoTable({ startY: y, body: lineas, theme: 'plain', styles: { fontSize: 10, cellPadding: 2, textColor: [40, 40, 40] }, columnStyles: { 0: { fontStyle: 'bold', cellWidth: 72 } }, margin: { left: M, right: M } });
   y = doc.lastAutoTable.finalY + 8;
 
   const macrosImg = crearGraficoBase64(() => ({
-    type: 'doughnut',
-    data: { labels: ['Proteínas', 'Carbohidratos', 'Grasas'], datasets: [{ data: [userData.protG * 4, userData.carbG * 4, userData.grasasG * 9], backgroundColor: ['#0d9488', '#f59e0b', '#f43f5e'], borderWidth: 0 }] },
+    type: 'doughnut', data: { labels: ['Proteínas', 'Carbohidratos', 'Grasas'], datasets: [{ data: [userData.protG * 4, userData.carbG * 4, userData.grasasG * 9], backgroundColor: ['#0d9488', '#f59e0b', '#f43f5e'], borderWidth: 0 }] },
     options: { plugins: { legend: { position: 'bottom', labels: { font: { size: 12 } } }, title: { display: true, text: 'Distribución de macronutrientes (kcal)', font: { size: 13 } } } }
   }), 760, 440);
   if (macrosImg) { need(86); doc.addImage(macrosImg, 'PNG', M, y, CW, 82); y += 88; }
@@ -1970,12 +1847,10 @@ function exportarInformeCompletoPDF() {
     const labels = pesos.map(p => new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
     const mm = mediaMovil(pesos);
     const pesoImg = crearGraficoBase64(() => ({
-      type: 'line',
-      data: { labels, datasets: [
+      type: 'line', data: { labels, datasets: [
         { label: 'Peso real', data: pesos.map(p => p.valor), borderColor: '#0d9488', backgroundColor: 'rgba(13,148,136,0.10)', tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: '#0d9488' },
         { label: 'Media móvil 7d', data: mm.map(p => p.valor), borderColor: '#f59e0b', borderDash: [5, 5], tension: 0.4, pointRadius: 0, fill: false }
-      ] },
-      options: { plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Evolución del peso (kg)', font: { size: 13 } } }, scales: { y: { beginAtZero: false } } }
+      ] }, options: { plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Evolución del peso (kg)', font: { size: 13 } } }, scales: { y: { beginAtZero: false } } }
     }), 900, 440);
     if (pesoImg) { need(86); doc.addImage(pesoImg, 'PNG', M, y, CW, 82); y += 88; }
   }
@@ -1984,16 +1859,14 @@ function exportarInformeCompletoPDF() {
     const semanas = [];
     for (let i = 0; i < pesos.length; i += 7) { const s = pesos.slice(i, i + 7); semanas.push(parseFloat((s.reduce((a, p) => a + p.valor, 0) / s.length).toFixed(2))); }
     const semImg = crearGraficoBase64(() => ({
-      type: 'bar',
-      data: { labels: semanas.map((_, i) => `Sem ${i + 1}`), datasets: [{ label: 'Peso medio (kg)', data: semanas, backgroundColor: semanas.map((v, i) => i === 0 ? '#0d9488' : (i === semanas.length - 1 ? '#f59e0b' : '#94a3b8')), borderRadius: 6 }] },
+      type: 'bar', data: { labels: semanas.map((_, i) => `Sem ${i + 1}`), datasets: [{ label: 'Peso medio (kg)', data: semanas, backgroundColor: semanas.map((v, i) => i === 0 ? '#0d9488' : (i === semanas.length - 1 ? '#f59e0b' : '#94a3b8')), borderRadius: 6 }] },
       options: { plugins: { legend: { display: false }, title: { display: true, text: 'Peso medio por semana', font: { size: 13 } } }, scales: { y: { beginAtZero: false } } }
     }), 900, 400);
     if (semImg) { need(80); doc.addImage(semImg, 'PNG', M, y, CW, 74); y += 80; }
   }
 
   if (pesos && pesos.length) {
-    need(34);
-    doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
+    need(34); doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
     doc.text('Ultimos registros de peso', M, y); y += 4;
     const rows = pesos.slice(-10).reverse().map(p => [new Date(p.fecha).toLocaleDateString('es-ES'), `${p.valor} kg`]);
     doc.autoTable({ startY: y, head: [['Fecha', 'Peso']], body: rows, theme: 'striped', headStyles: { fillColor: [13, 148, 136], fontSize: 9 }, bodyStyles: { fontSize: 9 }, margin: { left: M, right: M } });
@@ -2001,8 +1874,7 @@ function exportarInformeCompletoPDF() {
   }
 
   if (menuData && menuData.menu) {
-    need(34);
-    doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
+    need(34); doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
     doc.text(`Menu de la semana ${menuData.menuIndex + 1} de 4`, M, y); y += 4;
     const rows = menuData.menu.map(d => [d.dia, `${d.desayuno.nombre} / ${d.comida.prot.nombre} / ${d.cena.prot.nombre}`, `${calcularKcalDia(d)} kcal`]);
     doc.autoTable({ startY: y, head: [['Dia', 'Resumen (desayuno / prot. comida / prot. cena)', 'Total']], body: rows, theme: 'striped', headStyles: { fillColor: [13, 148, 136], fontSize: 9 }, bodyStyles: { fontSize: 8 }, margin: { left: M, right: M }, columnStyles: { 1: { cellWidth: 120 }, 2: { cellWidth: 25, halign: 'right' } } });
@@ -2011,41 +1883,22 @@ function exportarInformeCompletoPDF() {
 
   doc.setFont('helvetica', 'italic'); doc.setFontSize(8); doc.setTextColor(120, 120, 120);
   doc.text('Informe orientativo. No sustituye la consulta con un medico o nutricionista clinico.', M, PH - 8);
-
   doc.save(`Informe_Completo_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
   mostrarToast('📊 Informe completo exportado');
 }
 
 const HABITOS_SALUD = [
-  { icon: '🚭', titulo: 'Dejar de fumar',
-    texto: 'El tabaco daña prácticamente todos los órganos: aumenta el riesgo cardiovascular y de cáncer, reduce la capacidad pulmonar y empeora el gusto y el olfato. Dejarlo mejora la circulación en pocas semanas y reduce el riesgo a largo plazo. Además, fumar altera el apetito y la ansiedad, lo que dificulta seguir un plan nutricional.',
-    videos: ['daño del tabaco en el cuerpo humano', 'beneficios de dejar de fumar con el tiempo', 'cómo controlar la ansiedad al dejar de fumar'] },
-  { icon: '🍷', titulo: 'Reducir o evitar el alcohol',
-    texto: 'El alcohol aporta calorías "vacías" (sin nutrientes) que se suman a tu total y sabotean el déficit. También afecta al hígado, empeora la calidad del sueño y altera hormonas relacionadas con el hambre y la recuperación. Reducirlo o eliminarlo facilita perder grasa y dormir mejor.',
-    videos: ['efecto del alcohol en el cuerpo', 'alcohol y pérdida de grasa', 'qué hace el alcohol en el hígado'] },
-  { icon: '😴', titulo: 'Dormir entre 7 y 9 horas',
-    texto: 'Un sueño suficiente regula las hormonas del hambre y la saciedad (grelina y leptina), reduce el cortisol y permite la recuperación muscular. Dormir mal aumenta los antojos y dificulta mantener el plan, aunque comas bien.',
-    videos: ['por qué dormir mal engorda', 'higiene del sueño para dormir mejor', 'rutina nocturna para dormir mejor'] },
-  { icon: '💧', titulo: 'Hidratación adecuada',
-    texto: 'Una hidratación adecuada mejora el rendimiento, la digestión y la saciedad. A veces la sed se confunde con hambre, lo que lleva a comer de más. Beber agua a lo largo del día ayuda a regular el apetito y el bienestar general.',
-    videos: ['cuánta agua beber al día', 'señales de deshidratación', 'agua y sensación de saciedad'] },
-  { icon: '🧘', titulo: 'Gestionar el estrés y el cortisol',
-    texto: 'El estrés crónico eleva el cortisol, lo que favorece los antojos y la acumulación de grasa, sobre todo abdominal. Gestionar el estrés con respiración, pausas y mindfulness protege tu progreso y tu salud.',
-    videos: ['cortisol y grasa abdominal', 'técnicas de respiración para el estrés', 'mindfulness para reducir el estrés'] },
-  { icon: '🚶', titulo: 'Moverse cada día (NEAT)',
-    texto: 'El NEAT es la actividad fuera del ejercicio: caminar, estar de pie, moverse por casa. Suma mucho al gasto diario sin necesidad de gimnasio y es clave para mantener el déficit sin pasar hambre.',
-    videos: ['qué es el NEAT y por qué importa', 'cómo aumentar los pasos diarios', 'moverse más sin ir al gimnasio'] },
-  { icon: '🥦', titulo: 'Comida real y de calidad',
-    texto: 'Priorizar comida real frente a ultraprocesados, asegurar fibra y proteína suficiente y montar platos equilibrados mejora la saciedad y la salud. Aprender a leer etiquetas te da control sobre lo que comes.',
-    videos: ['cómo leer etiquetas nutricionales', 'el plato saludable explicado', 'ultraprocesados qué le hacen al cuerpo'] },
-  { icon: '🔁', titulo: 'Constancia y creación de hábitos',
-    texto: 'El progreso real viene de hábitos sostenibles, no de esfuerzos puntuales. Empezar pequeño, diseñar tu entorno y repetir hasta automatizar es lo que funciona a largo plazo, mucho más que la fuerza de voluntad.',
-    videos: ['la ciencia de los hábitos', 'cómo crear hábitos que duren', 'la regla de los 2 minutos para hábitos'] },
+  { icon: '🚭', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos: aumenta el riesgo cardiovascular y de cáncer, reduce la capacidad pulmonar y empeora el gusto y el olfato. Dejarlo mejora la circulación en pocas semanas y reduce el riesgo a largo plazo. Además, fumar altera el apetito y la ansiedad, lo que dificulta seguir un plan nutricional.', videos: ['daño del tabaco en el cuerpo humano', 'beneficios de dejar de fumar con el tiempo', 'cómo controlar la ansiedad al dejar de fumar'] },
+  { icon: '🍷', titulo: 'Reducir o evitar el alcohol', texto: 'El alcohol aporta calorías "vacías" (sin nutrientes) que se suman a tu total y sabotean el déficit. También afecta al hígado, empeora la calidad del sueño y altera hormonas relacionadas con el hambre y la recuperación. Reducirlo o eliminarlo facilita perder grasa y dormir mejor.', videos: ['efecto del alcohol en el cuerpo', 'alcohol y pérdida de grasa', 'qué hace el alcohol en el hígado'] },
+  { icon: '😴', titulo: 'Dormir entre 7 y 9 horas', texto: 'Un sueño suficiente regula las hormonas del hambre y la saciedad (grelina y leptina), reduce el cortisol y permite la recuperación muscular. Dormir mal aumenta los antojos y dificulta mantener el plan, aunque comas bien.', videos: ['por qué dormir mal engorda', 'higiene del sueño para dormir mejor', 'rutina nocturna para dormir mejor'] },
+  { icon: '💧', titulo: 'Hidratación adecuada', texto: 'Una hidratación adecuada mejora el rendimiento, la digestión y la saciedad. A veces la sed se confunde con hambre, lo que lleva a comer de más. Beber agua a lo largo del día ayuda a regular el apetito y el bienestar general.', videos: ['cuánta agua beber al día', 'señales de deshidratación', 'agua y sensación de saciedad'] },
+  { icon: '🧘', titulo: 'Gestionar el estrés y el cortisol', texto: 'El estrés crónico eleva el cortisol, lo que favorece los antojos y la acumulación de grasa, sobre todo abdominal. Gestionar el estrés con respiración, pausas y mindfulness protege tu progreso y tu salud.', videos: ['cortisol y grasa abdominal', 'técnicas de respiración para el estrés', 'mindfulness para reducir el estrés'] },
+  { icon: '🚶', titulo: 'Moverse cada día (NEAT)', texto: 'El NEAT es la actividad fuera del ejercicio: caminar, estar de pie, moverse por casa. Suma mucho al gasto diario sin necesidad de gimnasio y es clave para mantener el déficit sin pasar hambre.', videos: ['qué es el NEAT y por qué importa', 'cómo aumentar los pasos diarios', 'moverse más sin ir al gimnasio'] },
+  { icon: '🥦', titulo: 'Comida real y de calidad', texto: 'Priorizar comida real frente a ultraprocesados, asegurar fibra y proteína suficiente y montar platos equilibrados mejora la saciedad y la salud. Aprender a leer etiquetas te da control sobre lo que comes.', videos: ['cómo leer etiquetas nutricionales', 'el plato saludable explicado', 'ultraprocesados qué le hacen al cuerpo'] },
+  { icon: '🔁', titulo: 'Constancia y creación de hábitos', texto: 'El progreso real viene de hábitos sostenibles, no de esfuerzos puntuales. Empezar pequeño, diseñar tu entorno y repetir hasta automatizar es lo que funciona a largo plazo, mucho más que la fuerza de voluntad.', videos: ['la ciencia de los hábitos', 'cómo crear hábitos que duren', 'la regla de los 2 minutos para hábitos'] },
 ];
 
-function buscarVideoHabito(q) {
-  window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(q), '_blank');
-}
+function buscarVideoHabito(q) { window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(q), '_blank'); }
 
 function renderSalud() {
   const cont = document.getElementById('saludCards');
@@ -2080,7 +1933,13 @@ function renderSeguimiento() {
   else { hist.innerHTML = pesos.slice().reverse().slice(0, 10).map(p => `<div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"><span class="text-sm text-slate-600 dark:text-slate-300">${new Date(p.fecha).toLocaleDateString('es-ES')}</span><span class="font-bold text-slate-800 dark:text-white">${p.valor} kg</span></div>`).join(''); }
   const feedback = document.getElementById('feedbackTexto');
   if (pesos.length < 2) { feedback.textContent = 'Registra tu primer peso para comenzar el análisis.'; }
-  else { const mm = mediaMovil(pesos); const diff = (mm[mm.length - 1].valor - mm[0].valor).toFixed(2); if (diff < -0.5) feedback.innerHTML = `<strong>✅ ¡Excelente tendencia!</strong> Has perdido ${Math.abs(diff)} kg.`; else if (diff > 0.5) feedback.innerHTML = `<strong>⚠️ Revisa el plan.</strong> Tendencia de +${diff} kg.`; else feedback.innerHTML = `<strong>📊 Estabilidad.</strong> Variación de ${diff} kg.`; }
+  else { 
+    const mm = mediaMovil(pesos); 
+    const diff = (mm[mm.length - 1].valor - mm[0].valor).toFixed(2); 
+    if (diff < -0.5) feedback.innerHTML = `<strong>✅ ¡Excelente tendencia!</strong> Has perdido ${Math.abs(diff)} kg.`; 
+    else if (diff > 0.5) feedback.innerHTML = `<strong>⚠️ Revisa el plan.</strong> Tendencia de +${diff} kg.`; 
+    else feedback.innerHTML = `<strong>📊 Estabilidad.</strong> Variación de ${diff} kg.`; 
+  }
   renderChartPeso();
 }
 
@@ -2111,40 +1970,28 @@ function generarEjercicio() {
   if (edad >= 18 && edad <= 35) {
     icono = '🏋️'; foco = 'Hipertrofia y Resistencia · 18-35 años';
     ejercicios = [
-      { nombre: 'Sentadillas búlgaras', reps: '3x12 por pierna', foco: 'Piernas' },
-      { nombre: 'Flexiones diamante', reps: '3x10-15', foco: 'Pecho/Tríceps' },
-      { nombre: 'Zancadas con salto', reps: '3x10 por pierna', foco: 'Piernas/Cardio' },
-      { nombre: 'Remo con mochila', reps: '3x12', foco: 'Espalda' },
-      { nombre: 'Plancha lateral', reps: '3x30s por lado', foco: 'Core' },
-      { nombre: 'Burpees modificados', reps: '3x8', foco: 'HIIT' },
-      { nombre: 'Puente de glúteos', reps: '3x15', foco: 'Glúteos' },
-      { nombre: 'Flexiones declinadas', reps: '3x10', foco: 'Pecho superior' }
+      { nombre: 'Sentadillas búlgaras', reps: '3x12 por pierna', foco: 'Piernas' }, { nombre: 'Flexiones diamante', reps: '3x10-15', foco: 'Pecho/Tríceps' },
+      { nombre: 'Zancadas con salto', reps: '3x10 por pierna', foco: 'Piernas/Cardio' }, { nombre: 'Remo con mochila', reps: '3x12', foco: 'Espalda' },
+      { nombre: 'Plancha lateral', reps: '3x30s por lado', foco: 'Core' }, { nombre: 'Burpees modificados', reps: '3x8', foco: 'HIIT' },
+      { nombre: 'Puente de glúteos', reps: '3x15', foco: 'Glúteos' }, { nombre: 'Flexiones declinadas', reps: '3x10', foco: 'Pecho superior' }
     ];
     plan = ['Fuerza A', 'HIIT', 'Fuerza B', 'Descanso', 'Fuerza A', 'Cardio', 'Descanso'];
   } else if (edad >= 36 && edad <= 55) {
     icono = '🧘'; foco = 'Salud Metabólica · 36-55 años';
     ejercicios = [
-      { nombre: 'Sentadilla a la silla', reps: '3x12', foco: 'Piernas' },
-      { nombre: 'Flexiones en pared', reps: '3x12', foco: 'Pecho' },
-      { nombre: 'Puente de glúteos', reps: '3x15', foco: 'Glúteos/Core' },
-      { nombre: 'Remo con bandas', reps: '3x12', foco: 'Espalda' },
-      { nombre: 'Plancha frontal', reps: '3x20-30s', foco: 'Core' },
-      { nombre: 'Caminata rápida', reps: '30-45 min', foco: 'Cardio' },
-      { nombre: 'Yoga / movilidad', reps: '20 min', foco: 'Flexibilidad' },
-      { nombre: 'Elevación de talones', reps: '3x15', foco: 'Gemelos' }
+      { nombre: 'Sentadilla a la silla', reps: '3x12', foco: 'Piernas' }, { nombre: 'Flexiones en pared', reps: '3x12', foco: 'Pecho' },
+      { nombre: 'Puente de glúteos', reps: '3x15', foco: 'Glúteos/Core' }, { nombre: 'Remo con bandas', reps: '3x12', foco: 'Espalda' },
+      { nombre: 'Plancha frontal', reps: '3x20-30s', foco: 'Core' }, { nombre: 'Caminata rápida', reps: '30-45 min', foco: 'Cardio' },
+      { nombre: 'Yoga / movilidad', reps: '20 min', foco: 'Flexibilidad' }, { nombre: 'Elevación de talones', reps: '3x15', foco: 'Gemelos' }
     ];
     plan = ['Fuerza', 'Caminata', 'Yoga', 'Fuerza', 'Caminata', 'Pilates', 'Descanso'];
   } else {
     icono = '🌊'; foco = 'Densidad Ósea y Movilidad · 55+';
     ejercicios = [
-      { nombre: 'Sentadilla asistida', reps: '3x10', foco: 'Piernas' },
-      { nombre: 'Ejercicios con bandas', reps: '3x12', foco: 'Fuerza general' },
-      { nombre: 'Equilibrio a una pierna', reps: '3x20s por lado', foco: 'Equilibrio' },
-      { nombre: 'Flexiones en pared', reps: '3x10', foco: 'Pecho' },
-      { nombre: 'Natación / aquagym', reps: '30 min', foco: 'Cardio suave' },
-      { nombre: 'Tai Chi / movilidad', reps: '20 min', foco: 'Movilidad' },
-      { nombre: 'Caminata suave', reps: '20-30 min', foco: 'Cardio' },
-      { nombre: 'Elevaciones laterales', reps: '3x10', foco: 'Hombros' }
+      { nombre: 'Sentadilla asistida', reps: '3x10', foco: 'Piernas' }, { nombre: 'Ejercicios con bandas', reps: '3x12', foco: 'Fuerza general' },
+      { nombre: 'Equilibrio a una pierna', reps: '3x20s por lado', foco: 'Equilibrio' }, { nombre: 'Flexiones en pared', reps: '3x10', foco: 'Pecho' },
+      { nombre: 'Natación / aquagym', reps: '30 min', foco: 'Cardio suave' }, { nombre: 'Tai Chi / movilidad', reps: '20 min', foco: 'Movilidad' },
+      { nombre: 'Caminata suave', reps: '20-30 min', foco: 'Cardio' }, { nombre: 'Elevaciones laterales', reps: '3x10', foco: 'Hombros' }
     ];
     plan = ['Bandas', 'Caminata', 'Equilibrio', 'Descanso', 'Bandas', 'Natación', 'Descanso'];
   }
@@ -2213,11 +2060,7 @@ document.getElementById('formPerfil').addEventListener('submit', async (e) => {
 
   try {
     const { error } = await sb.from('profiles').update({ nombre: nombre }).eq('id', currentUser.id);
-    if (error) {
-      console.error('Error actualizando perfil:', error);
-      addToOfflineQueue('update_profile', { nombre });
-      return;
-    }
+    if (error) { console.error('Error actualizando perfil:', error); addToOfflineQueue('update_profile', { nombre }); return; }
     currentUser.nombre = nombre;
     updateUserUI();
     mostrarToast('✓ Perfil actualizado en la nube');
@@ -2229,10 +2072,7 @@ document.getElementById('formPerfil').addEventListener('submit', async (e) => {
 
 document.getElementById('formPassword').addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (!navigator.onLine) {
-    mostrarToast('⚠️ Se requiere conexión a internet para cambiar la contraseña.');
-    return;
-  }
+  if (!navigator.onLine) { mostrarToast('⚠️ Se requiere conexión a internet para cambiar la contraseña.'); return; }
   const nueva = document.getElementById('passNueva').value;
   const conf = document.getElementById('passConfirm').value;
   if (nueva !== conf) { mostrarToast('❌ Las contraseñas nuevas no coinciden'); return; }
@@ -2240,12 +2080,8 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
   
   try {
     const { error } = await sb.auth.updateUser({ password: nueva });
-    if (error) {
-      mostrarToast('❌ Error: ' + error.message);
-    } else {
-      document.getElementById('formPassword').reset();
-      mostrarToast('✓ Contraseña cambiada');
-    }
+    if (error) { mostrarToast('❌ Error: ' + error.message); } 
+    else { document.getElementById('formPassword').reset(); mostrarToast('✓ Contraseña cambiada'); }
   } catch (err) {
     console.error('Error en formPassword:', err);
     mostrarToast('❌ Error de conexión. Inténtalo de nuevo.');
