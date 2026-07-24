@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NutriPro</title>
 
-<!-- 🟢 Logo, favicon y configuración de app móvil -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230d9488' rx='16'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle'%3E%3C/text%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230d9488' rx='16'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle'%3E🥗%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#0d9488">
@@ -13,23 +12,13 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NutriPro">
 
-<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-
-<!-- Supabase JS Client -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
-<!-- ️ DOMPurify para prevenir ataques XSS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 
-<!-- Fonts -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
@@ -69,6 +58,7 @@
   
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
   .fade-in { animation: fadeIn 0.4s ease-out; }
   
   .metric-card, .meal-card, .comment-card, .admin-stat, .auth-card, .modal-content { 
@@ -83,7 +73,9 @@
   .food-item { transition: all 0.2s ease; cursor: pointer; position: relative; }
   .food-item:hover { background: rgba(13,148,136,0.08); transform: translateX(2px); }
   .food-item:hover .swap-icon { opacity: 1; transform: translateX(0); }
+  .food-item:hover .recipe-btn { opacity: 1; transform: translateY(0); }
   .swap-icon { opacity: 0; transform: translateX(-5px); transition: all 0.2s ease; }
+  .recipe-btn { opacity: 0; transform: translateY(5px); transition: all 0.2s ease; }
   .food-item.substituted { background: linear-gradient(90deg, rgba(245,158,11,0.08), transparent); border-left: 3px solid #f59e0b; }
   
   .tab-content { display: none; }
@@ -99,6 +91,9 @@
   
   .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; animation: fadeIn 0.2s ease-out; }
   .modal-content { border-radius: 1.5rem; max-width: 560px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+  
+  /* 🟢 NUEVO: Modal de receta más grande */
+  .modal-content.recipe-modal { max-width: 720px; max-height: 90vh; }
   
   .sub-option { transition: all 0.2s ease; cursor: pointer; }
   .sub-option:hover { background: linear-gradient(135deg, #f0fdfa, #ecfeff); border-color: #0d9488; transform: translateX(4px); }
@@ -159,6 +154,58 @@
   
   .dark .nav-btn:not(.active) { color: rgba(255,255,255,0.7); }
   .dark .nav-btn:not(.active):hover { background: rgba(255,255,255,0.1); }
+
+  /*  NUEVO: Estilos para el modal de receta */
+  .recipe-step { 
+    display: flex; 
+    gap: 1rem; 
+    padding: 1rem; 
+    border-radius: 0.75rem; 
+    background: var(--bg); 
+    margin-bottom: 0.75rem;
+    animation: slideIn 0.3s ease-out;
+  }
+  .recipe-step-number {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    background: linear-gradient(135deg, #0d9488, #0891b2);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.875rem;
+  }
+  .recipe-ingredient {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    background: var(--bg);
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .recipe-ingredient:hover {
+    background: rgba(13,148,136,0.1);
+  }
+  .recipe-ingredient.checked {
+    opacity: 0.6;
+    text-decoration: line-through;
+  }
+  .recipe-chef-tip {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-left: 4px solid #f59e0b;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    margin-top: 1rem;
+  }
+  .dark .recipe-chef-tip {
+    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(253,230,138,0.1));
+  }
 </style>
 </head>
 <body class="min-h-screen">
@@ -233,7 +280,7 @@
   <div class="max-w-7xl mx-auto px-6 py-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center text-2xl"></div>
+        <div class="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center text-2xl">🥗</div>
         <div>
           <h1 class="text-2xl font-bold">NutriPro</h1>
           <p class="text-xs text-teal-100">Nutrición Clínica · Déficit Sostenible</p>
@@ -244,7 +291,7 @@
           📴 Sin conexión
         </div>
         <button onclick="compartirApp()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold" title="Compartir aplicación">
-          📤 Compartir
+           Compartir
         </button>
         <button onclick="compartirApp()" class="md:hidden w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Compartir">
           
@@ -297,7 +344,7 @@
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="salud">❤️ Salud</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios"> Comunidad</button>
     </div>
   </nav>
 </header>
@@ -382,7 +429,7 @@
     </div>
     <div class="space-y-4">
       <div class="ad-space py-8" data-pos="sidebar">
-        <div class="text-3xl mb-2"></div>
+        <div class="text-3xl mb-2">📢</div>
         <div class="font-semibold text-slate-500">Espacio publicitario lateral</div>
         <div class="text-xs mt-1">No interfiere con la navegación</div>
       </div>
@@ -397,7 +444,7 @@
         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">¿No encuentras un ingrediente? Haz clic sobre él y te sugeriremos <strong>alternativas con aporte nutricional equivalente</strong>.</p>
       </div>
       <div class="alert-warning rounded-xl p-4">
-        <p class="text-xs"><strong>️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
+        <p class="text-xs"><strong>⚕️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
       </div>
     </div>
   </div>
@@ -410,7 +457,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Tus cifras clave calculadas con base científica.</p>
   </div>
   <div id="dashboardNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4">📊</div>
+    <div class="text-6xl mb-4"></div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Aún no has completado la evaluación</h3>
     <p class="text-slate-600 dark:text-slate-400 mb-6">Ve a la sección de Evaluación para calcular tus métricas.</p>
     <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
@@ -482,7 +529,7 @@
       <p class="text-slate-600 dark:text-slate-400 mt-2">Haz clic en cualquier alimento para sustituirlo. <strong>Exporta tu menú a PDF.</strong></p>
     </div>
     <div class="flex gap-2 flex-wrap">
-      <button onclick="exportarMenuPDF()" class="btn-pdf px-4 py-3 rounded-lg font-semibold flex items-center gap-2 text-sm">📄 PDF Menú</button>
+      <button onclick="exportarMenuPDF()" class="btn-pdf px-4 py-3 rounded-lg font-semibold flex items-center gap-2 text-sm"> PDF Menú</button>
       <button onclick="resetSustituciones()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-lg font-semibold hover:bg-slate-200 text-sm dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600">🔄 Reset</button>
       <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2">🔄 Regenerar</button>
     </div>
@@ -579,13 +626,13 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Adaptada a tu edad. Sin gimnasio, sin excusas.</p>
   </div>
   <div id="ejercicioNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4">💪</div>
+    <div class="text-6xl mb-4"></div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
   </div>
   <div id="ejercicioContent" class="hidden space-y-6">
     <div class="bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
       <div class="flex items-center gap-3 mb-3">
-        <div class="text-4xl" id="ejIconoEdad">🏋️</div>
+        <div class="text-4xl" id="ejIconoEdad">️</div>
         <div>
           <h3 class="text-xl font-bold" id="ejTituloEdad">Grupo de edad</h3>
           <p class="text-teal-100 text-sm" id="ejFocoEdad">Enfoque principal</p>
@@ -674,7 +721,7 @@
     </div>
     <div class="space-y-4">
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-        <div class="text-3xl mb-2"></div>
+        <div class="text-3xl mb-2">🤝</div>
         <h4 class="font-bold text-slate-800 dark:text-white mb-2">Normas de la comunidad</h4>
         <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
           <li>✓ Sé respetuoso con los demás</li>
@@ -684,7 +731,7 @@
         </ul>
       </div>
       <div class="ad-space py-8">
-        <div class="text-3xl mb-2"></div>
+        <div class="text-3xl mb-2">📢</div>
         <div class="font-semibold text-slate-500">Espacio publicitario inferior</div>
         <div class="text-xs mt-1">300 × 250</div>
       </div>
@@ -753,7 +800,7 @@
   </div>
   <div class="flex gap-2 mb-4 border-b border-slate-200 dark:border-slate-700">
     <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600" data-atab="usuarios">👥 Usuarios</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="comentarios">💬 Comentarios</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="comentarios"> Comentarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="config">⚙️ Configuración</button>
   </div>
   <div id="admin-usuarios" class="admin-panel">
@@ -785,7 +832,7 @@
 
 <footer class="max-w-7xl mx-auto px-6 py-8 mt-4 border-t border-slate-200 dark:border-slate-700">
   <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-    <div> NutriPro · Nutrición basada en evidencia científica</div>
+    <div>🥗 NutriPro · Nutrición basada en evidencia científica</div>
     <div>⚕️ Esta herramienta no sustituye la consulta médica profesional</div>
   </div>
 </footer>
@@ -807,6 +854,68 @@
     <div id="modalOpciones" class="p-6 space-y-2"></div>
     <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-3xl dark:bg-slate-900 dark:border-slate-700">
       <button onclick="cerrarModal()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-semibold dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- 🟢 NUEVO: MODAL DE RECETA DETALLADA -->
+<div id="modalReceta" class="modal-overlay hidden">
+  <div class="modal-content recipe-modal">
+    <div class="p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10 dark:bg-slate-800 dark:border-slate-700">
+      <div class="flex justify-between items-start">
+        <div class="flex-1">
+          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">👨🍳 Receta detallada</div>
+          <h3 class="text-xl font-bold text-slate-800 dark:text-white" id="recetaTitulo">Nombre del plato</h3>
+          <div class="flex gap-3 mt-3 flex-wrap">
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
+              <span>⏱️</span>
+              <span id="recetaTiempo">20 min</span>
+            </div>
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
+              <span>🎯</span>
+              <span id="recetaDificultad">Fácil</span>
+            </div>
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
+              <span>️</span>
+              <span id="recetaPorciones">2 porciones</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="cerrarModalReceta()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300">✕</button>
+      </div>
+    </div>
+    
+    <div class="p-6">
+      <!-- Ingredientes -->
+      <div class="mb-6">
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+          <span class="text-lg"></span> Ingredientes
+        </h4>
+        <div id="recetaIngredientes"></div>
+      </div>
+
+      <!-- Pasos -->
+      <div class="mb-6">
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+          <span class="text-lg">👨‍</span> Preparación
+        </h4>
+        <div id="recetaPasos"></div>
+      </div>
+
+      <!-- Consejo del chef -->
+      <div id="recetaConsejo" class="recipe-chef-tip hidden">
+        <div class="flex items-start gap-2">
+          <span class="text-xl">💡</span>
+          <div>
+            <div class="font-bold text-amber-800 dark:text-amber-300 text-sm mb-1">Consejo del chef</div>
+            <p class="text-sm text-amber-900 dark:text-amber-200" id="recetaConsejoTexto"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-3xl dark:bg-slate-900 dark:border-slate-700">
+      <button onclick="cerrarModalReceta()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-semibold dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white">Cerrar receta</button>
     </div>
   </div>
 </div>
@@ -866,7 +975,7 @@ function addToOfflineQueue(action, data) {
   const queue = getOfflineQueue();
   queue.push({ action, data, timestamp: Date.now() });
   localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
-  mostrarToast('📴 Sin conexión. Guardado localmente. Se sincronizará al volver.');
+  mostrarToast(' Sin conexión. Guardado localmente. Se sincronizará al volver.');
 }
 
 function clearOfflineQueue() {
@@ -939,7 +1048,7 @@ async function checkRealConnection() {
     updateOnlineStatusUI();
     return;
   }
-  console.log('[NutriPro]  Todos los métodos fallaron → OFFLINE');
+  console.log('[NutriPro] ❌ Todos los métodos fallaron → OFFLINE');
   appIsOnline = false;
   updateOnlineStatusUI();
 }
@@ -964,7 +1073,7 @@ async function processOfflineQueue() {
     return;
   }
   console.log('[NutriPro] 🔄 Sincronizando', queue.length, 'elementos pendientes...');
-  mostrarToast('🔄 Sincronizando datos pendientes...');
+  mostrarToast(' Sincronizando datos pendientes...');
   let successCount = 0;
   const newQueue = [];
 
@@ -1127,7 +1236,7 @@ function updateUserUI() {
   document.getElementById('dropdownEmail').textContent = currentUser.email;
   const roleEl = document.getElementById('dropdownRole');
   if (currentUser.rol === 'admin') {
-    roleEl.innerHTML = '<span class="status-badge bg-purple-100 text-purple-700">️ Administrador</span>';
+    roleEl.innerHTML = '<span class="status-badge bg-purple-100 text-purple-700">⚙️ Administrador</span>';
     document.getElementById('adminMenuItem').classList.remove('hidden');
   } else {
     roleEl.innerHTML = '<span class="status-badge bg-teal-100 text-teal-700">✓ Usuario</span>';
@@ -1145,7 +1254,7 @@ async function cerrarSesion() {
     showAuthScreen();
   } catch (err) {
     console.error('Error al cerrar sesión:', err);
-    mostrarToast('⚠️ Error al cerrar sesión. Recarga la página.');
+    mostrarToast('️ Error al cerrar sesión. Recarga la página.');
   }
 }
 
@@ -1235,7 +1344,7 @@ async function loadUserDataFromDB() {
       }
     } else if (uError && uError.code !== 'PGRST116') {
       console.error('Error cargando user_data:', uError);
-      mostrarToast('️ No se pudieron cargar tus datos.');
+      mostrarToast('⚠️ No se pudieron cargar tus datos.');
     }
     if (uData) {
       userData = uData;
@@ -1247,7 +1356,7 @@ async function loadUserDataFromDB() {
       cargarDatosEnFormularioEvaluacion();
     }
     const { data: wData, error: wError } = await sb.from('weight_logs').select('*').eq('user_id', currentUser.id).order('fecha', { ascending: true });
-    if (wError) { console.error('Error cargando weight_logs:', wError); mostrarToast('⚠️ No se pudo cargar tu historial de peso.'); }
+    if (wError) { console.error('Error cargando weight_logs:', wError); mostrarToast('️ No se pudo cargar tu historial de peso.'); }
     if (wData) {
       pesos = wData.map(w => ({ fecha: w.fecha, valor: w.valor }));
       renderSeguimiento();
@@ -1255,7 +1364,7 @@ async function loadUserDataFromDB() {
     await renderComentarios();
   } catch (err) {
     console.error('Error en loadUserDataFromDB:', err);
-    mostrarToast('️ Error al cargar datos. Recarga la página.');
+    mostrarToast('⚠️ Error al cargar datos. Recarga la página.');
   }
 }
 
@@ -1353,7 +1462,7 @@ async function publicarComentario() {
   if (!appIsOnline) {
     addToOfflineQueue('add_comment', commentData);
     document.getElementById('nuevoComentario').value = '';
-    mostrarToast(' Comentario guardado localmente. Se publicará al tener conexión.');
+    mostrarToast('📴 Comentario guardado localmente. Se publicará al tener conexión.');
     return;
   }
   try {
@@ -1371,7 +1480,7 @@ async function publicarComentario() {
 async function renderComentarios() {
   try {
     const { data: comments, error } = await sb.from('comments').select('*').order('created_at', { ascending: false });
-    if (error) { console.error('Error cargando comentarios:', error); mostrarToast('⚠️ No se pudieron cargar los comentarios.'); return; }
+    if (error) { console.error('Error cargando comentarios:', error); mostrarToast('️ No se pudieron cargar los comentarios.'); return; }
     const cont = document.getElementById('listaComentarios');
     if (!comments || comments.length === 0) {
       cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia 💬</div>';
@@ -1383,11 +1492,11 @@ async function renderComentarios() {
       const textoSeguro = DOMPurify.sanitize(c.texto);
       const nombreSeguro = DOMPurify.sanitize(c.user_name);
       const respuestas = (c.respuestas || []).map(r => `<div class="admin-reply"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold text-teal-700">🛡️ Equipo NutriPro</span><span class="text-xs text-slate-400">${new Date(r.fecha).toLocaleDateString()}</span></div><p class="text-sm text-slate-700 dark:text-slate-300">${DOMPurify.sanitize(r.texto)}</p></div>`).join('');
-      return `<div class="comment-card"><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${nombreSeguro.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${nombreSeguro}</div><div class="text-xs text-slate-400">${fecha}</div></div></div>${isAdmin ? `<div class="flex gap-1"><button onclick="responderComentario(${c.id})" class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200"> Responder</button><button onclick="eliminarComentario(${c.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200">🗑</button></div>` : ''}</div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${textoSeguro}</p>${respuestas}</div>`;
+      return `<div class="comment-card"><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${nombreSeguro.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${nombreSeguro}</div><div class="text-xs text-slate-400">${fecha}</div></div></div>${isAdmin ? `<div class="flex gap-1"><button onclick="responderComentario(${c.id})" class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200">↩ Responder</button><button onclick="eliminarComentario(${c.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200">🗑</button></div>` : ''}</div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${textoSeguro}</p>${respuestas}</div>`;
     }).join('');
   } catch (err) {
     console.error('Error en renderComentarios:', err);
-    mostrarToast('️ Error al cargar comentarios.');
+    mostrarToast('⚠️ Error al cargar comentarios.');
   }
 }
 
@@ -1404,7 +1513,6 @@ function categoriaIMC(imc) {
   return { texto: 'Obesidad', color: 'text-red-600' };
 }
 
-// 🟢 MODIFICADO: Calcula peso recomendado con lógica inteligente ±1.5kg
 function actualizarDashboard() {
   if (!userData) return;
   document.getElementById('dashboardNoData').classList.add('hidden');
@@ -1418,20 +1526,16 @@ function actualizarDashboard() {
   document.getElementById('metricIMCCat').textContent = catIMC.texto;
   document.getElementById('metricIMCCat').className = `text-xs font-semibold mt-1 ${catIMC.color}`;
   
-  // 🟢 NUEVA LÓGICA: Peso recomendado ±1.5kg según IMC actual
   const alturaM = userData.altura / 100;
   const imcActual = parseFloat(userData.imc);
   const MARGEN_KG = 1.5;
   
   let imcReferencia;
   if (imcActual < 18.5) {
-    // Bajo peso: usar IMC mínimo saludable (18.5)
     imcReferencia = 18.5;
   } else if (imcActual > 24.9) {
-    // Sobrepeso/obesidad: usar IMC 24.5 como objetivo
     imcReferencia = 24.5;
   } else {
-    // IMC saludable: usar el IMC actual del usuario
     imcReferencia = imcActual;
   }
   
@@ -1441,7 +1545,6 @@ function actualizarDashboard() {
   
   document.getElementById('metricPesoIdeal').textContent = `${pesoMin} – ${pesoMax} kg`;
   
-  // Texto descriptivo según la situación
   let detalleTexto = '';
   if (imcActual < 18.5) {
     detalleTexto = `Objetivo: alcanzar IMC saludable (18.5)`;
@@ -1477,6 +1580,247 @@ function actualizarDashboard() {
     alerta.innerHTML = `<strong>✅ Excelente:</strong> Ritmo estable y sostenible.`;
     alerta.classList.remove('hidden');
   } else { alerta.classList.add('hidden'); }
+}
+
+// ==========================================
+// 🟢 NUEVO: BASE DE DATOS DE RECETAS DETALLADAS
+// ==========================================
+const RECETAS_DB = {
+  'p1': {
+    tiempo: '15 min',
+    dificultad: 'Fácil',
+    porciones: 2,
+    ingredientes: [
+      { nombre: 'Pechuga de pollo', cantidad: '2 unidades (400g)' },
+      { nombre: 'Aceite de oliva virgen extra', cantidad: '1 cda' },
+      { nombre: 'Sal y pimienta', cantidad: 'al gusto' },
+      { nombre: 'Ajo en polvo', cantidad: '1/2 cdta (opcional)' },
+      { nombre: 'Limón', cantidad: '1/2 unidad' }
+    ],
+    pasos: [
+      'Saca el pollo de la nevera 10 minutos antes para que esté a temperatura ambiente.',
+      'Seca bien las pechugas con papel de cocina (esto ayuda a que se doren mejor).',
+      'Salpimienta ambos lados y añade el ajo en polvo si lo deseas.',
+      'Calienta una sartén antiadherente a fuego medio-alto con el aceite de oliva.',
+      'Coloca las pechugas y cocina 6-7 minutos por lado sin moverlas.',
+      'Cuando estén doradas, añade el zumo de medio limón y cocina 1 minuto más.',
+      'Retira del fuego y deja reposar 2 minutos antes de cortar.'
+    ],
+    consejo: 'Para mayor jugosidad, marina el pollo 30 minutos en limón, ajo y hierbas antes de cocinarlo.'
+  },
+  'p3': {
+    tiempo: '25 min',
+    dificultad: 'Media',
+    porciones: 2,
+    ingredientes: [
+      { nombre: 'Lomo de salmón', cantidad: '2 unidades (300g)' },
+      { nombre: 'Aceite de oliva', cantidad: '2 cdas' },
+      { nombre: 'Limón', cantidad: '1 unidad' },
+      { nombre: 'Eneldo fresco', cantidad: '2 ramitas' },
+      { nombre: 'Sal y pimienta', cantidad: 'al gusto' },
+      { nombre: 'Ajo', cantidad: '2 dientes' }
+    ],
+    pasos: [
+      'Precalienta el horno a 200°C.',
+      'Coloca el salmón sobre papel de aluminio en una bandeja.',
+      'Mezcla el aceite de oliva, el zumo de limón, el ajo picado y el eneldo.',
+      'Vierte la mezcla sobre el salmón y salpimienta.',
+      'Cierra el papel de aluminio formando un paquete.',
+      'Hornea 15-18 minutos hasta que el salmón esté en su punto.',
+      'Abre con cuidado (sale vapor) y sirve con rodajas de limón.'
+    ],
+    consejo: 'El salmón está en su punto cuando se desmenuza fácilmente con un tenedor pero sigue rosado en el centro.'
+  },
+  'c1': {
+    tiempo: '20 min',
+    dificultad: 'Fácil',
+    porciones: 4,
+    ingredientes: [
+      { nombre: 'Arroz integral', cantidad: '200g' },
+      { nombre: 'Agua', cantidad: '500ml' },
+      { nombre: 'Sal', cantidad: '1 cdta' },
+      { nombre: 'Aceite de oliva', cantidad: '1 cda' }
+    ],
+    pasos: [
+      'Lava el arroz integral bajo el grifo hasta que el agua salga clara.',
+      'Pon el agua a hervir con la sal en una olla.',
+      'Añade el arroz y el aceite de oliva.',
+      'Cuando hierva, baja el fuego al mínimo y tapa.',
+      'Cocina 18-20 minutos sin destapar.',
+      'Retira del fuego y deja reposar 5 minutos tapado.',
+      'Destapa y esponja con un tenedor antes de servir.'
+    ],
+    consejo: 'No destapes la olla durante la cocción: el vapor es clave para que quede suelto.'
+  },
+  'c3': {
+    tiempo: '15 min',
+    dificultad: 'Fácil',
+    porciones: 2,
+    ingredientes: [
+      { nombre: 'Quinoa', cantidad: '150g' },
+      { nombre: 'Agua o caldo de verduras', cantidad: '300ml' },
+      { nombre: 'Sal', cantidad: '1/2 cdta' }
+    ],
+    pasos: [
+      'Lava la quinoa en un colador fino bajo el grifo (elimina el sabor amargo).',
+      'Pon el agua o caldo a hervir con la sal.',
+      'Añade la quinoa y cocina a fuego medio.',
+      'Cuando hierva, baja el fuego y tapa.',
+      'Cocina 12-15 minutos hasta que absorba el líquido.',
+      'Retira del fuego y deja reposar 5 minutos.',
+      'Espolvorea con un tenedor para que quede suelta.'
+    ],
+    consejo: 'La quinoa está lista cuando se ven los "hilos" blancos (el germen) separados del grano.'
+  },
+  'v1': {
+    tiempo: '10 min',
+    dificultad: 'Fácil',
+    porciones: 2,
+    ingredientes: [
+      { nombre: 'Brócoli fresco', cantidad: '400g' },
+      { nombre: 'Agua', cantidad: 'para vapor' },
+      { nombre: 'Sal', cantidad: '1 pizca' },
+      { nombre: 'Aceite de oliva', cantidad: '1 cda' },
+      { nombre: 'Ajo', cantidad: '1 diente (opcional)' }
+    ],
+    pasos: [
+      'Lava el brócoli y córtalo en ramilletes pequeños.',
+      'Pon agua a hervir en una olla con cestillo de vapor.',
+      'Coloca el brócoli en el cestillo y tapa.',
+      'Cocina al vapor 5-7 minutos (debe quedar verde brillante y crujiente).',
+      'Retira y salpimienta al gusto.',
+      'Aliña con aceite de oliva y ajo picado si deseas.'
+    ],
+    consejo: 'No cocines el brócoli en exceso: debe quedar "al dente" para conservar vitaminas y textura.'
+  },
+  'd1': {
+    tiempo: '10 min',
+    dificultad: 'Fácil',
+    porciones: 1,
+    ingredientes: [
+      { nombre: 'Avena en copos', cantidad: '50g' },
+      { nombre: 'Leche o bebida vegetal', cantidad: '200ml' },
+      { nombre: 'Plátano', cantidad: '1 unidad' },
+      { nombre: 'Nueces', cantidad: '15g' },
+      { nombre: 'Canela', cantidad: '1 pizca' },
+      { nombre: 'Miel o stevia', cantidad: 'al gusto (opcional)' }
+    ],
+    pasos: [
+      'Pon la avena y la leche en un cazo a fuego medio.',
+      'Remueve constantemente durante 5 minutos hasta que espese.',
+      'Corta el plátano en rodajas.',
+      'Vierte la avena en un bol.',
+      'Coloca el plátano por encima.',
+      'Añade las nueces troceadas y la canela.',
+      'Endulza con miel o stevia si lo deseas.'
+    ],
+    consejo: 'Para un porridge más cremoso, usa mitad leche y mitad agua, y cocina a fuego muy bajo.'
+  },
+  'm1': {
+    tiempo: '5 min',
+    dificultad: 'Fácil',
+    porciones: 1,
+    ingredientes: [
+      { nombre: 'Manzana', cantidad: '1 unidad mediana' },
+      { nombre: 'Almendras naturales', cantidad: '20g (un puñado)' }
+    ],
+    pasos: [
+      'Lava bien la manzana.',
+      'Córtala en gajos o rodajas.',
+      'Sirve con las almendras al lado.',
+      'Opcional: añade una pizca de canela por encima.'
+    ],
+    consejo: 'La combinación de fruta + frutos secos proporciona energía sostenida y evita picos de glucosa.'
+  }
+};
+
+// Función para obtener receta (con fallback para alimentos sin receta detallada)
+function obtenerReceta(alimentoId) {
+  const receta = RECETAS_DB[alimentoId];
+  if (receta) return receta;
+  
+  // Receta genérica para alimentos sin receta específica
+  const alimento = MAPA_ALIMENTOS[alimentoId];
+  if (!alimento) return null;
+  
+  return {
+    tiempo: '15-20 min',
+    dificultad: 'Fácil',
+    porciones: 2,
+    ingredientes: [
+      { nombre: alimento.nombre, cantidad: 'porción estándar' },
+      { nombre: 'Aceite de oliva virgen extra', cantidad: '1 cda' },
+      { nombre: 'Sal y pimienta', cantidad: 'al gusto' },
+      { nombre: 'Hierbas aromáticas', cantidad: 'al gusto' }
+    ],
+    pasos: [
+      'Prepara los ingredientes y lávalos si es necesario.',
+      'Calienta una sartén o plancha a fuego medio con el aceite.',
+      'Cocina el alimento principal hasta que esté en su punto.',
+      'Salpimienta y añade hierbas al gusto.',
+      'Sirve caliente y disfruta.'
+    ],
+    consejo: 'Usa siempre ingredientes frescos y de temporada para maximizar el valor nutricional.'
+  };
+}
+
+// 🟢 NUEVO: Funciones para el modal de receta
+function abrirModalReceta(alimentoId) {
+  const alimento = MAPA_ALIMENTOS[alimentoId];
+  if (!alimento) return;
+  
+  const receta = obtenerReceta(alimentoId);
+  if (!receta) return;
+  
+  // Rellenar datos del header
+  document.getElementById('recetaTitulo').textContent = alimento.nombre;
+  document.getElementById('recetaTiempo').textContent = receta.tiempo;
+  document.getElementById('recetaDificultad').textContent = receta.dificultad;
+  document.getElementById('recetaPorciones').textContent = `${receta.porciones} ${receta.porciones === 1 ? 'porción' : 'porciones'}`;
+  
+  // Rellenar ingredientes
+  const contIngredientes = document.getElementById('recetaIngredientes');
+  contIngredientes.innerHTML = receta.ingredientes.map((ing, i) => `
+    <div class="recipe-ingredient" onclick="toggleIngrediente(this)">
+      <input type="checkbox" class="w-4 h-4 accent-teal-600">
+      <span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${ing.nombre}</span>
+      <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">${ing.cantidad}</span>
+    </div>
+  `).join('');
+  
+  // Rellenar pasos
+  const contPasos = document.getElementById('recetaPasos');
+  contPasos.innerHTML = receta.pasos.map((paso, i) => `
+    <div class="recipe-step">
+      <div class="recipe-step-number">${i + 1}</div>
+      <div class="flex-1 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">${paso}</div>
+    </div>
+  `).join('');
+  
+  // Consejo del chef
+  const consejoEl = document.getElementById('recetaConsejo');
+  const consejoTexto = document.getElementById('recetaConsejoTexto');
+  if (receta.consejo) {
+    consejoTexto.textContent = receta.consejo;
+    consejoEl.classList.remove('hidden');
+  } else {
+    consejoEl.classList.add('hidden');
+  }
+  
+  // Mostrar modal
+  document.getElementById('modalReceta').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarModalReceta() {
+  document.getElementById('modalReceta').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function toggleIngrediente(el) {
+  el.classList.toggle('checked');
+  const checkbox = el.querySelector('input[type="checkbox"]');
+  checkbox.checked = !checkbox.checked;
 }
 
 const GRUPO_PROTEINAS = [
@@ -1647,9 +1991,10 @@ function renderMenu() {
     const foodItemHTML = (item, path, label, color, emoji) => {
       const key = `${diaIdx}|${path}`;
       const isSub = sustituciones[key] !== undefined;
-      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-snug">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap"><span class="macro-chip bg-white/70 dark:bg-slate-700 text-slate-700 dark:text-slate-300">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="swap-icon flex-shrink-0 w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm">🔄</span></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
+      const tieneReceta = RECETAS_DB[item.id] !== undefined;
+      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-snug">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap"><span class="macro-chip bg-white/70 dark:bg-slate-700 text-slate-700 dark:text-slate-300">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="flex gap-1"><button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center shadow-sm text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍🍳</button><div class="swap-icon w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm">🔄</span></div></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
     };
-    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500 dark:text-slate-400">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '🥬')}</div>`;
+    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500 dark:text-slate-400">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '')}</div>`;
     cont.appendChild(card);
   });
 }
@@ -1711,12 +2056,13 @@ function mostrarToast(mensaje) {
 }
 
 document.getElementById('modalSustitucion').addEventListener('click', (e) => { if (e.target.id === 'modalSustitucion') cerrarModal(); });
+document.getElementById('modalReceta').addEventListener('click', (e) => { if (e.target.id === 'modalReceta') cerrarModalReceta(); });
 
 async function compartirApp() {
   const shareData = { title: 'NutriPro - Nutrición Clínica', text: '¡Estoy mejorando mi salud con NutriPro! Menús personalizados, seguimiento de peso y hábitos saludables. Pruébalo gratis aquí:', url: window.location.href };
   if (navigator.share) {
     try { await navigator.share(shareData); mostrarToast('✅ ¡Compartido con éxito!'); } 
-    catch (err) { if (err.name !== 'AbortError') { console.error('Error al compartir:', err); mostrarToast('⚠️ No se pudo compartir.'); } }
+    catch (err) { if (err.name !== 'AbortError') { console.error('Error al compartir:', err); mostrarToast('️ No se pudo compartir.'); } }
   } else {
     window.open(`https://wa.me/?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`, '_blank');
   }
@@ -1728,7 +2074,7 @@ function categorizarIngrediente(ing) {
   if (/arroz|quinoa|pasta|batata|patata|avena|pan|cuscús|mijo|bulgur|trigo|espelta|boniato|tostadas/.test(lower)) return { cat: '🍚 Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
   if (/aceite|aguacate|almendra|nueces|chía|lino|cacahuete|pistacho|anacardo|calabaza|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
   if (/manzana|plátano|frutos rojos|membrillo|naranja|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
-  if (/brócoli|espinaca|tomate|pepino|zanahoria|pimiento|calabacín|judía|coliflor|espárrago|cebolla|lechuga|acelgas|berenjena|champiñón|kale|hummus/.test(lower)) return { cat: ' Verduras', color: 'from-green-500 to-emerald-500' };
+  if (/brócoli|espinaca|tomate|pepino|zanahoria|pimiento|calabacín|judía|coliflor|espárrago|cebolla|lechuga|acelgas|berenjena|champiñón|kale|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
   return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
 }
 
@@ -1820,7 +2166,7 @@ function exportarMenuPDF() {
     yPos = doc.lastAutoTable.finalY + 6;
   });
   doc.save(`Menu_Semana${menuData.menuIndex + 1}_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast('📄 Menú exportado a PDF');
+  mostrarToast(' Menú exportado a PDF');
 }
 
 function exportarCompraPDF() {
@@ -1851,7 +2197,7 @@ function exportarCompraPDF() {
     yPos = doc.lastAutoTable.finalY + 5;
   });
   doc.save(`Lista_Compra_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast(' Lista exportada a PDF');
+  mostrarToast('📄 Lista exportada a PDF');
 }
 
 function exportarProgresoPDF() {
@@ -1897,7 +2243,6 @@ function crearGraficoBase64(buildConfig, w, h) {
   } catch (e) { console.error('Error generando gráfico para PDF:', e); return null; }
 }
 
-//  MODIFICADO: Ahora usa la misma lógica inteligente ±1.5kg
 function exportarInformeCompletoPDF() {
   if (!currentUser) { alert('Inicia sesión para generar el informe.'); return; }
   if (!userData) { alert('Completa primero la evaluación para generar el informe.'); return; }
@@ -1920,7 +2265,6 @@ function exportarInformeCompletoPDF() {
   const imcActual = parseFloat(userData.imc);
   const MARGEN_KG = 1.5;
   
-  // 🟢 MISMA LÓGICA QUE EL DASHBOARD
   let imcReferencia;
   if (imcActual < 18.5) {
     imcReferencia = 18.5;
@@ -2002,7 +2346,7 @@ const HABITOS_SALUD = [
   { icon: '🚭', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos: aumenta el riesgo cardiovascular y de cáncer, reduce la capacidad pulmonar y empeora el gusto y el olfato. Dejarlo mejora la circulación en pocas semanas y reduce el riesgo a largo plazo. Además, fumar altera el apetito y la ansiedad, lo que dificulta seguir un plan nutricional.', videos: ['daño del tabaco en el cuerpo humano', 'beneficios de dejar de fumar con el tiempo', 'cómo controlar la ansiedad al dejar de fumar'] },
   { icon: '', titulo: 'Reducir o evitar el alcohol', texto: 'El alcohol aporta calorías "vacías" (sin nutrientes) que se suman a tu total y sabotean el déficit. También afecta al hígado, empeora la calidad del sueño y altera hormonas relacionadas con el hambre y la recuperación. Reducirlo o eliminarlo facilita perder grasa y dormir mejor.', videos: ['efecto del alcohol en el cuerpo', 'alcohol y pérdida de grasa', 'qué hace el alcohol en el hígado'] },
   { icon: '😴', titulo: 'Dormir entre 7 y 9 horas', texto: 'Un sueño suficiente regula las hormonas del hambre y la saciedad (grelina y leptina), reduce el cortisol y permite la recuperación muscular. Dormir mal aumenta los antojos y dificulta mantener el plan, aunque comas bien.', videos: ['por qué dormir mal engorda', 'higiene del sueño para dormir mejor', 'rutina nocturna para dormir mejor'] },
-  { icon: '', titulo: 'Hidratación adecuada', texto: 'Una hidratación adecuada mejora el rendimiento, la digestión y la saciedad. A veces la sed se confunde con hambre, lo que lleva a comer de más. Beber agua a lo largo del día ayuda a regular el apetito y el bienestar general.', videos: ['cuánta agua beber al día', 'señales de deshidratación', 'agua y sensación de saciedad'] },
+  { icon: '💧', titulo: 'Hidratación adecuada', texto: 'Una hidratación adecuada mejora el rendimiento, la digestión y la saciedad. A veces la sed se confunde con hambre, lo que lleva a comer de más. Beber agua a lo largo del día ayuda a regular el apetito y el bienestar general.', videos: ['cuánta agua beber al día', 'señales de deshidratación', 'agua y sensación de saciedad'] },
   { icon: '', titulo: 'Gestionar el estrés y el cortisol', texto: 'El estrés crónico eleva el cortisol, lo que favorece los antojos y la acumulación de grasa, sobre todo abdominal. Gestionar el estrés con respiración, pausas y mindfulness protege tu progreso y tu salud.', videos: ['cortisol y grasa abdominal', 'técnicas de respiración para el estrés', 'mindfulness para reducir el estrés'] },
   { icon: '🚶', titulo: 'Moverse cada día (NEAT)', texto: 'El NEAT es la actividad fuera del ejercicio: caminar, estar de pie, moverse por casa. Suma mucho al gasto diario sin necesidad de gimnasio y es clave para mantener el déficit sin pasar hambre.', videos: ['qué es el NEAT y por qué importa', 'cómo aumentar los pasos diarios', 'moverse más sin ir al gimnasio'] },
   { icon: '🥦', titulo: 'Comida real y de calidad', texto: 'Priorizar comida real frente a ultraprocesados, asegurar fibra y proteína suficiente y montar platos equilibrados mejora la saciedad y la salud. Aprender a leer etiquetas te da control sobre lo que comes.', videos: ['cómo leer etiquetas nutricionales', 'el plato saludable explicado', 'ultraprocesados qué le hacen al cuerpo'] },
@@ -2049,7 +2393,7 @@ function renderSeguimiento() {
     const diff = (mm[mm.length - 1].valor - mm[0].valor).toFixed(2); 
     if (diff < -0.5) feedback.innerHTML = `<strong>✅ ¡Excelente tendencia!</strong> Has perdido ${Math.abs(diff)} kg.`; 
     else if (diff > 0.5) feedback.innerHTML = `<strong>⚠️ Revisa el plan.</strong> Tendencia de +${diff} kg.`; 
-    else feedback.innerHTML = `<strong> Estabilidad.</strong> Variación de ${diff} kg.`; 
+    else feedback.innerHTML = `<strong>📊 Estabilidad.</strong> Variación de ${diff} kg.`; 
   }
   renderChartPeso();
 }
@@ -2097,7 +2441,7 @@ function generarEjercicio() {
     ];
     plan = ['Fuerza', 'Caminata', 'Yoga', 'Fuerza', 'Caminata', 'Pilates', 'Descanso'];
   } else {
-    icono = '🌊'; foco = 'Densidad Ósea y Movilidad · 55+';
+    icono = ''; foco = 'Densidad Ósea y Movilidad · 55+';
     ejercicios = [
       { nombre: 'Sentadilla asistida', reps: '3x10', foco: 'Piernas' }, { nombre: 'Ejercicios con bandas', reps: '3x12', foco: 'Fuerza general' },
       { nombre: 'Equilibrio a una pierna', reps: '3x20s por lado', foco: 'Equilibrio' }, { nombre: 'Flexiones en pared', reps: '3x10', foco: 'Pecho' },
@@ -2139,7 +2483,7 @@ function renderAnalisis() {
   const proy = document.getElementById('proyeccionTexto');
   if (ritmoSem < -0.5) { proy.innerHTML = `<p class="mb-2">⚠️ <strong>Ritmo acelerado:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. Considera aumentar calorías.</p>`; }
   else if (ritmoSem >= -0.5 && ritmoSem <= -0.2) { proy.innerHTML = `<p class="mb-2">✅ <strong>Ritmo ideal:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. ¡Sigue así!</p>`; }
-  else if (ritmoSem > -0.2 && ritmoSem < 0.2) { proy.innerHTML = `<p class="mb-2"> <strong>Estancamiento.</strong> Revisa el cumplimiento del plan.</p>`; }
+  else if (ritmoSem > -0.2 && ritmoSem < 0.2) { proy.innerHTML = `<p class="mb-2">📊 <strong>Estancamiento.</strong> Revisa el cumplimiento del plan.</p>`; }
   else { proy.innerHTML = `<p class="mb-2">📈 <strong>Tendencia al alza:</strong> +${ritmoSem.toFixed(2)} kg/sem.</p><p>Revisa porciones y actividad física.</p>`; }
   const ctx = document.getElementById('chartSemanal').getContext('2d');
   if (chartSemanal) chartSemanal.destroy();
@@ -2181,18 +2525,18 @@ document.getElementById('formPerfil').addEventListener('submit', async (e) => {
 
 document.getElementById('formPassword').addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (!appIsOnline) { mostrarToast('⚠️ Se requiere conexión a internet para cambiar la contraseña.'); return; }
+  if (!appIsOnline) { mostrarToast('️ Se requiere conexión a internet para cambiar la contraseña.'); return; }
   const nueva = document.getElementById('passNueva').value;
   const conf = document.getElementById('passConfirm').value;
   if (nueva !== conf) { mostrarToast('❌ Las contraseñas nuevas no coinciden'); return; }
-  if (nueva.length < 6) { mostrarToast('❌ Mínimo 6 caracteres'); return; }
+  if (nueva.length < 6) { mostrarToast(' Mínimo 6 caracteres'); return; }
   try {
     const { error } = await sb.auth.updateUser({ password: nueva });
     if (error) { mostrarToast('❌ Error: ' + error.message); } 
     else { document.getElementById('formPassword').reset(); mostrarToast('✓ Contraseña cambiada'); }
   } catch (err) {
     console.error('Error en formPassword:', err);
-    mostrarToast(' Error de conexión. Inténtalo de nuevo.');
+    mostrarToast('❌ Error de conexión. Inténtalo de nuevo.');
   }
 });
 
@@ -2225,7 +2569,7 @@ document.querySelectorAll('.admin-tab').forEach(tab => {
 
 document.getElementById('userBtn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('userDropdown').classList.toggle('show'); });
 document.addEventListener('click', (e) => { if (!e.target.closest('.user-menu')) document.getElementById('userDropdown').classList.remove('show'); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { cerrarModal(); } });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { cerrarModal(); cerrarModalReceta(); } });
 
 checkAuth();
 </script>
