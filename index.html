@@ -241,6 +241,10 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
+        <!-- 📴 Indicador de Estado de Conexión -->
+        <div id="connectionStatus" class="hidden items-center gap-1 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full animate-pulse">
+          📴 Sin conexión
+        </div>
         <!-- 📤 Botón de Compartir (Mejora Paso 1) -->
         <button onclick="compartirApp()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold" title="Compartir aplicación">
           📤 Compartir
@@ -826,6 +830,137 @@ let chartPeso = null;
 let chartSemanal = null;
 let currentSwap = null;
 
+// ==========================================
+// 📴 SISTEMA OFFLINE-FIRST Y SINCRONIZACIÓN
+// ==========================================
+const OFFLINE_QUEUE_KEY = 'nutripro_offline_queue';
+
+function getOfflineQueue() {
+  try {
+    return JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY)) || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function addToOfflineQueue(action, data) {
+  const queue = getOfflineQueue();
+  queue.push({ action, data, timestamp: Date.now() });
+  localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
+  mostrarToast('📴 Sin conexión. Guardado localmente. Se sincronizará al volver.');
+}
+
+function clearOfflineQueue() {
+  localStorage.removeItem(OFFLINE_QUEUE_KEY);
+}
+
+async function processOfflineQueue() {
+  const queue = getOfflineQueue();
+  if (queue.length === 0) return;
+  
+  mostrarToast('🔄 Sincronizando datos pendientes...');
+  let successCount = 0;
+  const newQueue = [];
+
+  for (const item of queue) {
+    try {
+      let success = false;
+      if (item.action === 'add_weight' && currentUser) {
+        const { error } = await sb.from('weight_logs').insert({ 
+          user_id: currentUser.id, 
+          fecha: item.data.fecha, 
+          valor: item.data.valor 
+        });
+        if (!error) success = true; // Ya está en el array local 'pesos', no lo añadimos de nuevo
+      } else if (item.action === 'add_comment' && currentUser) {
+        const { error } = await sb.from('comments').insert({
+          user_id: currentUser.id,
+          user_name: item.data.anonimo ? 'Anónimo' : currentUser.nombre,
+          texto: item.data.texto,
+          is_anonymous: item.data.anonimo
+        });
+        if (!error) success = true;
+      } else if (item.action === 'save_evaluation' && currentUser) {
+        const { error } = await sb.from('user_data').upsert({ 
+          user_id: currentUser.id, 
+          ...item.data, 
+          updated_at: new Date() 
+        });
+        if (!error) {
+          userData = item.data;
+          success = true;
+        }
+      } else if (item.action === 'update_profile' && currentUser) {
+        const { error } = await sb.from('profiles').update({ nombre: item.data.nombre }).eq('id', currentUser.id);
+        if (!error) {
+          currentUser.nombre = item.data.nombre;
+          updateUserUI();
+          success = true;
+        }
+      }
+
+      if (success) {
+        successCount++;
+      } else {
+        newQueue.push(item); // Mantener los fallidos para el próximo intento
+      }
+    } catch (err) {
+      console.error('Error procesando cola offline:', err);
+      newQueue.push(item);
+    }
+  }
+  
+  if (newQueue.length === 0) {
+    clearOfflineQueue();
+  } else {
+    localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(newQueue));
+  }
+
+  if (successCount > 0) {
+    mostrarToast(`✅ ${successCount} registro(s) sincronizado(s) con éxito.`);
+    // Refrescar UI para asegurar consistencia
+    pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+    renderSeguimiento();
+    if (userData) {
+      actualizarDashboard();
+      generarMenu();
+      generarListaCompra();
+      generarEjercicio();
+    }
+    renderComentarios();
+  } else if (queue.length > 0) {
+    mostrarToast('⚠️ No se pudo sincronizar todo. Revisa tu conexión.');
+  }
+}
+
+function updateOnlineStatusUI() {
+  const isOnline = navigator.onLine;
+  const statusEl = document.getElementById('connectionStatus');
+  if (statusEl) {
+    if (isOnline) {
+      statusEl.classList.add('hidden');
+      statusEl.classList.remove('flex');
+    } else {
+      statusEl.classList.remove('hidden');
+      statusEl.classList.add('flex');
+    }
+  }
+}
+
+// Event listeners para online/offline
+window.addEventListener('online', () => {
+  mostrarToast('🟢 Conexión restaurada. Sincronizando...');
+  updateOnlineStatusUI();
+  if (currentUser) {
+    processOfflineQueue();
+  }
+});
+
+window.addEventListener('offline', () => {
+  mostrarToast('🔴 Sin conexión a internet. Los datos se guardarán localmente.');
+  updateOnlineStatusUI();
+});
+
 function initDarkMode() {
   const toggle = document.getElementById('darkModeToggle');
   const icon = document.getElementById('darkModeIcon');
@@ -886,6 +1021,12 @@ async function checkAuth() {
     showMainApp();
     await loadUserDataFromDB();
     initDarkMode();
+    updateOnlineStatusUI();
+    
+    // 🔄 Sincronizar datos pendientes al iniciar si hay conexión
+    if (navigator.onLine) {
+      await processOfflineQueue();
+    }
   } catch (err) {
     console.error('Error en checkAuth:', err);
     mostrarToast('⚠️ Error de conexión. Recarga la página.');
@@ -1109,18 +1250,38 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
   const grasasKcal = grasasG * 9;
   const carbKcal = caloriasObjetivo - protKcal - grasasKcal;
   const carbG = Math.round(carbKcal / 4);
-  userData = { edad, sexo, peso, altura, factor, objetivo, prefs, tmb: Math.round(tmb), getd: Math.round(getd), imc: imc.toFixed(1), deficit, caloriasObjetivo, protG, grasasG, carbG };
   
-  try {
-    await saveUserDataToDB();
+  const newUserData = { edad, sexo, peso, altura, factor, objetivo, prefs, tmb: Math.round(tmb), getd: Math.round(getd), imc: imc.toFixed(1), deficit, caloriasObjetivo, protG, grasasG, carbG };
+
+  if (!navigator.onLine) {
+    addToOfflineQueue('save_evaluation', newUserData);
+    userData = newUserData;
     actualizarDashboard();
     generarMenu();
     generarListaCompra();
     generarEjercicio();
     switchTab('dashboard');
+    mostrarToast('📴 Evaluación guardada localmente. Se sincronizará al tener conexión.');
+    return;
+  }
+
+  try {
+    const { error } = await sb.from('user_data').upsert({ user_id: currentUser.id, ...newUserData, updated_at: new Date() });
+    if (error) {
+      console.error('Error guardando datos:', error);
+      addToOfflineQueue('save_evaluation', newUserData);
+    } else {
+      userData = newUserData;
+      actualizarDashboard();
+      generarMenu();
+      generarListaCompra();
+      generarEjercicio();
+      switchTab('dashboard');
+      mostrarToast('✅ Evaluación guardada en la nube');
+    }
   } catch (err) {
     console.error('Error en formEvaluacion:', err);
-    alert('⚠️ Error al guardar tu evaluación. Inténtalo de nuevo.');
+    addToOfflineQueue('save_evaluation', newUserData);
   }
 });
 
@@ -1128,33 +1289,56 @@ async function agregarPeso() {
   const fecha = document.getElementById('fechaPeso').value;
   const valor = parseFloat(document.getElementById('valorPeso').value);
   if (!fecha || isNaN(valor)) {
-    alert('Introduce fecha y peso válido');
+    mostrarToast('⚠️ Introduce fecha y peso válido');
     return;
   }
   
+  const pesoData = { fecha, valor };
+
+  // Si no hay conexión, guardar en cola offline y actualizar UI localmente
+  if (!navigator.onLine) {
+    addToOfflineQueue('add_weight', pesoData);
+    pesos.push(pesoData);
+    pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+    document.getElementById('valorPeso').value = '';
+    renderSeguimiento();
+    return;
+  }
+
   try {
     const { error } = await sb.from('weight_logs').insert({ user_id: currentUser.id, fecha: fecha, valor: valor });
     if (error) {
       console.error('Error guardando peso:', error);
-      alert('❌ Error al guardar el peso. Inténtalo de nuevo.');
+      addToOfflineQueue('add_weight', pesoData);
       return;
     }
-    pesos.push({ fecha, valor });
+    pesos.push(pesoData);
     pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
     document.getElementById('valorPeso').value = '';
     renderSeguimiento();
     mostrarToast('✅ Peso registrado en la nube');
   } catch (err) {
     console.error('Error en agregarPeso:', err);
-    alert('❌ Error de conexión. Verifica tu internet e intenta de nuevo.');
+    addToOfflineQueue('add_weight', pesoData);
   }
 }
 
 async function publicarComentario() {
   const texto = document.getElementById('nuevoComentario').value.trim();
-  if (!texto) return;
+  if (!texto) {
+    mostrarToast('⚠️ El comentario no puede estar vacío');
+    return;
+  }
   const anonimo = document.getElementById('comentarioAnonimo').checked;
+  const commentData = { texto, anonimo };
   
+  if (!navigator.onLine) {
+    addToOfflineQueue('add_comment', commentData);
+    document.getElementById('nuevoComentario').value = '';
+    mostrarToast('📴 Comentario guardado localmente. Se publicará al tener conexión.');
+    return;
+  }
+
   try {
     const { error } = await sb.from('comments').insert({
       user_id: currentUser.id,
@@ -1165,7 +1349,7 @@ async function publicarComentario() {
     
     if (error) {
       console.error('Error publicando comentario:', error);
-      mostrarToast('❌ Error al publicar. Inténtalo de nuevo.');
+      addToOfflineQueue('add_comment', commentData);
       return;
     }
     
@@ -1174,7 +1358,7 @@ async function publicarComentario() {
     mostrarToast('💬 Comentario publicado');
   } catch (err) {
     console.error('Error en publicarComentario:', err);
-    mostrarToast('❌ Error de conexión. Inténtalo de nuevo.');
+    addToOfflineQueue('add_comment', commentData);
   }
 }
 
@@ -2019,11 +2203,19 @@ document.getElementById('formPerfil').addEventListener('submit', async (e) => {
   const nombre = document.getElementById('perfilNombre').value.trim();
   if (!nombre) return;
   
+  if (!navigator.onLine) {
+    addToOfflineQueue('update_profile', { nombre });
+    currentUser.nombre = nombre;
+    updateUserUI();
+    mostrarToast('📴 Cambio de nombre guardado localmente. Se sincronizará al tener conexión.');
+    return;
+  }
+
   try {
     const { error } = await sb.from('profiles').update({ nombre: nombre }).eq('id', currentUser.id);
     if (error) {
       console.error('Error actualizando perfil:', error);
-      mostrarToast('❌ Error al actualizar el perfil.');
+      addToOfflineQueue('update_profile', { nombre });
       return;
     }
     currentUser.nombre = nombre;
@@ -2031,28 +2223,32 @@ document.getElementById('formPerfil').addEventListener('submit', async (e) => {
     mostrarToast('✓ Perfil actualizado en la nube');
   } catch (err) {
     console.error('Error en formPerfil:', err);
-    mostrarToast('❌ Error de conexión. Inténtalo de nuevo.');
+    addToOfflineQueue('update_profile', { nombre });
   }
 });
 
 document.getElementById('formPassword').addEventListener('submit', async (e) => {
   e.preventDefault();
+  if (!navigator.onLine) {
+    mostrarToast('⚠️ Se requiere conexión a internet para cambiar la contraseña.');
+    return;
+  }
   const nueva = document.getElementById('passNueva').value;
   const conf = document.getElementById('passConfirm').value;
-  if (nueva !== conf) { alert('❌ Las contraseñas nuevas no coinciden'); return; }
-  if (nueva.length < 6) { alert('❌ Mínimo 6 caracteres'); return; }
+  if (nueva !== conf) { mostrarToast('❌ Las contraseñas nuevas no coinciden'); return; }
+  if (nueva.length < 6) { mostrarToast('❌ Mínimo 6 caracteres'); return; }
   
   try {
     const { error } = await sb.auth.updateUser({ password: nueva });
     if (error) {
-      alert('❌ Error: ' + error.message);
+      mostrarToast('❌ Error: ' + error.message);
     } else {
       document.getElementById('formPassword').reset();
       mostrarToast('✓ Contraseña cambiada');
     }
   } catch (err) {
     console.error('Error en formPassword:', err);
-    alert('❌ Error de conexión. Inténtalo de nuevo.');
+    mostrarToast('❌ Error de conexión. Inténtalo de nuevo.');
   }
 });
 
