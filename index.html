@@ -6,7 +6,7 @@
 <title>NutriPro</title>
 
 <!-- 🟢 Logo, favicon y configuración de app móvil -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230d9488' rx='16'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle'%3E🥗%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230d9488' rx='16'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle'%3E%3C/text%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230d9488' rx='16'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle'%3E🥗%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#0d9488">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -26,7 +26,7 @@
 <!-- Supabase JS Client -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-<!-- 🛡️ DOMPurify para prevenir ataques XSS -->
+<!-- ️ DOMPurify para prevenir ataques XSS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 
 <!-- Fonts -->
@@ -233,7 +233,7 @@
   <div class="max-w-7xl mx-auto px-6 py-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center text-2xl">🥗</div>
+        <div class="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center text-2xl"></div>
         <div>
           <h1 class="text-2xl font-bold">NutriPro</h1>
           <p class="text-xs text-teal-100">Nutrición Clínica · Déficit Sostenible</p>
@@ -247,7 +247,7 @@
           📤 Compartir
         </button>
         <button onclick="compartirApp()" class="md:hidden w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Compartir">
-          📤
+          
         </button>
 
         <button id="darkModeToggle" class="w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Cambiar tema">
@@ -292,12 +292,12 @@
       <button class="nav-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all" data-tab="evaluacion">📋 Evaluación</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard">📊 Dashboard</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="menu">🍽️ Menú</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra">🛒 Compra</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra"> Compra</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="seguimiento">📈 Seguimiento</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="salud">❤️ Salud</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios"> Comunidad</button>
     </div>
   </nav>
 </header>
@@ -410,7 +410,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Tus cifras clave calculadas con base científica.</p>
   </div>
   <div id="dashboardNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4">📊</div>
+    <div class="text-6xl mb-4"></div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Aún no has completado la evaluación</h3>
     <p class="text-slate-600 dark:text-slate-400 mb-6">Ve a la sección de Evaluación para calcular tus métricas.</p>
     <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
@@ -437,7 +437,7 @@
         <div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="metricIMC">—</div>
         <div class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="metricIMCCat">Categoría</div>
         <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-600">
-          <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Peso Ideal <span class="normal-case font-normal">(IMC 22 ± 1.5 kg)</span></div>
+          <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Peso Saludable <span class="normal-case font-normal">(Rango OMS)</span></div>
           <div class="text-sm font-bold text-teal-600" id="metricPesoIdeal">—</div>
           <div class="text-xs text-slate-400 dark:text-slate-500 mt-1" id="metricPesoIdealDetalle"></div>
         </div>
@@ -484,7 +484,7 @@
     <div class="flex gap-2 flex-wrap">
       <button onclick="exportarMenuPDF()" class="btn-pdf px-4 py-3 rounded-lg font-semibold flex items-center gap-2 text-sm">📄 PDF Menú</button>
       <button onclick="resetSustituciones()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-lg font-semibold hover:bg-slate-200 text-sm dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600">🔄 Reset</button>
-      <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2">🔄 Regenerar</button>
+      <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2"> Regenerar</button>
     </div>
   </div>
   <div id="menuNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
@@ -523,7 +523,7 @@
     </div>
     <div class="flex gap-2 flex-wrap">
       <button onclick="exportarProgresoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📈 PDF Progreso</button>
-      <button onclick="exportarInformeCompletoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📊 Informe completo</button>
+      <button onclick="exportarInformeCompletoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2"> Informe completo</button>
     </div>
   </div>
   <div class="ad-space py-6 mb-6" data-pos="inline">
@@ -644,7 +644,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">La nutrición es solo una pieza. Estos hábitos, respaldados por consenso clínico (OMS), multiplican tu progreso y tu salud. Cada tarjeta incluye vídeos explicativos.</p>
   </div>
   <div class="alert-warning rounded-xl p-4 mb-6">
-    <p class="text-xs"><strong>⚕️ Aviso:</strong> La información es orientativa y de divulgación. Para dejar de fumar, reducir el alcohol o cualquier cambio de salud, apóyate en tu médico o en recursos sanitarios oficiales.</p>
+    <p class="text-xs"><strong>️ Aviso:</strong> La información es orientativa y de divulgación. Para dejar de fumar, reducir el alcohol o cualquier cambio de salud, apóyate en tu médico o en recursos sanitarios oficiales.</p>
   </div>
   <div class="grid md:grid-cols-2 gap-6" id="saludCards"></div>
 </section>
@@ -680,7 +680,7 @@
           <li>✓ Sé respetuoso con los demás</li>
           <li>✓ Comparte experiencias reales</li>
           <li>✗ No compartas datos médicos personales</li>
-          <li>✗ Evita promocionar dietas milagro</li>
+          <li> Evita promocionar dietas milagro</li>
         </ul>
       </div>
       <div class="ad-space py-8">
@@ -754,7 +754,7 @@
   <div class="flex gap-2 mb-4 border-b border-slate-200 dark:border-slate-700">
     <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600" data-atab="usuarios">👥 Usuarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="comentarios">💬 Comentarios</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="config">⚙️ Configuración</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="config">️ Configuración</button>
   </div>
   <div id="admin-usuarios" class="admin-panel">
     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
@@ -842,9 +842,6 @@ let currentSwap = null;
 // 📴 SISTEMA OFFLINE-FIRST CON DETECCIÓN ROBUSTA
 // ==========================================
 const OFFLINE_QUEUE_KEY = 'nutripro_offline_queue';
-
-// 🟢 Por defecto asumimos que HAY conexión (más permisivo)
-// Solo se marca como offline si TODOS los métodos fallan
 let appIsOnline = true;
 
 function getOfflineQueue() {
@@ -852,7 +849,6 @@ function getOfflineQueue() {
     const data = localStorage.getItem(OFFLINE_QUEUE_KEY);
     if (!data) return [];
     const parsed = JSON.parse(data);
-    // Validar que sea un array
     if (!Array.isArray(parsed)) {
       console.warn('Cola offline corrupta, limpiando...');
       localStorage.removeItem(OFFLINE_QUEUE_KEY);
@@ -877,7 +873,6 @@ function clearOfflineQueue() {
   localStorage.removeItem(OFFLINE_QUEUE_KEY);
 }
 
-// 🟢 MÉTODO 1: Verificación por imagen (el más fiable, sin problemas de CORS)
 function checkConnectionByImage() {
   return new Promise((resolve) => {
     const img = new Image();
@@ -885,7 +880,6 @@ function checkConnectionByImage() {
       console.log('[NutriPro] Check imagen: TIMEOUT');
       resolve(false);
     }, 4000);
-    
     img.onload = () => {
       clearTimeout(timeout);
       console.log('[NutriPro] Check imagen: ✅ OK');
@@ -896,18 +890,14 @@ function checkConnectionByImage() {
       console.log('[NutriPro] Check imagen: ❌ FAIL');
       resolve(false);
     };
-    
-    // Usar favicon de Cloudflare (muy fiable y sin CORS issues)
     img.src = `https://www.cloudflare.com/favicon.ico?_=${Date.now()}`;
   });
 }
 
-// 🟢 MÉTODO 2: Verificación por fetch a endpoint público
 async function checkConnectionByFetch() {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 4000);
-    
     const response = await fetch('https://1.1.1.1/cdn-cgi/trace', { 
       method: 'GET',
       signal: controller.signal,
@@ -922,14 +912,10 @@ async function checkConnectionByFetch() {
   }
 }
 
-// 🟢 VERIFICACIÓN COMBINADA: Si al menos UN método funciona, hay conexión
 async function checkRealConnection() {
   console.log('[NutriPro] 🔍 Verificando conexión real...');
-  
-  // Si el navegador dice que no hay red, es casi seguro que no hay
   if (!navigator.onLine) {
     console.log('[NutriPro] navigator.onLine = false');
-    // Pero aún así hacemos una prueba por si acaso
     const imgOk = await checkConnectionByImage();
     if (imgOk) {
       console.log('[NutriPro] navigator.onLine=false pero imagen OK → asumimos ONLINE');
@@ -941,24 +927,18 @@ async function checkRealConnection() {
     updateOnlineStatusUI();
     return;
   }
-  
-  // Si el navegador dice que SÍ hay red, lo confirmamos con al menos un método
   const imgOk = await checkConnectionByImage();
   if (imgOk) {
     appIsOnline = true;
     updateOnlineStatusUI();
     return;
   }
-  
-  // Si la imagen falla, probamos con fetch
   const fetchOk = await checkConnectionByFetch();
   if (fetchOk) {
     appIsOnline = true;
     updateOnlineStatusUI();
     return;
   }
-  
-  // Si ambos fallan, asumimos offline
   console.log('[NutriPro] ❌ Todos los métodos fallaron → OFFLINE');
   appIsOnline = false;
   updateOnlineStatusUI();
@@ -979,15 +959,12 @@ function updateOnlineStatusUI() {
 
 async function processOfflineQueue() {
   const queue = getOfflineQueue();
-  
-  // 🟢 Si no hay nada en la cola, no hacemos nada ni mostramos mensajes
   if (queue.length === 0) {
     console.log('[NutriPro] Cola offline vacía, nada que sincronizar');
     return;
   }
-  
   console.log('[NutriPro] 🔄 Sincronizando', queue.length, 'elementos pendientes...');
-  mostrarToast('🔄 Sincronizando datos pendientes...');
+  mostrarToast(' Sincronizando datos pendientes...');
   let successCount = 0;
   const newQueue = [];
 
@@ -1007,7 +984,6 @@ async function processOfflineQueue() {
         const { error } = await sb.from('profiles').update({ nombre: item.data.nombre }).eq('id', currentUser.id);
         if (!error) { currentUser.nombre = item.data.nombre; updateUserUI(); success = true; }
       }
-
       if (success) { successCount++; } 
       else { newQueue.push(item); }
     } catch (err) {
@@ -1026,12 +1002,10 @@ async function processOfflineQueue() {
     if (userData) { actualizarDashboard(); generarMenu(); generarListaCompra(); generarEjercicio(); cargarDatosEnFormularioEvaluacion(); }
     renderComentarios();
   } else if (queue.length > 0) {
-    // Solo mostrar error si realmente había elementos y todos fallaron
-    mostrarToast('⚠️ No se pudo sincronizar. Se reintentará automáticamente.');
+    mostrarToast('️ No se pudo sincronizar. Se reintentará automáticamente.');
   }
 }
 
-// Event listeners
 window.addEventListener('online', () => {
   console.log('[NutriPro] 🟢 Evento "online" del navegador');
   appIsOnline = true;
@@ -1048,7 +1022,6 @@ window.addEventListener('offline', () => {
   updateOnlineStatusUI();
 });
 
-// 🟢 Persistencia y visualización de la evaluación
 function saveUserDataToLocal(data) {
   localStorage.setItem('nutripro_user_data', JSON.stringify(data));
 }
@@ -1061,11 +1034,9 @@ function cargarDatosEnFormularioEvaluacion() {
   document.getElementById('altura').value = userData.altura || 175;
   document.getElementById('actividad').value = userData.factor || 1.375;
   document.getElementById('objetivo').value = userData.objetivo || 'perder';
-
   document.querySelectorAll('.pref').forEach(cb => {
     cb.checked = userData.prefs && userData.prefs.includes(cb.value);
   });
-
   document.getElementById('evaluacionStatus').classList.remove('hidden');
 }
 
@@ -1089,7 +1060,7 @@ function initDarkMode() {
   toggle.addEventListener('click', () => {
     html.classList.toggle('dark');
     const isDark = html.classList.contains('dark');
-    icon.textContent = isDark ? '☀️' : '🌙';
+    icon.textContent = isDark ? '☀️' : '';
     localStorage.setItem('nutripro-theme', isDark ? 'dark' : 'light');
     if (chartPeso) renderChartPeso();
     if (chartSemanal) renderAnalisis();
@@ -1101,9 +1072,7 @@ async function checkAuth() {
   try {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { showAuthScreen(); return; }
-    
     const { data: profile, error } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
-    
     if (error || !profile) {
       const nombre = session.user.user_metadata?.nombre || session.user.email.split('@')[0];
       const { error: insertError } = await sb.from('profiles').insert({ id: session.user.id, nombre: nombre, rol: 'user', bloqueado: false });
@@ -1111,29 +1080,22 @@ async function checkAuth() {
         console.error('Error creando perfil:', insertError);
         await sb.auth.signOut();
         showAuthScreen();
-        alert('⚠️ Error al inicializar tu cuenta en la base de datos. Por favor, contacta con el administrador.');
+        alert('️ Error al inicializar tu cuenta en la base de datos. Por favor, contacta con el administrador.');
         return;
       }
       location.reload();
       return;
     }
-    
     if (profile.bloqueado) { showBlockedScreen('Tu cuenta ha sido bloqueada por el administrador.'); return; }
-    
     currentUser = { id: session.user.id, email: session.user.email, nombre: profile.nombre, rol: profile.rol };
     showMainApp();
     await loadUserDataFromDB();
     initDarkMode();
-    
-    // 🟢 Verificación real de conexión al iniciar
     await checkRealConnection();
-    
-    if (appIsOnline) { 
-      await processOfflineQueue(); 
-    }
+    if (appIsOnline) { await processOfflineQueue(); }
   } catch (err) {
     console.error('Error en checkAuth:', err);
-    mostrarToast('⚠️ Error de conexión. Recarga la página.');
+    mostrarToast('️ Error de conexión. Recarga la página.');
   }
 }
 
@@ -1192,7 +1154,6 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
   const email = document.getElementById('loginEmail').value;
   const pass = document.getElementById('loginPassword').value;
   const err = document.getElementById('loginError');
-  
   try {
     const { data, error } = await sb.auth.signInWithPassword({ email: email, password: pass });
     if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } 
@@ -1213,20 +1174,15 @@ document.getElementById('formRegister').addEventListener('submit', async (e) => 
   const terms = document.getElementById('regTerms').checked;
   const err = document.getElementById('regError');
   const btn = e.target.querySelector('button[type="submit"]');
-
   err.classList.add('hidden');
-
   if (!nombre) { err.textContent = '❌ El nombre es obligatorio'; err.classList.remove('hidden'); return; }
   if (!terms) { err.textContent = '❌ Debes aceptar los términos y condiciones'; err.classList.remove('hidden'); return; }
   if (pass !== pass2) { err.textContent = '❌ Las contraseñas no coinciden'; err.classList.remove('hidden'); return; }
   if (pass.length < 6) { err.textContent = '❌ La contraseña debe tener al menos 6 caracteres'; err.classList.remove('hidden'); return; }
-
   if (!sb) { err.textContent = '❌ Error de conexión con la base de datos. Recarga la página.'; err.classList.remove('hidden'); return; }
-
   const originalBtnText = btn.textContent;
   btn.disabled = true;
   btn.textContent = 'Creando cuenta...';
-
   try {
     const { data, error } = await sb.auth.signUp({ email: email, password: pass, options: { data: { nombre: nombre } } });
     if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } 
@@ -1267,7 +1223,6 @@ document.querySelectorAll('.auth-tab').forEach(tab => {
 async function loadUserDataFromDB() {
   try {
     const { data: uData, error: uError } = await sb.from('user_data').select('*').eq('user_id', currentUser.id).single();
-    
     if ((!uData || uError) && !appIsOnline) {
       const localData = localStorage.getItem('nutripro_user_data');
       if (localData) {
@@ -1282,7 +1237,6 @@ async function loadUserDataFromDB() {
       console.error('Error cargando user_data:', uError);
       mostrarToast('⚠️ No se pudieron cargar tus datos.');
     }
-    
     if (uData) {
       userData = uData;
       saveUserDataToLocal(userData);
@@ -1292,14 +1246,12 @@ async function loadUserDataFromDB() {
       generarEjercicio();
       cargarDatosEnFormularioEvaluacion();
     }
-    
     const { data: wData, error: wError } = await sb.from('weight_logs').select('*').eq('user_id', currentUser.id).order('fecha', { ascending: true });
     if (wError) { console.error('Error cargando weight_logs:', wError); mostrarToast('⚠️ No se pudo cargar tu historial de peso.'); }
     if (wData) {
       pesos = wData.map(w => ({ fecha: w.fecha, valor: w.valor }));
       renderSeguimiento();
     }
-    
     await renderComentarios();
   } catch (err) {
     console.error('Error en loadUserDataFromDB:', err);
@@ -1331,9 +1283,7 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
   const grasasKcal = grasasG * 9;
   const carbKcal = caloriasObjetivo - protKcal - grasasKcal;
   const carbG = Math.round(carbKcal / 4);
-  
   const newUserData = { edad, sexo, peso, altura, factor, objetivo, prefs, tmb: Math.round(tmb), getd: Math.round(getd), imc: imc.toFixed(1), deficit, caloriasObjetivo, protG, grasasG, carbG };
-
   if (!appIsOnline) {
     addToOfflineQueue('save_evaluation', newUserData);
     userData = newUserData;
@@ -1346,7 +1296,6 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
     switchTab('dashboard');
     return;
   }
-
   try {
     const { error } = await sb.from('user_data').upsert({ user_id: currentUser.id, ...newUserData, updated_at: new Date() });
     if (error) {
@@ -1373,9 +1322,7 @@ async function agregarPeso() {
   const fecha = document.getElementById('fechaPeso').value;
   const valor = parseFloat(document.getElementById('valorPeso').value);
   if (!fecha || isNaN(valor)) { mostrarToast('⚠️ Introduce fecha y peso válido'); return; }
-  
   const pesoData = { fecha, valor };
-
   if (!appIsOnline) {
     addToOfflineQueue('add_weight', pesoData);
     pesos.push(pesoData);
@@ -1384,7 +1331,6 @@ async function agregarPeso() {
     renderSeguimiento();
     return;
   }
-
   try {
     const { error } = await sb.from('weight_logs').insert({ user_id: currentUser.id, fecha: fecha, valor: valor });
     if (error) { console.error('Error guardando peso:', error); addToOfflineQueue('add_weight', pesoData); return; }
@@ -1404,14 +1350,12 @@ async function publicarComentario() {
   if (!texto) { mostrarToast('⚠️ El comentario no puede estar vacío'); return; }
   const anonimo = document.getElementById('comentarioAnonimo').checked;
   const commentData = { texto, anonimo };
-  
   if (!appIsOnline) {
     addToOfflineQueue('add_comment', commentData);
     document.getElementById('nuevoComentario').value = '';
-    mostrarToast('📴 Comentario guardado localmente. Se publicará al tener conexión.');
+    mostrarToast(' Comentario guardado localmente. Se publicará al tener conexión.');
     return;
   }
-
   try {
     const { error } = await sb.from('comments').insert({ user_id: currentUser.id, user_name: anonimo ? 'Anónimo' : currentUser.nombre, texto: texto, is_anonymous: anonimo });
     if (error) { console.error('Error publicando comentario:', error); addToOfflineQueue('add_comment', commentData); return; }
@@ -1428,25 +1372,22 @@ async function renderComentarios() {
   try {
     const { data: comments, error } = await sb.from('comments').select('*').order('created_at', { ascending: false });
     if (error) { console.error('Error cargando comentarios:', error); mostrarToast('⚠️ No se pudieron cargar los comentarios.'); return; }
-    
     const cont = document.getElementById('listaComentarios');
     if (!comments || comments.length === 0) {
       cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia 💬</div>';
       return;
     }
-    
     cont.innerHTML = comments.map(c => {
       const isAdmin = currentUser && currentUser.rol === 'admin';
       const fecha = new Date(c.created_at).toLocaleDateString('es-ES');
       const textoSeguro = DOMPurify.sanitize(c.texto);
       const nombreSeguro = DOMPurify.sanitize(c.user_name);
       const respuestas = (c.respuestas || []).map(r => `<div class="admin-reply"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold text-teal-700">🛡️ Equipo NutriPro</span><span class="text-xs text-slate-400">${new Date(r.fecha).toLocaleDateString()}</span></div><p class="text-sm text-slate-700 dark:text-slate-300">${DOMPurify.sanitize(r.texto)}</p></div>`).join('');
-      
       return `<div class="comment-card"><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${nombreSeguro.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${nombreSeguro}</div><div class="text-xs text-slate-400">${fecha}</div></div></div>${isAdmin ? `<div class="flex gap-1"><button onclick="responderComentario(${c.id})" class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200">↩ Responder</button><button onclick="eliminarComentario(${c.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200">🗑</button></div>` : ''}</div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${textoSeguro}</p>${respuestas}</div>`;
     }).join('');
   } catch (err) {
     console.error('Error en renderComentarios:', err);
-    mostrarToast('⚠️ Error al cargar comentarios.');
+    mostrarToast('️ Error al cargar comentarios.');
   }
 }
 
@@ -1463,6 +1404,7 @@ function categoriaIMC(imc) {
   return { texto: 'Obesidad', color: 'text-red-600' };
 }
 
+// 🟢 MODIFICADO: Ahora usa el rango OMS (18.5 - 24.9) en lugar de IMC fijo de 22
 function actualizarDashboard() {
   if (!userData) return;
   document.getElementById('dashboardNoData').classList.add('hidden');
@@ -1475,13 +1417,17 @@ function actualizarDashboard() {
   const catIMC = categoriaIMC(parseFloat(userData.imc));
   document.getElementById('metricIMCCat').textContent = catIMC.texto;
   document.getElementById('metricIMCCat').className = `text-xs font-semibold mt-1 ${catIMC.color}`;
+  
+  // 🟢 NUEVO: Rango de peso saludable según OMS (IMC 18.5 - 24.9)
   const alturaM = userData.altura / 100;
-  const IMC_IDEAL = 22;
-  const pesoIdeal = IMC_IDEAL * alturaM * alturaM;
-  const pesoIdealMin = (pesoIdeal - 1.5).toFixed(1);
-  const pesoIdealMax = (pesoIdeal + 1.5).toFixed(1);
-  document.getElementById('metricPesoIdeal').textContent = `${pesoIdealMin} – ${pesoIdealMax} kg`;
-  document.getElementById('metricPesoIdealDetalle').textContent = `Objetivo: ${pesoIdeal.toFixed(1)} kg (IMC ${IMC_IDEAL})`;
+  const IMC_MIN_SALUDABLE = 18.5;
+  const IMC_MAX_SALUDABLE = 24.9;
+  const pesoMinSaludable = (IMC_MIN_SALUDABLE * alturaM * alturaM).toFixed(1);
+  const pesoMaxSaludable = (IMC_MAX_SALUDABLE * alturaM * alturaM).toFixed(1);
+  
+  document.getElementById('metricPesoIdeal').textContent = `${pesoMinSaludable} – ${pesoMaxSaludable} kg`;
+  document.getElementById('metricPesoIdealDetalle').textContent = `Rango saludable OMS (IMC ${IMC_MIN_SALUDABLE}-${IMC_MAX_SALUDABLE})`;
+  
   const totalKcal = userData.protG * 4 + userData.grasasG * 9 + userData.carbG * 4;
   const pctProt = Math.round((userData.protG * 4 / totalKcal) * 100);
   const pctCarb = Math.round((userData.carbG * 4 / totalKcal) * 100);
@@ -1679,7 +1625,7 @@ function renderMenu() {
       const isSub = sustituciones[key] !== undefined;
       return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-snug">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap"><span class="macro-chip bg-white/70 dark:bg-slate-700 text-slate-700 dark:text-slate-300">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="swap-icon flex-shrink-0 w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm">🔄</span></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
     };
-    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500 dark:text-slate-400">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '🥬')}</div>`;
+    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500 dark:text-slate-400">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300', '')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '🥬')}</div>`;
     cont.appendChild(card);
   });
 }
@@ -1927,6 +1873,7 @@ function crearGraficoBase64(buildConfig, w, h) {
   } catch (e) { console.error('Error generando gráfico para PDF:', e); return null; }
 }
 
+// 🟢 MODIFICADO: Ahora usa el rango OMS (18.5 - 24.9) en lugar de IMC fijo de 22
 function exportarInformeCompletoPDF() {
   if (!currentUser) { alert('Inicia sesión para generar el informe.'); return; }
   if (!userData) { alert('Completa primero la evaluación para generar el informe.'); return; }
@@ -1945,13 +1892,24 @@ function exportarInformeCompletoPDF() {
   doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
   doc.text('Resumen metabolico', M, y); y += 6;
   const catIMC = categoriaIMC(parseFloat(userData.imc));
-  const alturaM = userData.altura / 100; const pi = 22 * alturaM * alturaM;
+  const alturaM = userData.altura / 100;
+  
+  // 🟢 NUEVO: Rango de peso saludable según OMS
+  const IMC_MIN_SALUDABLE = 18.5;
+  const IMC_MAX_SALUDABLE = 24.9;
+  const pesoMinSaludable = (IMC_MIN_SALUDABLE * alturaM * alturaM).toFixed(1);
+  const pesoMaxSaludable = (IMC_MAX_SALUDABLE * alturaM * alturaM).toFixed(1);
+  
   const deficitTxt = userData.deficit > 0 ? `Deficit ${userData.deficit} kcal` : (userData.deficit < 0 ? `Superavit ${Math.abs(userData.deficit)} kcal` : 'Mantenimiento');
   const lineas = [
-    ['TMB (reposo)', `${userData.tmb} kcal/dia`], ['Gasto total (GETD)', `${userData.getd} kcal/dia`],
-    ['Objetivo calorico', `${userData.caloriasObjetivo} kcal/dia`], ['Deficit / superavit', deficitTxt],
-    ['IMC', `${userData.imc} (${catIMC.texto})`], ['Peso ideal (IMC 22 +/-1.5 kg)', `${(pi - 1.5).toFixed(1)} - ${(pi + 1.5).toFixed(1)} kg`],
-    ['Peso actual', `${userData.peso} kg`], ['Macros objetivo', `P ${userData.protG}g  C ${userData.carbG}g  G ${userData.grasasG}g`],
+    ['TMB (reposo)', `${userData.tmb} kcal/dia`], 
+    ['Gasto total (GETD)', `${userData.getd} kcal/dia`],
+    ['Objetivo calorico', `${userData.caloriasObjetivo} kcal/dia`], 
+    ['Deficit / superavit', deficitTxt],
+    ['IMC', `${userData.imc} (${catIMC.texto})`], 
+    ['Peso saludable (OMS)', `${pesoMinSaludable} - ${pesoMaxSaludable} kg (IMC 18.5-24.9)`],
+    ['Peso actual', `${userData.peso} kg`], 
+    ['Macros objetivo', `P ${userData.protG}g  C ${userData.carbG}g  G ${userData.grasasG}g`],
   ];
   doc.autoTable({ startY: y, body: lineas, theme: 'plain', styles: { fontSize: 10, cellPadding: 2, textColor: [40, 40, 40] }, columnStyles: { 0: { fontStyle: 'bold', cellWidth: 72 } }, margin: { left: M, right: M } });
   y = doc.lastAutoTable.finalY + 8;
@@ -2012,7 +1970,7 @@ const HABITOS_SALUD = [
   { icon: '😴', titulo: 'Dormir entre 7 y 9 horas', texto: 'Un sueño suficiente regula las hormonas del hambre y la saciedad (grelina y leptina), reduce el cortisol y permite la recuperación muscular. Dormir mal aumenta los antojos y dificulta mantener el plan, aunque comas bien.', videos: ['por qué dormir mal engorda', 'higiene del sueño para dormir mejor', 'rutina nocturna para dormir mejor'] },
   { icon: '💧', titulo: 'Hidratación adecuada', texto: 'Una hidratación adecuada mejora el rendimiento, la digestión y la saciedad. A veces la sed se confunde con hambre, lo que lleva a comer de más. Beber agua a lo largo del día ayuda a regular el apetito y el bienestar general.', videos: ['cuánta agua beber al día', 'señales de deshidratación', 'agua y sensación de saciedad'] },
   { icon: '🧘', titulo: 'Gestionar el estrés y el cortisol', texto: 'El estrés crónico eleva el cortisol, lo que favorece los antojos y la acumulación de grasa, sobre todo abdominal. Gestionar el estrés con respiración, pausas y mindfulness protege tu progreso y tu salud.', videos: ['cortisol y grasa abdominal', 'técnicas de respiración para el estrés', 'mindfulness para reducir el estrés'] },
-  { icon: '🚶', titulo: 'Moverse cada día (NEAT)', texto: 'El NEAT es la actividad fuera del ejercicio: caminar, estar de pie, moverse por casa. Suma mucho al gasto diario sin necesidad de gimnasio y es clave para mantener el déficit sin pasar hambre.', videos: ['qué es el NEAT y por qué importa', 'cómo aumentar los pasos diarios', 'moverse más sin ir al gimnasio'] },
+  { icon: '', titulo: 'Moverse cada día (NEAT)', texto: 'El NEAT es la actividad fuera del ejercicio: caminar, estar de pie, moverse por casa. Suma mucho al gasto diario sin necesidad de gimnasio y es clave para mantener el déficit sin pasar hambre.', videos: ['qué es el NEAT y por qué importa', 'cómo aumentar los pasos diarios', 'moverse más sin ir al gimnasio'] },
   { icon: '🥦', titulo: 'Comida real y de calidad', texto: 'Priorizar comida real frente a ultraprocesados, asegurar fibra y proteína suficiente y montar platos equilibrados mejora la saciedad y la salud. Aprender a leer etiquetas te da control sobre lo que comes.', videos: ['cómo leer etiquetas nutricionales', 'el plato saludable explicado', 'ultraprocesados qué le hacen al cuerpo'] },
   { icon: '🔁', titulo: 'Constancia y creación de hábitos', texto: 'El progreso real viene de hábitos sostenibles, no de esfuerzos puntuales. Empezar pequeño, diseñar tu entorno y repetir hasta automatizar es lo que funciona a largo plazo, mucho más que la fuerza de voluntad.', videos: ['la ciencia de los hábitos', 'cómo crear hábitos que duren', 'la regla de los 2 minutos para hábitos'] },
 ];
@@ -2105,7 +2063,7 @@ function generarEjercicio() {
     ];
     plan = ['Fuerza', 'Caminata', 'Yoga', 'Fuerza', 'Caminata', 'Pilates', 'Descanso'];
   } else {
-    icono = '🌊'; foco = 'Densidad Ósea y Movilidad · 55+';
+    icono = ''; foco = 'Densidad Ósea y Movilidad · 55+';
     ejercicios = [
       { nombre: 'Sentadilla asistida', reps: '3x10', foco: 'Piernas' }, { nombre: 'Ejercicios con bandas', reps: '3x12', foco: 'Fuerza general' },
       { nombre: 'Equilibrio a una pierna', reps: '3x20s por lado', foco: 'Equilibrio' }, { nombre: 'Flexiones en pared', reps: '3x10', foco: 'Pecho' },
@@ -2168,7 +2126,6 @@ document.getElementById('formPerfil').addEventListener('submit', async (e) => {
   e.preventDefault();
   const nombre = document.getElementById('perfilNombre').value.trim();
   if (!nombre) return;
-  
   if (!appIsOnline) {
     addToOfflineQueue('update_profile', { nombre });
     currentUser.nombre = nombre;
@@ -2176,7 +2133,6 @@ document.getElementById('formPerfil').addEventListener('submit', async (e) => {
     mostrarToast('📴 Cambio de nombre guardado localmente. Se sincronizará al tener conexión.');
     return;
   }
-
   try {
     const { error } = await sb.from('profiles').update({ nombre: nombre }).eq('id', currentUser.id);
     if (error) { console.error('Error actualizando perfil:', error); addToOfflineQueue('update_profile', { nombre }); return; }
@@ -2196,7 +2152,6 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
   const conf = document.getElementById('passConfirm').value;
   if (nueva !== conf) { mostrarToast('❌ Las contraseñas nuevas no coinciden'); return; }
   if (nueva.length < 6) { mostrarToast('❌ Mínimo 6 caracteres'); return; }
-  
   try {
     const { error } = await sb.auth.updateUser({ password: nueva });
     if (error) { mostrarToast('❌ Error: ' + error.message); } 
@@ -2209,7 +2164,7 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
 
 document.querySelectorAll('.nav-btn').forEach(btn => { btn.addEventListener('click', () => switchTab(btn.dataset.tab)); });
 function switchTab(tab) {
-  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert('⛔ Acceso restringido'); return; }
+  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert(' Acceso restringido'); return; }
   document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-white/80'); });
   const section = document.getElementById(tab);
