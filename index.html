@@ -854,37 +854,42 @@ async function checkAuth() {
     console.error('Supabase no está inicializado correctamente.');
     return;
   }
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) { showAuthScreen(); return; }
-  
-  const { data: profile, error } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
-  
-  if (error || !profile) {
-    const nombre = session.user.user_metadata?.nombre || session.user.email.split('@')[0];
-    const { error: insertError } = await sb.from('profiles').insert({
-      id: session.user.id,
-      nombre: nombre,
-      rol: 'user',
-      bloqueado: false
-    });
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { showAuthScreen(); return; }
+    
+    const { data: profile, error } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
+    
+    if (error || !profile) {
+      const nombre = session.user.user_metadata?.nombre || session.user.email.split('@')[0];
+      const { error: insertError } = await sb.from('profiles').insert({
+        id: session.user.id,
+        nombre: nombre,
+        rol: 'user',
+        bloqueado: false
+      });
 
-    if (insertError) {
-      console.error('Error creando perfil:', insertError);
-      await sb.auth.signOut();
-      showAuthScreen();
-      alert('⚠️ Error al inicializar tu cuenta en la base de datos. Por favor, contacta con el administrador.');
+      if (insertError) {
+        console.error('Error creando perfil:', insertError);
+        await sb.auth.signOut();
+        showAuthScreen();
+        alert('⚠️ Error al inicializar tu cuenta en la base de datos. Por favor, contacta con el administrador.');
+        return;
+      }
+      location.reload();
       return;
     }
-    location.reload();
-    return;
+    
+    if (profile.bloqueado) { showBlockedScreen('Tu cuenta ha sido bloqueada por el administrador.'); return; }
+    
+    currentUser = { id: session.user.id, email: session.user.email, nombre: profile.nombre, rol: profile.rol };
+    showMainApp();
+    await loadUserDataFromDB();
+    initDarkMode();
+  } catch (err) {
+    console.error('Error en checkAuth:', err);
+    mostrarToast('⚠️ Error de conexión. Recarga la página.');
   }
-  
-  if (profile.bloqueado) { showBlockedScreen('Tu cuenta ha sido bloqueada por el administrador.'); return; }
-  
-  currentUser = { id: session.user.id, email: session.user.email, nombre: profile.nombre, rol: profile.rol };
-  showMainApp();
-  loadUserDataFromDB();
-  initDarkMode();
 }
 
 function showAuthScreen() {
@@ -926,10 +931,15 @@ function updateUserUI() {
 }
 
 async function cerrarSesion() {
-  await sb.auth.signOut();
-  currentUser = null;
-  document.getElementById('userDropdown').classList.remove('show');
-  showAuthScreen();
+  try {
+    await sb.auth.signOut();
+    currentUser = null;
+    document.getElementById('userDropdown').classList.remove('show');
+    showAuthScreen();
+  } catch (err) {
+    console.error('Error al cerrar sesión:', err);
+    mostrarToast('⚠️ Error al cerrar sesión. Recarga la página.');
+  }
 }
 
 document.getElementById('formLogin').addEventListener('submit', async (e) => {
@@ -937,8 +947,20 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
   const email = document.getElementById('loginEmail').value;
   const pass = document.getElementById('loginPassword').value;
   const err = document.getElementById('loginError');
-  const { data, error } = await sb.auth.signInWithPassword({ email: email, password: pass });
-  if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } else { location.reload(); }
+  
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email: email, password: pass });
+    if (error) {
+      err.textContent = '❌ ' + error.message;
+      err.classList.remove('hidden');
+    } else {
+      location.reload();
+    }
+  } catch (errCatch) {
+    console.error('Error en login:', errCatch);
+    err.textContent = '❌ Error de conexión. Verifica tu internet e intenta de nuevo.';
+    err.classList.remove('hidden');
+  }
 });
 
 document.getElementById('formRegister').addEventListener('submit', async (e) => {
@@ -1018,17 +1040,49 @@ document.querySelectorAll('.auth-tab').forEach(tab => {
 });
 
 async function loadUserDataFromDB() {
-  const { data: uData } = await sb.from('user_data').select('*').eq('user_id', currentUser.id).single();
-  if (uData) { userData = uData; actualizarDashboard(); generarMenu(); generarListaCompra(); generarEjercicio(); }
-  const { data: wData } = await sb.from('weight_logs').select('*').eq('user_id', currentUser.id).order('fecha', { ascending: true });
-  if (wData) { pesos = wData.map(w => ({ fecha: w.fecha, valor: w.valor })); renderSeguimiento(); }
-  renderComentarios();
+  try {
+    const { data: uData, error: uError } = await sb.from('user_data').select('*').eq('user_id', currentUser.id).single();
+    if (uError && uError.code !== 'PGRST116') {
+      console.error('Error cargando user_data:', uError);
+      mostrarToast('⚠️ No se pudieron cargar tus datos.');
+    }
+    if (uData) {
+      userData = uData;
+      actualizarDashboard();
+      generarMenu();
+      generarListaCompra();
+      generarEjercicio();
+    }
+    
+    const { data: wData, error: wError } = await sb.from('weight_logs').select('*').eq('user_id', currentUser.id).order('fecha', { ascending: true });
+    if (wError) {
+      console.error('Error cargando weight_logs:', wError);
+      mostrarToast('⚠️ No se pudo cargar tu historial de peso.');
+    }
+    if (wData) {
+      pesos = wData.map(w => ({ fecha: w.fecha, valor: w.valor }));
+      renderSeguimiento();
+    }
+    
+    await renderComentarios();
+  } catch (err) {
+    console.error('Error en loadUserDataFromDB:', err);
+    mostrarToast('⚠️ Error al cargar datos. Recarga la página.');
+  }
 }
 
 async function saveUserDataToDB() {
   if (!userData || !currentUser) return;
-  const { error } = await sb.from('user_data').upsert({ user_id: currentUser.id, ...userData, updated_at: new Date() });
-  if (error) console.error('Error guardando datos:', error);
+  try {
+    const { error } = await sb.from('user_data').upsert({ user_id: currentUser.id, ...userData, updated_at: new Date() });
+    if (error) {
+      console.error('Error guardando datos:', error);
+      mostrarToast('⚠️ No se pudieron guardar tus datos.');
+    }
+  } catch (err) {
+    console.error('Error en saveUserDataToDB:', err);
+    mostrarToast('⚠️ Error al guardar datos.');
+  }
 }
 
 document.getElementById('formEvaluacion').addEventListener('submit', async (e) => {
@@ -1056,48 +1110,105 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
   const carbKcal = caloriasObjetivo - protKcal - grasasKcal;
   const carbG = Math.round(carbKcal / 4);
   userData = { edad, sexo, peso, altura, factor, objetivo, prefs, tmb: Math.round(tmb), getd: Math.round(getd), imc: imc.toFixed(1), deficit, caloriasObjetivo, protG, grasasG, carbG };
-  await saveUserDataToDB();
-  actualizarDashboard();
-  generarMenu();
-  generarListaCompra();
-  generarEjercicio();
-  switchTab('dashboard');
+  
+  try {
+    await saveUserDataToDB();
+    actualizarDashboard();
+    generarMenu();
+    generarListaCompra();
+    generarEjercicio();
+    switchTab('dashboard');
+  } catch (err) {
+    console.error('Error en formEvaluacion:', err);
+    alert('⚠️ Error al guardar tu evaluación. Inténtalo de nuevo.');
+  }
 });
 
 async function agregarPeso() {
   const fecha = document.getElementById('fechaPeso').value;
   const valor = parseFloat(document.getElementById('valorPeso').value);
-  if (!fecha || isNaN(valor)) { alert('Introduce fecha y peso válido'); return; }
-  const { error } = await sb.from('weight_logs').insert({ user_id: currentUser.id, fecha: fecha, valor: valor });
-  if (!error) { pesos.push({ fecha, valor }); pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha)); document.getElementById('valorPeso').value = ''; renderSeguimiento(); mostrarToast('✅ Peso registrado en la nube'); } else { alert('Error al guardar peso'); }
+  if (!fecha || isNaN(valor)) {
+    alert('Introduce fecha y peso válido');
+    return;
+  }
+  
+  try {
+    const { error } = await sb.from('weight_logs').insert({ user_id: currentUser.id, fecha: fecha, valor: valor });
+    if (error) {
+      console.error('Error guardando peso:', error);
+      alert('❌ Error al guardar el peso. Inténtalo de nuevo.');
+      return;
+    }
+    pesos.push({ fecha, valor });
+    pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+    document.getElementById('valorPeso').value = '';
+    renderSeguimiento();
+    mostrarToast('✅ Peso registrado en la nube');
+  } catch (err) {
+    console.error('Error en agregarPeso:', err);
+    alert('❌ Error de conexión. Verifica tu internet e intenta de nuevo.');
+  }
 }
 
 async function publicarComentario() {
   const texto = document.getElementById('nuevoComentario').value.trim();
   if (!texto) return;
   const anonimo = document.getElementById('comentarioAnonimo').checked;
-  const { error } = await sb.from('comments').insert({ user_id: currentUser.id, user_name: anonimo ? 'Anónimo' : currentUser.nombre, texto: texto, is_anonymous: anonimo });
-  if (!error) { document.getElementById('nuevoComentario').value = ''; renderComentarios(); mostrarToast('💬 Comentario publicado'); }
+  
+  try {
+    const { error } = await sb.from('comments').insert({
+      user_id: currentUser.id,
+      user_name: anonimo ? 'Anónimo' : currentUser.nombre,
+      texto: texto,
+      is_anonymous: anonimo
+    });
+    
+    if (error) {
+      console.error('Error publicando comentario:', error);
+      mostrarToast('❌ Error al publicar. Inténtalo de nuevo.');
+      return;
+    }
+    
+    document.getElementById('nuevoComentario').value = '';
+    await renderComentarios();
+    mostrarToast('💬 Comentario publicado');
+  } catch (err) {
+    console.error('Error en publicarComentario:', err);
+    mostrarToast('❌ Error de conexión. Inténtalo de nuevo.');
+  }
 }
 
 async function renderComentarios() {
-  const { data: comments, error } = await sb.from('comments').select('*').order('created_at', { ascending: false });
-  if (error) return;
-  const cont = document.getElementById('listaComentarios');
-  if (!comments || comments.length === 0) { cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia 💬</div>'; return; }
-  
-  cont.innerHTML = comments.map(c => {
-    const isAdmin = currentUser && currentUser.rol === 'admin';
-    const fecha = new Date(c.created_at).toLocaleDateString('es-ES');
+  try {
+    const { data: comments, error } = await sb.from('comments').select('*').order('created_at', { ascending: false });
+    if (error) {
+      console.error('Error cargando comentarios:', error);
+      mostrarToast('⚠️ No se pudieron cargar los comentarios.');
+      return;
+    }
     
-    // 🛡️ MEJORA DE SEGURIDAD PASO 1: Sanitización con DOMPurify
-    const textoSeguro = DOMPurify.sanitize(c.texto);
-    const nombreSeguro = DOMPurify.sanitize(c.user_name);
+    const cont = document.getElementById('listaComentarios');
+    if (!comments || comments.length === 0) {
+      cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia 💬</div>';
+      return;
+    }
     
-    const respuestas = (c.respuestas || []).map(r => `<div class="admin-reply"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold text-teal-700">🛡️ Equipo NutriPro</span><span class="text-xs text-slate-400">${new Date(r.fecha).toLocaleDateString()}</span></div><p class="text-sm text-slate-700 dark:text-slate-300">${DOMPurify.sanitize(r.texto)}</p></div>`).join('');
-    
-    return `<div class="comment-card"><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${nombreSeguro.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${nombreSeguro}</div><div class="text-xs text-slate-400">${fecha}</div></div></div>${isAdmin ? `<div class="flex gap-1"><button onclick="responderComentario(${c.id})" class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200">↩ Responder</button><button onclick="eliminarComentario(${c.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200">🗑</button></div>` : ''}</div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${textoSeguro}</p>${respuestas}</div>`;
-  }).join('');
+    cont.innerHTML = comments.map(c => {
+      const isAdmin = currentUser && currentUser.rol === 'admin';
+      const fecha = new Date(c.created_at).toLocaleDateString('es-ES');
+      
+      // 🛡️ MEJORA DE SEGURIDAD PASO 1: Sanitización con DOMPurify
+      const textoSeguro = DOMPurify.sanitize(c.texto);
+      const nombreSeguro = DOMPurify.sanitize(c.user_name);
+      
+      const respuestas = (c.respuestas || []).map(r => `<div class="admin-reply"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold text-teal-700">🛡️ Equipo NutriPro</span><span class="text-xs text-slate-400">${new Date(r.fecha).toLocaleDateString()}</span></div><p class="text-sm text-slate-700 dark:text-slate-300">${DOMPurify.sanitize(r.texto)}</p></div>`).join('');
+      
+      return `<div class="comment-card"><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${nombreSeguro.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${nombreSeguro}</div><div class="text-xs text-slate-400">${fecha}</div></div></div>${isAdmin ? `<div class="flex gap-1"><button onclick="responderComentario(${c.id})" class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200">↩ Responder</button><button onclick="eliminarComentario(${c.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200">🗑</button></div>` : ''}</div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${textoSeguro}</p>${respuestas}</div>`;
+    }).join('');
+  } catch (err) {
+    console.error('Error en renderComentarios:', err);
+    mostrarToast('⚠️ Error al cargar comentarios.');
+  }
 }
 
 function calcularTMB(peso, altura, edad, sexo) {
@@ -1907,8 +2018,21 @@ document.getElementById('formPerfil').addEventListener('submit', async (e) => {
   e.preventDefault();
   const nombre = document.getElementById('perfilNombre').value.trim();
   if (!nombre) return;
-  const { error } = await sb.from('profiles').update({ nombre: nombre }).eq('id', currentUser.id);
-  if (!error) { currentUser.nombre = nombre; updateUserUI(); mostrarToast('✓ Perfil actualizado en la nube'); }
+  
+  try {
+    const { error } = await sb.from('profiles').update({ nombre: nombre }).eq('id', currentUser.id);
+    if (error) {
+      console.error('Error actualizando perfil:', error);
+      mostrarToast('❌ Error al actualizar el perfil.');
+      return;
+    }
+    currentUser.nombre = nombre;
+    updateUserUI();
+    mostrarToast('✓ Perfil actualizado en la nube');
+  } catch (err) {
+    console.error('Error en formPerfil:', err);
+    mostrarToast('❌ Error de conexión. Inténtalo de nuevo.');
+  }
 });
 
 document.getElementById('formPassword').addEventListener('submit', async (e) => {
@@ -1917,8 +2041,19 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
   const conf = document.getElementById('passConfirm').value;
   if (nueva !== conf) { alert('❌ Las contraseñas nuevas no coinciden'); return; }
   if (nueva.length < 6) { alert('❌ Mínimo 6 caracteres'); return; }
-  const { error } = await sb.auth.updateUser({ password: nueva });
-  if (error) { alert('❌ Error: ' + error.message); } else { document.getElementById('formPassword').reset(); mostrarToast('✓ Contraseña cambiada'); }
+  
+  try {
+    const { error } = await sb.auth.updateUser({ password: nueva });
+    if (error) {
+      alert('❌ Error: ' + error.message);
+    } else {
+      document.getElementById('formPassword').reset();
+      mostrarToast('✓ Contraseña cambiada');
+    }
+  } catch (err) {
+    console.error('Error en formPassword:', err);
+    alert('❌ Error de conexión. Inténtalo de nuevo.');
+  }
 });
 
 document.querySelectorAll('.nav-btn').forEach(btn => { btn.addEventListener('click', () => switchTab(btn.dataset.tab)); });
