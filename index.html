@@ -839,19 +839,41 @@ function initDarkMode() {
 }
 
 async function checkAuth() {
+  if (!sb) {
+    console.error('Supabase no está inicializado correctamente.');
+    return;
+  }
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { showAuthScreen(); return; }
+  
   const { data: profile, error } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
-  if (error || !profile) { await createProfile(session.user); location.reload(); return; }
+  
+  if (error || !profile) {
+    const nombre = session.user.user_metadata?.nombre || session.user.email.split('@')[0];
+    const { error: insertError } = await sb.from('profiles').insert({
+      id: session.user.id,
+      nombre: nombre,
+      rol: 'user',
+      bloqueado: false
+    });
+
+    if (insertError) {
+      console.error('Error creando perfil:', insertError);
+      await sb.auth.signOut();
+      showAuthScreen();
+      alert('⚠️ Error al inicializar tu cuenta en la base de datos. Por favor, contacta con el administrador.');
+      return;
+    }
+    location.reload();
+    return;
+  }
+  
   if (profile.bloqueado) { showBlockedScreen('Tu cuenta ha sido bloqueada por el administrador.'); return; }
+  
   currentUser = { id: session.user.id, email: session.user.email, nombre: profile.nombre, rol: profile.rol };
   showMainApp();
   loadUserDataFromDB();
   initDarkMode();
-}
-
-async function createProfile(user) {
-  await sb.from('profiles').insert({ id: user.id, nombre: user.email.split('@')[0], rol: 'user' });
 }
 
 function showAuthScreen() {
@@ -910,14 +932,79 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
 
 document.getElementById('formRegister').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const nombre = document.getElementById('regName').value;
-  const email = document.getElementById('regEmail').value;
+  const nombre = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
   const pass = document.getElementById('regPassword').value;
   const pass2 = document.getElementById('regPassword2').value;
+  const terms = document.getElementById('regTerms').checked;
   const err = document.getElementById('regError');
+  const btn = e.target.querySelector('button[type="submit"]');
+
+  err.classList.add('hidden');
+
+  if (!nombre) { err.textContent = '❌ El nombre es obligatorio'; err.classList.remove('hidden'); return; }
+  if (!terms) { err.textContent = '❌ Debes aceptar los términos y condiciones'; err.classList.remove('hidden'); return; }
   if (pass !== pass2) { err.textContent = '❌ Las contraseñas no coinciden'; err.classList.remove('hidden'); return; }
-  const { data, error } = await sb.auth.signUp({ email: email, password: pass, options: { data: { nombre: nombre } } });
-  if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } else { alert('✅ Cuenta creada. Por favor inicia sesión.'); document.querySelector('.auth-tab[data-auth="login"]').click(); }
+  if (pass.length < 6) { err.textContent = '❌ La contraseña debe tener al menos 6 caracteres'; err.classList.remove('hidden'); return; }
+
+  if (!sb) {
+    err.textContent = '❌ Error de conexión con la base de datos. Recarga la página.';
+    err.classList.remove('hidden');
+    return;
+  }
+
+  const originalBtnText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Creando cuenta...';
+
+  try {
+    const { data, error } = await sb.auth.signUp({
+      email: email,
+      password: pass,
+      options: {
+        data: { nombre: nombre }
+      }
+    });
+
+    if (error) {
+      err.textContent = '❌ ' + error.message;
+      err.classList.remove('hidden');
+    } else {
+      if (data.session) {
+        mostrarToast('✅ Cuenta creada. Inicializando...');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        alert('✅ Cuenta creada exitosamente. Por favor, revisa tu correo electrónico (incluida la carpeta de spam) para confirmar tu cuenta antes de iniciar sesión.');
+        document.querySelector('.auth-tab[data-auth="login"]').click();
+      }
+    }
+  } catch (errCatch) {
+    console.error('Error en registro:', errCatch);
+    err.textContent = '❌ Ocurrió un error inesperado. Inténtalo de nuevo.';
+    err.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalBtnText;
+  }
+});
+
+// AGREGADO: Lógica para cambiar entre pestañas de Login y Registro
+document.querySelectorAll('.auth-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    
+    const authType = tab.dataset.auth;
+    if (authType === 'login') {
+      document.getElementById('formLogin').classList.remove('hidden');
+      document.getElementById('formRegister').classList.add('hidden');
+    } else {
+      document.getElementById('formLogin').classList.add('hidden');
+      document.getElementById('formRegister').classList.remove('hidden');
+    }
+    document.getElementById('loginError').classList.add('hidden');
+    document.getElementById('regError').classList.add('hidden');
+  });
 });
 
 async function loadUserDataFromDB() {
