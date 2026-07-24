@@ -297,7 +297,7 @@
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="salud">❤️ Salud</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios"> Comunidad</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
     </div>
   </nav>
 </header>
@@ -382,7 +382,7 @@
     </div>
     <div class="space-y-4">
       <div class="ad-space py-8" data-pos="sidebar">
-        <div class="text-3xl mb-2">📢</div>
+        <div class="text-3xl mb-2"></div>
         <div class="font-semibold text-slate-500">Espacio publicitario lateral</div>
         <div class="text-xs mt-1">No interfiere con la navegación</div>
       </div>
@@ -397,7 +397,7 @@
         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">¿No encuentras un ingrediente? Haz clic sobre él y te sugeriremos <strong>alternativas con aporte nutricional equivalente</strong>.</p>
       </div>
       <div class="alert-warning rounded-xl p-4">
-        <p class="text-xs"><strong>⚕️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
+        <p class="text-xs"><strong>️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
       </div>
     </div>
   </div>
@@ -410,7 +410,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Tus cifras clave calculadas con base científica.</p>
   </div>
   <div id="dashboardNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4"></div>
+    <div class="text-6xl mb-4">📊</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Aún no has completado la evaluación</h3>
     <p class="text-slate-600 dark:text-slate-400 mb-6">Ve a la sección de Evaluación para calcular tus métricas.</p>
     <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
@@ -437,7 +437,7 @@
         <div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="metricIMC">—</div>
         <div class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="metricIMCCat">Categoría</div>
         <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-600">
-          <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Peso Saludable <span class="normal-case font-normal">(Rango OMS)</span></div>
+          <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Peso Recomendado <span class="normal-case font-normal">(±1.5 kg)</span></div>
           <div class="text-sm font-bold text-teal-600" id="metricPesoIdeal">—</div>
           <div class="text-xs text-slate-400 dark:text-slate-500 mt-1" id="metricPesoIdealDetalle"></div>
         </div>
@@ -484,7 +484,7 @@
     <div class="flex gap-2 flex-wrap">
       <button onclick="exportarMenuPDF()" class="btn-pdf px-4 py-3 rounded-lg font-semibold flex items-center gap-2 text-sm">📄 PDF Menú</button>
       <button onclick="resetSustituciones()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-lg font-semibold hover:bg-slate-200 text-sm dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600">🔄 Reset</button>
-      <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2"> Regenerar</button>
+      <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2">🔄 Regenerar</button>
     </div>
   </div>
   <div id="menuNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
@@ -523,7 +523,7 @@
     </div>
     <div class="flex gap-2 flex-wrap">
       <button onclick="exportarProgresoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📈 PDF Progreso</button>
-      <button onclick="exportarInformeCompletoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2"> Informe completo</button>
+      <button onclick="exportarInformeCompletoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📊 Informe completo</button>
     </div>
   </div>
   <div class="ad-space py-6 mb-6" data-pos="inline">
@@ -644,7 +644,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">La nutrición es solo una pieza. Estos hábitos, respaldados por consenso clínico (OMS), multiplican tu progreso y tu salud. Cada tarjeta incluye vídeos explicativos.</p>
   </div>
   <div class="alert-warning rounded-xl p-4 mb-6">
-    <p class="text-xs"><strong>️ Aviso:</strong> La información es orientativa y de divulgación. Para dejar de fumar, reducir el alcohol o cualquier cambio de salud, apóyate en tu médico o en recursos sanitarios oficiales.</p>
+    <p class="text-xs"><strong>⚕️ Aviso:</strong> La información es orientativa y de divulgación. Para dejar de fumar, reducir el alcohol o cualquier cambio de salud, apóyate en tu médico o en recursos sanitarios oficiales.</p>
   </div>
   <div class="grid md:grid-cols-2 gap-6" id="saludCards"></div>
 </section>
@@ -674,17 +674,17 @@
     </div>
     <div class="space-y-4">
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-        <div class="text-3xl mb-2">🤝</div>
+        <div class="text-3xl mb-2"></div>
         <h4 class="font-bold text-slate-800 dark:text-white mb-2">Normas de la comunidad</h4>
         <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
           <li>✓ Sé respetuoso con los demás</li>
           <li>✓ Comparte experiencias reales</li>
           <li>✗ No compartas datos médicos personales</li>
-          <li> Evita promocionar dietas milagro</li>
+          <li>✗ Evita promocionar dietas milagro</li>
         </ul>
       </div>
       <div class="ad-space py-8">
-        <div class="text-3xl mb-2">📢</div>
+        <div class="text-3xl mb-2"></div>
         <div class="font-semibold text-slate-500">Espacio publicitario inferior</div>
         <div class="text-xs mt-1">300 × 250</div>
       </div>
@@ -754,7 +754,7 @@
   <div class="flex gap-2 mb-4 border-b border-slate-200 dark:border-slate-700">
     <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600" data-atab="usuarios">👥 Usuarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="comentarios">💬 Comentarios</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="config">️ Configuración</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="config">⚙️ Configuración</button>
   </div>
   <div id="admin-usuarios" class="admin-panel">
     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
@@ -785,7 +785,7 @@
 
 <footer class="max-w-7xl mx-auto px-6 py-8 mt-4 border-t border-slate-200 dark:border-slate-700">
   <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-    <div>🥗 NutriPro · Nutrición basada en evidencia científica</div>
+    <div> NutriPro · Nutrición basada en evidencia científica</div>
     <div>⚕️ Esta herramienta no sustituye la consulta médica profesional</div>
   </div>
 </footer>
@@ -939,7 +939,7 @@ async function checkRealConnection() {
     updateOnlineStatusUI();
     return;
   }
-  console.log('[NutriPro] ❌ Todos los métodos fallaron → OFFLINE');
+  console.log('[NutriPro]  Todos los métodos fallaron → OFFLINE');
   appIsOnline = false;
   updateOnlineStatusUI();
 }
@@ -964,7 +964,7 @@ async function processOfflineQueue() {
     return;
   }
   console.log('[NutriPro] 🔄 Sincronizando', queue.length, 'elementos pendientes...');
-  mostrarToast(' Sincronizando datos pendientes...');
+  mostrarToast('🔄 Sincronizando datos pendientes...');
   let successCount = 0;
   const newQueue = [];
 
@@ -1002,7 +1002,7 @@ async function processOfflineQueue() {
     if (userData) { actualizarDashboard(); generarMenu(); generarListaCompra(); generarEjercicio(); cargarDatosEnFormularioEvaluacion(); }
     renderComentarios();
   } else if (queue.length > 0) {
-    mostrarToast('️ No se pudo sincronizar. Se reintentará automáticamente.');
+    mostrarToast('⚠️ No se pudo sincronizar. Se reintentará automáticamente.');
   }
 }
 
@@ -1060,7 +1060,7 @@ function initDarkMode() {
   toggle.addEventListener('click', () => {
     html.classList.toggle('dark');
     const isDark = html.classList.contains('dark');
-    icon.textContent = isDark ? '☀️' : '';
+    icon.textContent = isDark ? '☀️' : '🌙';
     localStorage.setItem('nutripro-theme', isDark ? 'dark' : 'light');
     if (chartPeso) renderChartPeso();
     if (chartSemanal) renderAnalisis();
@@ -1080,7 +1080,7 @@ async function checkAuth() {
         console.error('Error creando perfil:', insertError);
         await sb.auth.signOut();
         showAuthScreen();
-        alert('️ Error al inicializar tu cuenta en la base de datos. Por favor, contacta con el administrador.');
+        alert('⚠️ Error al inicializar tu cuenta en la base de datos. Por favor, contacta con el administrador.');
         return;
       }
       location.reload();
@@ -1095,7 +1095,7 @@ async function checkAuth() {
     if (appIsOnline) { await processOfflineQueue(); }
   } catch (err) {
     console.error('Error en checkAuth:', err);
-    mostrarToast('️ Error de conexión. Recarga la página.');
+    mostrarToast('⚠️ Error de conexión. Recarga la página.');
   }
 }
 
@@ -1127,7 +1127,7 @@ function updateUserUI() {
   document.getElementById('dropdownEmail').textContent = currentUser.email;
   const roleEl = document.getElementById('dropdownRole');
   if (currentUser.rol === 'admin') {
-    roleEl.innerHTML = '<span class="status-badge bg-purple-100 text-purple-700">⚙️ Administrador</span>';
+    roleEl.innerHTML = '<span class="status-badge bg-purple-100 text-purple-700">️ Administrador</span>';
     document.getElementById('adminMenuItem').classList.remove('hidden');
   } else {
     roleEl.innerHTML = '<span class="status-badge bg-teal-100 text-teal-700">✓ Usuario</span>';
@@ -1235,7 +1235,7 @@ async function loadUserDataFromDB() {
       }
     } else if (uError && uError.code !== 'PGRST116') {
       console.error('Error cargando user_data:', uError);
-      mostrarToast('⚠️ No se pudieron cargar tus datos.');
+      mostrarToast('️ No se pudieron cargar tus datos.');
     }
     if (uData) {
       userData = uData;
@@ -1255,7 +1255,7 @@ async function loadUserDataFromDB() {
     await renderComentarios();
   } catch (err) {
     console.error('Error en loadUserDataFromDB:', err);
-    mostrarToast('⚠️ Error al cargar datos. Recarga la página.');
+    mostrarToast('️ Error al cargar datos. Recarga la página.');
   }
 }
 
@@ -1383,7 +1383,7 @@ async function renderComentarios() {
       const textoSeguro = DOMPurify.sanitize(c.texto);
       const nombreSeguro = DOMPurify.sanitize(c.user_name);
       const respuestas = (c.respuestas || []).map(r => `<div class="admin-reply"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold text-teal-700">🛡️ Equipo NutriPro</span><span class="text-xs text-slate-400">${new Date(r.fecha).toLocaleDateString()}</span></div><p class="text-sm text-slate-700 dark:text-slate-300">${DOMPurify.sanitize(r.texto)}</p></div>`).join('');
-      return `<div class="comment-card"><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${nombreSeguro.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${nombreSeguro}</div><div class="text-xs text-slate-400">${fecha}</div></div></div>${isAdmin ? `<div class="flex gap-1"><button onclick="responderComentario(${c.id})" class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200">↩ Responder</button><button onclick="eliminarComentario(${c.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200">🗑</button></div>` : ''}</div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${textoSeguro}</p>${respuestas}</div>`;
+      return `<div class="comment-card"><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${nombreSeguro.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${nombreSeguro}</div><div class="text-xs text-slate-400">${fecha}</div></div></div>${isAdmin ? `<div class="flex gap-1"><button onclick="responderComentario(${c.id})" class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200"> Responder</button><button onclick="eliminarComentario(${c.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200">🗑</button></div>` : ''}</div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${textoSeguro}</p>${respuestas}</div>`;
     }).join('');
   } catch (err) {
     console.error('Error en renderComentarios:', err);
@@ -1404,7 +1404,7 @@ function categoriaIMC(imc) {
   return { texto: 'Obesidad', color: 'text-red-600' };
 }
 
-// 🟢 MODIFICADO: Ahora usa el rango OMS (18.5 - 24.9) en lugar de IMC fijo de 22
+// 🟢 MODIFICADO: Calcula peso recomendado con lógica inteligente ±1.5kg
 function actualizarDashboard() {
   if (!userData) return;
   document.getElementById('dashboardNoData').classList.add('hidden');
@@ -1418,15 +1418,39 @@ function actualizarDashboard() {
   document.getElementById('metricIMCCat').textContent = catIMC.texto;
   document.getElementById('metricIMCCat').className = `text-xs font-semibold mt-1 ${catIMC.color}`;
   
-  // 🟢 NUEVO: Rango de peso saludable según OMS (IMC 18.5 - 24.9)
+  // 🟢 NUEVA LÓGICA: Peso recomendado ±1.5kg según IMC actual
   const alturaM = userData.altura / 100;
-  const IMC_MIN_SALUDABLE = 18.5;
-  const IMC_MAX_SALUDABLE = 24.9;
-  const pesoMinSaludable = (IMC_MIN_SALUDABLE * alturaM * alturaM).toFixed(1);
-  const pesoMaxSaludable = (IMC_MAX_SALUDABLE * alturaM * alturaM).toFixed(1);
+  const imcActual = parseFloat(userData.imc);
+  const MARGEN_KG = 1.5;
   
-  document.getElementById('metricPesoIdeal').textContent = `${pesoMinSaludable} – ${pesoMaxSaludable} kg`;
-  document.getElementById('metricPesoIdealDetalle').textContent = `Rango saludable OMS (IMC ${IMC_MIN_SALUDABLE}-${IMC_MAX_SALUDABLE})`;
+  let imcReferencia;
+  if (imcActual < 18.5) {
+    // Bajo peso: usar IMC mínimo saludable (18.5)
+    imcReferencia = 18.5;
+  } else if (imcActual > 24.9) {
+    // Sobrepeso/obesidad: usar IMC 24.5 como objetivo
+    imcReferencia = 24.5;
+  } else {
+    // IMC saludable: usar el IMC actual del usuario
+    imcReferencia = imcActual;
+  }
+  
+  const pesoReferencia = imcReferencia * alturaM * alturaM;
+  const pesoMin = (pesoReferencia - MARGEN_KG).toFixed(1);
+  const pesoMax = (pesoReferencia + MARGEN_KG).toFixed(1);
+  
+  document.getElementById('metricPesoIdeal').textContent = `${pesoMin} – ${pesoMax} kg`;
+  
+  // Texto descriptivo según la situación
+  let detalleTexto = '';
+  if (imcActual < 18.5) {
+    detalleTexto = `Objetivo: alcanzar IMC saludable (18.5)`;
+  } else if (imcActual > 24.9) {
+    detalleTexto = `Objetivo: alcanzar IMC 24.5 (límite saludable)`;
+  } else {
+    detalleTexto = `Basado en tu IMC actual (${imcActual})`;
+  }
+  document.getElementById('metricPesoIdealDetalle').textContent = detalleTexto;
   
   const totalKcal = userData.protG * 4 + userData.grasasG * 9 + userData.carbG * 4;
   const pctProt = Math.round((userData.protG * 4 / totalKcal) * 100);
@@ -1625,7 +1649,7 @@ function renderMenu() {
       const isSub = sustituciones[key] !== undefined;
       return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-snug">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap"><span class="macro-chip bg-white/70 dark:bg-slate-700 text-slate-700 dark:text-slate-300">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="swap-icon flex-shrink-0 w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm">🔄</span></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
     };
-    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500 dark:text-slate-400">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300', '')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '🥬')}</div>`;
+    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500 dark:text-slate-400">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '🥬')}</div>`;
     cont.appendChild(card);
   });
 }
@@ -1704,7 +1728,7 @@ function categorizarIngrediente(ing) {
   if (/arroz|quinoa|pasta|batata|patata|avena|pan|cuscús|mijo|bulgur|trigo|espelta|boniato|tostadas/.test(lower)) return { cat: '🍚 Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
   if (/aceite|aguacate|almendra|nueces|chía|lino|cacahuete|pistacho|anacardo|calabaza|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
   if (/manzana|plátano|frutos rojos|membrillo|naranja|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
-  if (/brócoli|espinaca|tomate|pepino|zanahoria|pimiento|calabacín|judía|coliflor|espárrago|cebolla|lechuga|acelgas|berenjena|champiñón|kale|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
+  if (/brócoli|espinaca|tomate|pepino|zanahoria|pimiento|calabacín|judía|coliflor|espárrago|cebolla|lechuga|acelgas|berenjena|champiñón|kale|hummus/.test(lower)) return { cat: ' Verduras', color: 'from-green-500 to-emerald-500' };
   return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
 }
 
@@ -1827,7 +1851,7 @@ function exportarCompraPDF() {
     yPos = doc.lastAutoTable.finalY + 5;
   });
   doc.save(`Lista_Compra_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast('📄 Lista exportada a PDF');
+  mostrarToast(' Lista exportada a PDF');
 }
 
 function exportarProgresoPDF() {
@@ -1873,7 +1897,7 @@ function crearGraficoBase64(buildConfig, w, h) {
   } catch (e) { console.error('Error generando gráfico para PDF:', e); return null; }
 }
 
-// 🟢 MODIFICADO: Ahora usa el rango OMS (18.5 - 24.9) en lugar de IMC fijo de 22
+//  MODIFICADO: Ahora usa la misma lógica inteligente ±1.5kg
 function exportarInformeCompletoPDF() {
   if (!currentUser) { alert('Inicia sesión para generar el informe.'); return; }
   if (!userData) { alert('Completa primero la evaluación para generar el informe.'); return; }
@@ -1893,12 +1917,22 @@ function exportarInformeCompletoPDF() {
   doc.text('Resumen metabolico', M, y); y += 6;
   const catIMC = categoriaIMC(parseFloat(userData.imc));
   const alturaM = userData.altura / 100;
+  const imcActual = parseFloat(userData.imc);
+  const MARGEN_KG = 1.5;
   
-  // 🟢 NUEVO: Rango de peso saludable según OMS
-  const IMC_MIN_SALUDABLE = 18.5;
-  const IMC_MAX_SALUDABLE = 24.9;
-  const pesoMinSaludable = (IMC_MIN_SALUDABLE * alturaM * alturaM).toFixed(1);
-  const pesoMaxSaludable = (IMC_MAX_SALUDABLE * alturaM * alturaM).toFixed(1);
+  // 🟢 MISMA LÓGICA QUE EL DASHBOARD
+  let imcReferencia;
+  if (imcActual < 18.5) {
+    imcReferencia = 18.5;
+  } else if (imcActual > 24.9) {
+    imcReferencia = 24.5;
+  } else {
+    imcReferencia = imcActual;
+  }
+  
+  const pesoReferencia = imcReferencia * alturaM * alturaM;
+  const pesoMin = (pesoReferencia - MARGEN_KG).toFixed(1);
+  const pesoMax = (pesoReferencia + MARGEN_KG).toFixed(1);
   
   const deficitTxt = userData.deficit > 0 ? `Deficit ${userData.deficit} kcal` : (userData.deficit < 0 ? `Superavit ${Math.abs(userData.deficit)} kcal` : 'Mantenimiento');
   const lineas = [
@@ -1907,7 +1941,7 @@ function exportarInformeCompletoPDF() {
     ['Objetivo calorico', `${userData.caloriasObjetivo} kcal/dia`], 
     ['Deficit / superavit', deficitTxt],
     ['IMC', `${userData.imc} (${catIMC.texto})`], 
-    ['Peso saludable (OMS)', `${pesoMinSaludable} - ${pesoMaxSaludable} kg (IMC 18.5-24.9)`],
+    ['Peso recomendado (±1.5 kg)', `${pesoMin} - ${pesoMax} kg`],
     ['Peso actual', `${userData.peso} kg`], 
     ['Macros objetivo', `P ${userData.protG}g  C ${userData.carbG}g  G ${userData.grasasG}g`],
   ];
@@ -1961,16 +1995,16 @@ function exportarInformeCompletoPDF() {
   doc.setFont('helvetica', 'italic'); doc.setFontSize(8); doc.setTextColor(120, 120, 120);
   doc.text('Informe orientativo. No sustituye la consulta con un medico o nutricionista clinico.', M, PH - 8);
   doc.save(`Informe_Completo_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast('📊 Informe completo exportado');
+  mostrarToast(' Informe completo exportado');
 }
 
 const HABITOS_SALUD = [
   { icon: '🚭', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos: aumenta el riesgo cardiovascular y de cáncer, reduce la capacidad pulmonar y empeora el gusto y el olfato. Dejarlo mejora la circulación en pocas semanas y reduce el riesgo a largo plazo. Además, fumar altera el apetito y la ansiedad, lo que dificulta seguir un plan nutricional.', videos: ['daño del tabaco en el cuerpo humano', 'beneficios de dejar de fumar con el tiempo', 'cómo controlar la ansiedad al dejar de fumar'] },
-  { icon: '🍷', titulo: 'Reducir o evitar el alcohol', texto: 'El alcohol aporta calorías "vacías" (sin nutrientes) que se suman a tu total y sabotean el déficit. También afecta al hígado, empeora la calidad del sueño y altera hormonas relacionadas con el hambre y la recuperación. Reducirlo o eliminarlo facilita perder grasa y dormir mejor.', videos: ['efecto del alcohol en el cuerpo', 'alcohol y pérdida de grasa', 'qué hace el alcohol en el hígado'] },
+  { icon: '', titulo: 'Reducir o evitar el alcohol', texto: 'El alcohol aporta calorías "vacías" (sin nutrientes) que se suman a tu total y sabotean el déficit. También afecta al hígado, empeora la calidad del sueño y altera hormonas relacionadas con el hambre y la recuperación. Reducirlo o eliminarlo facilita perder grasa y dormir mejor.', videos: ['efecto del alcohol en el cuerpo', 'alcohol y pérdida de grasa', 'qué hace el alcohol en el hígado'] },
   { icon: '😴', titulo: 'Dormir entre 7 y 9 horas', texto: 'Un sueño suficiente regula las hormonas del hambre y la saciedad (grelina y leptina), reduce el cortisol y permite la recuperación muscular. Dormir mal aumenta los antojos y dificulta mantener el plan, aunque comas bien.', videos: ['por qué dormir mal engorda', 'higiene del sueño para dormir mejor', 'rutina nocturna para dormir mejor'] },
-  { icon: '💧', titulo: 'Hidratación adecuada', texto: 'Una hidratación adecuada mejora el rendimiento, la digestión y la saciedad. A veces la sed se confunde con hambre, lo que lleva a comer de más. Beber agua a lo largo del día ayuda a regular el apetito y el bienestar general.', videos: ['cuánta agua beber al día', 'señales de deshidratación', 'agua y sensación de saciedad'] },
-  { icon: '🧘', titulo: 'Gestionar el estrés y el cortisol', texto: 'El estrés crónico eleva el cortisol, lo que favorece los antojos y la acumulación de grasa, sobre todo abdominal. Gestionar el estrés con respiración, pausas y mindfulness protege tu progreso y tu salud.', videos: ['cortisol y grasa abdominal', 'técnicas de respiración para el estrés', 'mindfulness para reducir el estrés'] },
-  { icon: '', titulo: 'Moverse cada día (NEAT)', texto: 'El NEAT es la actividad fuera del ejercicio: caminar, estar de pie, moverse por casa. Suma mucho al gasto diario sin necesidad de gimnasio y es clave para mantener el déficit sin pasar hambre.', videos: ['qué es el NEAT y por qué importa', 'cómo aumentar los pasos diarios', 'moverse más sin ir al gimnasio'] },
+  { icon: '', titulo: 'Hidratación adecuada', texto: 'Una hidratación adecuada mejora el rendimiento, la digestión y la saciedad. A veces la sed se confunde con hambre, lo que lleva a comer de más. Beber agua a lo largo del día ayuda a regular el apetito y el bienestar general.', videos: ['cuánta agua beber al día', 'señales de deshidratación', 'agua y sensación de saciedad'] },
+  { icon: '', titulo: 'Gestionar el estrés y el cortisol', texto: 'El estrés crónico eleva el cortisol, lo que favorece los antojos y la acumulación de grasa, sobre todo abdominal. Gestionar el estrés con respiración, pausas y mindfulness protege tu progreso y tu salud.', videos: ['cortisol y grasa abdominal', 'técnicas de respiración para el estrés', 'mindfulness para reducir el estrés'] },
+  { icon: '🚶', titulo: 'Moverse cada día (NEAT)', texto: 'El NEAT es la actividad fuera del ejercicio: caminar, estar de pie, moverse por casa. Suma mucho al gasto diario sin necesidad de gimnasio y es clave para mantener el déficit sin pasar hambre.', videos: ['qué es el NEAT y por qué importa', 'cómo aumentar los pasos diarios', 'moverse más sin ir al gimnasio'] },
   { icon: '🥦', titulo: 'Comida real y de calidad', texto: 'Priorizar comida real frente a ultraprocesados, asegurar fibra y proteína suficiente y montar platos equilibrados mejora la saciedad y la salud. Aprender a leer etiquetas te da control sobre lo que comes.', videos: ['cómo leer etiquetas nutricionales', 'el plato saludable explicado', 'ultraprocesados qué le hacen al cuerpo'] },
   { icon: '🔁', titulo: 'Constancia y creación de hábitos', texto: 'El progreso real viene de hábitos sostenibles, no de esfuerzos puntuales. Empezar pequeño, diseñar tu entorno y repetir hasta automatizar es lo que funciona a largo plazo, mucho más que la fuerza de voluntad.', videos: ['la ciencia de los hábitos', 'cómo crear hábitos que duren', 'la regla de los 2 minutos para hábitos'] },
 ];
@@ -2015,7 +2049,7 @@ function renderSeguimiento() {
     const diff = (mm[mm.length - 1].valor - mm[0].valor).toFixed(2); 
     if (diff < -0.5) feedback.innerHTML = `<strong>✅ ¡Excelente tendencia!</strong> Has perdido ${Math.abs(diff)} kg.`; 
     else if (diff > 0.5) feedback.innerHTML = `<strong>⚠️ Revisa el plan.</strong> Tendencia de +${diff} kg.`; 
-    else feedback.innerHTML = `<strong>📊 Estabilidad.</strong> Variación de ${diff} kg.`; 
+    else feedback.innerHTML = `<strong> Estabilidad.</strong> Variación de ${diff} kg.`; 
   }
   renderChartPeso();
 }
@@ -2063,7 +2097,7 @@ function generarEjercicio() {
     ];
     plan = ['Fuerza', 'Caminata', 'Yoga', 'Fuerza', 'Caminata', 'Pilates', 'Descanso'];
   } else {
-    icono = ''; foco = 'Densidad Ósea y Movilidad · 55+';
+    icono = '🌊'; foco = 'Densidad Ósea y Movilidad · 55+';
     ejercicios = [
       { nombre: 'Sentadilla asistida', reps: '3x10', foco: 'Piernas' }, { nombre: 'Ejercicios con bandas', reps: '3x12', foco: 'Fuerza general' },
       { nombre: 'Equilibrio a una pierna', reps: '3x20s por lado', foco: 'Equilibrio' }, { nombre: 'Flexiones en pared', reps: '3x10', foco: 'Pecho' },
@@ -2105,7 +2139,7 @@ function renderAnalisis() {
   const proy = document.getElementById('proyeccionTexto');
   if (ritmoSem < -0.5) { proy.innerHTML = `<p class="mb-2">⚠️ <strong>Ritmo acelerado:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. Considera aumentar calorías.</p>`; }
   else if (ritmoSem >= -0.5 && ritmoSem <= -0.2) { proy.innerHTML = `<p class="mb-2">✅ <strong>Ritmo ideal:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. ¡Sigue así!</p>`; }
-  else if (ritmoSem > -0.2 && ritmoSem < 0.2) { proy.innerHTML = `<p class="mb-2">📊 <strong>Estancamiento.</strong> Revisa el cumplimiento del plan.</p>`; }
+  else if (ritmoSem > -0.2 && ritmoSem < 0.2) { proy.innerHTML = `<p class="mb-2"> <strong>Estancamiento.</strong> Revisa el cumplimiento del plan.</p>`; }
   else { proy.innerHTML = `<p class="mb-2">📈 <strong>Tendencia al alza:</strong> +${ritmoSem.toFixed(2)} kg/sem.</p><p>Revisa porciones y actividad física.</p>`; }
   const ctx = document.getElementById('chartSemanal').getContext('2d');
   if (chartSemanal) chartSemanal.destroy();
@@ -2158,13 +2192,13 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
     else { document.getElementById('formPassword').reset(); mostrarToast('✓ Contraseña cambiada'); }
   } catch (err) {
     console.error('Error en formPassword:', err);
-    mostrarToast('❌ Error de conexión. Inténtalo de nuevo.');
+    mostrarToast(' Error de conexión. Inténtalo de nuevo.');
   }
 });
 
 document.querySelectorAll('.nav-btn').forEach(btn => { btn.addEventListener('click', () => switchTab(btn.dataset.tab)); });
 function switchTab(tab) {
-  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert(' Acceso restringido'); return; }
+  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert('⛔ Acceso restringido'); return; }
   document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-white/80'); });
   const section = document.getElementById(tab);
