@@ -91,8 +91,6 @@
   
   .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; animation: fadeIn 0.2s ease-out; }
   .modal-content { border-radius: 1.5rem; max-width: 560px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-  
-  /* 🟢 NUEVO: Modal de receta más grande */
   .modal-content.recipe-modal { max-width: 720px; max-height: 90vh; }
   
   .sub-option { transition: all 0.2s ease; cursor: pointer; }
@@ -141,9 +139,7 @@
     background: var(--checkbox-bg);
   }
 
-  .info-card {
-    background: var(--sidebar-card-bg);
-  }
+  .info-card { background: var(--sidebar-card-bg); }
 
   .habit-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1.25rem; padding: 1.5rem; transition: all 0.2s ease; }
   .habit-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
@@ -155,57 +151,25 @@
   .dark .nav-btn:not(.active) { color: rgba(255,255,255,0.7); }
   .dark .nav-btn:not(.active):hover { background: rgba(255,255,255,0.1); }
 
-  /*  NUEVO: Estilos para el modal de receta */
-  .recipe-step { 
-    display: flex; 
-    gap: 1rem; 
-    padding: 1rem; 
-    border-radius: 0.75rem; 
-    background: var(--bg); 
-    margin-bottom: 0.75rem;
-    animation: slideIn 0.3s ease-out;
-  }
-  .recipe-step-number {
-    flex-shrink: 0;
-    width: 2rem;
-    height: 2rem;
-    background: linear-gradient(135deg, #0d9488, #0891b2);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 0.875rem;
-  }
-  .recipe-ingredient {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    background: var(--bg);
-    margin-bottom: 0.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .recipe-ingredient:hover {
-    background: rgba(13,148,136,0.1);
-  }
-  .recipe-ingredient.checked {
-    opacity: 0.6;
-    text-decoration: line-through;
-  }
-  .recipe-chef-tip {
-    background: linear-gradient(135deg, #fef3c7, #fde68a);
-    border-left: 4px solid #f59e0b;
-    padding: 1rem;
-    border-radius: 0.75rem;
-    margin-top: 1rem;
-  }
-  .dark .recipe-chef-tip {
-    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(253,230,138,0.1));
-  }
+  .recipe-step { display: flex; gap: 1rem; padding: 1rem; border-radius: 0.75rem; background: var(--bg); margin-bottom: 0.75rem; animation: slideIn 0.3s ease-out; }
+  .recipe-step-number { flex-shrink: 0; width: 2rem; height: 2rem; background: linear-gradient(135deg, #0d9488, #0891b2); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem; }
+  .recipe-ingredient { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-radius: 0.5rem; background: var(--bg); margin-bottom: 0.5rem; cursor: pointer; transition: all 0.2s; }
+  .recipe-ingredient:hover { background: rgba(13,148,136,0.1); }
+  .recipe-ingredient.checked { opacity: 0.6; text-decoration: line-through; }
+  .recipe-chef-tip { background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 0.75rem; margin-top: 1rem; }
+  .dark .recipe-chef-tip { background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(253,230,138,0.1)); }
+
+  /*  NUEVO: Estilos para el panel admin */
+  .admin-user-row { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-radius: 0.75rem; background: var(--bg); margin-bottom: 0.5rem; transition: all 0.2s; }
+  .admin-user-row:hover { background: rgba(13,148,136,0.05); }
+  .admin-comment-row { padding: 1rem; border-radius: 0.75rem; background: var(--bg); margin-bottom: 0.5rem; }
+  .admin-btn { padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; }
+  .admin-btn-danger { background: #fee2e2; color: #991b1b; }
+  .admin-btn-danger:hover { background: #fecaca; }
+  .admin-btn-warning { background: #fef3c7; color: #92400e; }
+  .admin-btn-warning:hover { background: #fde68a; }
+  .admin-btn-success { background: #d1fae5; color: #065f46; }
+  .admin-btn-success:hover { background: #a7f3d0; }
 </style>
 </head>
 <body class="min-h-screen">
@@ -287,21 +251,12 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <div id="connectionStatus" class="hidden items-center gap-1 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">
-          📴 Sin conexión
-        </div>
-        <button onclick="compartirApp()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold" title="Compartir aplicación">
-           Compartir
-        </button>
-        <button onclick="compartirApp()" class="md:hidden w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Compartir">
-          
-        </button>
-
-        <button id="darkModeToggle" class="w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Cambiar tema">
-          <span id="darkModeIcon">☀️</span>
-        </button>
+        <div id="connectionStatus" class="hidden items-center gap-1 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full"> Sin conexión</div>
+        <button onclick="compartirApp()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold" title="Compartir aplicación">📤 Compartir</button>
+        <button onclick="compartirApp()" class="md:hidden w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Compartir">📤</button>
+        <button id="darkModeToggle" class="w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Cambiar tema"><span id="darkModeIcon">☀️</span></button>
         <div class="hidden md:flex items-center gap-2 text-xs">
-          <span class="px-3 py-1 bg-white/15 rounded-full">🔬 Evidencia</span>
+          <span class="px-3 py-1 bg-white/15 rounded-full"> Evidencia</span>
           <span class="px-3 py-1 bg-white/15 rounded-full">☁️ Cloud Sync</span>
         </div>
         <div class="user-menu">
@@ -330,9 +285,7 @@
     </div>
   </div>
   <div class="max-w-7xl mx-auto px-6">
-    <div class="ad-space py-2 my-2" data-pos="top">
-      <span>📢 Espacio publicitario superior · Tu anuncio aquí</span>
-    </div>
+    <div class="ad-space py-2 my-2" data-pos="top"><span> Espacio publicitario superior · Tu anuncio aquí</span></div>
   </div>
   <nav class="max-w-7xl mx-auto px-6 pb-3">
     <div class="flex gap-2 overflow-x-auto">
@@ -344,7 +297,7 @@
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="salud">❤️ Salud</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios"> Comunidad</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
     </div>
   </nav>
 </header>
@@ -357,17 +310,13 @@
     <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Evaluación Inicial</h2>
     <p class="text-slate-600 dark:text-slate-400 mt-2">Comienza con una valoración completa. La reeducación alimentaria es un proceso, no una carrera.</p>
   </div>
-
   <div id="evaluacionStatus" class="hidden mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <div>
       <h3 class="font-bold text-green-800 dark:text-green-300 flex items-center gap-2">✅ Evaluación completada y guardada</h3>
       <p class="text-sm text-green-700 dark:text-green-400 mt-1">Tu plan está activo. Solo modifica estos datos si tu peso, altura u objetivos han cambiado recientemente.</p>
     </div>
-    <button onclick="mostrarFormularioEvaluacion()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">
-      ✏️ Modificar datos
-    </button>
+    <button onclick="mostrarFormularioEvaluacion()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">✏️ Modificar datos</button>
   </div>
-
   <div class="grid lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-8 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
@@ -503,7 +452,7 @@
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barCarb" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🥑 Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barGrasas" class="h-full bg-gradient-to-r from-rose-400 to-rose-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
         </div>
@@ -529,7 +478,7 @@
       <p class="text-slate-600 dark:text-slate-400 mt-2">Haz clic en cualquier alimento para sustituirlo. <strong>Exporta tu menú a PDF.</strong></p>
     </div>
     <div class="flex gap-2 flex-wrap">
-      <button onclick="exportarMenuPDF()" class="btn-pdf px-4 py-3 rounded-lg font-semibold flex items-center gap-2 text-sm"> PDF Menú</button>
+      <button onclick="exportarMenuPDF()" class="btn-pdf px-4 py-3 rounded-lg font-semibold flex items-center gap-2 text-sm">📄 PDF Menú</button>
       <button onclick="resetSustituciones()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-lg font-semibold hover:bg-slate-200 text-sm dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600">🔄 Reset</button>
       <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2">🔄 Regenerar</button>
     </div>
@@ -626,13 +575,13 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Adaptada a tu edad. Sin gimnasio, sin excusas.</p>
   </div>
   <div id="ejercicioNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4"></div>
+    <div class="text-6xl mb-4">💪</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
   </div>
   <div id="ejercicioContent" class="hidden space-y-6">
     <div class="bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
       <div class="flex items-center gap-3 mb-3">
-        <div class="text-4xl" id="ejIconoEdad">️</div>
+        <div class="text-4xl" id="ejIconoEdad">🏋️</div>
         <div>
           <h3 class="text-xl font-bold" id="ejTituloEdad">Grupo de edad</h3>
           <p class="text-teal-100 text-sm" id="ejFocoEdad">Enfoque principal</p>
@@ -715,9 +664,7 @@
           <button onclick="publicarComentario()" class="bg-teal-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-teal-700">Publicar →</button>
         </div>
       </div>
-      <div id="listaComentarios" class="space-y-3">
-        <div class="loading-spinner"></div>
-      </div>
+      <div id="listaComentarios" class="space-y-3"><div class="loading-spinner"></div></div>
     </div>
     <div class="space-y-4">
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
@@ -781,7 +728,7 @@
   </div>
 </section>
 
-<!-- ADMIN -->
+<!-- 🟢 ADMIN COMPLETAMENTE REESCRITO -->
 <section id="admin" class="tab-content">
   <div class="mb-6">
     <div class="flex items-center gap-3">
@@ -792,38 +739,79 @@
       </div>
     </div>
   </div>
+
+  <!-- Estadísticas -->
   <div class="grid md:grid-cols-4 gap-4 mb-6">
-    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios totales</div><div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="statUsuarios">0</div></div>
-    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios activos</div><div class="text-3xl font-bold text-green-600 mt-2" id="statActivos">0</div></div>
-    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios bloqueados</div><div class="text-3xl font-bold text-red-600 mt-2" id="statBloqueados">0</div></div>
-    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Comentarios</div><div class="text-3xl font-bold text-teal-600 mt-2" id="statComentarios">0</div></div>
+    <div class="admin-stat">
+      <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios totales</div>
+      <div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="statUsuarios">—</div>
+    </div>
+    <div class="admin-stat">
+      <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios activos</div>
+      <div class="text-3xl font-bold text-green-600 mt-2" id="statActivos">—</div>
+    </div>
+    <div class="admin-stat">
+      <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios bloqueados</div>
+      <div class="text-3xl font-bold text-red-600 mt-2" id="statBloqueados">—</div>
+    </div>
+    <div class="admin-stat">
+      <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Comentarios</div>
+      <div class="text-3xl font-bold text-teal-600 mt-2" id="statComentarios">—</div>
+    </div>
   </div>
-  <div class="flex gap-2 mb-4 border-b border-slate-200 dark:border-slate-700">
-    <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600" data-atab="usuarios">👥 Usuarios</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="comentarios"> Comentarios</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-atab="config">⚙️ Configuración</button>
+
+  <!-- Pestañas admin -->
+  <div class="flex gap-2 mb-4 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
+    <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600 whitespace-nowrap" data-atab="usuarios"> Usuarios</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="comentarios">💬 Comentarios</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="config">⚙️ Configuración</button>
   </div>
+
+  <!-- Panel Usuarios -->
   <div id="admin-usuarios" class="admin-panel">
     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
       <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700">
-        <h3 class="font-bold text-slate-800 dark:text-white">Gestión de usuarios (Supabase Auth)</h3>
-        <p class="text-xs text-slate-500 dark:text-slate-400">Para gestionar usuarios reales, usa el panel de Supabase > Authentication.</p>
+        <h3 class="font-bold text-slate-800 dark:text-white">Gestión de usuarios</h3>
+        <button onclick="cargarPanelAdmin()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold">🔄 Actualizar</button>
       </div>
-      <div class="p-6 text-center text-slate-500 dark:text-slate-400">
-        La gestión avanzada de usuarios se realiza directamente en el dashboard de Supabase para mayor seguridad.
+      <div id="listaUsuariosAdmin" class="p-4">
+        <div class="loading-spinner"></div>
       </div>
     </div>
   </div>
+
+  <!-- Panel Comentarios -->
   <div id="admin-comentarios" class="admin-panel hidden">
     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
-      <div class="p-4 border-b border-slate-100 dark:border-slate-700"><h3 class="font-bold text-slate-800 dark:text-white">Moderación de comentarios</h3></div>
-      <div id="listaComentariosAdmin" class="p-4 space-y-3"></div>
+      <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700">
+        <h3 class="font-bold text-slate-800 dark:text-white">Moderación de comentarios</h3>
+        <button onclick="cargarComentariosAdmin()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold">🔄 Actualizar</button>
+      </div>
+      <div id="listaComentariosAdmin" class="p-4">
+        <div class="loading-spinner"></div>
+      </div>
     </div>
   </div>
+
+  <!-- Panel Configuración -->
   <div id="admin-config" class="admin-panel hidden">
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="font-bold text-slate-800 dark:text-white mb-4">Estado del Sistema</h3>
-      <p class="text-sm text-slate-600 dark:text-slate-400">Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
+      <div class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
+        <p>📡 Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
+        <p>👤 Usuario actual: <strong id="configUsuario">—</strong></p>
+        <p> Rol: <strong id="configRol">—</strong></p>
+        <p>🌐 Estado de conexión: <strong id="configConexion">—</strong></p>
+        <p>📦 Datos en cola offline: <strong id="configCola">0</strong></p>
+      </div>
+      <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3">Acciones rápidas</h4>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="forzarSincronizacion()" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">🔄 Forzar sincronización</button>
+          <button onclick="limpiarColaOffline()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">🗑️ Limpiar cola offline</button>
+          <button onclick="location.reload()" class="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">♻️ Recargar app</button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -858,7 +846,7 @@
   </div>
 </div>
 
-<!-- 🟢 NUEVO: MODAL DE RECETA DETALLADA -->
+<!-- MODAL RECETA -->
 <div id="modalReceta" class="modal-overlay hidden">
   <div class="modal-content recipe-modal">
     <div class="p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10 dark:bg-slate-800 dark:border-slate-700">
@@ -867,42 +855,23 @@
           <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">👨🍳 Receta detallada</div>
           <h3 class="text-xl font-bold text-slate-800 dark:text-white" id="recetaTitulo">Nombre del plato</h3>
           <div class="flex gap-3 mt-3 flex-wrap">
-            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-              <span>⏱️</span>
-              <span id="recetaTiempo">20 min</span>
-            </div>
-            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-              <span>🎯</span>
-              <span id="recetaDificultad">Fácil</span>
-            </div>
-            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-              <span>️</span>
-              <span id="recetaPorciones">2 porciones</span>
-            </div>
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>️</span><span id="recetaTiempo">20 min</span></div>
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>🎯</span><span id="recetaDificultad">Fácil</span></div>
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>👥</span><span id="recetaPorciones">2 porciones</span></div>
           </div>
         </div>
         <button onclick="cerrarModalReceta()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300">✕</button>
       </div>
     </div>
-    
     <div class="p-6">
-      <!-- Ingredientes -->
       <div class="mb-6">
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-          <span class="text-lg"></span> Ingredientes
-        </h4>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">🛒</span> Ingredientes</h4>
         <div id="recetaIngredientes"></div>
       </div>
-
-      <!-- Pasos -->
       <div class="mb-6">
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-          <span class="text-lg">👨‍</span> Preparación
-        </h4>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">👨‍</span> Preparación</h4>
         <div id="recetaPasos"></div>
       </div>
-
-      <!-- Consejo del chef -->
       <div id="recetaConsejo" class="recipe-chef-tip hidden">
         <div class="flex items-start gap-2">
           <span class="text-xl">💡</span>
@@ -913,7 +882,6 @@
         </div>
       </div>
     </div>
-
     <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-3xl dark:bg-slate-900 dark:border-slate-700">
       <button onclick="cerrarModalReceta()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-semibold dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white">Cerrar receta</button>
     </div>
@@ -927,12 +895,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 let sb = null;
 if (typeof supabase !== 'undefined') {
     sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-        auth: {
-            storage: sessionStorage,
-            autoRefreshToken: true,
-            persistSession: true,
-            detectSessionInUrl: true
-        }
+        auth: { storage: sessionStorage, autoRefreshToken: true, persistSession: true, detectSessionInUrl: true }
     });
 } else {
     console.error('Error crítico: La librería de Supabase no se ha cargado.');
@@ -948,7 +911,7 @@ let chartSemanal = null;
 let currentSwap = null;
 
 // ==========================================
-// 📴 SISTEMA OFFLINE-FIRST CON DETECCIÓN ROBUSTA
+// 📴 SISTEMA OFFLINE-FIRST
 // ==========================================
 const OFFLINE_QUEUE_KEY = 'nutripro_offline_queue';
 let appIsOnline = true;
@@ -958,47 +921,26 @@ function getOfflineQueue() {
     const data = localStorage.getItem(OFFLINE_QUEUE_KEY);
     if (!data) return [];
     const parsed = JSON.parse(data);
-    if (!Array.isArray(parsed)) {
-      console.warn('Cola offline corrupta, limpiando...');
-      localStorage.removeItem(OFFLINE_QUEUE_KEY);
-      return [];
-    }
+    if (!Array.isArray(parsed)) { localStorage.removeItem(OFFLINE_QUEUE_KEY); return []; }
     return parsed;
-  } catch (e) { 
-    console.error('Error leyendo cola offline:', e);
-    localStorage.removeItem(OFFLINE_QUEUE_KEY);
-    return []; 
-  }
+  } catch (e) { localStorage.removeItem(OFFLINE_QUEUE_KEY); return []; }
 }
 
 function addToOfflineQueue(action, data) {
   const queue = getOfflineQueue();
   queue.push({ action, data, timestamp: Date.now() });
   localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
-  mostrarToast(' Sin conexión. Guardado localmente. Se sincronizará al volver.');
+  mostrarToast('📴 Sin conexión. Guardado localmente.');
 }
 
-function clearOfflineQueue() {
-  localStorage.removeItem(OFFLINE_QUEUE_KEY);
-}
+function clearOfflineQueue() { localStorage.removeItem(OFFLINE_QUEUE_KEY); }
 
 function checkConnectionByImage() {
   return new Promise((resolve) => {
     const img = new Image();
-    const timeout = setTimeout(() => {
-      console.log('[NutriPro] Check imagen: TIMEOUT');
-      resolve(false);
-    }, 4000);
-    img.onload = () => {
-      clearTimeout(timeout);
-      console.log('[NutriPro] Check imagen: ✅ OK');
-      resolve(true);
-    };
-    img.onerror = () => {
-      clearTimeout(timeout);
-      console.log('[NutriPro] Check imagen: ❌ FAIL');
-      resolve(false);
-    };
+    const timeout = setTimeout(() => resolve(false), 4000);
+    img.onload = () => { clearTimeout(timeout); resolve(true); };
+    img.onerror = () => { clearTimeout(timeout); resolve(false); };
     img.src = `https://www.cloudflare.com/favicon.ico?_=${Date.now()}`;
   });
 }
@@ -1007,48 +949,24 @@ async function checkConnectionByFetch() {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 4000);
-    const response = await fetch('https://1.1.1.1/cdn-cgi/trace', { 
-      method: 'GET',
-      signal: controller.signal,
-      cache: 'no-store'
-    });
+    const response = await fetch('https://1.1.1.1/cdn-cgi/trace', { method: 'GET', signal: controller.signal, cache: 'no-store' });
     clearTimeout(timeoutId);
-    console.log('[NutriPro] Check fetch: ✅ OK (status:', response.status, ')');
     return true;
-  } catch (error) {
-    console.log('[NutriPro] Check fetch: ❌ FAIL -', error.message);
-    return false;
-  }
+  } catch (error) { return false; }
 }
 
 async function checkRealConnection() {
-  console.log('[NutriPro] 🔍 Verificando conexión real...');
   if (!navigator.onLine) {
-    console.log('[NutriPro] navigator.onLine = false');
     const imgOk = await checkConnectionByImage();
-    if (imgOk) {
-      console.log('[NutriPro] navigator.onLine=false pero imagen OK → asumimos ONLINE');
-      appIsOnline = true;
-      updateOnlineStatusUI();
-      return;
-    }
+    if (imgOk) { appIsOnline = true; updateOnlineStatusUI(); return; }
     appIsOnline = false;
     updateOnlineStatusUI();
     return;
   }
   const imgOk = await checkConnectionByImage();
-  if (imgOk) {
-    appIsOnline = true;
-    updateOnlineStatusUI();
-    return;
-  }
+  if (imgOk) { appIsOnline = true; updateOnlineStatusUI(); return; }
   const fetchOk = await checkConnectionByFetch();
-  if (fetchOk) {
-    appIsOnline = true;
-    updateOnlineStatusUI();
-    return;
-  }
-  console.log('[NutriPro] ❌ Todos los métodos fallaron → OFFLINE');
+  if (fetchOk) { appIsOnline = true; updateOnlineStatusUI(); return; }
   appIsOnline = false;
   updateOnlineStatusUI();
 }
@@ -1056,24 +974,15 @@ async function checkRealConnection() {
 function updateOnlineStatusUI() {
   const statusEl = document.getElementById('connectionStatus');
   if (statusEl) {
-    if (appIsOnline) { 
-      statusEl.classList.add('hidden'); 
-      statusEl.classList.remove('flex'); 
-    } else { 
-      statusEl.classList.remove('hidden'); 
-      statusEl.classList.add('flex'); 
-    }
+    if (appIsOnline) { statusEl.classList.add('hidden'); statusEl.classList.remove('flex'); } 
+    else { statusEl.classList.remove('hidden'); statusEl.classList.add('flex'); }
   }
 }
 
 async function processOfflineQueue() {
   const queue = getOfflineQueue();
-  if (queue.length === 0) {
-    console.log('[NutriPro] Cola offline vacía, nada que sincronizar');
-    return;
-  }
-  console.log('[NutriPro] 🔄 Sincronizando', queue.length, 'elementos pendientes...');
-  mostrarToast(' Sincronizando datos pendientes...');
+  if (queue.length === 0) return;
+  mostrarToast('🔄 Sincronizando datos pendientes...');
   let successCount = 0;
   const newQueue = [];
 
@@ -1093,47 +1002,34 @@ async function processOfflineQueue() {
         const { error } = await sb.from('profiles').update({ nombre: item.data.nombre }).eq('id', currentUser.id);
         if (!error) { currentUser.nombre = item.data.nombre; updateUserUI(); success = true; }
       }
-      if (success) { successCount++; } 
-      else { newQueue.push(item); }
-    } catch (err) {
-      console.error('Error procesando cola offline:', err);
-      newQueue.push(item);
-    }
+      if (success) { successCount++; } else { newQueue.push(item); }
+    } catch (err) { newQueue.push(item); }
   }
   
   if (newQueue.length === 0) { clearOfflineQueue(); } 
   else { localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(newQueue)); }
 
   if (successCount > 0) {
-    mostrarToast(`✅ ${successCount} registro(s) sincronizado(s) con éxito.`);
-    pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-    renderSeguimiento();
+    mostrarToast(`✅ ${successCount} registro(s) sincronizado(s).`);
     if (userData) { actualizarDashboard(); generarMenu(); generarListaCompra(); generarEjercicio(); cargarDatosEnFormularioEvaluacion(); }
+    renderSeguimiento();
     renderComentarios();
-  } else if (queue.length > 0) {
-    mostrarToast('⚠️ No se pudo sincronizar. Se reintentará automáticamente.');
   }
 }
 
 window.addEventListener('online', () => {
-  console.log('[NutriPro] 🟢 Evento "online" del navegador');
   appIsOnline = true;
   updateOnlineStatusUI();
-  checkRealConnection().then(() => {
-    if (appIsOnline && currentUser) processOfflineQueue();
-  });
+  checkRealConnection().then(() => { if (appIsOnline && currentUser) processOfflineQueue(); });
 });
 
 window.addEventListener('offline', () => {
-  console.log('[NutriPro] 🔴 Evento "offline" del navegador');
   appIsOnline = false;
-  mostrarToast('🔴 Sin conexión a internet. Los datos se guardarán localmente.');
+  mostrarToast('🔴 Sin conexión. Los datos se guardarán localmente.');
   updateOnlineStatusUI();
 });
 
-function saveUserDataToLocal(data) {
-  localStorage.setItem('nutripro_user_data', JSON.stringify(data));
-}
+function saveUserDataToLocal(data) { localStorage.setItem('nutripro_user_data', JSON.stringify(data)); }
 
 function cargarDatosEnFormularioEvaluacion() {
   if (!userData) return;
@@ -1143,15 +1039,11 @@ function cargarDatosEnFormularioEvaluacion() {
   document.getElementById('altura').value = userData.altura || 175;
   document.getElementById('actividad').value = userData.factor || 1.375;
   document.getElementById('objetivo').value = userData.objetivo || 'perder';
-  document.querySelectorAll('.pref').forEach(cb => {
-    cb.checked = userData.prefs && userData.prefs.includes(cb.value);
-  });
+  document.querySelectorAll('.pref').forEach(cb => { cb.checked = userData.prefs && userData.prefs.includes(cb.value); });
   document.getElementById('evaluacionStatus').classList.remove('hidden');
 }
 
-function mostrarFormularioEvaluacion() {
-  document.getElementById('formEvaluacion').scrollIntoView({ behavior: 'smooth' });
-}
+function mostrarFormularioEvaluacion() { document.getElementById('formEvaluacion').scrollIntoView({ behavior: 'smooth' }); }
 
 function initDarkMode() {
   const toggle = document.getElementById('darkModeToggle');
@@ -1177,7 +1069,7 @@ function initDarkMode() {
 }
 
 async function checkAuth() {
-  if (!sb) { console.error('Supabase no está inicializado correctamente.'); return; }
+  if (!sb) { console.error('Supabase no inicializado.'); return; }
   try {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { showAuthScreen(); return; }
@@ -1185,27 +1077,18 @@ async function checkAuth() {
     if (error || !profile) {
       const nombre = session.user.user_metadata?.nombre || session.user.email.split('@')[0];
       const { error: insertError } = await sb.from('profiles').insert({ id: session.user.id, nombre: nombre, rol: 'user', bloqueado: false });
-      if (insertError) {
-        console.error('Error creando perfil:', insertError);
-        await sb.auth.signOut();
-        showAuthScreen();
-        alert('⚠️ Error al inicializar tu cuenta en la base de datos. Por favor, contacta con el administrador.');
-        return;
-      }
+      if (insertError) { await sb.auth.signOut(); showAuthScreen(); alert('⚠️ Error al inicializar tu cuenta.'); return; }
       location.reload();
       return;
     }
-    if (profile.bloqueado) { showBlockedScreen('Tu cuenta ha sido bloqueada por el administrador.'); return; }
+    if (profile.bloqueado) { showBlockedScreen('Tu cuenta ha sido bloqueada.'); return; }
     currentUser = { id: session.user.id, email: session.user.email, nombre: profile.nombre, rol: profile.rol };
     showMainApp();
     await loadUserDataFromDB();
     initDarkMode();
     await checkRealConnection();
     if (appIsOnline) { await processOfflineQueue(); }
-  } catch (err) {
-    console.error('Error en checkAuth:', err);
-    mostrarToast('⚠️ Error de conexión. Recarga la página.');
-  }
+  } catch (err) { console.error('Error en checkAuth:', err); }
 }
 
 function showAuthScreen() {
@@ -1252,10 +1135,7 @@ async function cerrarSesion() {
     currentUser = null;
     document.getElementById('userDropdown').classList.remove('show');
     showAuthScreen();
-  } catch (err) {
-    console.error('Error al cerrar sesión:', err);
-    mostrarToast('️ Error al cerrar sesión. Recarga la página.');
-  }
+  } catch (err) { mostrarToast('️ Error al cerrar sesión.'); }
 }
 
 document.getElementById('formLogin').addEventListener('submit', async (e) => {
@@ -1264,14 +1144,10 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
   const pass = document.getElementById('loginPassword').value;
   const err = document.getElementById('loginError');
   try {
-    const { data, error } = await sb.auth.signInWithPassword({ email: email, password: pass });
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
     if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } 
     else { location.reload(); }
-  } catch (errCatch) {
-    console.error('Error en login:', errCatch);
-    err.textContent = '❌ Error de conexión. Verifica tu internet e intenta de nuevo.';
-    err.classList.remove('hidden');
-  }
+  } catch (errCatch) { err.textContent = '❌ Error de conexión.'; err.classList.remove('hidden'); }
 });
 
 document.getElementById('formRegister').addEventListener('submit', async (e) => {
@@ -1285,67 +1161,40 @@ document.getElementById('formRegister').addEventListener('submit', async (e) => 
   const btn = e.target.querySelector('button[type="submit"]');
   err.classList.add('hidden');
   if (!nombre) { err.textContent = '❌ El nombre es obligatorio'; err.classList.remove('hidden'); return; }
-  if (!terms) { err.textContent = '❌ Debes aceptar los términos y condiciones'; err.classList.remove('hidden'); return; }
+  if (!terms) { err.textContent = '❌ Debes aceptar los términos'; err.classList.remove('hidden'); return; }
   if (pass !== pass2) { err.textContent = '❌ Las contraseñas no coinciden'; err.classList.remove('hidden'); return; }
-  if (pass.length < 6) { err.textContent = '❌ La contraseña debe tener al menos 6 caracteres'; err.classList.remove('hidden'); return; }
-  if (!sb) { err.textContent = '❌ Error de conexión con la base de datos. Recarga la página.'; err.classList.remove('hidden'); return; }
+  if (pass.length < 6) { err.textContent = '❌ Mínimo 6 caracteres'; err.classList.remove('hidden'); return; }
   const originalBtnText = btn.textContent;
   btn.disabled = true;
   btn.textContent = 'Creando cuenta...';
   try {
-    const { data, error } = await sb.auth.signUp({ email: email, password: pass, options: { data: { nombre: nombre } } });
+    const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { nombre } } });
     if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } 
     else {
-      if (data.session) { mostrarToast('✅ Cuenta creada. Inicializando...'); setTimeout(() => location.reload(), 1000); } 
-      else {
-        alert('✅ Cuenta creada exitosamente. Por favor, revisa tu correo electrónico (incluida la carpeta de spam) para confirmar tu cuenta antes de iniciar sesión.');
-        document.querySelector('.auth-tab[data-auth="login"]').click();
-      }
+      if (data.session) { mostrarToast('✅ Cuenta creada.'); setTimeout(() => location.reload(), 1000); } 
+      else { alert('✅ Revisa tu email para confirmar la cuenta.'); document.querySelector('.auth-tab[data-auth="login"]').click(); }
     }
-  } catch (errCatch) {
-    console.error('Error en registro:', errCatch);
-    err.textContent = '❌ Ocurrió un error inesperado. Inténtalo de nuevo.';
-    err.classList.remove('hidden');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = originalBtnText;
-  }
+  } catch (errCatch) { err.textContent = '❌ Error inesperado.'; err.classList.remove('hidden'); } 
+  finally { btn.disabled = false; btn.textContent = originalBtnText; }
 });
 
 document.querySelectorAll('.auth-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-    const authType = tab.dataset.auth;
-    if (authType === 'login') {
+    if (tab.dataset.auth === 'login') {
       document.getElementById('formLogin').classList.remove('hidden');
       document.getElementById('formRegister').classList.add('hidden');
     } else {
       document.getElementById('formLogin').classList.add('hidden');
       document.getElementById('formRegister').classList.remove('hidden');
     }
-    document.getElementById('loginError').classList.add('hidden');
-    document.getElementById('regError').classList.add('hidden');
   });
 });
 
 async function loadUserDataFromDB() {
   try {
     const { data: uData, error: uError } = await sb.from('user_data').select('*').eq('user_id', currentUser.id).single();
-    if ((!uData || uError) && !appIsOnline) {
-      const localData = localStorage.getItem('nutripro_user_data');
-      if (localData) {
-        userData = JSON.parse(localData);
-        actualizarDashboard();
-        generarMenu();
-        generarListaCompra();
-        generarEjercicio();
-        cargarDatosEnFormularioEvaluacion();
-      }
-    } else if (uError && uError.code !== 'PGRST116') {
-      console.error('Error cargando user_data:', uError);
-      mostrarToast('⚠️ No se pudieron cargar tus datos.');
-    }
     if (uData) {
       userData = uData;
       saveUserDataToLocal(userData);
@@ -1355,17 +1204,13 @@ async function loadUserDataFromDB() {
       generarEjercicio();
       cargarDatosEnFormularioEvaluacion();
     }
-    const { data: wData, error: wError } = await sb.from('weight_logs').select('*').eq('user_id', currentUser.id).order('fecha', { ascending: true });
-    if (wError) { console.error('Error cargando weight_logs:', wError); mostrarToast('️ No se pudo cargar tu historial de peso.'); }
+    const { data: wData } = await sb.from('weight_logs').select('*').eq('user_id', currentUser.id).order('fecha', { ascending: true });
     if (wData) {
       pesos = wData.map(w => ({ fecha: w.fecha, valor: w.valor }));
       renderSeguimiento();
     }
     await renderComentarios();
-  } catch (err) {
-    console.error('Error en loadUserDataFromDB:', err);
-    mostrarToast('⚠️ Error al cargar datos. Recarga la página.');
-  }
+  } catch (err) { console.error('Error cargando datos:', err); }
 }
 
 document.getElementById('formEvaluacion').addEventListener('submit', async (e) => {
@@ -1387,12 +1232,11 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
   if (deficit > 750) deficit = 750;
   const caloriasObjetivo = Math.round(getd - deficit);
   const protG = Math.round(peso * 1.8);
-  const protKcal = protG * 4;
   const grasasG = Math.max(Math.round(peso * 0.9), 50);
-  const grasasKcal = grasasG * 9;
-  const carbKcal = caloriasObjetivo - protKcal - grasasKcal;
+  const carbKcal = caloriasObjetivo - (protG * 4) - (grasasG * 9);
   const carbG = Math.round(carbKcal / 4);
   const newUserData = { edad, sexo, peso, altura, factor, objetivo, prefs, tmb: Math.round(tmb), getd: Math.round(getd), imc: imc.toFixed(1), deficit, caloriasObjetivo, protG, grasasG, carbG };
+  
   if (!appIsOnline) {
     addToOfflineQueue('save_evaluation', newUserData);
     userData = newUserData;
@@ -1405,12 +1249,11 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
     switchTab('dashboard');
     return;
   }
+  
   try {
     const { error } = await sb.from('user_data').upsert({ user_id: currentUser.id, ...newUserData, updated_at: new Date() });
-    if (error) {
-      console.error('Error guardando datos:', error);
-      addToOfflineQueue('save_evaluation', newUserData);
-    } else {
+    if (error) { addToOfflineQueue('save_evaluation', newUserData); } 
+    else {
       userData = newUserData;
       saveUserDataToLocal(userData);
       actualizarDashboard();
@@ -1419,12 +1262,9 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
       generarEjercicio();
       cargarDatosEnFormularioEvaluacion();
       switchTab('dashboard');
-      mostrarToast('✅ Evaluación actualizada y guardada en la nube');
+      mostrarToast('✅ Evaluación guardada');
     }
-  } catch (err) {
-    console.error('Error en formEvaluacion:', err);
-    addToOfflineQueue('save_evaluation', newUserData);
-  }
+  } catch (err) { addToOfflineQueue('save_evaluation', newUserData); }
 });
 
 async function agregarPeso() {
@@ -1441,63 +1281,52 @@ async function agregarPeso() {
     return;
   }
   try {
-    const { error } = await sb.from('weight_logs').insert({ user_id: currentUser.id, fecha: fecha, valor: valor });
-    if (error) { console.error('Error guardando peso:', error); addToOfflineQueue('add_weight', pesoData); return; }
+    const { error } = await sb.from('weight_logs').insert({ user_id: currentUser.id, fecha, valor });
+    if (error) { addToOfflineQueue('add_weight', pesoData); return; }
     pesos.push(pesoData);
     pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
     document.getElementById('valorPeso').value = '';
     renderSeguimiento();
-    mostrarToast('✅ Peso registrado en la nube');
-  } catch (err) {
-    console.error('Error en agregarPeso:', err);
-    addToOfflineQueue('add_weight', pesoData);
-  }
+    mostrarToast('✅ Peso registrado');
+  } catch (err) { addToOfflineQueue('add_weight', pesoData); }
 }
 
 async function publicarComentario() {
   const texto = document.getElementById('nuevoComentario').value.trim();
-  if (!texto) { mostrarToast('⚠️ El comentario no puede estar vacío'); return; }
+  if (!texto) { mostrarToast('⚠️ Escribe un comentario'); return; }
   const anonimo = document.getElementById('comentarioAnonimo').checked;
   const commentData = { texto, anonimo };
   if (!appIsOnline) {
     addToOfflineQueue('add_comment', commentData);
     document.getElementById('nuevoComentario').value = '';
-    mostrarToast('📴 Comentario guardado localmente. Se publicará al tener conexión.');
+    mostrarToast('📴 Comentario guardado localmente');
     return;
   }
   try {
-    const { error } = await sb.from('comments').insert({ user_id: currentUser.id, user_name: anonimo ? 'Anónimo' : currentUser.nombre, texto: texto, is_anonymous: anonimo });
-    if (error) { console.error('Error publicando comentario:', error); addToOfflineQueue('add_comment', commentData); return; }
+    const { error } = await sb.from('comments').insert({ user_id: currentUser.id, user_name: anonimo ? 'Anónimo' : currentUser.nombre, texto, is_anonymous: anonimo });
+    if (error) { addToOfflineQueue('add_comment', commentData); return; }
     document.getElementById('nuevoComentario').value = '';
     await renderComentarios();
     mostrarToast('💬 Comentario publicado');
-  } catch (err) {
-    console.error('Error en publicarComentario:', err);
-    addToOfflineQueue('add_comment', commentData);
-  }
+  } catch (err) { addToOfflineQueue('add_comment', commentData); }
 }
 
 async function renderComentarios() {
   try {
     const { data: comments, error } = await sb.from('comments').select('*').order('created_at', { ascending: false });
-    if (error) { console.error('Error cargando comentarios:', error); mostrarToast('️ No se pudieron cargar los comentarios.'); return; }
+    if (error) return;
     const cont = document.getElementById('listaComentarios');
     if (!comments || comments.length === 0) {
-      cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia 💬</div>';
+      cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia </div>';
       return;
     }
     cont.innerHTML = comments.map(c => {
-      const isAdmin = currentUser && currentUser.rol === 'admin';
       const fecha = new Date(c.created_at).toLocaleDateString('es-ES');
       const textoSeguro = DOMPurify.sanitize(c.texto);
       const nombreSeguro = DOMPurify.sanitize(c.user_name);
-      const respuestas = (c.respuestas || []).map(r => `<div class="admin-reply"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold text-teal-700">🛡️ Equipo NutriPro</span><span class="text-xs text-slate-400">${new Date(r.fecha).toLocaleDateString()}</span></div><p class="text-sm text-slate-700 dark:text-slate-300">${DOMPurify.sanitize(r.texto)}</p></div>`).join('');
-      return `<div class="comment-card"><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${nombreSeguro.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${nombreSeguro}</div><div class="text-xs text-slate-400">${fecha}</div></div></div>${isAdmin ? `<div class="flex gap-1"><button onclick="responderComentario(${c.id})" class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200">↩ Responder</button><button onclick="eliminarComentario(${c.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200">🗑</button></div>` : ''}</div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${textoSeguro}</p>${respuestas}</div>`;
+      return `<div class="comment-card"><div class="flex items-center gap-2 mb-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${nombreSeguro.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${nombreSeguro}</div><div class="text-xs text-slate-400">${fecha}</div></div></div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${textoSeguro}</p></div>`;
     }).join('');
-  } catch (err) {
-    console.error('Error en renderComentarios:', err);
-    mostrarToast('⚠️ Error al cargar comentarios.');
-  }
+  } catch (err) { console.error('Error cargando comentarios:', err); }
 }
 
 function calcularTMB(peso, altura, edad, sexo) {
@@ -1529,30 +1358,20 @@ function actualizarDashboard() {
   const alturaM = userData.altura / 100;
   const imcActual = parseFloat(userData.imc);
   const MARGEN_KG = 1.5;
-  
   let imcReferencia;
-  if (imcActual < 18.5) {
-    imcReferencia = 18.5;
-  } else if (imcActual > 24.9) {
-    imcReferencia = 24.5;
-  } else {
-    imcReferencia = imcActual;
-  }
+  if (imcActual < 18.5) imcReferencia = 18.5;
+  else if (imcActual > 24.9) imcReferencia = 24.5;
+  else imcReferencia = imcActual;
   
   const pesoReferencia = imcReferencia * alturaM * alturaM;
   const pesoMin = (pesoReferencia - MARGEN_KG).toFixed(1);
   const pesoMax = (pesoReferencia + MARGEN_KG).toFixed(1);
-  
   document.getElementById('metricPesoIdeal').textContent = `${pesoMin} – ${pesoMax} kg`;
   
   let detalleTexto = '';
-  if (imcActual < 18.5) {
-    detalleTexto = `Objetivo: alcanzar IMC saludable (18.5)`;
-  } else if (imcActual > 24.9) {
-    detalleTexto = `Objetivo: alcanzar IMC 24.5 (límite saludable)`;
-  } else {
-    detalleTexto = `Basado en tu IMC actual (${imcActual})`;
-  }
+  if (imcActual < 18.5) detalleTexto = `Objetivo: alcanzar IMC saludable (18.5)`;
+  else if (imcActual > 24.9) detalleTexto = `Objetivo: alcanzar IMC 24.5`;
+  else detalleTexto = `Basado en tu IMC actual (${imcActual})`;
   document.getElementById('metricPesoIdealDetalle').textContent = detalleTexto;
   
   const totalKcal = userData.protG * 4 + userData.grasasG * 9 + userData.carbG * 4;
@@ -1565,351 +1384,89 @@ function actualizarDashboard() {
   document.getElementById('barProt').style.width = pctProt + '%';
   document.getElementById('barCarb').style.width = pctCarb + '%';
   document.getElementById('barGrasas').style.width = pctGrasas + '%';
-  const perdidaSemKg = (userData.deficit * 7 / 7700).toFixed(2);
-  const perdidaMesKg = (userData.deficit * 30 / 7700).toFixed(2);
-  document.getElementById('perdidaSem').textContent = `${perdidaSemKg} kg/sem`;
-  document.getElementById('perdidaMes').textContent = `${perdidaMesKg} kg/mes`;
-  document.getElementById('deficitDiario').textContent = `${userData.deficit} kcal/día`;
-  const alerta = document.getElementById('alertaSeguridad');
-  if (perdidaSemKg > userData.peso * 0.01) {
-    alerta.className = 'mt-3 p-3 rounded-lg text-sm alert-danger';
-    alerta.innerHTML = `<strong>⚠️ Alerta:</strong> La pérdida supera el 1% semanal. Considera aumentar calorías.`;
-    alerta.classList.remove('hidden');
-  } else if (perdidaSemKg >= 0.2 && perdidaSemKg <= 0.5) {
-    alerta.className = 'mt-3 p-3 rounded-lg text-sm alert-success';
-    alerta.innerHTML = `<strong>✅ Excelente:</strong> Ritmo estable y sostenible.`;
-    alerta.classList.remove('hidden');
-  } else { alerta.classList.add('hidden'); }
 }
 
 // ==========================================
-// 🟢 NUEVO: BASE DE DATOS DE RECETAS DETALLADAS
+// 🟢 RECETAS
 // ==========================================
 const RECETAS_DB = {
-  'p1': {
-    tiempo: '15 min',
-    dificultad: 'Fácil',
-    porciones: 2,
-    ingredientes: [
-      { nombre: 'Pechuga de pollo', cantidad: '2 unidades (400g)' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '1 cda' },
-      { nombre: 'Sal y pimienta', cantidad: 'al gusto' },
-      { nombre: 'Ajo en polvo', cantidad: '1/2 cdta (opcional)' },
-      { nombre: 'Limón', cantidad: '1/2 unidad' }
-    ],
-    pasos: [
-      'Saca el pollo de la nevera 10 minutos antes para que esté a temperatura ambiente.',
-      'Seca bien las pechugas con papel de cocina (esto ayuda a que se doren mejor).',
-      'Salpimienta ambos lados y añade el ajo en polvo si lo deseas.',
-      'Calienta una sartén antiadherente a fuego medio-alto con el aceite de oliva.',
-      'Coloca las pechugas y cocina 6-7 minutos por lado sin moverlas.',
-      'Cuando estén doradas, añade el zumo de medio limón y cocina 1 minuto más.',
-      'Retira del fuego y deja reposar 2 minutos antes de cortar.'
-    ],
-    consejo: 'Para mayor jugosidad, marina el pollo 30 minutos en limón, ajo y hierbas antes de cocinarlo.'
-  },
-  'p3': {
-    tiempo: '25 min',
-    dificultad: 'Media',
-    porciones: 2,
-    ingredientes: [
-      { nombre: 'Lomo de salmón', cantidad: '2 unidades (300g)' },
-      { nombre: 'Aceite de oliva', cantidad: '2 cdas' },
-      { nombre: 'Limón', cantidad: '1 unidad' },
-      { nombre: 'Eneldo fresco', cantidad: '2 ramitas' },
-      { nombre: 'Sal y pimienta', cantidad: 'al gusto' },
-      { nombre: 'Ajo', cantidad: '2 dientes' }
-    ],
-    pasos: [
-      'Precalienta el horno a 200°C.',
-      'Coloca el salmón sobre papel de aluminio en una bandeja.',
-      'Mezcla el aceite de oliva, el zumo de limón, el ajo picado y el eneldo.',
-      'Vierte la mezcla sobre el salmón y salpimienta.',
-      'Cierra el papel de aluminio formando un paquete.',
-      'Hornea 15-18 minutos hasta que el salmón esté en su punto.',
-      'Abre con cuidado (sale vapor) y sirve con rodajas de limón.'
-    ],
-    consejo: 'El salmón está en su punto cuando se desmenuza fácilmente con un tenedor pero sigue rosado en el centro.'
-  },
-  'c1': {
-    tiempo: '20 min',
-    dificultad: 'Fácil',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Arroz integral', cantidad: '200g' },
-      { nombre: 'Agua', cantidad: '500ml' },
-      { nombre: 'Sal', cantidad: '1 cdta' },
-      { nombre: 'Aceite de oliva', cantidad: '1 cda' }
-    ],
-    pasos: [
-      'Lava el arroz integral bajo el grifo hasta que el agua salga clara.',
-      'Pon el agua a hervir con la sal en una olla.',
-      'Añade el arroz y el aceite de oliva.',
-      'Cuando hierva, baja el fuego al mínimo y tapa.',
-      'Cocina 18-20 minutos sin destapar.',
-      'Retira del fuego y deja reposar 5 minutos tapado.',
-      'Destapa y esponja con un tenedor antes de servir.'
-    ],
-    consejo: 'No destapes la olla durante la cocción: el vapor es clave para que quede suelto.'
-  },
-  'c3': {
-    tiempo: '15 min',
-    dificultad: 'Fácil',
-    porciones: 2,
-    ingredientes: [
-      { nombre: 'Quinoa', cantidad: '150g' },
-      { nombre: 'Agua o caldo de verduras', cantidad: '300ml' },
-      { nombre: 'Sal', cantidad: '1/2 cdta' }
-    ],
-    pasos: [
-      'Lava la quinoa en un colador fino bajo el grifo (elimina el sabor amargo).',
-      'Pon el agua o caldo a hervir con la sal.',
-      'Añade la quinoa y cocina a fuego medio.',
-      'Cuando hierva, baja el fuego y tapa.',
-      'Cocina 12-15 minutos hasta que absorba el líquido.',
-      'Retira del fuego y deja reposar 5 minutos.',
-      'Espolvorea con un tenedor para que quede suelta.'
-    ],
-    consejo: 'La quinoa está lista cuando se ven los "hilos" blancos (el germen) separados del grano.'
-  },
-  'v1': {
-    tiempo: '10 min',
-    dificultad: 'Fácil',
-    porciones: 2,
-    ingredientes: [
-      { nombre: 'Brócoli fresco', cantidad: '400g' },
-      { nombre: 'Agua', cantidad: 'para vapor' },
-      { nombre: 'Sal', cantidad: '1 pizca' },
-      { nombre: 'Aceite de oliva', cantidad: '1 cda' },
-      { nombre: 'Ajo', cantidad: '1 diente (opcional)' }
-    ],
-    pasos: [
-      'Lava el brócoli y córtalo en ramilletes pequeños.',
-      'Pon agua a hervir en una olla con cestillo de vapor.',
-      'Coloca el brócoli en el cestillo y tapa.',
-      'Cocina al vapor 5-7 minutos (debe quedar verde brillante y crujiente).',
-      'Retira y salpimienta al gusto.',
-      'Aliña con aceite de oliva y ajo picado si deseas.'
-    ],
-    consejo: 'No cocines el brócoli en exceso: debe quedar "al dente" para conservar vitaminas y textura.'
-  },
-  'd1': {
-    tiempo: '10 min',
-    dificultad: 'Fácil',
-    porciones: 1,
-    ingredientes: [
-      { nombre: 'Avena en copos', cantidad: '50g' },
-      { nombre: 'Leche o bebida vegetal', cantidad: '200ml' },
-      { nombre: 'Plátano', cantidad: '1 unidad' },
-      { nombre: 'Nueces', cantidad: '15g' },
-      { nombre: 'Canela', cantidad: '1 pizca' },
-      { nombre: 'Miel o stevia', cantidad: 'al gusto (opcional)' }
-    ],
-    pasos: [
-      'Pon la avena y la leche en un cazo a fuego medio.',
-      'Remueve constantemente durante 5 minutos hasta que espese.',
-      'Corta el plátano en rodajas.',
-      'Vierte la avena en un bol.',
-      'Coloca el plátano por encima.',
-      'Añade las nueces troceadas y la canela.',
-      'Endulza con miel o stevia si lo deseas.'
-    ],
-    consejo: 'Para un porridge más cremoso, usa mitad leche y mitad agua, y cocina a fuego muy bajo.'
-  },
-  'm1': {
-    tiempo: '5 min',
-    dificultad: 'Fácil',
-    porciones: 1,
-    ingredientes: [
-      { nombre: 'Manzana', cantidad: '1 unidad mediana' },
-      { nombre: 'Almendras naturales', cantidad: '20g (un puñado)' }
-    ],
-    pasos: [
-      'Lava bien la manzana.',
-      'Córtala en gajos o rodajas.',
-      'Sirve con las almendras al lado.',
-      'Opcional: añade una pizca de canela por encima.'
-    ],
-    consejo: 'La combinación de fruta + frutos secos proporciona energía sostenida y evita picos de glucosa.'
-  }
+  'p1': { tiempo: '15 min', dificultad: 'Fácil', porciones: 2, ingredientes: [{ nombre: 'Pechuga de pollo', cantidad: '2 unidades (400g)' }, { nombre: 'Aceite de oliva', cantidad: '1 cda' }, { nombre: 'Sal y pimienta', cantidad: 'al gusto' }, { nombre: 'Limón', cantidad: '1/2 unidad' }], pasos: ['Saca el pollo 10 min antes de la nevera.', 'Seca bien con papel de cocina.', 'Salpimienta ambos lados.', 'Calienta sartén a fuego medio-alto con aceite.', 'Cocina 6-7 min por lado sin mover.', 'Añade zumo de limón y cocina 1 min más.', 'Deja reposar 2 min antes de cortar.'], consejo: 'Marina 30 min en limón y ajo para más jugosidad.' },
+  'p3': { tiempo: '25 min', dificultad: 'Media', porciones: 2, ingredientes: [{ nombre: 'Lomo de salmón', cantidad: '2 unidades (300g)' }, { nombre: 'Aceite de oliva', cantidad: '2 cdas' }, { nombre: 'Limón', cantidad: '1 unidad' }, { nombre: 'Eneldo fresco', cantidad: '2 ramitas' }, { nombre: 'Ajo', cantidad: '2 dientes' }], pasos: ['Precalienta horno a 200°C.', 'Coloca salmón sobre papel aluminio.', 'Mezcla aceite, limón, ajo y eneldo.', 'Vierte sobre el salmón y salpimienta.', 'Cierra el aluminio formando paquete.', 'Hornea 15-18 min.', 'Abre con cuidado y sirve.'], consejo: 'Está en su punto cuando se desmenuza fácil pero sigue rosado.' },
+  'c1': { tiempo: '20 min', dificultad: 'Fácil', porciones: 4, ingredientes: [{ nombre: 'Arroz integral', cantidad: '200g' }, { nombre: 'Agua', cantidad: '500ml' }, { nombre: 'Sal', cantidad: '1 cdta' }, { nombre: 'Aceite de oliva', cantidad: '1 cda' }], pasos: ['Lava el arroz hasta que el agua salga clara.', 'Hierve agua con sal.', 'Añade arroz y aceite.', 'Cuando hierva, baja fuego y tapa.', 'Cocina 18-20 min sin destapar.', 'Reposa 5 min tapado.', 'Esponja con tenedor.'], consejo: 'No destapes durante la cocción.' },
+  'd1': { tiempo: '10 min', dificultad: 'Fácil', porciones: 1, ingredientes: [{ nombre: 'Avena', cantidad: '50g' }, { nombre: 'Leche', cantidad: '200ml' }, { nombre: 'Plátano', cantidad: '1 unidad' }, { nombre: 'Nueces', cantidad: '15g' }, { nombre: 'Canela', cantidad: '1 pizca' }], pasos: ['Pon avena y leche a fuego medio.', 'Remueve 5 min hasta espesar.', 'Corta el plátano.', 'Vierte en un bol.', 'Añade plátano, nueces y canela.'], consejo: 'Usa mitad leche y mitad agua para más cremosidad.' }
 };
 
-// Función para obtener receta (con fallback para alimentos sin receta detallada)
 function obtenerReceta(alimentoId) {
   const receta = RECETAS_DB[alimentoId];
   if (receta) return receta;
-  
-  // Receta genérica para alimentos sin receta específica
   const alimento = MAPA_ALIMENTOS[alimentoId];
   if (!alimento) return null;
-  
-  return {
-    tiempo: '15-20 min',
-    dificultad: 'Fácil',
-    porciones: 2,
-    ingredientes: [
-      { nombre: alimento.nombre, cantidad: 'porción estándar' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '1 cda' },
-      { nombre: 'Sal y pimienta', cantidad: 'al gusto' },
-      { nombre: 'Hierbas aromáticas', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Prepara los ingredientes y lávalos si es necesario.',
-      'Calienta una sartén o plancha a fuego medio con el aceite.',
-      'Cocina el alimento principal hasta que esté en su punto.',
-      'Salpimienta y añade hierbas al gusto.',
-      'Sirve caliente y disfruta.'
-    ],
-    consejo: 'Usa siempre ingredientes frescos y de temporada para maximizar el valor nutricional.'
-  };
+  return { tiempo: '15-20 min', dificultad: 'Fácil', porciones: 2, ingredientes: [{ nombre: alimento.nombre, cantidad: 'porción estándar' }, { nombre: 'Aceite de oliva', cantidad: '1 cda' }, { nombre: 'Sal y pimienta', cantidad: 'al gusto' }], pasos: ['Prepara los ingredientes.', 'Calienta sartén con aceite.', 'Cocina hasta que esté en su punto.', 'Salpimienta y sirve.'], consejo: 'Usa ingredientes frescos y de temporada.' };
 }
 
-// 🟢 NUEVO: Funciones para el modal de receta
 function abrirModalReceta(alimentoId) {
   const alimento = MAPA_ALIMENTOS[alimentoId];
   if (!alimento) return;
-  
   const receta = obtenerReceta(alimentoId);
   if (!receta) return;
-  
-  // Rellenar datos del header
   document.getElementById('recetaTitulo').textContent = alimento.nombre;
   document.getElementById('recetaTiempo').textContent = receta.tiempo;
   document.getElementById('recetaDificultad').textContent = receta.dificultad;
   document.getElementById('recetaPorciones').textContent = `${receta.porciones} ${receta.porciones === 1 ? 'porción' : 'porciones'}`;
-  
-  // Rellenar ingredientes
-  const contIngredientes = document.getElementById('recetaIngredientes');
-  contIngredientes.innerHTML = receta.ingredientes.map((ing, i) => `
-    <div class="recipe-ingredient" onclick="toggleIngrediente(this)">
-      <input type="checkbox" class="w-4 h-4 accent-teal-600">
-      <span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${ing.nombre}</span>
-      <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">${ing.cantidad}</span>
-    </div>
-  `).join('');
-  
-  // Rellenar pasos
-  const contPasos = document.getElementById('recetaPasos');
-  contPasos.innerHTML = receta.pasos.map((paso, i) => `
-    <div class="recipe-step">
-      <div class="recipe-step-number">${i + 1}</div>
-      <div class="flex-1 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">${paso}</div>
-    </div>
-  `).join('');
-  
-  // Consejo del chef
+  document.getElementById('recetaIngredientes').innerHTML = receta.ingredientes.map(ing => `<div class="recipe-ingredient" onclick="toggleIngrediente(this)"><input type="checkbox" class="w-4 h-4 accent-teal-600"><span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${ing.nombre}</span><span class="text-xs text-slate-500 font-semibold">${ing.cantidad}</span></div>`).join('');
+  document.getElementById('recetaPasos').innerHTML = receta.pasos.map((paso, i) => `<div class="recipe-step"><div class="recipe-step-number">${i + 1}</div><div class="flex-1 text-sm text-slate-700 dark:text-slate-300">${paso}</div></div>`).join('');
   const consejoEl = document.getElementById('recetaConsejo');
-  const consejoTexto = document.getElementById('recetaConsejoTexto');
-  if (receta.consejo) {
-    consejoTexto.textContent = receta.consejo;
-    consejoEl.classList.remove('hidden');
-  } else {
-    consejoEl.classList.add('hidden');
-  }
-  
-  // Mostrar modal
+  if (receta.consejo) { document.getElementById('recetaConsejoTexto').textContent = receta.consejo; consejoEl.classList.remove('hidden'); } 
+  else { consejoEl.classList.add('hidden'); }
   document.getElementById('modalReceta').classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
 }
 
-function cerrarModalReceta() {
-  document.getElementById('modalReceta').classList.add('hidden');
-  document.body.style.overflow = '';
-}
+function cerrarModalReceta() { document.getElementById('modalReceta').classList.add('hidden'); }
+function toggleIngrediente(el) { el.classList.toggle('checked'); const cb = el.querySelector('input[type="checkbox"]'); cb.checked = !cb.checked; }
 
-function toggleIngrediente(el) {
-  el.classList.toggle('checked');
-  const checkbox = el.querySelector('input[type="checkbox"]');
-  checkbox.checked = !checkbox.checked;
-}
-
+// ==========================================
+// 🟢 ALIMENTOS
+// ==========================================
 const GRUPO_PROTEINAS = [
   { id: 'p1', grupo: 'prot', nombre: 'Pechuga de pollo a la plancha', kcal: 165, prot: 31, ing: ['pollo'] },
   { id: 'p2', grupo: 'prot', nombre: 'Pavo a la plancha', kcal: 135, prot: 29, ing: ['pavo'] },
   { id: 'p3', grupo: 'prot', nombre: 'Salmón al horno', kcal: 208, prot: 22, ing: ['salmón'] },
   { id: 'p4', grupo: 'prot', nombre: 'Merluza a la plancha', kcal: 90, prot: 20, ing: ['merluza'] },
   { id: 'p5', grupo: 'prot', nombre: 'Atún fresco', kcal: 144, prot: 23, ing: ['atún'] },
-  { id: 'p6', grupo: 'prot', nombre: 'Bacalao al horno', kcal: 100, prot: 22, ing: ['bacalao'] },
-  { id: 'p7', grupo: 'prot', nombre: 'Dorada a la plancha', kcal: 120, prot: 22, ing: ['dorada'] },
-  { id: 'p8', grupo: 'prot', nombre: 'Gambas al ajillo', kcal: 110, prot: 24, ing: ['gambas'] },
   { id: 'p9', grupo: 'prot', nombre: 'Huevos cocidos (2 uds)', kcal: 155, prot: 13, ing: ['huevos'] },
-  { id: 'p10', grupo: 'prot', nombre: 'Tortilla francesa (2 huevos)', kcal: 180, prot: 14, ing: ['huevos'] },
   { id: 'p11', grupo: 'prot', nombre: 'Tofu salteado', kcal: 144, prot: 15, ing: ['tofu'] },
-  { id: 'p12', grupo: 'prot', nombre: 'Tempeh marinado', kcal: 160, prot: 18, ing: ['tempeh'] },
-  { id: 'p13', grupo: 'prot', nombre: 'Lentejas estofadas', kcal: 180, prot: 12, ing: ['lentejas'] },
-  { id: 'p14', grupo: 'prot', nombre: 'Garbanzos guisados', kcal: 190, prot: 11, ing: ['garbanzos'] },
-  { id: 'p15', grupo: 'prot', nombre: 'Alubias con verduras', kcal: 175, prot: 10, ing: ['alubias'] },
-  { id: 'p16', grupo: 'prot', nombre: 'Solomillo de ternera', kcal: 180, prot: 28, ing: ['ternera'] },
-  { id: 'p17', grupo: 'prot', nombre: 'Muslos de pollo al horno', kcal: 190, prot: 26, ing: ['pollo'] },
-  { id: 'p18', grupo: 'prot', nombre: 'Conejo a la plancha', kcal: 150, prot: 25, ing: ['conejo'] }
+  { id: 'p13', grupo: 'prot', nombre: 'Lentejas estofadas', kcal: 180, prot: 12, ing: ['lentejas'] }
 ];
 const GRUPO_CARBOS = [
   { id: 'c1', grupo: 'carb', nombre: 'Arroz integral', kcal: 220, ing: ['arroz integral'] },
-  { id: 'c2', grupo: 'carb', nombre: 'Arroz basmati', kcal: 215, ing: ['arroz basmati'] },
   { id: 'c3', grupo: 'carb', nombre: 'Quinoa', kcal: 222, ing: ['quinoa'] },
-  { id: 'c4', grupo: 'carb', nombre: 'Mijo', kcal: 210, ing: ['mijo'] },
   { id: 'c5', grupo: 'carb', nombre: 'Pasta integral', kcal: 230, ing: ['pasta integral'] },
-  { id: 'c6', grupo: 'carb', nombre: 'Pasta de espelta', kcal: 225, ing: ['pasta de espelta'] },
   { id: 'c7', grupo: 'carb', nombre: 'Batata asada', kcal: 180, ing: ['batata'] },
-  { id: 'c8', grupo: 'carb', nombre: 'Patata cocida', kcal: 160, ing: ['patatas'] },
-  { id: 'c9', grupo: 'carb', nombre: 'Boniato al horno', kcal: 175, ing: ['boniato'] },
   { id: 'c10', grupo: 'carb', nombre: 'Avena', kcal: 190, ing: ['avena'] },
-  { id: 'c11', grupo: 'carb', nombre: 'Pan integral', kcal: 170, ing: ['pan integral'] },
-  { id: 'c12', grupo: 'carb', nombre: 'Pan de centeno', kcal: 175, ing: ['pan de centeno'] },
-  { id: 'c13', grupo: 'carb', nombre: 'Cuscús integral', kcal: 210, ing: ['cuscús'] },
-  { id: 'c14', grupo: 'carb', nombre: 'Trigo sarraceno', kcal: 205, ing: ['trigo sarraceno'] },
-  { id: 'c15', grupo: 'carb', nombre: 'Bulgur', kcal: 200, ing: ['bulgur'] }
+  { id: 'c11', grupo: 'carb', nombre: 'Pan integral', kcal: 170, ing: ['pan integral'] }
 ];
 const GRUPO_VERDURAS = [
   { id: 'v1', grupo: 'verd', nombre: 'Brócoli al vapor', kcal: 55, ing: ['brócoli'] },
-  { id: 'v2', grupo: 'verd', nombre: 'Coliflor al horno', kcal: 50, ing: ['coliflor'] },
   { id: 'v3', grupo: 'verd', nombre: 'Espinacas salteadas', kcal: 45, ing: ['espinacas'] },
-  { id: 'v4', grupo: 'verd', nombre: 'Acelgas al vapor', kcal: 40, ing: ['acelgas'] },
-  { id: 'v5', grupo: 'verd', nombre: 'Ensalada mixta', kcal: 35, ing: ['lechuga', 'tomate', 'pepino'] },
-  { id: 'v6', grupo: 'verd', nombre: 'Pimientos asados', kcal: 50, ing: ['pimientos'] },
+  { id: 'v5', grupo: 'verd', nombre: 'Ensalada mixta', kcal: 35, ing: ['lechuga', 'tomate'] },
   { id: 'v7', grupo: 'verd', nombre: 'Calabacín a la plancha', kcal: 40, ing: ['calabacín'] },
-  { id: 'v8', grupo: 'verd', nombre: 'Berenjena asada', kcal: 45, ing: ['berenjena'] },
-  { id: 'v9', grupo: 'verd', nombre: 'Tomate aliñado', kcal: 30, ing: ['tomate'] },
-  { id: 'v10', grupo: 'verd', nombre: 'Judías verdes', kcal: 45, ing: ['judías verdes'] },
-  { id: 'v11', grupo: 'verd', nombre: 'Zanahoria cocida', kcal: 50, ing: ['zanahoria'] },
-  { id: 'v12', grupo: 'verd', nombre: 'Espárragos trigueros', kcal: 40, ing: ['espárragos'] },
-  { id: 'v13', grupo: 'verd', nombre: 'Champiñones salteados', kcal: 35, ing: ['champiñones'] },
-  { id: 'v14', grupo: 'verd', nombre: 'Cebolla morada asada', kcal: 45, ing: ['cebolla'] },
-  { id: 'v15', grupo: 'verd', nombre: 'Kale salteado', kcal: 50, ing: ['kale'] }
+  { id: 'v9', grupo: 'verd', nombre: 'Tomate aliñado', kcal: 30, ing: ['tomate'] }
 ];
 const GRUPO_GRASAS = [
   { id: 'g1', grupo: 'grasa', nombre: 'Aguacate', kcal: 160, ing: ['aguacate'] },
-  { id: 'g2', grupo: 'grasa', nombre: 'Aceite de oliva virgen extra (1 cda)', kcal: 120, ing: ['aceite de oliva'] },
+  { id: 'g2', grupo: 'grasa', nombre: 'Aceite de oliva (1 cda)', kcal: 120, ing: ['aceite de oliva'] },
   { id: 'g3', grupo: 'grasa', nombre: 'Almendras (20g)', kcal: 120, ing: ['almendras'] },
-  { id: 'g4', grupo: 'grasa', nombre: 'Nueces (15g)', kcal: 100, ing: ['nueces'] },
-  { id: 'g5', grupo: 'grasa', nombre: 'Semillas de chía (15g)', kcal: 80, ing: ['semillas de chía'] },
-  { id: 'g6', grupo: 'grasa', nombre: 'Semillas de lino (15g)', kcal: 75, ing: ['semillas de lino'] },
-  { id: 'g7', grupo: 'grasa', nombre: 'Semillas de calabaza (15g)', kcal: 85, ing: ['semillas de calabaza'] },
-  { id: 'g8', grupo: 'grasa', nombre: 'Pistachos (15g)', kcal: 95, ing: ['pistachos'] },
-  { id: 'g9', grupo: 'grasa', nombre: 'Anacardos (15g)', kcal: 100, ing: ['anacardos'] },
-  { id: 'g10', grupo: 'grasa', nombre: 'Aceitunas negras (30g)', kcal: 115, ing: ['aceitunas'] }
+  { id: 'g4', grupo: 'grasa', nombre: 'Nueces (15g)', kcal: 100, ing: ['nueces'] }
 ];
 const GRUPO_DESAYUNOS = [
-  { id: 'd1', grupo: 'des', nombre: 'Avena con frutas y nueces', kcal: 380, prot: 12, ing: ['avena', 'plátano', 'nueces', 'canela'] },
-  { id: 'd2', grupo: 'des', nombre: 'Tostadas integrales con aguacate y huevo', kcal: 420, prot: 18, ing: ['pan integral', 'aguacate', 'huevos'] },
-  { id: 'd3', grupo: 'des', nombre: 'Yogur griego con granola y frutos rojos', kcal: 350, prot: 20, ing: ['yogur griego', 'granola', 'frutos rojos'] },
-  { id: 'd4', grupo: 'des', nombre: 'Tortilla de claras con espinacas', kcal: 300, prot: 25, ing: ['huevos', 'espinacas'] },
-  { id: 'd5', grupo: 'des', nombre: 'Smoothie bowl de proteína', kcal: 380, prot: 22, ing: ['plátano', 'proteína', 'semillas de chía'] },
-  { id: 'd6', grupo: 'des', nombre: 'Tostadas con queso fresco y tomate', kcal: 340, prot: 16, ing: ['pan integral', 'queso fresco', 'tomate'] },
-  { id: 'd7', grupo: 'des', nombre: 'Porridge con manzana y canela', kcal: 360, prot: 10, ing: ['avena', 'manzana', 'canela'] },
-  { id: 'd8', grupo: 'des', nombre: 'Tostada de pan de centeno con salmón', kcal: 390, prot: 20, ing: ['pan de centeno', 'salmón'] },
-  { id: 'd9', grupo: 'des', nombre: 'Chía pudding con frutas', kcal: 340, prot: 9, ing: ['semillas de chía', 'leche', 'frutos rojos'] }
+  { id: 'd1', grupo: 'des', nombre: 'Avena con frutas y nueces', kcal: 380, prot: 12, ing: ['avena', 'plátano', 'nueces'] },
+  { id: 'd2', grupo: 'des', nombre: 'Tostadas con aguacate y huevo', kcal: 420, prot: 18, ing: ['pan integral', 'aguacate', 'huevos'] },
+  { id: 'd4', grupo: 'des', nombre: 'Tortilla de claras con espinacas', kcal: 300, prot: 25, ing: ['huevos', 'espinacas'] }
 ];
 const GRUPO_MERIENDAS = [
-  { id: 'm1', grupo: 'mer', nombre: 'Fruta + puñado de almendras', kcal: 200, prot: 6, ing: ['manzana', 'almendras'] },
-  { id: 'm2', grupo: 'mer', nombre: 'Yogur natural con nueces', kcal: 180, prot: 8, ing: ['yogur natural', 'nueces'] },
-  { id: 'm3', grupo: 'mer', nombre: 'Hummus con zanahoria', kcal: 160, prot: 6, ing: ['hummus', 'zanahoria'] },
-  { id: 'm4', grupo: 'mer', nombre: 'Queso fresco con membrillo', kcal: 170, prot: 10, ing: ['queso fresco', 'membrillo'] },
-  { id: 'm5', grupo: 'mer', nombre: 'Plátano con mantequilla de cacahuete', kcal: 220, prot: 6, ing: ['plátano', 'cacahuete'] },
-  { id: 'm6', grupo: 'mer', nombre: 'Batido de proteínas casero', kcal: 200, prot: 20, ing: ['plátano', 'leche', 'cacao'] },
-  { id: 'm7', grupo: 'mer', nombre: 'Tostada de arroz con aguacate', kcal: 190, prot: 4, ing: ['tostadas de arroz', 'aguacate'] },
-  { id: 'm8', grupo: 'mer', nombre: 'Mix de frutos secos (30g)', kcal: 210, prot: 6, ing: ['almendras', 'nueces', 'pasas'] },
-  { id: 'm9', grupo: 'mer', nombre: 'Kéfir con canela', kcal: 150, prot: 9, ing: ['kéfir', 'canela'] }
+  { id: 'm1', grupo: 'mer', nombre: 'Fruta + almendras', kcal: 200, prot: 6, ing: ['manzana', 'almendras'] },
+  { id: 'm2', grupo: 'mer', nombre: 'Yogur con nueces', kcal: 180, prot: 8, ing: ['yogur', 'nueces'] },
+  { id: 'm3', grupo: 'mer', nombre: 'Hummus con zanahoria', kcal: 160, prot: 6, ing: ['hummus', 'zanahoria'] }
 ];
 
 const MAPA_ALIMENTOS = {};
@@ -1931,8 +1488,7 @@ function generarMenu() {
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
   const diff = now - start + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
-  const oneDay = 1000 * 60 * 60 * 24;
-  const dayOfYear = Math.floor(diff / oneDay);
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
   const menuIndex = Math.floor(dayOfYear / 7) % 4;
   document.getElementById('weekText').textContent = `Semana ${menuIndex + 1} de 4`;
   const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
@@ -1952,7 +1508,7 @@ function generarMenu() {
     });
     menus.push(menu);
   }
-  menuData = { menu: menus[menuIndex], menuIndex: menuIndex, allMenus: menus };
+  menuData = { menu: menus[menuIndex], menuIndex, allMenus: menus };
   aplicarSustitucionesGuardadas();
   renderMenu();
   renderListaCompra();
@@ -1962,8 +1518,7 @@ function aplicarSustitucionesGuardadas() {
   if (!menuData) return;
   Object.keys(sustituciones).forEach(key => {
     const [diaIdx, path] = key.split('|');
-    const nuevoId = sustituciones[key];
-    const nuevo = MAPA_ALIMENTOS[nuevoId];
+    const nuevo = MAPA_ALIMENTOS[sustituciones[key]];
     if (!nuevo) return;
     const dia = menuData.menu[parseInt(diaIdx)];
     if (!dia) return;
@@ -1979,7 +1534,7 @@ function calcularKcalDia(dia) {
 }
 
 function regenerarMenu() { sustituciones = {}; generarMenu(); }
-function resetSustituciones() { if (!confirm('¿Restaurar el menú original?')) return; sustituciones = {}; generarMenu(); }
+function resetSustituciones() { if (!confirm('¿Restaurar menú original?')) return; sustituciones = {}; generarMenu(); }
 
 function renderMenu() {
   const cont = document.getElementById('menuContent');
@@ -1991,10 +1546,9 @@ function renderMenu() {
     const foodItemHTML = (item, path, label, color, emoji) => {
       const key = `${diaIdx}|${path}`;
       const isSub = sustituciones[key] !== undefined;
-      const tieneReceta = RECETAS_DB[item.id] !== undefined;
-      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-snug">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap"><span class="macro-chip bg-white/70 dark:bg-slate-700 text-slate-700 dark:text-slate-300">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="flex gap-1"><button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center shadow-sm text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍🍳</button><div class="swap-icon w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm">🔄</span></div></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
+      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap"><span class="macro-chip bg-white/70 dark:bg-slate-700">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="flex gap-1"><button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍🍳</button><div class="swap-icon w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600"><span class="text-sm">🔄</span></div></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
     };
-    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase tracking-wide">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500 dark:text-slate-400">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20 text-pink-800 dark:text-pink-300', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20 text-violet-800 dark:text-violet-300', '')}</div>`;
+    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20', '🥬')}</div>`;
     cont.appendChild(card);
   });
 }
@@ -2020,7 +1574,7 @@ function abrirModalSustitucion(diaIdx, path, currentId) {
     const diffKcal = alim.kcal - current.kcal;
     const opt = document.createElement('div');
     opt.className = `sub-option p-4 border-2 rounded-xl ${isCurrent ? 'current border-green-300' : 'border-slate-200 dark:border-slate-700'}`;
-    opt.innerHTML = `<div class="flex justify-between items-start gap-3"><div class="flex-1 min-w-0"><div class="flex items-center gap-2 mb-1 flex-wrap"><span class="font-bold text-slate-800 dark:text-white">${alim.nombre}</span>${isCurrent ? '<span class="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">ACTUAL</span>' : ''}</div><div class="flex gap-1.5 flex-wrap mt-2"><span class="macro-chip bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">🔥 ${alim.kcal} kcal</span>${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' : 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}</div></div>${!isCurrent ? `<button class="flex-shrink-0 bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir →</button>` : ''}</div>`;
+    opt.innerHTML = `<div class="flex justify-between items-start gap-3"><div class="flex-1"><div class="font-bold text-slate-800 dark:text-white">${alim.nombre}</div><div class="flex gap-1.5 mt-2 flex-wrap"><span class="macro-chip bg-slate-100 dark:bg-slate-700">🔥 ${alim.kcal} kcal</span>${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}</div></div>${!isCurrent ? `<button class="flex-shrink-0 bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir</button>` : ''}</div>`;
     if (!isCurrent) opt.addEventListener('click', () => aplicarSustitucion(alim.id));
     cont.appendChild(opt);
   });
@@ -2038,8 +1592,7 @@ function aplicarSustitucion(nuevoId) {
   let obj = dia;
   for (let i = 0; i < partes.length - 1; i++) obj = obj[partes[i]];
   obj[partes[partes.length - 1]] = { ...nuevo };
-  const key = `${diaIdx}|${path}`;
-  sustituciones[key] = nuevoId;
+  sustituciones[`${diaIdx}|${path}`] = nuevoId;
   cerrarModal();
   renderMenu();
   renderListaCompra();
@@ -2059,23 +1612,19 @@ document.getElementById('modalSustitucion').addEventListener('click', (e) => { i
 document.getElementById('modalReceta').addEventListener('click', (e) => { if (e.target.id === 'modalReceta') cerrarModalReceta(); });
 
 async function compartirApp() {
-  const shareData = { title: 'NutriPro - Nutrición Clínica', text: '¡Estoy mejorando mi salud con NutriPro! Menús personalizados, seguimiento de peso y hábitos saludables. Pruébalo gratis aquí:', url: window.location.href };
-  if (navigator.share) {
-    try { await navigator.share(shareData); mostrarToast('✅ ¡Compartido con éxito!'); } 
-    catch (err) { if (err.name !== 'AbortError') { console.error('Error al compartir:', err); mostrarToast('️ No se pudo compartir.'); } }
-  } else {
-    window.open(`https://wa.me/?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`, '_blank');
-  }
+  const shareData = { title: 'NutriPro', text: '¡Estoy mejorando mi salud con NutriPro!', url: window.location.href };
+  if (navigator.share) { try { await navigator.share(shareData); } catch (err) {} } 
+  else { window.open(`https://wa.me/?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`, '_blank'); }
 }
 
 function categorizarIngrediente(ing) {
   const lower = ing.toLowerCase();
-  if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|tempeh|lentejas|garbanzos|alubias|yogur|queso|bacalao|dorada|gambas|ternera|conejo|kéfir/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
-  if (/arroz|quinoa|pasta|batata|patata|avena|pan|cuscús|mijo|bulgur|trigo|espelta|boniato|tostadas/.test(lower)) return { cat: '🍚 Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
-  if (/aceite|aguacate|almendra|nueces|chía|lino|cacahuete|pistacho|anacardo|calabaza|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
-  if (/manzana|plátano|frutos rojos|membrillo|naranja|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
-  if (/brócoli|espinaca|tomate|pepino|zanahoria|pimiento|calabacín|judía|coliflor|espárrago|cebolla|lechuga|acelgas|berenjena|champiñón|kale|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
-  return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
+  if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|lentejas/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
+  if (/arroz|quinoa|pasta|batata|avena|pan/.test(lower)) return { cat: '🍚 Cereales', color: 'from-amber-500 to-orange-500' };
+  if (/aceite|aguacate|almendra|nueces/.test(lower)) return { cat: '🥑 Grasas', color: 'from-emerald-500 to-teal-500' };
+  if (/manzana|plátano|frutos/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
+  if (/brócoli|espinaca|tomate|calabacín|lechuga/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
+  return { cat: ' Otros', color: 'from-blue-500 to-cyan-500' };
 }
 
 function generarListaCompra() {
@@ -2086,315 +1635,137 @@ function generarListaCompra() {
 }
 
 function obtenerIngredientes() {
-  const ingredientesTotales = {};
+  const totales = {};
   menuData.menu.forEach(dia => {
     const items = [dia.desayuno.ing, dia.comida.prot.ing, dia.comida.carb.ing, dia.comida.verdura.ing, dia.comida.grasa.ing, dia.merienda.ing, dia.cena.prot.ing, dia.cena.verdura.ing];
-    items.forEach(lista => { if (!lista) return; lista.forEach(ing => { ingredientesTotales[ing] = (ingredientesTotales[ing] || 0) + 1; }); });
+    items.forEach(lista => { if (!lista) return; lista.forEach(ing => { totales[ing] = (totales[ing] || 0) + 1; }); });
   });
-  return ingredientesTotales;
-}
-
-function obtenerIngredientesParaCompra() {
-  const resultado = {};
-  const cont = document.getElementById('compraContent');
-  if (!cont) return resultado;
-  const checks = cont.querySelectorAll('input[type="checkbox"]');
-  checks.forEach(chk => {
-    if (!chk.checked) return;
-    const li = chk.closest('li');
-    if (!li) return;
-    const spanNombre = li.querySelector('span.flex-1');
-    if (!spanNombre) return;
-    const nombre = spanNombre.textContent.trim().toLowerCase();
-    if (!nombre) return;
-    const spanCant = li.querySelector('span.text-xs');
-    let cant = 1;
-    if (spanCant) { const m = spanCant.textContent.match(/×?\s*(\d+)/); if (m) cant = parseInt(m[1], 10) || 1; }
-    resultado[nombre] = (resultado[nombre] || 0) + cant;
-  });
-  return resultado;
+  return totales;
 }
 
 function renderListaCompra() {
   if (!menuData) return;
-  const ingredientesTotales = obtenerIngredientes();
+  const totales = obtenerIngredientes();
   const cont = document.getElementById('compraContent');
   cont.innerHTML = '';
   const categorias = {};
-  Object.keys(ingredientesTotales).forEach(ing => {
+  Object.keys(totales).forEach(ing => {
     const { cat, color } = categorizarIngrediente(ing);
     if (!categorias[cat]) categorias[cat] = { color, items: [] };
-    categorias[cat].items.push({ nombre: ing, cantidad: ingredientesTotales[ing] });
+    categorias[cat].items.push({ nombre: ing, cantidad: totales[ing] });
   });
   Object.keys(categorias).sort().forEach(cat => {
     const data = categorias[cat];
     const card = document.createElement('div');
     card.className = 'bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700';
-    card.innerHTML = `<div class="bg-gradient-to-r ${data.color} text-white p-4"><h3 class="font-bold">${cat}</h3><p class="text-xs opacity-90">${data.items.length} productos</p></div><ul class="p-4 space-y-2">${data.items.map(item => `<li class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer"><input type="checkbox" class="compra-chk w-4 h-4 accent-teal-600"><span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1)}</span><span class="text-xs text-slate-400">×${item.cantidad}</span></li>`).join('')}</ul>`;
+    card.innerHTML = `<div class="bg-gradient-to-r ${data.color} text-white p-4"><h3 class="font-bold">${cat}</h3></div><ul class="p-4 space-y-2">${data.items.map(item => `<li class="flex items-center gap-3 p-2"><input type="checkbox" class="w-4 h-4 accent-teal-600"><span class="flex-1 text-sm">${item.nombre}</span><span class="text-xs text-slate-400">×${item.cantidad}</span></li>`).join('')}</ul>`;
     cont.appendChild(card);
   });
 }
 
 function exportarMenuPDF() {
-  if (!menuData) { alert('Primero genera tu menú'); return; }
+  if (!menuData) { alert('Genera tu menú primero'); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   doc.setFillColor(13, 148, 136); doc.rect(0, 0, 210, 25, 'F');
   doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.setFont('helvetica', 'bold');
-  doc.text(`NutriPro · Menú Semanal (Semana ${menuData.menuIndex + 1}/4)`, 14, 16);
-  doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.setFont('helvetica', 'normal');
-  doc.text(`Generado para: ${currentUser.nombre} · ${new Date().toLocaleDateString('es-ES')}`, 14, 32);
-  if (userData) doc.text(`Objetivo: ${userData.caloriasObjetivo} kcal/día`, 14, 38);
-  let yPos = 48;
+  doc.text(`NutriPro · Menú Semanal`, 14, 16);
+  let yPos = 40;
   menuData.menu.forEach((dia) => {
     if (yPos > 250) { doc.addPage(); yPos = 20; }
-    const kcalTotales = calcularKcalDia(dia);
-    doc.setFillColor(240, 253, 250); doc.rect(14, yPos - 5, 182, 8, 'F');
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(13, 148, 136);
-    doc.text(`${dia.dia} · ${kcalTotales} kcal`, 16, yPos); yPos += 6;
-    const rows = [
-      ['Desayuno', dia.desayuno.nombre, dia.desayuno.kcal + ' kcal'],
-      ['Comida (prot)', dia.comida.prot.nombre, dia.comida.prot.kcal + ' kcal'],
-      ['Comida (carb)', dia.comida.carb.nombre, dia.comida.carb.kcal + ' kcal'],
-      ['Comida (verdura)', dia.comida.verdura.nombre, dia.comida.verdura.kcal + ' kcal'],
-      ['Comida (grasa)', dia.comida.grasa.nombre, dia.comida.grasa.kcal + ' kcal'],
-      ['Merienda', dia.merienda.nombre, dia.merienda.kcal + ' kcal'],
-      ['Cena (prot)', dia.cena.prot.nombre, dia.cena.prot.kcal + ' kcal'],
-      ['Cena (verdura)', dia.cena.verdura.nombre, dia.cena.verdura.kcal + ' kcal']
-    ];
-    doc.autoTable({ startY: yPos, head: [['Momento', 'Alimento', 'Calorías']], body: rows, theme: 'striped', headStyles: { fillColor: [13, 148, 136], fontSize: 9 }, bodyStyles: { fontSize: 8.5 }, margin: { left: 14, right: 14 }, columnStyles: { 0: { cellWidth: 35 }, 2: { cellWidth: 25, halign: 'right' } } });
-    yPos = doc.lastAutoTable.finalY + 6;
+    doc.setTextColor(13, 148, 136); doc.setFontSize(12); doc.setFont('helvetica', 'bold');
+    doc.text(`${dia.dia} - ${calcularKcalDia(dia)} kcal`, 14, yPos);
+    yPos += 8;
+    doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+    const rows = [['Desayuno', dia.desayuno.nombre], ['Comida', `${dia.comida.prot.nombre} + ${dia.comida.carb.nombre} + ${dia.comida.verdura.nombre}`], ['Cena', `${dia.cena.prot.nombre} + ${dia.cena.verdura.nombre}`]];
+    doc.autoTable({ startY: yPos, body: rows, theme: 'plain', margin: { left: 14, right: 14 } });
+    yPos = doc.lastAutoTable.finalY + 8;
   });
-  doc.save(`Menu_Semana${menuData.menuIndex + 1}_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast(' Menú exportado a PDF');
+  doc.save(`Menu_NutriPro.pdf`);
+  mostrarToast('📄 Menú exportado');
 }
 
 function exportarCompraPDF() {
-  if (!menuData) { alert('Primero genera tu menú'); return; }
-  const ingredientes = obtenerIngredientesParaCompra();
-  if (Object.keys(ingredientes).length === 0) { alert('No has marcado ningún producto. Marca con ✓ los productos que te faltan en casa para generar tu lista de la compra.'); return; }
+  if (!menuData) { alert('Genera tu menú primero'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(18); doc.text('Lista de la Compra - NutriPro', 14, 20);
+  const totales = obtenerIngredientes();
+  let yPos = 30;
+  Object.keys(totales).forEach(ing => {
+    if (yPos > 280) { doc.addPage(); yPos = 20; }
+    doc.setFontSize(11); doc.text(`☐ ${ing} (×${totales[ing]})`, 14, yPos);
+    yPos += 8;
+  });
+  doc.save(`Lista_Compra_NutriPro.pdf`);
+  mostrarToast('📄 Lista exportada');
+}
+
+function exportarProgresoPDF() {
+  if (pesos.length === 0) { alert('No hay datos'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(18); doc.text('Reporte de Progreso - NutriPro', 14, 20);
+  let yPos = 30;
+  pesos.forEach(p => {
+    doc.setFontSize(11); doc.text(`${new Date(p.fecha).toLocaleDateString('es-ES')}: ${p.valor} kg`, 14, yPos);
+    yPos += 8;
+  });
+  doc.save(`Progreso_NutriPro.pdf`);
+  mostrarToast(' Reporte exportado');
+}
+
+function exportarInformeCompletoPDF() {
+  if (!userData) { alert('Completa la evaluación primero'); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   doc.setFillColor(13, 148, 136); doc.rect(0, 0, 210, 25, 'F');
   doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.setFont('helvetica', 'bold');
-  doc.text('NutriPro · Lista de la Compra', 14, 16);
-  doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.setFont('helvetica', 'normal');
-  doc.text(`Generada: ${new Date().toLocaleDateString('es-ES')} · ${currentUser.nombre}`, 14, 32);
-  const categorias = {};
-  Object.keys(ingredientes).forEach(ing => {
-    const { cat } = categorizarIngrediente(ing);
-    if (!categorias[cat]) categorias[cat] = [];
-    categorias[cat].push({ nombre: ing, cantidad: ingredientes[ing] });
-  });
-  let yPos = 45;
-  Object.keys(categorias).sort().forEach(cat => {
-    if (yPos > 260) { doc.addPage(); yPos = 20; }
-    doc.setFillColor(240, 253, 250); doc.rect(14, yPos - 5, 182, 8, 'F');
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(13, 148, 136);
-    doc.text(cat, 16, yPos); yPos += 5;
-    const rows = categorias[cat].map(i => ['', i.nombre.charAt(0).toUpperCase() + i.nombre.slice(1), `×${i.cantidad}`, '☐']);
-    doc.autoTable({ startY: yPos, head: [['✓', 'Producto', 'Cant.', '']], body: rows, theme: 'plain', headStyles: { fillColor: [226, 232, 240], textColor: [51, 65, 85], fontSize: 9 }, bodyStyles: { fontSize: 9 }, margin: { left: 14, right: 14 }, columnStyles: { 0: { cellWidth: 10 }, 2: { cellWidth: 15, halign: 'center' }, 3: { cellWidth: 10, halign: 'center' } } });
-    yPos = doc.lastAutoTable.finalY + 5;
-  });
-  doc.save(`Lista_Compra_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast('📄 Lista exportada a PDF');
-}
-
-function exportarProgresoPDF() {
-  if (pesos.length === 0) { alert('No hay datos de peso para exportar.'); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFillColor(13, 148, 136); doc.rect(0, 0, 210, 30, 'F');
-  doc.setTextColor(255, 255, 255); doc.setFontSize(22); doc.setFont('helvetica', 'bold');
-  doc.text('NutriPro · Reporte de Progreso', 14, 20);
-  doc.setTextColor(50, 50, 50); doc.setFontSize(12); doc.setFont('helvetica', 'normal');
-  let yPos = 45;
-  doc.text(`Usuario: ${currentUser.nombre}`, 14, yPos);
-  doc.text(`Fecha del reporte: ${new Date().toLocaleDateString('es-ES')}`, 14, yPos + 8);
-  if (userData) {
-    doc.text(`Peso Actual: ${userData.peso} kg`, 14, yPos + 20);
-    doc.text(`IMC: ${userData.imc}`, 14, yPos + 28);
-    doc.text(`Objetivo Calórico: ${userData.caloriasObjetivo} kcal/día`, 14, yPos + 36);
-  }
-  try {
-    const canvas = document.getElementById('chartPeso');
-    if (canvas) {
-      const chartImage = canvas.toDataURL('image/png');
-      doc.addImage(chartImage, 'PNG', 14, yPos + 50, 182, 100); yPos += 160;
-    }
-  } catch (e) { console.error('Error al capturar el gráfico:', e); doc.text('(Error al cargar el gráfico)', 14, yPos + 50); yPos += 70; }
-  doc.setFontSize(14); doc.setFont('helvetica', 'bold');
-  doc.text('Historial de Registros Recientes', 14, yPos); yPos += 10;
-  const historialRows = pesos.slice(-10).reverse().map(p => [new Date(p.fecha).toLocaleDateString('es-ES'), `${p.valor} kg`]);
-  doc.autoTable({ startY: yPos, head: [['Fecha', 'Peso']], body: historialRows, theme: 'striped', headStyles: { fillColor: [13, 148, 136] }, margin: { left: 14, right: 14 } });
-  doc.save(`Progreso_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast('📈 Reporte de progreso exportado');
-}
-
-function crearGraficoBase64(buildConfig, w, h) {
-  try {
-    if (typeof Chart === 'undefined') return null;
-    const c = document.createElement('canvas'); c.width = w; c.height = h;
-    const ctx = c.getContext('2d'); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
-    const cfg = buildConfig(); cfg.options = cfg.options || {}; cfg.options.responsive = false; cfg.options.animation = false;
-    const chart = new Chart(ctx, cfg);
-    const url = c.toDataURL('image/png'); chart.destroy();
-    return url;
-  } catch (e) { console.error('Error generando gráfico para PDF:', e); return null; }
-}
-
-function exportarInformeCompletoPDF() {
-  if (!currentUser) { alert('Inicia sesión para generar el informe.'); return; }
-  if (!userData) { alert('Completa primero la evaluación para generar el informe.'); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  const PW = 210, M = 14, CW = PW - M * 2; const PH = doc.internal.pageSize.getHeight();
-  let y = 0;
-  const need = (h) => { if (y + h > PH - 14) { doc.addPage(); y = 18; } };
-
-  doc.setFillColor(13, 148, 136); doc.rect(0, 0, PW, 28, 'F');
-  doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
-  doc.text('NutriPro - Informe de Progreso Completo', M, 14);
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
-  doc.text(`${currentUser.nombre} - ${new Date().toLocaleDateString('es-ES')}`, M, 22); y = 36;
-
-  doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
-  doc.text('Resumen metabolico', M, y); y += 6;
-  const catIMC = categoriaIMC(parseFloat(userData.imc));
-  const alturaM = userData.altura / 100;
-  const imcActual = parseFloat(userData.imc);
-  const MARGEN_KG = 1.5;
-  
-  let imcReferencia;
-  if (imcActual < 18.5) {
-    imcReferencia = 18.5;
-  } else if (imcActual > 24.9) {
-    imcReferencia = 24.5;
-  } else {
-    imcReferencia = imcActual;
-  }
-  
-  const pesoReferencia = imcReferencia * alturaM * alturaM;
-  const pesoMin = (pesoReferencia - MARGEN_KG).toFixed(1);
-  const pesoMax = (pesoReferencia + MARGEN_KG).toFixed(1);
-  
-  const deficitTxt = userData.deficit > 0 ? `Deficit ${userData.deficit} kcal` : (userData.deficit < 0 ? `Superavit ${Math.abs(userData.deficit)} kcal` : 'Mantenimiento');
-  const lineas = [
-    ['TMB (reposo)', `${userData.tmb} kcal/dia`], 
-    ['Gasto total (GETD)', `${userData.getd} kcal/dia`],
-    ['Objetivo calorico', `${userData.caloriasObjetivo} kcal/dia`], 
-    ['Deficit / superavit', deficitTxt],
-    ['IMC', `${userData.imc} (${catIMC.texto})`], 
-    ['Peso recomendado (±1.5 kg)', `${pesoMin} - ${pesoMax} kg`],
-    ['Peso actual', `${userData.peso} kg`], 
-    ['Macros objetivo', `P ${userData.protG}g  C ${userData.carbG}g  G ${userData.grasasG}g`],
+  doc.text('NutriPro - Informe Completo', 14, 16);
+  doc.setTextColor(50, 50, 50); doc.setFontSize(11); doc.setFont('helvetica', 'normal');
+  let yPos = 40;
+  const lines = [
+    `Usuario: ${currentUser.nombre}`,
+    `TMB: ${userData.tmb} kcal/día`,
+    `GETD: ${userData.getd} kcal/día`,
+    `Objetivo: ${userData.caloriasObjetivo} kcal/día`,
+    `IMC: ${userData.imc}`,
+    `Peso actual: ${userData.peso} kg`,
+    `Proteínas: ${userData.protG}g | Carbohidratos: ${userData.carbG}g | Grasas: ${userData.grasasG}g`
   ];
-  doc.autoTable({ startY: y, body: lineas, theme: 'plain', styles: { fontSize: 10, cellPadding: 2, textColor: [40, 40, 40] }, columnStyles: { 0: { fontStyle: 'bold', cellWidth: 72 } }, margin: { left: M, right: M } });
-  y = doc.lastAutoTable.finalY + 8;
-
-  const macrosImg = crearGraficoBase64(() => ({
-    type: 'doughnut', data: { labels: ['Proteínas', 'Carbohidratos', 'Grasas'], datasets: [{ data: [userData.protG * 4, userData.carbG * 4, userData.grasasG * 9], backgroundColor: ['#0d9488', '#f59e0b', '#f43f5e'], borderWidth: 0 }] },
-    options: { plugins: { legend: { position: 'bottom', labels: { font: { size: 12 } } }, title: { display: true, text: 'Distribución de macronutrientes (kcal)', font: { size: 13 } } } }
-  }), 760, 440);
-  if (macrosImg) { need(86); doc.addImage(macrosImg, 'PNG', M, y, CW, 82); y += 88; }
-
-  if (pesos && pesos.length >= 2) {
-    const labels = pesos.map(p => new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
-    const mm = mediaMovil(pesos);
-    const pesoImg = crearGraficoBase64(() => ({
-      type: 'line', data: { labels, datasets: [
-        { label: 'Peso real', data: pesos.map(p => p.valor), borderColor: '#0d9488', backgroundColor: 'rgba(13,148,136,0.10)', tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: '#0d9488' },
-        { label: 'Media móvil 7d', data: mm.map(p => p.valor), borderColor: '#f59e0b', borderDash: [5, 5], tension: 0.4, pointRadius: 0, fill: false }
-      ] }, options: { plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Evolución del peso (kg)', font: { size: 13 } } }, scales: { y: { beginAtZero: false } } }
-    }), 900, 440);
-    if (pesoImg) { need(86); doc.addImage(pesoImg, 'PNG', M, y, CW, 82); y += 88; }
-  }
-
-  if (pesos && pesos.length >= 4) {
-    const semanas = [];
-    for (let i = 0; i < pesos.length; i += 7) { const s = pesos.slice(i, i + 7); semanas.push(parseFloat((s.reduce((a, p) => a + p.valor, 0) / s.length).toFixed(2))); }
-    const semImg = crearGraficoBase64(() => ({
-      type: 'bar', data: { labels: semanas.map((_, i) => `Sem ${i + 1}`), datasets: [{ label: 'Peso medio (kg)', data: semanas, backgroundColor: semanas.map((v, i) => i === 0 ? '#0d9488' : (i === semanas.length - 1 ? '#f59e0b' : '#94a3b8')), borderRadius: 6 }] },
-      options: { plugins: { legend: { display: false }, title: { display: true, text: 'Peso medio por semana', font: { size: 13 } } }, scales: { y: { beginAtZero: false } } }
-    }), 900, 400);
-    if (semImg) { need(80); doc.addImage(semImg, 'PNG', M, y, CW, 74); y += 80; }
-  }
-
-  if (pesos && pesos.length) {
-    need(34); doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
-    doc.text('Ultimos registros de peso', M, y); y += 4;
-    const rows = pesos.slice(-10).reverse().map(p => [new Date(p.fecha).toLocaleDateString('es-ES'), `${p.valor} kg`]);
-    doc.autoTable({ startY: y, head: [['Fecha', 'Peso']], body: rows, theme: 'striped', headStyles: { fillColor: [13, 148, 136], fontSize: 9 }, bodyStyles: { fontSize: 9 }, margin: { left: M, right: M } });
-    y = doc.lastAutoTable.finalY + 8;
-  }
-
-  if (menuData && menuData.menu) {
-    need(34); doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
-    doc.text(`Menu de la semana ${menuData.menuIndex + 1} de 4`, M, y); y += 4;
-    const rows = menuData.menu.map(d => [d.dia, `${d.desayuno.nombre} / ${d.comida.prot.nombre} / ${d.cena.prot.nombre}`, `${calcularKcalDia(d)} kcal`]);
-    doc.autoTable({ startY: y, head: [['Dia', 'Resumen (desayuno / prot. comida / prot. cena)', 'Total']], body: rows, theme: 'striped', headStyles: { fillColor: [13, 148, 136], fontSize: 9 }, bodyStyles: { fontSize: 8 }, margin: { left: M, right: M }, columnStyles: { 1: { cellWidth: 120 }, 2: { cellWidth: 25, halign: 'right' } } });
-    y = doc.lastAutoTable.finalY + 8;
-  }
-
-  doc.setFont('helvetica', 'italic'); doc.setFontSize(8); doc.setTextColor(120, 120, 120);
-  doc.text('Informe orientativo. No sustituye la consulta con un medico o nutricionista clinico.', M, PH - 8);
-  doc.save(`Informe_Completo_NutriPro_${new Date().toISOString().slice(0,10)}.pdf`);
-  mostrarToast(' Informe completo exportado');
+  lines.forEach(l => { doc.text(l, 14, yPos); yPos += 8; });
+  doc.save(`Informe_NutriPro.pdf`);
+  mostrarToast(' Informe exportado');
 }
 
 const HABITOS_SALUD = [
-  { icon: '🚭', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos: aumenta el riesgo cardiovascular y de cáncer, reduce la capacidad pulmonar y empeora el gusto y el olfato. Dejarlo mejora la circulación en pocas semanas y reduce el riesgo a largo plazo. Además, fumar altera el apetito y la ansiedad, lo que dificulta seguir un plan nutricional.', videos: ['daño del tabaco en el cuerpo humano', 'beneficios de dejar de fumar con el tiempo', 'cómo controlar la ansiedad al dejar de fumar'] },
-  { icon: '', titulo: 'Reducir o evitar el alcohol', texto: 'El alcohol aporta calorías "vacías" (sin nutrientes) que se suman a tu total y sabotean el déficit. También afecta al hígado, empeora la calidad del sueño y altera hormonas relacionadas con el hambre y la recuperación. Reducirlo o eliminarlo facilita perder grasa y dormir mejor.', videos: ['efecto del alcohol en el cuerpo', 'alcohol y pérdida de grasa', 'qué hace el alcohol en el hígado'] },
-  { icon: '😴', titulo: 'Dormir entre 7 y 9 horas', texto: 'Un sueño suficiente regula las hormonas del hambre y la saciedad (grelina y leptina), reduce el cortisol y permite la recuperación muscular. Dormir mal aumenta los antojos y dificulta mantener el plan, aunque comas bien.', videos: ['por qué dormir mal engorda', 'higiene del sueño para dormir mejor', 'rutina nocturna para dormir mejor'] },
-  { icon: '💧', titulo: 'Hidratación adecuada', texto: 'Una hidratación adecuada mejora el rendimiento, la digestión y la saciedad. A veces la sed se confunde con hambre, lo que lleva a comer de más. Beber agua a lo largo del día ayuda a regular el apetito y el bienestar general.', videos: ['cuánta agua beber al día', 'señales de deshidratación', 'agua y sensación de saciedad'] },
-  { icon: '', titulo: 'Gestionar el estrés y el cortisol', texto: 'El estrés crónico eleva el cortisol, lo que favorece los antojos y la acumulación de grasa, sobre todo abdominal. Gestionar el estrés con respiración, pausas y mindfulness protege tu progreso y tu salud.', videos: ['cortisol y grasa abdominal', 'técnicas de respiración para el estrés', 'mindfulness para reducir el estrés'] },
-  { icon: '🚶', titulo: 'Moverse cada día (NEAT)', texto: 'El NEAT es la actividad fuera del ejercicio: caminar, estar de pie, moverse por casa. Suma mucho al gasto diario sin necesidad de gimnasio y es clave para mantener el déficit sin pasar hambre.', videos: ['qué es el NEAT y por qué importa', 'cómo aumentar los pasos diarios', 'moverse más sin ir al gimnasio'] },
-  { icon: '🥦', titulo: 'Comida real y de calidad', texto: 'Priorizar comida real frente a ultraprocesados, asegurar fibra y proteína suficiente y montar platos equilibrados mejora la saciedad y la salud. Aprender a leer etiquetas te da control sobre lo que comes.', videos: ['cómo leer etiquetas nutricionales', 'el plato saludable explicado', 'ultraprocesados qué le hacen al cuerpo'] },
-  { icon: '🔁', titulo: 'Constancia y creación de hábitos', texto: 'El progreso real viene de hábitos sostenibles, no de esfuerzos puntuales. Empezar pequeño, diseñar tu entorno y repetir hasta automatizar es lo que funciona a largo plazo, mucho más que la fuerza de voluntad.', videos: ['la ciencia de los hábitos', 'cómo crear hábitos que duren', 'la regla de los 2 minutos para hábitos'] },
+  { icon: '🚭', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos.', videos: ['beneficios de dejar de fumar'] },
+  { icon: '', titulo: 'Dormir 7-9 horas', texto: 'Regula hormonas del hambre y saciedad.', videos: ['higiene del sueño'] },
+  { icon: '💧', titulo: 'Hidratación', texto: 'Mejora rendimiento y saciedad.', videos: ['cuánta agua beber'] },
+  { icon: '🚶', titulo: 'Moverse cada día', texto: 'El NEAT suma al gasto diario.', videos: ['qué es el NEAT'] }
 ];
-
-function buscarVideoHabito(q) { window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(q), '_blank'); }
 
 function renderSalud() {
   const cont = document.getElementById('saludCards');
   if (!cont || cont.dataset.rendered === '1') return;
-  cont.innerHTML = HABITOS_SALUD.map(h => `
-    <div class="habit-card">
-      <div class="flex items-start gap-3 mb-3">
-        <div class="text-3xl leading-none">${h.icon}</div>
-        <h3 class="text-lg font-bold text-slate-800 dark:text-white leading-tight">${h.titulo}</h3>
-      </div>
-      <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">${h.texto}</p>
-      <div class="flex flex-wrap gap-2">
-        ${h.videos.map(v => `<button class="habit-video-btn" onclick="buscarVideoHabito('${v.replace(/'/g, "\\'")}')">▶️ ${v}</button>`).join('')}
-      </div>
-    </div>
-  `).join('');
+  cont.innerHTML = HABITOS_SALUD.map(h => `<div class="habit-card"><div class="flex items-start gap-3 mb-3"><div class="text-3xl">${h.icon}</div><h3 class="text-lg font-bold">${h.titulo}</h3></div><p class="text-sm text-slate-600 dark:text-slate-400 mb-4">${h.texto}</p><div class="flex flex-wrap gap-2">${h.videos.map(v => `<button class="habit-video-btn" onclick="buscarVideoHabito('${v}')">▶️ ${v}</button>`).join('')}</div></div>`).join('');
   cont.dataset.rendered = '1';
 }
+
+function buscarVideoHabito(q) { window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(q), '_blank'); }
 
 function mediaMovil(arr, ventana = 7) {
   return arr.map((p, i) => {
     const inicio = Math.max(0, i - ventana + 1);
     const slice = arr.slice(inicio, i + 1);
-    const avg = slice.reduce((s, x) => s + x.valor, 0) / slice.length;
-    return { fecha: p.fecha, valor: parseFloat(avg.toFixed(2)) };
+    return { fecha: p.fecha, valor: parseFloat((slice.reduce((s, x) => s + x.valor, 0) / slice.length).toFixed(2)) };
   });
 }
 
 function renderSeguimiento() {
   const hist = document.getElementById('historialPeso');
-  if (pesos.length === 0) { hist.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm">Sin registros aún.</p>'; }
-  else { hist.innerHTML = pesos.slice().reverse().slice(0, 10).map(p => `<div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"><span class="text-sm text-slate-600 dark:text-slate-300">${new Date(p.fecha).toLocaleDateString('es-ES')}</span><span class="font-bold text-slate-800 dark:text-white">${p.valor} kg</span></div>`).join(''); }
-  const feedback = document.getElementById('feedbackTexto');
-  if (pesos.length < 2) { feedback.textContent = 'Registra tu primer peso para comenzar el análisis.'; }
-  else { 
-    const mm = mediaMovil(pesos); 
-    const diff = (mm[mm.length - 1].valor - mm[0].valor).toFixed(2); 
-    if (diff < -0.5) feedback.innerHTML = `<strong>✅ ¡Excelente tendencia!</strong> Has perdido ${Math.abs(diff)} kg.`; 
-    else if (diff > 0.5) feedback.innerHTML = `<strong>⚠️ Revisa el plan.</strong> Tendencia de +${diff} kg.`; 
-    else feedback.innerHTML = `<strong>📊 Estabilidad.</strong> Variación de ${diff} kg.`; 
-  }
+  if (pesos.length === 0) { hist.innerHTML = '<p class="text-slate-500 text-sm">Sin registros.</p>'; }
+  else { hist.innerHTML = pesos.slice().reverse().slice(0, 10).map(p => `<div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"><span class="text-sm">${new Date(p.fecha).toLocaleDateString('es-ES')}</span><span class="font-bold">${p.valor} kg</span></div>`).join(''); }
   renderChartPeso();
 }
 
@@ -2402,17 +1773,14 @@ function renderChartPeso() {
   const ctx = document.getElementById('chartPeso').getContext('2d');
   if (chartPeso) chartPeso.destroy();
   if (pesos.length === 0) return;
-  const isDark = document.documentElement.classList.contains('dark');
-  const gridColor = isDark ? '#334155' : '#f1f5f9';
-  const textColor = isDark ? '#94a3b8' : '#64748b';
   const labels = pesos.map(p => new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
   chartPeso = new Chart(ctx, {
     type: 'line',
     data: { labels, datasets: [
-      { label: 'Peso real', data: pesos.map(p => p.valor), borderColor: '#0d9488', backgroundColor: 'rgba(13,148,136,0.1)', tension: 0.3, fill: true, pointRadius: 4, pointBackgroundColor: '#0d9488' },
-      { label: 'Media móvil 7 días', data: mediaMovil(pesos).map(p => p.valor), borderColor: '#f59e0b', borderDash: [5, 5], tension: 0.4, pointRadius: 0, fill: false }
+      { label: 'Peso real', data: pesos.map(p => p.valor), borderColor: '#0d9488', tension: 0.3, fill: true, backgroundColor: 'rgba(13,148,136,0.1)' },
+      { label: 'Media móvil', data: mediaMovil(pesos).map(p => p.valor), borderColor: '#f59e0b', borderDash: [5, 5], tension: 0.4, pointRadius: 0 }
     ]},
-    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false, grid: { color: gridColor }, ticks: { color: textColor } }, x: { grid: { display: false }, ticks: { color: textColor } } } }
+    options: { responsive: true, plugins: { legend: { display: false } } }
   });
 }
 
@@ -2421,126 +1789,209 @@ function generarEjercicio() {
   document.getElementById('ejercicioNoData').classList.add('hidden');
   document.getElementById('ejercicioContent').classList.remove('hidden');
   const edad = userData.edad;
-  let icono, foco, ejercicios, plan;
+  let ejercicios;
   if (edad >= 18 && edad <= 35) {
-    icono = '🏋️'; foco = 'Hipertrofia y Resistencia · 18-35 años';
-    ejercicios = [
-      { nombre: 'Sentadillas búlgaras', reps: '3x12 por pierna', foco: 'Piernas' }, { nombre: 'Flexiones diamante', reps: '3x10-15', foco: 'Pecho/Tríceps' },
-      { nombre: 'Zancadas con salto', reps: '3x10 por pierna', foco: 'Piernas/Cardio' }, { nombre: 'Remo con mochila', reps: '3x12', foco: 'Espalda' },
-      { nombre: 'Plancha lateral', reps: '3x30s por lado', foco: 'Core' }, { nombre: 'Burpees modificados', reps: '3x8', foco: 'HIIT' },
-      { nombre: 'Puente de glúteos', reps: '3x15', foco: 'Glúteos' }, { nombre: 'Flexiones declinadas', reps: '3x10', foco: 'Pecho superior' }
-    ];
-    plan = ['Fuerza A', 'HIIT', 'Fuerza B', 'Descanso', 'Fuerza A', 'Cardio', 'Descanso'];
+    ejercicios = [{ nombre: 'Sentadillas búlgaras', reps: '3x12' }, { nombre: 'Flexiones', reps: '3x10' }, { nombre: 'Plancha', reps: '3x30s' }];
   } else if (edad >= 36 && edad <= 55) {
-    icono = '🧘'; foco = 'Salud Metabólica · 36-55 años';
-    ejercicios = [
-      { nombre: 'Sentadilla a la silla', reps: '3x12', foco: 'Piernas' }, { nombre: 'Flexiones en pared', reps: '3x12', foco: 'Pecho' },
-      { nombre: 'Puente de glúteos', reps: '3x15', foco: 'Glúteos/Core' }, { nombre: 'Remo con bandas', reps: '3x12', foco: 'Espalda' },
-      { nombre: 'Plancha frontal', reps: '3x20-30s', foco: 'Core' }, { nombre: 'Caminata rápida', reps: '30-45 min', foco: 'Cardio' },
-      { nombre: 'Yoga / movilidad', reps: '20 min', foco: 'Flexibilidad' }, { nombre: 'Elevación de talones', reps: '3x15', foco: 'Gemelos' }
-    ];
-    plan = ['Fuerza', 'Caminata', 'Yoga', 'Fuerza', 'Caminata', 'Pilates', 'Descanso'];
+    ejercicios = [{ nombre: 'Sentadilla a silla', reps: '3x12' }, { nombre: 'Flexiones en pared', reps: '3x12' }, { nombre: 'Caminata', reps: '30 min' }];
   } else {
-    icono = ''; foco = 'Densidad Ósea y Movilidad · 55+';
-    ejercicios = [
-      { nombre: 'Sentadilla asistida', reps: '3x10', foco: 'Piernas' }, { nombre: 'Ejercicios con bandas', reps: '3x12', foco: 'Fuerza general' },
-      { nombre: 'Equilibrio a una pierna', reps: '3x20s por lado', foco: 'Equilibrio' }, { nombre: 'Flexiones en pared', reps: '3x10', foco: 'Pecho' },
-      { nombre: 'Natación / aquagym', reps: '30 min', foco: 'Cardio suave' }, { nombre: 'Tai Chi / movilidad', reps: '20 min', foco: 'Movilidad' },
-      { nombre: 'Caminata suave', reps: '20-30 min', foco: 'Cardio' }, { nombre: 'Elevaciones laterales', reps: '3x10', foco: 'Hombros' }
-    ];
-    plan = ['Bandas', 'Caminata', 'Equilibrio', 'Descanso', 'Bandas', 'Natación', 'Descanso'];
+    ejercicios = [{ nombre: 'Sentadilla asistida', reps: '3x10' }, { nombre: 'Bandas elásticas', reps: '3x12' }, { nombre: 'Caminata suave', reps: '20 min' }];
   }
-  document.getElementById('ejIconoEdad').textContent = icono;
-  document.getElementById('ejTituloEdad').textContent = foco;
-  document.getElementById('ejFocoEdad').textContent = 'Entrenamiento adaptado en casa';
-  document.getElementById('ejerciciosList').innerHTML = ejercicios.map((ej, i) => `<div class="bg-white rounded-2xl p-5 border border-slate-100 relative group dark:bg-slate-800 dark:border-slate-700"><div class="flex justify-between items-start mb-2"><div class="w-8 h-8 bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 rounded-lg flex items-center justify-center font-bold text-sm">${i+1}</div><span class="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">${ej.foco}</span></div><h4 class="font-bold text-slate-800 dark:text-white mb-1">${ej.nombre}</h4><p class="text-sm text-teal-600 font-semibold mb-3">${ej.reps}</p><button onclick="buscarVideo('${ej.nombre}')" class="w-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors"><span>▶️</span> Ver tutorial en YouTube</button></div>`).join('');
-  const diasSemana = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-  document.getElementById('planSemanal').innerHTML = plan.map((p, i) => {
-    const isDescanso = p.toLowerCase().includes('descanso');
-    return `<div class="p-3 rounded-xl text-center ${isDescanso ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400' : 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white'}"><div class="text-xs font-bold opacity-80">${diasSemana[i]}</div><div class="text-sm font-semibold mt-1">${p}</div></div>`;
-  }).join('');
+  document.getElementById('ejerciciosList').innerHTML = ejercicios.map((ej, i) => `<div class="bg-white rounded-2xl p-5 border border-slate-100 dark:bg-slate-800 dark:border-slate-700"><h4 class="font-bold mb-1">${ej.nombre}</h4><p class="text-sm text-teal-600 font-semibold mb-3">${ej.reps}</p><button onclick="buscarVideo('${ej.nombre}')" class="w-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 py-2 rounded-lg text-sm font-semibold">▶️ Ver tutorial</button></div>`).join('');
 }
 
-function buscarVideo(nombreEjercicio) {
-  const query = encodeURIComponent(`como hacer ${nombreEjercicio} tecnica correcta`);
-  window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank');
-}
+function buscarVideo(nombre) { window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent('como hacer ' + nombre)}`, '_blank'); }
 
 function renderAnalisis() {
   if (pesos.length < 4) { document.getElementById('analisisNoData').classList.remove('hidden'); document.getElementById('analisisContent').classList.add('hidden'); return; }
   document.getElementById('analisisNoData').classList.add('hidden');
   document.getElementById('analisisContent').classList.remove('hidden');
-  const semanas = [];
-  for (let i = 0; i < pesos.length; i += 7) { const slice = pesos.slice(i, i + 7); semanas.push(parseFloat((slice.reduce((s, p) => s + p.valor, 0) / slice.length).toFixed(2))); }
-  const s1 = semanas[0];
-  const s4 = semanas[Math.min(3, semanas.length - 1)];
-  const cambio = (s4 - s1).toFixed(2);
-  document.getElementById('anS1').textContent = `${s1} kg`;
-  document.getElementById('anS4').textContent = `${s4} kg`;
-  document.getElementById('anCambio').textContent = `${cambio > 0 ? '+' : ''}${cambio} kg`;
-  const ritmoSem = parseFloat(cambio) / Math.min(4, semanas.length);
-  const proyeccionMes = (ritmoSem * 4).toFixed(2);
-  const proy = document.getElementById('proyeccionTexto');
-  if (ritmoSem < -0.5) { proy.innerHTML = `<p class="mb-2">⚠️ <strong>Ritmo acelerado:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. Considera aumentar calorías.</p>`; }
-  else if (ritmoSem >= -0.5 && ritmoSem <= -0.2) { proy.innerHTML = `<p class="mb-2">✅ <strong>Ritmo ideal:</strong> ${Math.abs(ritmoSem).toFixed(2)} kg/sem.</p><p>Proyección: <strong>${Math.abs(proyeccionMes)} kg</strong>/mes. ¡Sigue así!</p>`; }
-  else if (ritmoSem > -0.2 && ritmoSem < 0.2) { proy.innerHTML = `<p class="mb-2">📊 <strong>Estancamiento.</strong> Revisa el cumplimiento del plan.</p>`; }
-  else { proy.innerHTML = `<p class="mb-2">📈 <strong>Tendencia al alza:</strong> +${ritmoSem.toFixed(2)} kg/sem.</p><p>Revisa porciones y actividad física.</p>`; }
   const ctx = document.getElementById('chartSemanal').getContext('2d');
   if (chartSemanal) chartSemanal.destroy();
-  const isDark = document.documentElement.classList.contains('dark');
-  const gridColor = isDark ? '#334155' : '#f1f5f9';
-  const textColor = isDark ? '#94a3b8' : '#64748b';
-  chartSemanal = new Chart(ctx, {
-    type: 'bar',
-    data: { labels: semanas.map((_, i) => `Sem ${i+1}`), datasets: [{ label: 'Peso medio (kg)', data: semanas, backgroundColor: semanas.map((v, i) => i === 0 ? '#0d9488' : (i === semanas.length - 1 ? '#f59e0b' : '#94a3b8')), borderRadius: 8 }] },
-    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false, grid: { color: gridColor }, ticks: { color: textColor } }, x: { grid: { display: false }, ticks: { color: textColor } } } }
-  });
+  const semanas = [];
+  for (let i = 0; i < pesos.length; i += 7) { const s = pesos.slice(i, i + 7); semanas.push(parseFloat((s.reduce((a, p) => a + p.valor, 0) / s.length).toFixed(2))); }
+  chartSemanal = new Chart(ctx, { type: 'bar', data: { labels: semanas.map((_, i) => `Sem ${i+1}`), datasets: [{ data: semanas, backgroundColor: '#0d9488', borderRadius: 8 }] }, options: { responsive: true } });
 }
 
-function responderComentario(id) { const texto = prompt('Escribe tu respuesta como administrador:'); if (!texto || !texto.trim()) return; alert('Funcionalidad de respuesta simulada. En producción, esto actualizaría la base de datos.'); }
-function eliminarComentario(id) { if (!confirm('¿Eliminar este comentario?')) return; alert('Funcionalidad de borrado simulada. En producción, esto borraría de la base de datos.'); }
+// ==========================================
+// 🟢 NUEVO: PANEL ADMIN FUNCIONAL
+// ==========================================
+async function cargarPanelAdmin() {
+  if (!currentUser || currentUser.rol !== 'admin') return;
+  
+  // Mostrar loading
+  document.getElementById('listaUsuariosAdmin').innerHTML = '<div class="loading-spinner"></div>';
+  document.getElementById('statUsuarios').textContent = '...';
+  document.getElementById('statActivos').textContent = '...';
+  document.getElementById('statBloqueados').textContent = '...';
+  document.getElementById('statComentarios').textContent = '...';
+  
+  try {
+    // 1. Cargar todos los usuarios desde profiles
+    const { data: usuarios, error: errorUsuarios } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+    
+    if (errorUsuarios) {
+      console.error('Error cargando usuarios:', errorUsuarios);
+      document.getElementById('listaUsuariosAdmin').innerHTML = '<p class="text-red-600 text-sm">Error al cargar usuarios. Verifica permisos RLS en la tabla profiles.</p>';
+      return;
+    }
+    
+    // 2. Cargar comentarios para el contador
+    const { count: totalComentarios } = await sb.from('comments').select('*', { count: 'exact', head: true });
+    
+    // 3. Calcular estadísticas
+    const total = usuarios.length;
+    const bloqueados = usuarios.filter(u => u.bloqueado === true).length;
+    const activos = total - bloqueados;
+    
+    // 4. Actualizar contadores
+    document.getElementById('statUsuarios').textContent = total;
+    document.getElementById('statActivos').textContent = activos;
+    document.getElementById('statBloqueados').textContent = bloqueados;
+    document.getElementById('statComentarios').textContent = totalComentarios || 0;
+    
+    // 5. Renderizar lista de usuarios
+    if (usuarios.length === 0) {
+      document.getElementById('listaUsuariosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay usuarios registrados.</p>';
+    } else {
+      document.getElementById('listaUsuariosAdmin').innerHTML = usuarios.map(u => {
+        const esAdmin = u.rol === 'admin';
+        const estaBloqueado = u.bloqueado === true;
+        const esYo = u.id === currentUser.id;
+        const idCorto = u.id.substring(0, 8) + '...';
+        
+        return `
+          <div class="admin-user-row">
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${esAdmin ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' : 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300'}">
+                ${(u.nombre || 'U').charAt(0).toUpperCase()}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-slate-800 dark:text-white text-sm truncate">${DOMPurify.sanitize(u.nombre || 'Sin nombre')}</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 truncate">${idCorto}</div>
+                <div class="flex gap-1 mt-1 flex-wrap">
+                  ${esAdmin ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">⚙️ Admin</span>' : '<span class="status-badge bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">👤 Usuario</span>'}
+                  ${estaBloqueado ? '<span class="status-badge bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"> Bloqueado</span>' : '<span class="status-badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">✅ Activo</span>'}
+                  ${esYo ? '<span class="status-badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">👤 Tú</span>' : ''}
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+              ${!esYo ? `
+                <button onclick="toggleBloqueoUsuario('${u.id}', ${!estaBloqueado})" class="admin-btn ${estaBloqueado ? 'admin-btn-success' : 'admin-btn-warning'}">
+                  ${estaBloqueado ? '✅ Desbloquear' : '🚫 Bloquear'}
+                </button>
+              ` : '<span class="text-xs text-slate-400 italic">Tu cuenta</span>'}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // Actualizar info de configuración
+    document.getElementById('configUsuario').textContent = currentUser.nombre;
+    document.getElementById('configRol').textContent = currentUser.rol;
+    document.getElementById('configConexion').textContent = appIsOnline ? '🟢 Online' : '🔴 Offline';
+    document.getElementById('configCola').textContent = getOfflineQueue().length;
+    
+  } catch (err) {
+    console.error('Error en cargarPanelAdmin:', err);
+    document.getElementById('listaUsuariosAdmin').innerHTML = '<p class="text-red-600 text-sm">Error inesperado al cargar datos.</p>';
+  }
+}
 
-document.getElementById('formPerfil').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const nombre = document.getElementById('perfilNombre').value.trim();
-  if (!nombre) return;
+async function toggleBloqueoUsuario(userId, bloquear) {
+  if (!confirm(`¿${bloquear ? 'Bloquear' : 'Desbloquear'} este usuario?`)) return;
+  
+  try {
+    const { error } = await sb.from('profiles').update({ bloqueado: bloquear }).eq('id', userId);
+    if (error) {
+      console.error('Error actualizando usuario:', error);
+      mostrarToast('❌ Error al actualizar usuario');
+      return;
+    }
+    mostrarToast(`✅ Usuario ${bloquear ? 'bloqueado' : 'desbloqueado'}`);
+    await cargarPanelAdmin();
+  } catch (err) {
+    console.error('Error en toggleBloqueoUsuario:', err);
+    mostrarToast('❌ Error inesperado');
+  }
+}
+
+async function cargarComentariosAdmin() {
+  try {
+    const { data: comments, error } = await sb.from('comments').select('*').order('created_at', { ascending: false });
+    if (error) {
+      document.getElementById('listaComentariosAdmin').innerHTML = '<p class="text-red-600 text-sm">Error al cargar comentarios.</p>';
+      return;
+    }
+    
+    if (!comments || comments.length === 0) {
+      document.getElementById('listaComentariosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay comentarios.</p>';
+      return;
+    }
+    
+    document.getElementById('listaComentariosAdmin').innerHTML = comments.map(c => `
+      <div class="admin-comment-row">
+        <div class="flex justify-between items-start gap-3 mb-2">
+          <div class="flex items-center gap-2 flex-1 min-w-0">
+            <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">
+              ${DOMPurify.sanitize(c.user_name).charAt(0).toUpperCase()}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-slate-800 dark:text-white text-sm truncate">${DOMPurify.sanitize(c.user_name)}</div>
+              <div class="text-xs text-slate-400">${new Date(c.created_at).toLocaleString('es-ES')}</div>
+            </div>
+          </div>
+          <button onclick="eliminarComentarioAdmin(${c.id})" class="admin-btn admin-btn-danger flex-shrink-0">🗑️ Eliminar</button>
+        </div>
+        <p class="text-sm text-slate-700 dark:text-slate-300">${DOMPurify.sanitize(c.texto)}</p>
+        ${c.is_anonymous ? '<div class="text-xs text-slate-400 mt-2">🔒 Publicado anónimamente</div>' : ''}
+      </div>
+    `).join('');
+  } catch (err) {
+    console.error('Error cargando comentarios admin:', err);
+  }
+}
+
+async function eliminarComentarioAdmin(id) {
+  if (!confirm('¿Eliminar este comentario permanentemente?')) return;
+  try {
+    const { error } = await sb.from('comments').delete().eq('id', id);
+    if (error) {
+      console.error('Error eliminando comentario:', error);
+      mostrarToast('❌ Error al eliminar');
+      return;
+    }
+    mostrarToast('✅ Comentario eliminado');
+    await cargarComentariosAdmin();
+    await cargarPanelAdmin();
+  } catch (err) {
+    console.error('Error en eliminarComentarioAdmin:', err);
+  }
+}
+
+async function forzarSincronizacion() {
   if (!appIsOnline) {
-    addToOfflineQueue('update_profile', { nombre });
-    currentUser.nombre = nombre;
-    updateUserUI();
-    mostrarToast('📴 Cambio de nombre guardado localmente. Se sincronizará al tener conexión.');
+    mostrarToast('⚠️ No hay conexión. Conéctate primero.');
     return;
   }
-  try {
-    const { error } = await sb.from('profiles').update({ nombre: nombre }).eq('id', currentUser.id);
-    if (error) { console.error('Error actualizando perfil:', error); addToOfflineQueue('update_profile', { nombre }); return; }
-    currentUser.nombre = nombre;
-    updateUserUI();
-    mostrarToast('✓ Perfil actualizado en la nube');
-  } catch (err) {
-    console.error('Error en formPerfil:', err);
-    addToOfflineQueue('update_profile', { nombre });
-  }
-});
+  await processOfflineQueue();
+  document.getElementById('configCola').textContent = getOfflineQueue().length;
+}
 
-document.getElementById('formPassword').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (!appIsOnline) { mostrarToast('️ Se requiere conexión a internet para cambiar la contraseña.'); return; }
-  const nueva = document.getElementById('passNueva').value;
-  const conf = document.getElementById('passConfirm').value;
-  if (nueva !== conf) { mostrarToast('❌ Las contraseñas nuevas no coinciden'); return; }
-  if (nueva.length < 6) { mostrarToast(' Mínimo 6 caracteres'); return; }
-  try {
-    const { error } = await sb.auth.updateUser({ password: nueva });
-    if (error) { mostrarToast('❌ Error: ' + error.message); } 
-    else { document.getElementById('formPassword').reset(); mostrarToast('✓ Contraseña cambiada'); }
-  } catch (err) {
-    console.error('Error en formPassword:', err);
-    mostrarToast('❌ Error de conexión. Inténtalo de nuevo.');
-  }
-});
+function limpiarColaOffline() {
+  if (!confirm('¿Limpiar toda la cola offline? Se perderán los datos no sincronizados.')) return;
+  clearOfflineQueue();
+  document.getElementById('configCola').textContent = '0';
+  mostrarToast('🗑️ Cola offline limpiada');
+}
 
+// ==========================================
+// NAVEGACIÓN
+// ==========================================
 document.querySelectorAll('.nav-btn').forEach(btn => { btn.addEventListener('click', () => switchTab(btn.dataset.tab)); });
+
 function switchTab(tab) {
   if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert('⛔ Acceso restringido'); return; }
   document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
@@ -2550,10 +2001,17 @@ function switchTab(tab) {
   const btn = document.querySelector(`.nav-btn[data-tab="${tab}"]`);
   if (btn) { btn.classList.add('active'); btn.classList.remove('text-white/80'); }
   document.getElementById('userDropdown').classList.remove('show');
+  
+  // Cargar datos específicos de cada pestaña
   if (tab === 'comentarios') renderComentarios();
   if (tab === 'analisis') renderAnalisis();
   if (tab === 'seguimiento') renderSeguimiento();
   if (tab === 'salud') renderSalud();
+  if (tab === 'admin') {
+    cargarPanelAdmin();
+    cargarComentariosAdmin();
+  }
+  
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
