@@ -5,20 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NutriPro</title>
 
+<!--  Logo, favicon y configuración de app móvil -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230d9488' rx='16'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle'%3E%3C/text%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230d9488' rx='16'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle'%3E🥗%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#0d9488">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NutriPro">
 
+<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<!-- Supabase JS Client -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<!-- ️ DOMPurify para prevenir ataques XSS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 
+<!-- Fonts -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
@@ -159,7 +171,6 @@
   .recipe-chef-tip { background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 0.75rem; margin-top: 1rem; }
   .dark .recipe-chef-tip { background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(253,230,138,0.1)); }
 
-  /*  NUEVO: Estilos para el panel admin */
   .admin-user-row { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-radius: 0.75rem; background: var(--bg); margin-bottom: 0.5rem; transition: all 0.2s; }
   .admin-user-row:hover { background: rgba(13,148,136,0.05); }
   .admin-comment-row { padding: 1rem; border-radius: 0.75rem; background: var(--bg); margin-bottom: 0.5rem; }
@@ -251,12 +262,12 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <div id="connectionStatus" class="hidden items-center gap-1 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full"> Sin conexión</div>
+        <div id="connectionStatus" class="hidden items-center gap-1 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">📴 Sin conexión</div>
         <button onclick="compartirApp()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold" title="Compartir aplicación">📤 Compartir</button>
         <button onclick="compartirApp()" class="md:hidden w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Compartir">📤</button>
         <button id="darkModeToggle" class="w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Cambiar tema"><span id="darkModeIcon">☀️</span></button>
         <div class="hidden md:flex items-center gap-2 text-xs">
-          <span class="px-3 py-1 bg-white/15 rounded-full"> Evidencia</span>
+          <span class="px-3 py-1 bg-white/15 rounded-full">🔬 Evidencia</span>
           <span class="px-3 py-1 bg-white/15 rounded-full">☁️ Cloud Sync</span>
         </div>
         <div class="user-menu">
@@ -290,11 +301,11 @@
   <nav class="max-w-7xl mx-auto px-6 pb-3">
     <div class="flex gap-2 overflow-x-auto">
       <button class="nav-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all" data-tab="evaluacion">📋 Evaluación</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard">📊 Dashboard</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard"> Dashboard</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="menu">🍽️ Menú</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra"> Compra</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra">🛒 Compra</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="seguimiento">📈 Seguimiento</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio"> Ejercicio</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="salud">❤️ Salud</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
@@ -378,7 +389,7 @@
     </div>
     <div class="space-y-4">
       <div class="ad-space py-8" data-pos="sidebar">
-        <div class="text-3xl mb-2">📢</div>
+        <div class="text-3xl mb-2"></div>
         <div class="font-semibold text-slate-500">Espacio publicitario lateral</div>
         <div class="text-xs mt-1">No interfiere con la navegación</div>
       </div>
@@ -406,7 +417,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Tus cifras clave calculadas con base científica.</p>
   </div>
   <div id="dashboardNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4"></div>
+    <div class="text-6xl mb-4">📊</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Aún no has completado la evaluación</h3>
     <p class="text-slate-600 dark:text-slate-400 mb-6">Ve a la sección de Evaluación para calcular tus métricas.</p>
     <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
@@ -452,7 +463,7 @@
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barCarb" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🥑 Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barGrasas" class="h-full bg-gradient-to-r from-rose-400 to-rose-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
         </div>
@@ -480,7 +491,7 @@
     <div class="flex gap-2 flex-wrap">
       <button onclick="exportarMenuPDF()" class="btn-pdf px-4 py-3 rounded-lg font-semibold flex items-center gap-2 text-sm">📄 PDF Menú</button>
       <button onclick="resetSustituciones()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-lg font-semibold hover:bg-slate-200 text-sm dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600">🔄 Reset</button>
-      <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2">🔄 Regenerar</button>
+      <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2"> Regenerar</button>
     </div>
   </div>
   <div id="menuNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
@@ -668,13 +679,13 @@
     </div>
     <div class="space-y-4">
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-        <div class="text-3xl mb-2">🤝</div>
+        <div class="text-3xl mb-2"></div>
         <h4 class="font-bold text-slate-800 dark:text-white mb-2">Normas de la comunidad</h4>
         <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
           <li>✓ Sé respetuoso con los demás</li>
           <li>✓ Comparte experiencias reales</li>
           <li>✗ No compartas datos médicos personales</li>
-          <li>✗ Evita promocionar dietas milagro</li>
+          <li> Evita promocionar dietas milagro</li>
         </ul>
       </div>
       <div class="ad-space py-8">
@@ -728,7 +739,7 @@
   </div>
 </section>
 
-<!-- 🟢 ADMIN COMPLETAMENTE REESCRITO -->
+<!-- ADMIN -->
 <section id="admin" class="tab-content">
   <div class="mb-6">
     <div class="flex items-center gap-3">
@@ -762,7 +773,7 @@
 
   <!-- Pestañas admin -->
   <div class="flex gap-2 mb-4 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
-    <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600 whitespace-nowrap" data-atab="usuarios"> Usuarios</button>
+    <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600 whitespace-nowrap" data-atab="usuarios">👥 Usuarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="comentarios">💬 Comentarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="config">⚙️ Configuración</button>
   </div>
@@ -800,8 +811,8 @@
       <div class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
         <p>📡 Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
         <p>👤 Usuario actual: <strong id="configUsuario">—</strong></p>
-        <p> Rol: <strong id="configRol">—</strong></p>
-        <p>🌐 Estado de conexión: <strong id="configConexion">—</strong></p>
+        <p>🔐 Rol: <strong id="configRol">—</strong></p>
+        <p> Estado de conexión: <strong id="configConexion">—</strong></p>
         <p>📦 Datos en cola offline: <strong id="configCola">0</strong></p>
       </div>
       <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
@@ -855,9 +866,9 @@
           <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">👨🍳 Receta detallada</div>
           <h3 class="text-xl font-bold text-slate-800 dark:text-white" id="recetaTitulo">Nombre del plato</h3>
           <div class="flex gap-3 mt-3 flex-wrap">
-            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>️</span><span id="recetaTiempo">20 min</span></div>
-            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>🎯</span><span id="recetaDificultad">Fácil</span></div>
-            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>👥</span><span id="recetaPorciones">2 porciones</span></div>
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>⏱️</span><span id="recetaTiempo">20 min</span></div>
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span></span><span id="recetaDificultad">Fácil</span></div>
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span></span><span id="recetaPorciones">2 porciones</span></div>
           </div>
         </div>
         <button onclick="cerrarModalReceta()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300">✕</button>
@@ -869,7 +880,7 @@
         <div id="recetaIngredientes"></div>
       </div>
       <div class="mb-6">
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">👨‍</span> Preparación</h4>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">👨‍🍳</span> Preparación</h4>
         <div id="recetaPasos"></div>
       </div>
       <div id="recetaConsejo" class="recipe-chef-tip hidden">
@@ -1135,7 +1146,7 @@ async function cerrarSesion() {
     currentUser = null;
     document.getElementById('userDropdown').classList.remove('show');
     showAuthScreen();
-  } catch (err) { mostrarToast('️ Error al cerrar sesión.'); }
+  } catch (err) { mostrarToast('⚠️ Error al cerrar sesión.'); }
 }
 
 document.getElementById('formLogin').addEventListener('submit', async (e) => {
@@ -1147,7 +1158,7 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
     if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } 
     else { location.reload(); }
-  } catch (errCatch) { err.textContent = '❌ Error de conexión.'; err.classList.remove('hidden'); }
+  } catch (errCatch) { err.textContent = ' Error de conexión.'; err.classList.remove('hidden'); }
 });
 
 document.getElementById('formRegister').addEventListener('submit', async (e) => {
@@ -1161,7 +1172,7 @@ document.getElementById('formRegister').addEventListener('submit', async (e) => 
   const btn = e.target.querySelector('button[type="submit"]');
   err.classList.add('hidden');
   if (!nombre) { err.textContent = '❌ El nombre es obligatorio'; err.classList.remove('hidden'); return; }
-  if (!terms) { err.textContent = '❌ Debes aceptar los términos'; err.classList.remove('hidden'); return; }
+  if (!terms) { err.textContent = ' Debes aceptar los términos'; err.classList.remove('hidden'); return; }
   if (pass !== pass2) { err.textContent = '❌ Las contraseñas no coinciden'; err.classList.remove('hidden'); return; }
   if (pass.length < 6) { err.textContent = '❌ Mínimo 6 caracteres'; err.classList.remove('hidden'); return; }
   const originalBtnText = btn.textContent;
@@ -1174,7 +1185,7 @@ document.getElementById('formRegister').addEventListener('submit', async (e) => 
       if (data.session) { mostrarToast('✅ Cuenta creada.'); setTimeout(() => location.reload(), 1000); } 
       else { alert('✅ Revisa tu email para confirmar la cuenta.'); document.querySelector('.auth-tab[data-auth="login"]').click(); }
     }
-  } catch (errCatch) { err.textContent = '❌ Error inesperado.'; err.classList.remove('hidden'); } 
+  } catch (errCatch) { err.textContent = ' Error inesperado.'; err.classList.remove('hidden'); } 
   finally { btn.disabled = false; btn.textContent = originalBtnText; }
 });
 
@@ -1307,7 +1318,7 @@ async function publicarComentario() {
     if (error) { addToOfflineQueue('add_comment', commentData); return; }
     document.getElementById('nuevoComentario').value = '';
     await renderComentarios();
-    mostrarToast('💬 Comentario publicado');
+    mostrarToast(' Comentario publicado');
   } catch (err) { addToOfflineQueue('add_comment', commentData); }
 }
 
@@ -1317,7 +1328,7 @@ async function renderComentarios() {
     if (error) return;
     const cont = document.getElementById('listaComentarios');
     if (!comments || comments.length === 0) {
-      cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia </div>';
+      cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia 💬</div>';
       return;
     }
     cont.innerHTML = comments.map(c => {
@@ -1546,9 +1557,9 @@ function renderMenu() {
     const foodItemHTML = (item, path, label, color, emoji) => {
       const key = `${diaIdx}|${path}`;
       const isSub = sustituciones[key] !== undefined;
-      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap"><span class="macro-chip bg-white/70 dark:bg-slate-700">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="flex gap-1"><button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍🍳</button><div class="swap-icon w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600"><span class="text-sm">🔄</span></div></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
+      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap"><span class="macro-chip bg-white/70 dark:bg-slate-700">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="flex gap-1"><button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍</button><div class="swap-icon w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600"><span class="text-sm">🔄</span></div></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
     };
-    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20', '🥬')}</div>`;
+    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20', '')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20', '🥬')}</div>`;
     cont.appendChild(card);
   });
 }
@@ -1574,7 +1585,7 @@ function abrirModalSustitucion(diaIdx, path, currentId) {
     const diffKcal = alim.kcal - current.kcal;
     const opt = document.createElement('div');
     opt.className = `sub-option p-4 border-2 rounded-xl ${isCurrent ? 'current border-green-300' : 'border-slate-200 dark:border-slate-700'}`;
-    opt.innerHTML = `<div class="flex justify-between items-start gap-3"><div class="flex-1"><div class="font-bold text-slate-800 dark:text-white">${alim.nombre}</div><div class="flex gap-1.5 mt-2 flex-wrap"><span class="macro-chip bg-slate-100 dark:bg-slate-700">🔥 ${alim.kcal} kcal</span>${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}</div></div>${!isCurrent ? `<button class="flex-shrink-0 bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir</button>` : ''}</div>`;
+    opt.innerHTML = `<div class="flex justify-between items-start gap-3"><div class="flex-1"><div class="font-bold text-slate-800 dark:text-white">${alim.nombre}</div><div class="flex gap-1.5 mt-2 flex-wrap"><span class="macro-chip bg-slate-100 dark:bg-slate-700"> ${alim.kcal} kcal</span>${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}</div></div>${!isCurrent ? `<button class="flex-shrink-0 bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir</button>` : ''}</div>`;
     if (!isCurrent) opt.addEventListener('click', () => aplicarSustitucion(alim.id));
     cont.appendChild(opt);
   });
@@ -1621,10 +1632,10 @@ function categorizarIngrediente(ing) {
   const lower = ing.toLowerCase();
   if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|lentejas/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
   if (/arroz|quinoa|pasta|batata|avena|pan/.test(lower)) return { cat: '🍚 Cereales', color: 'from-amber-500 to-orange-500' };
-  if (/aceite|aguacate|almendra|nueces/.test(lower)) return { cat: '🥑 Grasas', color: 'from-emerald-500 to-teal-500' };
-  if (/manzana|plátano|frutos/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
+  if (/aceite|aguacate|almendra|nueces/.test(lower)) return { cat: ' Grasas', color: 'from-emerald-500 to-teal-500' };
+  if (/manzana|plátano|frutos/.test(lower)) return { cat: ' Frutas', color: 'from-red-500 to-rose-500' };
   if (/brócoli|espinaca|tomate|calabacín|lechuga/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
-  return { cat: ' Otros', color: 'from-blue-500 to-cyan-500' };
+  return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
 }
 
 function generarListaCompra() {
@@ -1712,7 +1723,7 @@ function exportarProgresoPDF() {
     yPos += 8;
   });
   doc.save(`Progreso_NutriPro.pdf`);
-  mostrarToast(' Reporte exportado');
+  mostrarToast('📈 Reporte exportado');
 }
 
 function exportarInformeCompletoPDF() {
@@ -1735,14 +1746,14 @@ function exportarInformeCompletoPDF() {
   ];
   lines.forEach(l => { doc.text(l, 14, yPos); yPos += 8; });
   doc.save(`Informe_NutriPro.pdf`);
-  mostrarToast(' Informe exportado');
+  mostrarToast('📊 Informe exportado');
 }
 
 const HABITOS_SALUD = [
   { icon: '🚭', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos.', videos: ['beneficios de dejar de fumar'] },
-  { icon: '', titulo: 'Dormir 7-9 horas', texto: 'Regula hormonas del hambre y saciedad.', videos: ['higiene del sueño'] },
+  { icon: '😴', titulo: 'Dormir 7-9 horas', texto: 'Regula hormonas del hambre y saciedad.', videos: ['higiene del sueño'] },
   { icon: '💧', titulo: 'Hidratación', texto: 'Mejora rendimiento y saciedad.', videos: ['cuánta agua beber'] },
-  { icon: '🚶', titulo: 'Moverse cada día', texto: 'El NEAT suma al gasto diario.', videos: ['qué es el NEAT'] }
+  { icon: '', titulo: 'Moverse cada día', texto: 'El NEAT suma al gasto diario.', videos: ['qué es el NEAT'] }
 ];
 
 function renderSalud() {
@@ -1814,7 +1825,7 @@ function renderAnalisis() {
 }
 
 // ==========================================
-// 🟢 NUEVO: PANEL ADMIN FUNCIONAL
+//  NUEVO: PANEL ADMIN FUNCIONAL
 // ==========================================
 async function cargarPanelAdmin() {
   if (!currentUser || currentUser.rol !== 'admin') return;
