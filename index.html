@@ -66,6 +66,62 @@
   .food-item:hover .swap-icon, .food-item:hover .recipe-btn { opacity: 1; transform: translateY(0); }
   .swap-icon, .recipe-btn { opacity: 0; transform: translateY(5px); transition: all 0.2s ease; }
   .food-item.substituted { background: linear-gradient(90deg, rgba(245,158,11,0.08), transparent); border-left: 3px solid #f59e0b; }
+  /* 🟢 NUEVO: Badges de temporada */
+  .temporada-badge { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 2px; 
+    font-size: 9px; 
+    padding: 2px 6px; 
+    border-radius: 999px; 
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .temporada-actual { 
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0); 
+    color: #065f46; 
+    border: 1px solid #10b981;
+  }
+  .dark .temporada-actual {
+    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.1));
+    color: #6ee7b7;
+  }
+  .temporada-todo { 
+    background: #f1f5f9; 
+    color: #475569; 
+    border: 1px solid #cbd5e1;
+  }
+  .dark .temporada-todo {
+    background: rgba(100,116,139,0.2);
+    color: #94a3b8;
+  }
+  .temporada-otra { 
+    background: #fef3c7; 
+    color: #92400e; 
+    border: 1px solid #f59e0b;
+    opacity: 0.7;
+  }
+  .dark .temporada-otra {
+    background: rgba(245,158,11,0.15);
+    color: #fcd34d;
+  }
+  .season-indicator {
+    background: linear-gradient(135deg, #f0fdfa, #ecfeff);
+    border: 1px solid #99f6e4;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #0f766e;
+  }
+  .dark .season-indicator {
+    background: linear-gradient(135deg, rgba(15,118,110,0.2), rgba(20,184,166,0.1));
+    border-color: rgba(15,118,110,0.4);
+    color: #5eead4;
+  }
   .tab-content { display: none; }
   .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
   ::-webkit-scrollbar { width: 8px; }
@@ -139,6 +195,13 @@
   .admin-select { width: 100%; padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-main); font-size: 0.875rem; }
   .admin-form-group { margin-bottom: 1rem; }
   .admin-form-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--text-main); }
+  /* Toggle switch para filtro de temporada */
+  .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 24px; }
+  .toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+  input:checked + .toggle-slider { background-color: #0d9488; }
+  input:checked + .toggle-slider:before { transform: translateX(20px); }
 </style>
 </head>
 <body class="min-h-screen">
@@ -147,7 +210,7 @@
 <div id="authScreen" class="auth-screen hidden">
   <div class="auth-card">
     <div class="text-center mb-6">
-      <div class="inline-flex w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl items-center justify-center text-3xl mb-3 shadow-lg">🥗</div>
+      <div class="inline-flex w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl items-center justify-center text-3xl mb-3 shadow-lg"></div>
       <h1 class="text-2xl font-bold text-slate-800 dark:text-white">NutriPro</h1>
       <p class="text-sm text-slate-500 mt-1 dark:text-slate-400">Nutrición Clínica · Déficit Sostenible</p>
     </div>
@@ -221,11 +284,11 @@
       </div>
       <div class="flex items-center gap-3">
         <div id="connectionStatus" class="hidden items-center gap-1 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">📴 Sin conexión</div>
-        <button onclick="compartirApp()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold">📤 Compartir</button>
+        <button onclick="compartirApp()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold"> Compartir</button>
         <button onclick="compartirApp()" class="md:hidden w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all">📤</button>
         <button id="darkModeToggle" class="w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all"><span id="darkModeIcon">☀️</span></button>
         <div class="hidden md:flex items-center gap-2 text-xs">
-          <span class="px-3 py-1 bg-white/15 rounded-full"> Evidencia</span>
+          <span class="px-3 py-1 bg-white/15 rounded-full">🔬 Evidencia</span>
           <span class="px-3 py-1 bg-white/15 rounded-full">☁️ Cloud Sync</span>
         </div>
         <div class="user-menu">
@@ -247,7 +310,7 @@
             <div class="user-dropdown-item" onclick="switchTab('perfil')"><span>👤</span> <span>Mi perfil</span></div>
             <div class="user-dropdown-item" onclick="switchTab('comentarios')"><span>💬</span> <span>Comunidad</span></div>
             <div class="user-dropdown-divider"></div>
-            <div class="user-dropdown-item text-red-600" onclick="cerrarSesion()"><span>🚪</span> <span>Cerrar sesión</span></div>
+            <div class="user-dropdown-item text-red-600" onclick="cerrarSesion()"><span></span> <span>Cerrar sesión</span></div>
           </div>
         </div>
       </div>
@@ -259,14 +322,14 @@
   <nav class="max-w-7xl mx-auto px-6 pb-3">
     <div class="flex gap-2 overflow-x-auto">
       <button class="nav-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all" data-tab="evaluacion">📋 Evaluación</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard"> Dashboard</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard">📊 Dashboard</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="menu">🍽️ Menú</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra">🛒 Compra</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="seguimiento"> Seguimiento</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra"> Compra</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="seguimiento">📈 Seguimiento</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="salud">❤️ Salud</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios"> Comunidad</button>
     </div>
   </nav>
 </header>
@@ -284,7 +347,7 @@
       <h3 class="font-bold text-green-800 dark:text-green-300 flex items-center gap-2">✅ Evaluación completada y guardada</h3>
       <p class="text-sm text-green-700 dark:text-green-400 mt-1">Tu plan está activo. Solo modifica estos datos si tu peso, altura u objetivos han cambiado recientemente.</p>
     </div>
-    <button onclick="mostrarFormularioEvaluacion()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">✏️ Modificar datos</button>
+    <button onclick="mostrarFormularioEvaluacion()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">️ Modificar datos</button>
   </div>
   <div class="grid lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-8 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
@@ -347,7 +410,7 @@
     </div>
     <div class="space-y-4">
       <div id="adSidebar" class="ad-space py-8" data-pos="sidebar">
-        <div class="text-3xl mb-2"></div>
+        <div class="text-3xl mb-2">📢</div>
         <div class="font-semibold text-slate-500">Espacio publicitario lateral</div>
         <div class="text-xs mt-1">No interfiere con la navegación</div>
       </div>
@@ -362,7 +425,7 @@
         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">¿No encuentras un ingrediente? Haz clic sobre él y te sugeriremos <strong>alternativas con aporte nutricional equivalente</strong>.</p>
       </div>
       <div class="alert-warning rounded-xl p-4">
-        <p class="text-xs"><strong>️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
+        <p class="text-xs"><strong>⚕️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
       </div>
     </div>
   </div>
@@ -413,15 +476,15 @@
         <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Distribución de Macronutrientes</h3>
         <div class="space-y-4">
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Proteínas</span><span class="text-sm font-bold text-teal-600" id="macroProt">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🥩 Proteínas</span><span class="text-sm font-bold text-teal-600" id="macroProt">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barProt" class="h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🍞 Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barCarb" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🥑 Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barGrasas" class="h-full bg-gradient-to-r from-rose-400 to-rose-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
         </div>
@@ -452,6 +515,28 @@
       <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2">🔄 Regenerar</button>
     </div>
   </div>
+  
+  <!--  NUEVO: Indicador de temporada -->
+  <div id="seasonBanner" class="mb-6 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between flex-wrap">
+    <div class="season-indicator">
+      <span id="seasonEmoji" class="text-2xl">🌸</span>
+      <div>
+        <div class="font-bold" id="seasonName">Primavera</div>
+        <div class="text-xs font-normal opacity-80">Productos de temporada destacados</div>
+      </div>
+    </div>
+    <label class="flex items-center gap-3 bg-white dark:bg-slate-800 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 cursor-pointer">
+      <div class="toggle-switch">
+        <input type="checkbox" id="soloTemporada" onchange="toggleFiltroTemporada()">
+        <span class="toggle-slider"></span>
+      </div>
+      <div>
+        <div class="text-sm font-semibold text-slate-700 dark:text-slate-300">🌱 Solo temporada</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Prioriza alimentos de esta estación</div>
+      </div>
+    </label>
+  </div>
+  
   <div id="menuNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
     <div class="text-6xl mb-4">🍽️</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
@@ -487,18 +572,18 @@
       <p class="text-slate-600 dark:text-slate-400 mt-2">Media móvil de 7 días para eliminar el ruido de la retención de líquidos.</p>
     </div>
     <div class="flex gap-2 flex-wrap">
-      <button onclick="exportarProgresoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2"> PDF Progreso</button>
-      <button onclick="exportarInformeCompletoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📊 Informe completo</button>
+      <button onclick="exportarProgresoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📈 PDF Progreso</button>
+      <button onclick="exportarInformeCompletoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2"> Informe completo</button>
     </div>
   </div>
   <div id="adInline" class="ad-space py-6 mb-6" data-pos="inline">
     <div class="flex items-center justify-center gap-4 flex-wrap">
-      <span class="text-2xl">🏋️</span>
+      <span class="text-2xl">️</span>
       <div class="text-left">
         <div class="font-bold text-slate-600 dark:text-slate-400">¿Buscas suplementación deportiva?</div>
         <div class="text-xs">Descubre nuestra selección de productos recomendados</div>
       </div>
-      <span class="text-2xl">💊</span>
+      <span class="text-2xl"></span>
     </div>
   </div>
   <div class="grid lg:grid-cols-3 gap-6">
@@ -526,7 +611,7 @@
         </div>
       </div>
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-        <div class="text-2xl mb-2">💬</div>
+        <div class="text-2xl mb-2"></div>
         <p class="text-sm text-slate-700 dark:text-slate-300" id="feedbackTexto">Registra tu primer peso para comenzar el análisis.</p>
       </div>
     </div>
@@ -544,13 +629,13 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Adaptada a tu edad. Sin gimnasio, sin excusas.</p>
   </div>
   <div id="ejercicioNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4"></div>
+    <div class="text-6xl mb-4">💪</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
   </div>
   <div id="ejercicioContent" class="hidden space-y-6">
     <div class="bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
       <div class="flex items-center gap-3 mb-3">
-        <div class="text-4xl" id="ejIconoEdad">️</div>
+        <div class="text-4xl" id="ejIconoEdad">🏋️</div>
         <div>
           <h3 class="text-xl font-bold" id="ejTituloEdad">Grupo de edad</h3>
           <p class="text-teal-100 text-sm" id="ejFocoEdad">Enfoque principal</p>
@@ -596,7 +681,7 @@
       <canvas id="chartSemanal" height="120"></canvas>
     </div>
     <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-      <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-3"> Proyección próximo mes</h3>
+      <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-3">🔮 Proyección próximo mes</h3>
       <div id="proyeccionTexto" class="text-slate-700 dark:text-slate-300"></div>
     </div>
   </div>
@@ -609,7 +694,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">La nutrición es solo una pieza. Estos hábitos, respaldados por consenso clínico (OMS), multiplican tu progreso y tu salud.</p>
   </div>
   <div class="alert-warning rounded-xl p-4 mb-6">
-    <p class="text-xs"><strong>️ Aviso:</strong> La información es orientativa y de divulgación. Para dejar de fumar, reducir el alcohol o cualquier cambio de salud, apóyate en tu médico o en recursos sanitarios oficiales.</p>
+    <p class="text-xs"><strong>⚕️ Aviso:</strong> La información es orientativa y de divulgación. Para dejar de fumar, reducir el alcohol o cualquier cambio de salud, apóyate en tu médico o en recursos sanitarios oficiales.</p>
   </div>
   <div class="grid md:grid-cols-2 gap-6" id="saludCards"></div>
 </section>
@@ -637,7 +722,7 @@
     </div>
     <div class="space-y-4">
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-        <div class="text-3xl mb-2"></div>
+        <div class="text-3xl mb-2">🤝</div>
         <h4 class="font-bold text-slate-800 dark:text-white mb-2">Normas de la comunidad</h4>
         <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
           <li>✓ Sé respetuoso con los demás</li>
@@ -647,7 +732,7 @@
         </ul>
       </div>
       <div id="adFooter" class="ad-space py-8" data-pos="footer">
-        <div class="text-3xl mb-2">📢</div>
+        <div class="text-3xl mb-2"></div>
         <div class="font-semibold text-slate-500">Espacio publicitario inferior</div>
         <div class="text-xs mt-1">300 × 250</div>
       </div>
@@ -705,7 +790,6 @@
     </div>
   </div>
 
-  <!-- Estadísticas -->
   <div class="grid md:grid-cols-4 gap-4 mb-6">
     <div class="admin-stat">
       <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios totales</div>
@@ -725,16 +809,14 @@
     </div>
   </div>
 
-  <!-- Pestañas admin -->
   <div class="flex gap-2 mb-4 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
-    <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600 whitespace-nowrap" data-atab="usuarios"> Usuarios</button>
+    <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600 whitespace-nowrap" data-atab="usuarios">👥 Usuarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="comentarios">💬 Comentarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="publicidad">📢 Publicidad</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="alimentos">🍽️ Alimentos</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="config">⚙️ Configuración</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="config">️ Configuración</button>
   </div>
 
-  <!-- Panel Usuarios -->
   <div id="admin-usuarios" class="admin-panel">
     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
       <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700">
@@ -745,7 +827,6 @@
     </div>
   </div>
 
-  <!-- Panel Comentarios -->
   <div id="admin-comentarios" class="admin-panel hidden">
     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
       <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700">
@@ -756,7 +837,6 @@
     </div>
   </div>
 
-  <!-- Panel Publicidad -->
   <div id="admin-publicidad" class="admin-panel hidden">
     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
       <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700">
@@ -767,27 +847,25 @@
     </div>
   </div>
 
-  <!-- Panel Alimentos -->
   <div id="admin-alimentos" class="admin-panel hidden">
     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
       <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700">
         <h3 class="font-bold text-slate-800 dark:text-white">Gestión de alimentos y menús</h3>
-        <button onclick="abrirModalAlimento()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold">➕ Nuevo alimento</button>
+        <button onclick="abrirModalAlimento()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold"> Nuevo alimento</button>
       </div>
       <div id="listaAlimentosAdmin" class="p-4"><div class="loading-spinner"></div></div>
     </div>
   </div>
 
-  <!-- Panel Configuración -->
   <div id="admin-config" class="admin-panel hidden">
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="font-bold text-slate-800 dark:text-white mb-4">Estado del Sistema</h3>
       <div class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
-        <p>📡 Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
+        <p> Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
         <p> Usuario actual: <strong id="configUsuario">—</strong></p>
         <p> Rol: <strong id="configRol">—</strong></p>
-        <p> Estado de conexión: <strong id="configConexion">—</strong></p>
-        <p>📦 Datos en cola offline: <strong id="configCola">0</strong></p>
+        <p>🌐 Estado de conexión: <strong id="configConexion">—</strong></p>
+        <p> Datos en cola offline: <strong id="configCola">0</strong></p>
       </div>
       <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
         <h4 class="font-bold text-slate-800 dark:text-white mb-3">Acciones rápidas</h4>
@@ -805,7 +883,7 @@
 
 <footer class="max-w-7xl mx-auto px-6 py-8 mt-4 border-t border-slate-200 dark:border-slate-700">
   <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-    <div> NutriPro · Nutrición basada en evidencia científica</div>
+    <div>🥗 NutriPro · Nutrición basada en evidencia científica</div>
     <div>⚕️ Esta herramienta no sustituye la consulta médica profesional</div>
   </div>
 </footer>
@@ -837,7 +915,7 @@
     <div class="p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10 dark:bg-slate-800 dark:border-slate-700">
       <div class="flex justify-between items-start">
         <div class="flex-1">
-          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">‍🍳 Receta detallada</div>
+          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">👨‍🍳 Receta detallada</div>
           <h3 class="text-xl font-bold text-slate-800 dark:text-white" id="recetaTitulo">Nombre del plato</h3>
           <div class="flex gap-3 mt-3 flex-wrap">
             <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>⏱️</span><span id="recetaTiempo">20 min</span></div>
@@ -854,12 +932,12 @@
         <div id="recetaIngredientes"></div>
       </div>
       <div class="mb-6">
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">👨‍🍳</span> Preparación</h4>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">👨‍</span> Preparación</h4>
         <div id="recetaPasos"></div>
       </div>
       <div id="recetaConsejo" class="recipe-chef-tip hidden">
         <div class="flex items-start gap-2">
-          <span class="text-xl">💡</span>
+          <span class="text-xl"></span>
           <div>
             <div class="font-bold text-amber-800 dark:text-amber-300 text-sm mb-1">Consejo del chef</div>
             <p class="text-sm text-amber-900 dark:text-amber-200" id="recetaConsejoTexto"></p>
@@ -873,7 +951,7 @@
   </div>
 </div>
 
-<!--  NUEVO: MODAL ANUNCIO (CRUD PUBLICIDAD) -->
+<!-- MODAL ANUNCIO -->
 <div id="modalAnuncio" class="modal-overlay hidden">
   <div class="modal-content admin-modal">
     <div class="p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10 dark:bg-slate-800 dark:border-slate-700">
@@ -926,7 +1004,7 @@
   </div>
 </div>
 
-<!--  NUEVO: MODAL ALIMENTO (CRUD MENÚS) -->
+<!-- MODAL ALIMENTO -->
 <div id="modalAlimento" class="modal-overlay hidden">
   <div class="modal-content admin-modal">
     <div class="p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10 dark:bg-slate-800 dark:border-slate-700">
@@ -943,16 +1021,16 @@
       <div class="admin-form-group">
         <label>ID único (ej: p1, c2, v3)</label>
         <input type="text" id="alimentoIdInput" class="admin-input" placeholder="p1">
-        <p class="text-xs text-slate-500 mt-1">Formato: p=proteína, c=carbohidrato, v=verdura, g=grasa, d=desayuno, m=merienda + número</p>
+        <p class="text-xs text-slate-500 mt-1">Formato: p=proteína, c=carbohidrato, v=verdura, g=grasa, d=desayuno, m=merienda, f=fruta + número</p>
       </div>
       <div class="admin-form-group">
         <label>Grupo</label>
         <select id="alimentoGrupo" class="admin-select">
           <option value="prot">🥩 Proteínas</option>
           <option value="carb">🍚 Carbohidratos</option>
-          <option value="verd"> Verduras</option>
+          <option value="verd">🥦 Verduras</option>
           <option value="grasa">🥑 Grasas</option>
-          <option value="des">️ Desayunos</option>
+          <option value="des">☀️ Desayunos</option>
           <option value="mer">🍎 Meriendas</option>
         </select>
       </div>
@@ -970,6 +1048,24 @@
           <input type="number" id="alimentoProt" class="admin-input" placeholder="31">
         </div>
       </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="admin-form-group">
+          <label>Temporada</label>
+          <select id="alimentoTemporada" class="admin-select">
+            <option value="todo_el_año">🌍 Todo el año</option>
+            <option value="primavera">🌸 Primavera</option>
+            <option value="verano">☀️ Verano</option>
+            <option value="otono">🍂 Otoño</option>
+            <option value="invierno">❄️ Invierno</option>
+          </select>
+        </div>
+        <div class="admin-form-group">
+          <label class="flex items-center gap-2 h-full pt-6">
+            <input type="checkbox" id="alimentoEsFruta" class="w-4 h-4 accent-teal-600">
+            <span>🍎 Es fruta</span>
+          </label>
+        </div>
+      </div>
       <div class="admin-form-group">
         <label>Ingredientes (separados por comas)</label>
         <input type="text" id="alimentoIng" class="admin-input" placeholder="pollo, aceite, sal">
@@ -982,7 +1078,7 @@
       </div>
       
       <div class="border-t border-slate-200 dark:border-slate-700 pt-4 mt-4">
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3"> Receta detallada (opcional)</h4>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3">📖 Receta detallada (opcional)</h4>
         <div class="grid grid-cols-3 gap-3">
           <div class="admin-form-group">
             <label>Tiempo</label>
@@ -1039,11 +1135,66 @@ let sustituciones = {};
 let chartPeso = null;
 let chartSemanal = null;
 let currentSwap = null;
+let filtroSoloTemporada = false; // 🟢 NUEVO: estado del filtro
 
 // 🟢 DATOS DINÁMICOS DESDE BD
 let FOODS_DB = {};
 let RECIPES_DB = {};
 let ADS_DB = { top: null, sidebar: null, inline: null, footer: null };
+
+// ==========================================
+// 🌱 SISTEMA DE TEMPORADA
+// ==========================================
+function obtenerEstacion() {
+  const mes = new Date().getMonth(); // 0-11
+  if (mes >= 2 && mes <= 4) return 'primavera'; // Marzo-Mayo
+  if (mes >= 5 && mes <= 7) return 'verano';    // Junio-Agosto
+  if (mes >= 8 && mes <= 10) return 'otono';    // Septiembre-Noviembre
+  return 'invierno';                             // Diciembre-Febrero
+}
+
+function obtenerInfoEstacion(estacion) {
+  const info = {
+    primavera: { emoji: '🌸', nombre: 'Primavera', meses: 'Marzo - Mayo' },
+    verano: { emoji: '☀️', nombre: 'Verano', meses: 'Junio - Agosto' },
+    otono: { emoji: '🍂', nombre: 'Otoño', meses: 'Septiembre - Noviembre' },
+    invierno: { emoji: '❄️', nombre: 'Invierno', meses: 'Diciembre - Febrero' }
+  };
+  return info[estacion] || info.primavera;
+}
+
+function esDeTemporada(alimento) {
+  if (!alimento.temporada) return true;
+  if (alimento.temporada === 'todo_el_año') return true;
+  return alimento.temporada === obtenerEstacion();
+}
+
+function getBadgeTemporada(alimento) {
+  if (!alimento.temporada || alimento.temporada === 'todo_el_año') {
+    return '<span class="temporada-badge temporada-todo" title="Disponible todo el año">🌍 Todo el año</span>';
+  }
+  const info = obtenerInfoEstacion(alimento.temporada);
+  const estacionActual = obtenerEstacion();
+  if (alimento.temporada === estacionActual) {
+    return `<span class="temporada-badge temporada-actual" title="En temporada: ${info.meses}">${info.emoji} En temporada</span>`;
+  }
+  return `<span class="temporada-badge temporada-otra" title="Fuera de temporada: ${info.meses}">${info.emoji} ${info.nombre}</span>`;
+}
+
+function toggleFiltroTemporada() {
+  filtroSoloTemporada = document.getElementById('soloTemporada').checked;
+  mostrarToast(filtroSoloTemporada ? ' Filtro de temporada activado' : ' Mostrando todos los alimentos');
+  if (menuData) {
+    generarMenu();
+  }
+}
+
+function actualizarBannerEstacion() {
+  const estacion = obtenerEstacion();
+  const info = obtenerInfoEstacion(estacion);
+  document.getElementById('seasonEmoji').textContent = info.emoji;
+  document.getElementById('seasonName').textContent = info.nombre;
+}
 
 // ==========================================
 // 📴 SISTEMA OFFLINE-FIRST
@@ -1126,7 +1277,7 @@ async function processOfflineQueue() {
 }
 
 window.addEventListener('online', () => { appIsOnline = true; updateOnlineStatusUI(); checkRealConnection().then(() => { if (appIsOnline && currentUser) processOfflineQueue(); }); });
-window.addEventListener('offline', () => { appIsOnline = false; mostrarToast(' Sin conexión. Los datos se guardarán localmente.'); updateOnlineStatusUI(); });
+window.addEventListener('offline', () => { appIsOnline = false; mostrarToast('🔴 Sin conexión. Los datos se guardarán localmente.'); updateOnlineStatusUI(); });
 
 function saveUserDataToLocal(data) { localStorage.setItem('nutripro_user_data', JSON.stringify(data)); }
 
@@ -1155,7 +1306,7 @@ function initDarkMode() {
     localStorage.setItem('nutripro-theme', 'dark');
   } else {
     html.classList.remove('dark');
-    icon.textContent = '';
+    icon.textContent = '🌙';
   }
   toggle.addEventListener('click', () => {
     html.classList.toggle('dark');
@@ -1176,32 +1327,30 @@ async function checkAuth() {
     if (error || !profile) {
       const nombre = session.user.user_metadata?.nombre || session.user.email.split('@')[0];
       const { error: insertError } = await sb.from('profiles').insert({ id: session.user.id, nombre: nombre, rol: 'user', bloqueado: false });
-      if (insertError) { await sb.auth.signOut(); showAuthScreen(); alert('️ Error al inicializar tu cuenta.'); return; }
+      if (insertError) { await sb.auth.signOut(); showAuthScreen(); alert('⚠️ Error al inicializar tu cuenta.'); return; }
       location.reload();
       return;
     }
     if (profile.bloqueado) { showBlockedScreen('Tu cuenta ha sido bloqueada.'); return; }
     currentUser = { id: session.user.id, email: session.user.email, nombre: profile.nombre, rol: profile.rol };
     showMainApp();
-    await loadUserDataFromDB();
     await cargarDatosDinamicos();
+    await loadUserDataFromDB();
+    actualizarBannerEstacion(); // 🟢 NUEVO: Mostrar estación actual
     initDarkMode();
     await checkRealConnection();
     if (appIsOnline) { await processOfflineQueue(); }
   } catch (err) { console.error('Error en checkAuth:', err); }
 }
 
-// 🟢 NUEVO: Cargar datos dinámicos desde BD (alimentos, recetas, anuncios)
 async function cargarDatosDinamicos() {
   try {
-    // Cargar alimentos activos
     const { data: foods, error: foodsError } = await sb.from('foods').select('*').eq('active', true);
     if (!foodsError && foods) {
       FOODS_DB = {};
       foods.forEach(f => { FOODS_DB[f.id] = { ...f, ing: Array.isArray(f.ing) ? f.ing : JSON.parse(f.ing || '[]') }; });
     }
     
-    // Cargar recetas
     const { data: recipes, error: recipesError } = await sb.from('recipes').select('*');
     if (!recipesError && recipes) {
       RECIPES_DB = {};
@@ -1217,7 +1366,6 @@ async function cargarDatosDinamicos() {
       });
     }
     
-    // Cargar anuncios activos
     const { data: ads, error: adsError } = await sb.from('ads').select('*').eq('active', true).order('order_index');
     if (!adsError && ads) {
       ADS_DB = { top: null, sidebar: null, inline: null, footer: null };
@@ -1231,7 +1379,6 @@ async function cargarDatosDinamicos() {
   }
 }
 
-// 🟢 NUEVO: Renderizar anuncios dinámicamente
 function renderAnuncios() {
   const positions = ['top', 'sidebar', 'inline', 'footer'];
   positions.forEach(pos => {
@@ -1312,7 +1459,7 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
     if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } 
     else { location.reload(); }
-  } catch (errCatch) { err.textContent = ' Error de conexión.'; err.classList.remove('hidden'); }
+  } catch (errCatch) { err.textContent = '❌ Error de conexión.'; err.classList.remove('hidden'); }
 });
 
 document.getElementById('formRegister').addEventListener('submit', async (e) => {
@@ -1334,7 +1481,7 @@ document.getElementById('formRegister').addEventListener('submit', async (e) => 
   btn.textContent = 'Creando cuenta...';
   try {
     const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { nombre } } });
-    if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } 
+    if (error) { err.textContent = ' ' + error.message; err.classList.remove('hidden'); } 
     else {
       if (data.session) { mostrarToast('✅ Cuenta creada.'); setTimeout(() => location.reload(), 1000); } 
       else { alert('✅ Revisa tu email para confirmar la cuenta.'); document.querySelector('.auth-tab[data-auth="login"]').click(); }
@@ -1458,7 +1605,7 @@ async function agregarPeso() {
 
 async function publicarComentario() {
   const texto = document.getElementById('nuevoComentario').value.trim();
-  if (!texto) { mostrarToast('️ Escribe un comentario'); return; }
+  if (!texto) { mostrarToast('⚠️ Escribe un comentario'); return; }
   const anonimo = document.getElementById('comentarioAnonimo').checked;
   const commentData = { texto, anonimo };
   if (!appIsOnline) {
@@ -1472,7 +1619,7 @@ async function publicarComentario() {
     if (error) { addToOfflineQueue('add_comment', commentData); return; }
     document.getElementById('nuevoComentario').value = '';
     await renderComentarios();
-    mostrarToast(' Comentario publicado');
+    mostrarToast('💬 Comentario publicado');
   } catch (err) { addToOfflineQueue('add_comment', commentData); }
 }
 
@@ -1481,7 +1628,7 @@ async function renderComentarios() {
     const { data: comments } = await sb.from('comments').select('*').order('created_at', { ascending: false });
     const cont = document.getElementById('listaComentarios');
     if (!comments || comments.length === 0) {
-      cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia 💬</div>';
+      cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia </div>';
       return;
     }
     cont.innerHTML = comments.map(c => {
@@ -1583,15 +1730,22 @@ function getGrupoById(id) {
   if (!a) return [];
   return Object.values(FOODS_DB).filter(f => f.grupo === a.grupo && f.active);
 }
+
 function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+// 🟢 Función auxiliar para filtrar por temporada
+function filtrarPorTemporada(arr) {
+  if (!filtroSoloTemporada) return arr;
+  const enTemporada = arr.filter(a => esDeTemporada(a));
+  return enTemporada.length > 0 ? enTemporada : arr; // Fallback si no hay nada en temporada
+}
+
 // ==========================================
-//  ALGORITMO INTELIGENTE DE MENÚS MEDITERRÁNEOS
+// 🌱 ALGORITMO INTELIGENTE CON TEMPORADA
 // ==========================================
 function generarMenu() {
   if (!userData) return;
   
-  // 1. Obtener alimentos activos por grupo desde la BD
   const grupos = {
     prot: Object.values(FOODS_DB).filter(f => f.grupo === 'prot' && f.active),
     carb: Object.values(FOODS_DB).filter(f => f.grupo === 'carb' && f.active),
@@ -1601,7 +1755,6 @@ function generarMenu() {
     mer: Object.values(FOODS_DB).filter(f => f.grupo === 'mer' && f.active)
   };
   
-  // Verificar que hay suficientes alimentos
   if (Object.values(grupos).some(g => g.length === 0)) {
     document.getElementById('menuNoData').classList.remove('hidden');
     document.getElementById('menuContent').classList.add('hidden');
@@ -1609,7 +1762,6 @@ function generarMenu() {
     return;
   }
   
-  // 2. Clasificar proteínas en subcategorías mediterráneas
   const protPescadoAzul = grupos.prot.filter(p => /sardina|caballa|atún|boquerón/i.test(p.nombre));
   const protPescadoBlanco = grupos.prot.filter(p => /merluza|bacalao|dorada|lubina|sepia|pulpo/i.test(p.nombre));
   const protMarisco = grupos.prot.filter(p => /gamba|mejillón|almeja/i.test(p.nombre));
@@ -1618,11 +1770,9 @@ function generarMenu() {
   const protCarneRoja = grupos.prot.filter(p => /ternera|solomillo/i.test(p.nombre));
   const protHuevo = grupos.prot.filter(p => /huevo|tortilla|queso fresco/i.test(p.nombre));
   
-  // Fallback: si alguna categoría está vacía, usar proteínas generales
   const fallback = grupos.prot;
   const getProts = (arr) => arr.length > 0 ? arr : fallback;
   
-  // 3. Plan semanal mediterráneo (7 días)
   const planSemanal = [
     { dia: 'Lunes',    protComida: getProts(protLegumbres),     protCena: getProts(protHuevo) },
     { dia: 'Martes',   protComida: getProts(protPescadoAzul),   protCena: getProts(protHuevo) },
@@ -1633,7 +1783,6 @@ function generarMenu() {
     { dia: 'Domingo',  protComida: getProts(protCarneRoja.length > 0 ? protCarneRoja : protCarneBlanca), protCena: getProts(protHuevo) }
   ];
   
-  // 4. Generar 4 semanas de menús (rotación)
   document.getElementById('menuNoData').classList.add('hidden');
   document.getElementById('menuContent').classList.remove('hidden');
   document.getElementById('weekIndicator').classList.remove('hidden');
@@ -1647,26 +1796,21 @@ function generarMenu() {
   
   const menus = [];
   
-  // Generar 4 semanas con variaciones
   for (let m = 0; m < 4; m++) {
     const menu = [];
     planSemanal.forEach((plan, diaIdx) => {
-      // Seleccionar proteína del día (evitar repetir la misma que la semana anterior)
       const protComida = pickRandom(plan.protComida);
       const protCena = pickRandom(plan.protCena.filter(p => p.id !== protComida.id) || plan.protCena);
       
-      // Carbohidrato: variar entre arroz, pasta, patata, pan
       const carbOpciones = grupos.carb.filter(c => !/gazpacho|salmorejo|escalivada/i.test(c.nombre));
       const comidaCarb = pickRandom(carbOpciones);
       
-      // Verduras: 2 diferentes para comida y cena
-      const verdComida = pickRandom(grupos.verd);
-      const verdCena = pickRandom(grupos.verd.filter(v => v.id !== verdComida.id) || grupos.verd);
+      // 🟢 NUEVO: Filtrar verduras por temporada si el filtro está activo
+      const verdurasDisponibles = filtrarPorTemporada(grupos.verd);
+      const verdComida = pickRandom(verdurasDisponibles);
+      const verdCena = pickRandom(verdurasDisponibles.filter(v => v.id !== verdComida.id) || verdurasDisponibles);
       
-      // Grasa saludable
       const comidaGrasa = pickRandom(grupos.grasa);
-      
-      // Desayuno y merienda
       const desayuno = pickRandom(grupos.des);
       const merienda = pickRandom(grupos.mer);
       
@@ -1727,10 +1871,10 @@ function renderMenu() {
     const foodItemHTML = (item, path, label, color, emoji) => {
       const key = `${diaIdx}|${path}`;
       const isSub = sustituciones[key] !== undefined;
-      const tieneReceta = RECIPES_DB[item.id] !== undefined;
-      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap"><span class="macro-chip bg-white/70 dark:bg-slate-700">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="flex gap-1"><button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍</button><div class="swap-icon w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600"><span class="text-sm">🔄</span></div></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
+      const badgeTemporada = getBadgeTemporada(item);
+      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap">${badgeTemporada}<span class="macro-chip bg-white/70 dark:bg-slate-700">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="flex gap-1"><button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍🍳</button><div class="swap-icon w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm">🔄</span></div></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
     };
-    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20', '')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20', '')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20', '')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20', '🥬')}</div>`;
+    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20', '🥬')}</div>`;
     cont.appendChild(card);
   });
 }
@@ -1746,17 +1890,24 @@ function abrirModalSustitucion(diaIdx, path, currentId) {
   document.getElementById('modalSubtitulo').textContent = `Grupo: ${grupoNombre[current.grupo]} · ${grupo.length} alternativas`;
   const cont = document.getElementById('modalOpciones');
   cont.innerHTML = '';
+  
+  // 🟢 NUEVO: Ordenar poniendo primero los de temporada
   const ordenados = [...grupo].sort((a, b) => {
     if (a.id === currentId) return -1;
     if (b.id === currentId) return 1;
+    const aTemp = esDeTemporada(a) ? 0 : 1;
+    const bTemp = esDeTemporada(b) ? 0 : 1;
+    if (aTemp !== bTemp) return aTemp - bTemp;
     return Math.abs(a.kcal - current.kcal) - Math.abs(b.kcal - current.kcal);
   });
+  
   ordenados.forEach(alim => {
     const isCurrent = alim.id === currentId;
     const diffKcal = alim.kcal - current.kcal;
+    const badgeTemporada = getBadgeTemporada(alim);
     const opt = document.createElement('div');
     opt.className = `sub-option p-4 border-2 rounded-xl ${isCurrent ? 'current border-green-300' : 'border-slate-200 dark:border-slate-700'}`;
-    opt.innerHTML = `<div class="flex justify-between items-start gap-3"><div class="flex-1"><div class="font-bold text-slate-800 dark:text-white">${alim.nombre}</div><div class="flex gap-1.5 mt-2 flex-wrap"><span class="macro-chip bg-slate-100 dark:bg-slate-700">🔥 ${alim.kcal} kcal</span>${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}</div></div>${!isCurrent ? `<button class="flex-shrink-0 bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir</button>` : ''}</div>`;
+    opt.innerHTML = `<div class="flex justify-between items-start gap-3"><div class="flex-1"><div class="flex items-center gap-2 flex-wrap mb-1"><span class="font-bold text-slate-800 dark:text-white">${alim.nombre}</span>${isCurrent ? '<span class="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">ACTUAL</span>' : ''}</div><div class="flex gap-1.5 mt-2 flex-wrap">${badgeTemporada}<span class="macro-chip bg-slate-100 dark:bg-slate-700">🔥 ${alim.kcal} kcal</span>${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}</div></div>${!isCurrent ? `<button class="flex-shrink-0 bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir</button>` : ''}</div>`;
     if (!isCurrent) opt.addEventListener('click', () => aplicarSustitucion(alim.id));
     cont.appendChild(opt);
   });
@@ -1803,12 +1954,12 @@ async function compartirApp() {
 
 function categorizarIngrediente(ing) {
   const lower = ing.toLowerCase();
-  if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|lentejas/.test(lower)) return { cat: ' Proteínas', color: 'from-rose-500 to-pink-500' };
-  if (/arroz|quinoa|pasta|batata|avena|pan/.test(lower)) return { cat: '🍚 Cereales', color: 'from-amber-500 to-orange-500' };
-  if (/aceite|aguacate|almendra|nueces/.test(lower)) return { cat: '🥑 Grasas', color: 'from-emerald-500 to-teal-500' };
-  if (/manzana|plátano|frutos/.test(lower)) return { cat: ' Frutas', color: 'from-red-500 to-rose-500' };
-  if (/brócoli|espinaca|tomate|calabacín|lechuga/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
-  return { cat: ' Otros', color: 'from-blue-500 to-cyan-500' };
+  if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|lentejas|garbanzos|alubias|ternera/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
+  if (/arroz|quinoa|pasta|batata|avena|pan|cuscús|bulgur|boniato|tortita/.test(lower)) return { cat: '🍚 Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
+  if (/aceite|aguacate|almendra|nueces|pistacho|anacardo|semilla|tahini|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
+  if (/manzana|plátano|pera|fresa|cereza|sandía|melón|melocotón|nectarina|albaricoque|higo|granada|uva|caqui|mandarina|naranja|kiwi|pomelo|lima|frutos rojos|membrillo|naranja|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
+  if (/brócoli|espinaca|tomate|calabacín|lechuga|pepino|cebolla|pimiento|berenjena|coliflor|alcachofa|espárrago|judía|acelga|col|seta|champiñón|puerro|hinojo|apio|remolacha|zanahoria|guisante|haba|calabaza|col lombarda|coles de bruselas|menestra|pisto|escalivada|gazpacho|salmorejo|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
+  return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
 }
 
 function generarListaCompra() {
@@ -1842,7 +1993,7 @@ function renderListaCompra() {
     const data = categorias[cat];
     const card = document.createElement('div');
     card.className = 'bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700';
-    card.innerHTML = `<div class="bg-gradient-to-r ${data.color} text-white p-4"><h3 class="font-bold">${cat}</h3></div><ul class="p-4 space-y-2">${data.items.map(item => `<li class="flex items-center gap-3 p-2"><input type="checkbox" class="w-4 h-4 accent-teal-600"><span class="flex-1 text-sm">${item.nombre}</span><span class="text-xs text-slate-400">×${item.cantidad}</span></li>`).join('')}</ul>`;
+    card.innerHTML = `<div class="bg-gradient-to-r ${data.color} text-white p-4"><h3 class="font-bold">${cat}</h3><p class="text-xs opacity-90">${data.items.length} productos</p></div><ul class="p-4 space-y-2">${data.items.map(item => `<li class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-teal-600"><span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1)}</span><span class="text-xs text-slate-400">×${item.cantidad}</span></li>`).join('')}</ul>`;
     cont.appendChild(card);
   });
 }
@@ -1896,7 +2047,7 @@ function exportarProgresoPDF() {
     yPos += 8;
   });
   doc.save(`Progreso_NutriPro.pdf`);
-  mostrarToast(' Reporte exportado');
+  mostrarToast('📈 Reporte exportado');
 }
 
 function exportarInformeCompletoPDF() {
@@ -1918,7 +2069,7 @@ const HABITOS_SALUD = [
   { icon: '🚭', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos.', videos: ['beneficios de dejar de fumar'] },
   { icon: '😴', titulo: 'Dormir 7-9 horas', texto: 'Regula hormonas del hambre y saciedad.', videos: ['higiene del sueño'] },
   { icon: '💧', titulo: 'Hidratación', texto: 'Mejora rendimiento y saciedad.', videos: ['cuánta agua beber'] },
-  { icon: '', titulo: 'Moverse cada día', texto: 'El NEAT suma al gasto diario.', videos: ['qué es el NEAT'] }
+  { icon: '🚶', titulo: 'Moverse cada día', texto: 'El NEAT suma al gasto diario.', videos: ['qué es el NEAT'] }
 ];
 
 function renderSalud() {
@@ -2024,14 +2175,14 @@ async function cargarPanelAdmin() {
                   <div class="font-semibold text-slate-800 dark:text-white text-sm truncate">${DOMPurify.sanitize(u.nombre || 'Sin nombre')}</div>
                   <div class="text-xs text-slate-500 dark:text-slate-400 truncate">${idCorto}</div>
                   <div class="flex gap-1 mt-1 flex-wrap">
-                    ${esAdmin ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">⚙️ Admin</span>' : '<span class="status-badge bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"> Usuario</span>'}
+                    ${esAdmin ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">⚙️ Admin</span>' : '<span class="status-badge bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">👤 Usuario</span>'}
                     ${estaBloqueado ? '<span class="status-badge bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">🚫 Bloqueado</span>' : '<span class="status-badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">✅ Activo</span>'}
                     ${esYo ? '<span class="status-badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">👤 Tú</span>' : ''}
                   </div>
                 </div>
               </div>
               <div class="flex gap-2 flex-shrink-0 flex-wrap">
-                ${!esYo ? `<button onclick="toggleBloqueoUsuario('${u.id}', ${!estaBloqueado})" class="admin-btn ${estaBloqueado ? 'admin-btn-success' : 'admin-btn-warning'}">${estaBloqueado ? '✅ Desbloquear' : ' Bloquear'}</button>` : '<span class="text-xs text-slate-400 italic">Tu cuenta</span>'}
+                ${!esYo ? `<button onclick="toggleBloqueoUsuario('${u.id}', ${!estaBloqueado})" class="admin-btn ${estaBloqueado ? 'admin-btn-success' : 'admin-btn-warning'}">${estaBloqueado ? '✅ Desbloquear' : '🚫 Bloquear'}</button>` : '<span class="text-xs text-slate-400 italic">Tu cuenta</span>'}
                 <button onclick="resetPasswordUsuario('${u.id}', '${DOMPurify.sanitize(u.email || '')}')" class="admin-btn admin-btn-primary">🔑 Resetear clave</button>
               </div>
             </div>
@@ -2041,7 +2192,7 @@ async function cargarPanelAdmin() {
     }
     document.getElementById('configUsuario').textContent = currentUser.nombre;
     document.getElementById('configRol').textContent = currentUser.rol;
-    document.getElementById('configConexion').textContent = appIsOnline ? '🟢 Online' : ' Offline';
+    document.getElementById('configConexion').textContent = appIsOnline ? '🟢 Online' : '🔴 Offline';
     document.getElementById('configCola').textContent = getOfflineQueue().length;
   } catch (err) {
     console.error('Error en cargarPanelAdmin:', err);
@@ -2056,10 +2207,9 @@ async function toggleBloqueoUsuario(userId, bloquear) {
     if (error) { mostrarToast(' Error al actualizar usuario'); return; }
     mostrarToast(`✅ Usuario ${bloquear ? 'bloqueado' : 'desbloqueado'}`);
     await cargarPanelAdmin();
-  } catch (err) { mostrarToast(' Error inesperado'); }
+  } catch (err) { mostrarToast('❌ Error inesperado'); }
 }
 
-// 🟢 NUEVO: Resetear contraseña de usuario
 async function resetPasswordUsuario(userId, email) {
   if (!email) {
     alert('Este usuario no tiene email registrado. No se puede resetear la contraseña.');
@@ -2072,7 +2222,7 @@ async function resetPasswordUsuario(userId, email) {
     });
     if (error) {
       console.error('Error reseteando contraseña:', error);
-      mostrarToast(' Error: ' + error.message);
+      mostrarToast('❌ Error: ' + error.message);
       return;
     }
     mostrarToast('✅ Email de reseteo enviado a ' + email);
@@ -2121,7 +2271,6 @@ async function eliminarComentarioAdmin(id) {
   } catch (err) { console.error('Error en eliminarComentarioAdmin:', err); }
 }
 
-// 🟢 NUEVO: CRUD PUBLICIDAD
 async function cargarAnunciosAdmin() {
   try {
     const { data: ads } = await sb.from('ads').select('*').order('order_index');
@@ -2129,7 +2278,7 @@ async function cargarAnunciosAdmin() {
       document.getElementById('listaAnunciosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay anuncios. Haz clic en "Nuevo anuncio" para crear el primero.</p>';
       return;
     }
-    const positionNames = { top: ' Superior', sidebar: ' Lateral', inline: '📏 En línea', footer: '📍 Inferior' };
+    const positionNames = { top: '🔝 Superior', sidebar: ' Lateral', inline: '📏 En línea', footer: '📍 Inferior' };
     document.getElementById('listaAnunciosAdmin').innerHTML = ads.map(ad => `
       <div class="admin-ad-row">
         <div class="flex justify-between items-start gap-3 mb-2">
@@ -2140,12 +2289,12 @@ async function cargarAnunciosAdmin() {
               <span class="status-badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">${positionNames[ad.position] || ad.position}</span>
             </div>
             ${ad.content ? `<p class="text-sm text-slate-600 dark:text-slate-400">${DOMPurify.sanitize(ad.content)}</p>` : ''}
-            ${ad.link_url && ad.link_url !== '#' ? `<p class="text-xs text-teal-600 mt-1"> ${DOMPurify.sanitize(ad.link_url)}</p>` : ''}
+            ${ad.link_url && ad.link_url !== '#' ? `<p class="text-xs text-teal-600 mt-1">🔗 ${DOMPurify.sanitize(ad.link_url)}</p>` : ''}
           </div>
           <div class="flex gap-1 flex-shrink-0">
             <button onclick="editarAnuncio('${ad.id}')" class="admin-btn admin-btn-primary">✏️ Editar</button>
             <button onclick="toggleAnuncio('${ad.id}', ${!ad.active})" class="admin-btn ${ad.active ? 'admin-btn-warning' : 'admin-btn-success'}">${ad.active ? '⏸️ Pausar' : '✅ Activar'}</button>
-            <button onclick="eliminarAnuncio('${ad.id}')" class="admin-btn admin-btn-danger">🗑️</button>
+            <button onclick="eliminarAnuncio('${ad.id}')" class="admin-btn admin-btn-danger">️</button>
           </div>
         </div>
       </div>
@@ -2192,7 +2341,7 @@ async function guardarAnuncio() {
     } else {
       ({ error } = await sb.from('ads').insert([data]));
     }
-    if (error) { mostrarToast(' Error: ' + error.message); return; }
+    if (error) { mostrarToast('❌ Error: ' + error.message); return; }
     mostrarToast(id ? '✅ Anuncio actualizado' : '✅ Anuncio creado');
     cerrarModalAnuncio();
     await cargarAnunciosAdmin();
@@ -2215,13 +2364,12 @@ async function eliminarAnuncio(id) {
   try {
     const { error } = await sb.from('ads').delete().eq('id', id);
     if (error) { mostrarToast('❌ Error'); return; }
-    mostrarToast('️ Anuncio eliminado');
+    mostrarToast('🗑️ Anuncio eliminado');
     await cargarAnunciosAdmin();
     await cargarDatosDinamicos();
   } catch (err) { console.error('Error eliminando anuncio:', err); }
 }
 
-//  NUEVO: CRUD ALIMENTOS
 async function cargarAlimentosAdmin() {
   try {
     const { data: foods } = await sb.from('foods').select('*').order('grupo', { ascending: true }).order('nombre');
@@ -2229,7 +2377,8 @@ async function cargarAlimentosAdmin() {
       document.getElementById('listaAlimentosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay alimentos. Haz clic en "Nuevo alimento" para crear el primero.</p>';
       return;
     }
-    const grupoNames = { prot: ' Proteínas', carb: '🍚 Carbohidratos', verd: '🥦 Verduras', grasa: '🥑 Grasas', des: '️ Desayunos', mer: ' Meriendas' };
+    const grupoNames = { prot: ' Proteínas', carb: '🍚 Carbohidratos', verd: '🥦 Verduras', grasa: '🥑 Grasas', des: '☀️ Desayunos', mer: '🍎 Meriendas' };
+    const temporadaNames = { todo_el_año: '🌍 Todo el año', primavera: ' Primavera', verano: '☀️ Verano', otono: '🍂 Otoño', invierno: '❄️ Invierno' };
     let html = '';
     let currentGrupo = null;
     foods.forEach(f => {
@@ -2238,16 +2387,19 @@ async function cargarAlimentosAdmin() {
         html += `<h4 class="font-bold text-slate-700 dark:text-slate-300 mt-4 mb-2 pb-2 border-b border-slate-200 dark:border-slate-700">${grupoNames[f.grupo] || f.grupo}</h4>`;
       }
       const tieneReceta = RECIPES_DB[f.id] !== undefined;
+      const badgeTemp = temporadaNames[f.temporada] || '🌍 Todo el año';
       html += `
         <div class="admin-food-row">
           <div class="flex justify-between items-start gap-3">
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1 flex-wrap">
                 <span class="font-bold text-slate-800 dark:text-white">${DOMPurify.sanitize(f.nombre)}</span>
-                <span class="status-badge ${f.active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400'}">${f.active ? '✅ Activo' : '️ Oculto'}</span>
-                <span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300"> ${f.kcal} kcal</span>
+                <span class="status-badge ${f.active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400'}">${f.active ? '✅ Activo' : '⏸️ Oculto'}</span>
+                <span class="status-badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">${badgeTemp}</span>
+                ${f.es_fruta ? '<span class="status-badge bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">🍎 Fruta</span>' : ''}
+                <span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">🔥 ${f.kcal} kcal</span>
                 ${f.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${f.prot}g</span>` : ''}
-                ${tieneReceta ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">📖 Con receta</span>' : '<span class="status-badge bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400"> Sin receta</span>'}
+                ${tieneReceta ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">📖 Con receta</span>' : '<span class="status-badge bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">📄 Sin receta</span>'}
               </div>
               <p class="text-xs text-slate-500 dark:text-slate-400">ID: <code class="bg-slate-100 dark:bg-slate-700 px-1 rounded">${f.id}</code></p>
             </div>
@@ -2273,6 +2425,8 @@ function abrirModalAlimento(food = null, recipe = null) {
   document.getElementById('alimentoNombre').value = food ? food.nombre : '';
   document.getElementById('alimentoKcal').value = food ? food.kcal : '';
   document.getElementById('alimentoProt').value = food ? (food.prot || 0) : '';
+  document.getElementById('alimentoTemporada').value = food ? (food.temporada || 'todo_el_año') : 'todo_el_año';
+  document.getElementById('alimentoEsFruta').checked = food ? (food.es_fruta || false) : false;
   document.getElementById('alimentoIng').value = food ? (Array.isArray(food.ing) ? food.ing.join(', ') : '') : '';
   document.getElementById('alimentoActive').checked = food ? food.active : true;
   if (recipe) {
@@ -2312,6 +2466,8 @@ async function guardarAlimento() {
     nombre: document.getElementById('alimentoNombre').value.trim(),
     kcal: parseInt(document.getElementById('alimentoKcal').value) || 0,
     prot: parseInt(document.getElementById('alimentoProt').value) || 0,
+    temporada: document.getElementById('alimentoTemporada').value,
+    es_fruta: document.getElementById('alimentoEsFruta').checked,
     ing: document.getElementById('alimentoIng').value.split(',').map(s => s.trim()).filter(s => s),
     active: document.getElementById('alimentoActive').checked
   };
@@ -2325,7 +2481,6 @@ async function guardarAlimento() {
     }
     if (error) { mostrarToast('❌ Error: ' + error.message); return; }
     
-    // Guardar receta si hay datos
     const recetaIngredientesRaw = document.getElementById('recetaIngredientesInput').value.trim();
     const recetaPasosRaw = document.getElementById('recetaPasosInput').value.trim();
     const recetaConsejo = document.getElementById('recetaConsejoInput').value.trim();
@@ -2352,7 +2507,6 @@ async function guardarAlimento() {
       const { error: recipeError } = await sb.from('recipes').upsert(recipeData, { onConflict: 'food_id' });
       if (recipeError) console.error('Error guardando receta:', recipeError);
     } else {
-      // Eliminar receta si estaba vacía
       await sb.from('recipes').delete().eq('food_id', foodData.id);
     }
     
@@ -2366,7 +2520,7 @@ async function guardarAlimento() {
 async function toggleAlimento(id, active) {
   try {
     const { error } = await sb.from('foods').update({ active }).eq('id', id);
-    if (error) { mostrarToast(' Error'); return; }
+    if (error) { mostrarToast('❌ Error'); return; }
     mostrarToast(active ? '✅ Alimento activado' : '⏸️ Alimento ocultado');
     await cargarAlimentosAdmin();
     await cargarDatosDinamicos();
@@ -2379,7 +2533,7 @@ async function eliminarAlimento(id) {
     await sb.from('recipes').delete().eq('food_id', id);
     const { error } = await sb.from('foods').delete().eq('id', id);
     if (error) { mostrarToast('❌ Error'); return; }
-    mostrarToast('️ Alimento eliminado');
+    mostrarToast('🗑️ Alimento eliminado');
     await cargarAlimentosAdmin();
     await cargarDatosDinamicos();
   } catch (err) { console.error('Error eliminando alimento:', err); }
@@ -2443,7 +2597,7 @@ document.getElementById('formPerfil').addEventListener('submit', async (e) => {
   e.preventDefault();
   const nombre = document.getElementById('perfilNombre').value.trim();
   if (!nombre) return;
-  if (!appIsOnline) { addToOfflineQueue('update_profile', { nombre }); currentUser.nombre = nombre; updateUserUI(); mostrarToast(' Guardado localmente'); return; }
+  if (!appIsOnline) { addToOfflineQueue('update_profile', { nombre }); currentUser.nombre = nombre; updateUserUI(); mostrarToast('📴 Guardado localmente'); return; }
   try {
     const { error } = await sb.from('profiles').update({ nombre }).eq('id', currentUser.id);
     if (error) { mostrarToast('❌ Error'); return; }
