@@ -160,18 +160,15 @@
   input:checked + .toggle-slider { background-color: #0d9488; }
   input:checked + .toggle-slider:before { transform: translateX(20px); }
   
-  /* 🟢 NUEVO: Sistema de estrellas */
   .star-rating { display: inline-flex; gap: 2px; }
   .star-rating .star { cursor: pointer; font-size: 1.5rem; color: #cbd5e1; transition: all 0.15s; user-select: none; }
   .star-rating .star:hover, .star-rating .star.hovered { color: #fbbf24; transform: scale(1.15); }
   .star-rating .star.filled { color: #f59e0b; }
-  .star-rating .star.filled:hover { color: #fbbf24; }
   .star-rating.readonly .star { cursor: default; }
   .star-rating.readonly .star:hover { transform: none; }
   .fav-icon-active { color: #ef4444 !important; animation: pulse-heart 0.4s ease; }
   .exclude-icon-active { color: #64748b !important; }
   
-  /* 🟢 NUEVO: Tabs de perfil */
   .profile-tab { padding: 0.75rem 1rem; border-bottom: 2px solid transparent; cursor: pointer; font-weight: 600; color: #64748b; transition: all 0.2s; }
   .profile-tab:hover { color: #0d9488; }
   .profile-tab.active { color: #0d9488; border-bottom-color: #0d9488; }
@@ -180,6 +177,171 @@
   
   .food-card-mini { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--bg); border-radius: 0.5rem; margin-bottom: 0.5rem; transition: all 0.2s; }
   .food-card-mini:hover { background: rgba(13,148,136,0.05); }
+  
+  /* 🟢 NUEVO FASE 2: Estilos del Planificador Semanal */
+  .planner-header {
+    background: linear-gradient(135deg, #0d9488, #0891b2);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    color: white;
+    margin-bottom: 1.5rem;
+  }
+  .planner-nav-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .planner-nav-btn:hover { background: rgba(255,255,255,0.3); }
+  .planner-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 1024px) {
+    .planner-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .planner-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .planner-day-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .planner-day-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-color: #0d9488;
+  }
+  .planner-day-card.today {
+    border: 2px solid #0d9488;
+    background: linear-gradient(135deg, rgba(13,148,136,0.05), rgba(8,145,178,0.05));
+  }
+  .planner-day-name {
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #0d9488;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .planner-day-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .planner-meal {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .planner-meal-breakfast { background: #fef3c7; color: #92400e; }
+  .dark .planner-meal-breakfast { background: rgba(251,191,36,0.15); color: #fcd34d; }
+  .planner-meal-lunch { background: #fed7aa; color: #9a3412; }
+  .dark .planner-meal-lunch { background: rgba(251,146,60,0.15); color: #fdba74; }
+  .planner-meal-dinner { background: #e0e7ff; color: #3730a3; }
+  .dark .planner-meal-dinner { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+  .planner-kcal {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #0d9488;
+    margin-top: 0.5rem;
+    text-align: right;
+  }
+  .planner-view-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    background: var(--card-bg);
+    padding: 0.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+  }
+  .planner-view-btn {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .planner-view-btn.active {
+    background: #0d9488;
+    color: white;
+  }
+  
+  /* 🟢 NUEVO FASE 2: Estilos Batch Cooking */
+  .batch-container {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .dark .batch-container {
+    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(253,230,138,0.1));
+  }
+  .batch-task {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--card-bg);
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s;
+  }
+  .batch-task:hover { transform: translateX(4px); }
+  .batch-task.completed {
+    opacity: 0.6;
+    text-decoration: line-through;
+  }
+  .batch-task input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: #0d9488;
+  }
+  .batch-time {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #0d9488;
+    min-width: 3rem;
+  }
+  .batch-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .batch-stat {
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    text-align: center;
+  }
+  .batch-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0d9488;
+  }
+  .batch-stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
 </style>
 </head>
 <body class="min-h-screen">
@@ -285,7 +447,7 @@
               <div class="user-dropdown-item" onclick="switchTab('admin')"><span>⚙️</span> <span>Panel Admin</span></div>
               <div class="user-dropdown-divider"></div>
             </div>
-            <div class="user-dropdown-item" onclick="switchTab('perfil')"><span></span> <span>Mi perfil</span></div>
+            <div class="user-dropdown-item" onclick="switchTab('perfil')"><span>👤</span> <span>Mi perfil</span></div>
             <div class="user-dropdown-item" onclick="switchTab('comentarios')"><span>💬</span> <span>Comunidad</span></div>
             <div class="user-dropdown-divider"></div>
             <div class="user-dropdown-item text-red-600" onclick="cerrarSesion()"><span>🚪</span> <span>Cerrar sesión</span></div>
@@ -300,11 +462,12 @@
   <nav class="max-w-7xl mx-auto px-6 pb-3">
     <div class="flex gap-2 overflow-x-auto">
       <button class="nav-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all" data-tab="evaluacion">📋 Evaluación</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard"> Dashboard</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard">📊 Dashboard</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="menu">🍽️ Menú</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="planificador">📅 Planificador</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra">🛒 Compra</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="seguimiento">📈 Seguimiento</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio"> Ejercicio</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="salud">❤️ Salud</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
@@ -416,7 +579,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Tus cifras clave calculadas con base científica.</p>
   </div>
   <div id="dashboardNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4">📊</div>
+    <div class="text-6xl mb-4"></div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Aún no has completado la evaluación</h3>
     <p class="text-slate-600 dark:text-slate-400 mb-6">Ve a la sección de Evaluación para calcular tus métricas.</p>
     <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
@@ -454,15 +617,15 @@
         <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Distribución de Macronutrientes</h3>
         <div class="space-y-4">
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🥩 Proteínas</span><span class="text-sm font-bold text-teal-600" id="macroProt">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Proteínas</span><span class="text-sm font-bold text-teal-600" id="macroProt">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barProt" class="h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🍞 Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barCarb" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🥑 Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barGrasas" class="h-full bg-gradient-to-r from-rose-400 to-rose-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
         </div>
@@ -520,9 +683,155 @@
   </div>
   <div id="weekIndicator" class="hidden mb-6 p-4 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-xl text-center">
     <span class="text-lg font-bold text-teal-700 dark:text-teal-300" id="weekText">Semana X de 4</span>
-    <p class="text-sm text-teal-600 dark:text-teal-400 mt-1">Este menú rota automáticamente cada semana</p>
+    <p class="text-sm text-teal-600 dark:text-teal-400 mt-1">Este menú rota automáticamente cada semana del mes</p>
   </div>
   <div id="menuContent" class="hidden grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+</section>
+
+<!-- 🟢 NUEVO FASE 2: PLANIFICADOR SEMANAL -->
+<section id="planificador" class="tab-content">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-slate-800 dark:text-white"> Planificador Semanal</h2>
+    <p class="text-slate-600 dark:text-slate-400 mt-2">Vista completa de tu semana con modo Batch Cooking integrado.</p>
+  </div>
+  
+  <div id="planificadorNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+    <div class="text-6xl mb-4">📅</div>
+    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
+    <p class="text-slate-600 dark:text-slate-400 mb-6">Necesitamos tus datos para generar tu planificador semanal.</p>
+    <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
+  </div>
+  
+  <div id="planificadorContent" class="hidden">
+    <!-- Header del planificador -->
+    <div class="planner-header">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <div class="text-xs opacity-80 uppercase tracking-wide">Planificador</div>
+          <h3 class="text-2xl font-bold" id="plannerMonthYear">—</h3>
+          <div class="text-sm opacity-90 mt-1" id="plannerWeekRange">—</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="navegarSemana(-1)" class="planner-nav-btn">← Anterior</button>
+          <button onclick="navegarSemana(0)" class="planner-nav-btn">Hoy</button>
+          <button onclick="navegarSemana(1)" class="planner-nav-btn">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Toggle de vistas -->
+    <div class="planner-view-toggle">
+      <button class="planner-view-btn active" data-view="calendario" onclick="cambiarVistaPlanificador('calendario')">📅 Vista Calendario</button>
+      <button class="planner-view-btn" data-view="batch" onclick="cambiarVistaPlanificador('batch')">🍳 Batch Cooking</button>
+    </div>
+    
+    <!-- Vista Calendario -->
+    <div id="vistaCalendario">
+      <div class="planner-grid" id="plannerGrid">
+        <!-- Se genera dinámicamente -->
+      </div>
+      
+      <!-- Resumen semanal -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 mb-6">
+        <h3 class="font-bold text-slate-800 dark:text-white mb-4">📊 Resumen Semanal</h3>
+        <div class="grid md:grid-cols-4 gap-4">
+          <div class="text-center p-4 bg-teal-50 dark:bg-teal-900/20 rounded-xl">
+            <div class="text-2xl font-bold text-teal-600" id="resumenKcalSemana">—</div>
+            <div class="text-xs text-slate-600 dark:text-slate-400">Kcal totales semana</div>
+          </div>
+          <div class="text-center p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
+            <div class="text-2xl font-bold text-amber-600" id="resumenKcalDiario">—</div>
+            <div class="text-xs text-slate-600 dark:text-slate-400">Kcal media/día</div>
+          </div>
+          <div class="text-center p-4 bg-rose-50 dark:bg-rose-900/20 rounded-xl">
+            <div class="text-2xl font-bold text-rose-600" id="resumenProteinas">—</div>
+            <div class="text-xs text-slate-600 dark:text-slate-400">Proteína media/día</div>
+          </div>
+          <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+            <div class="text-2xl font-bold text-purple-600" id="resumenVariedad">—</div>
+            <div class="text-xs text-slate-600 dark:text-slate-400">Alimentos diferentes</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex gap-2 flex-wrap">
+        <button onclick="exportarPlanificadorPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📄 Exportar Planificador PDF</button>
+        <button onclick="regenerarMenu(); renderPlanificador();" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2">🔄 Regenerar Menú</button>
+      </div>
+    </div>
+    
+    <!-- Vista Batch Cooking -->
+    <div id="vistaBatch" class="hidden">
+      <div class="batch-container">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="text-4xl">🍳</div>
+          <div>
+            <h3 class="text-xl font-bold text-amber-900 dark:text-amber-300">Modo Batch Cooking</h3>
+            <p class="text-sm text-amber-800 dark:text-amber-400">Preparación del domingo para toda la semana</p>
+          </div>
+        </div>
+        
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-4 mb-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-lg">⏱️</span>
+            <span class="font-bold text-slate-800 dark:text-white">Tiempo total estimado:</span>
+            <span class="text-teal-600 font-bold" id="batchTiempoTotal">2h 30min</span>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400">Recomendamos empezar a las <strong>16:00</strong> para tener todo listo antes de la cena</p>
+        </div>
+        
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+          <span>📋</span> Lista de tareas por bloques de tiempo
+        </h4>
+        <div id="batchTasks">
+          <!-- Se genera dinámicamente -->
+        </div>
+        
+        <div class="batch-summary">
+          <div class="batch-stat">
+            <div class="batch-stat-value" id="batchTuppersComida">7</div>
+            <div class="batch-stat-label">Tuppers comida</div>
+          </div>
+          <div class="batch-stat">
+            <div class="batch-stat-value" id="batchTuppersCena">7</div>
+            <div class="batch-stat-label">Tuppers cena</div>
+          </div>
+          <div class="batch-stat">
+            <div class="batch-stat-value" id="batchDesayunos">7</div>
+            <div class="batch-stat-label">Desayunos listos</div>
+          </div>
+          <div class="batch-stat">
+            <div class="batch-stat-value" id="batchMeriendas">7</div>
+            <div class="batch-stat-label">Meriendas</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-6 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700">
+        <h3 class="font-bold text-slate-800 dark:text-white mb-4">💡 Consejos para Batch Cooking exitoso</h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="p-4 bg-teal-50 dark:bg-teal-900/20 rounded-xl">
+            <div class="font-bold text-teal-800 dark:text-teal-300 mb-2">🧊 Conservación</div>
+            <ul class="text-sm text-slate-700 dark:text-slate-300 space-y-1">
+              <li>• Guarda en tuppers de vidrio</li>
+              <li>• Refrigerar máximo 4 días</li>
+              <li>• Congelar el resto (hasta 3 meses)</li>
+              <li>• Etiqueta con fecha y contenido</li>
+            </ul>
+          </div>
+          <div class="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
+            <div class="font-bold text-amber-800 dark:text-amber-300 mb-2">🔥 Recalentado</div>
+            <ul class="text-sm text-slate-700 dark:text-slate-300 space-y-1">
+              <li>• Microondas: 2-3 min a máxima potencia</li>
+              <li>• Sartén: añade un chorrito de agua</li>
+              <li>• Horno: 180°C durante 10-15 min</li>
+              <li>• Nunca recalentar más de una vez</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- COMPRA -->
@@ -535,7 +844,7 @@
     <button onclick="exportarCompraPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📄 PDF Lista de compra</button>
   </div>
   <div id="compraNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4">🛒</div>
+    <div class="text-6xl mb-4"></div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Genera primero tu menú semanal</h3>
   </div>
   <div id="compraContent" class="hidden grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
@@ -550,17 +859,17 @@
     </div>
     <div class="flex gap-2 flex-wrap">
       <button onclick="exportarProgresoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📈 PDF Progreso</button>
-      <button onclick="exportarInformeCompletoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2"> Informe completo</button>
+      <button onclick="exportarInformeCompletoPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📊 Informe completo</button>
     </div>
   </div>
   <div id="adInline" class="ad-space py-6 mb-6" data-pos="inline">
     <div class="flex items-center justify-center gap-4 flex-wrap">
-      <span class="text-2xl">️</span>
+      <span class="text-2xl">🏋️</span>
       <div class="text-left">
         <div class="font-bold text-slate-600 dark:text-slate-400">¿Buscas suplementación deportiva?</div>
         <div class="text-xs">Descubre nuestra selección de productos recomendados</div>
       </div>
-      <span class="text-2xl"></span>
+      <span class="text-2xl">💊</span>
     </div>
   </div>
   <div class="grid lg:grid-cols-3 gap-6">
@@ -621,7 +930,7 @@
     </div>
     <div class="grid md:grid-cols-2 gap-4" id="ejerciciosList"></div>
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-      <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">📅 Planificación semanal</h3>
+      <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4"> Planificación semanal</h3>
       <div id="planSemanal" class="grid md:grid-cols-7 gap-2"></div>
     </div>
   </div>
@@ -699,7 +1008,7 @@
     </div>
     <div class="space-y-4">
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-        <div class="text-3xl mb-2"></div>
+        <div class="text-3xl mb-2">🤝</div>
         <h4 class="font-bold text-slate-800 dark:text-white mb-2">Normas de la comunidad</h4>
         <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
           <li>✓ Sé respetuoso con los demás</li>
@@ -717,22 +1026,20 @@
   </div>
 </section>
 
-<!--  NUEVO: PERFIL MEJORADO CON FAVORITOS Y EXCLUIDOS -->
+<!-- PERFIL -->
 <section id="perfil" class="tab-content">
   <div class="mb-6">
     <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Mi Perfil</h2>
     <p class="text-slate-600 dark:text-slate-400 mt-2">Gestiona tu información personal, favoritos y preferencias.</p>
   </div>
   
-  <!-- Tabs de perfil -->
   <div class="flex gap-2 mb-6 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
     <button class="profile-tab active" data-ptab="datos">👤 Datos personales</button>
     <button class="profile-tab" data-ptab="favoritos">❤️ Mis favoritos <span id="favCount" class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full ml-1">0</span></button>
     <button class="profile-tab" data-ptab="excluidos">🚫 Excluidos <span id="excCount" class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full ml-1">0</span></button>
-    <button class="profile-tab" data-ptab="password">🔒 Contraseña</button>
+    <button class="profile-tab" data-ptab="password"> Contraseña</button>
   </div>
   
-  <!-- Panel: Datos personales -->
   <div id="perfil-datos" class="profile-panel active">
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="font-bold text-slate-800 dark:text-white mb-4">Información personal</h3>
@@ -750,7 +1057,6 @@
     </div>
   </div>
   
-  <!-- Panel: Favoritos -->
   <div id="perfil-favoritos" class="profile-panel">
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <div class="flex justify-between items-center mb-4">
@@ -763,7 +1069,6 @@
     </div>
   </div>
   
-  <!-- Panel: Excluidos -->
   <div id="perfil-excluidos" class="profile-panel">
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <div class="flex justify-between items-center mb-4">
@@ -776,7 +1081,6 @@
     </div>
   </div>
   
-  <!-- Panel: Contraseña -->
   <div id="perfil-password" class="profile-panel">
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="font-bold text-slate-800 dark:text-white mb-4">Cambiar contraseña</h3>
@@ -799,7 +1103,7 @@
 <section id="admin" class="tab-content">
   <div class="mb-6">
     <div class="flex items-center gap-3">
-      <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-2xl">️</div>
+      <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-2xl">⚙️</div>
       <div>
         <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Panel de Administrador</h2>
         <p class="text-slate-600 dark:text-slate-400 mt-1">Control total de la aplicación sin tocar código.</p>
@@ -827,9 +1131,9 @@
   </div>
 
   <div class="flex gap-2 mb-4 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
-    <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600 whitespace-nowrap" data-atab="usuarios">👥 Usuarios</button>
+    <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600 whitespace-nowrap" data-atab="usuarios"> Usuarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="comentarios">💬 Comentarios</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="publicidad"> Publicidad</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="publicidad">📢 Publicidad</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="alimentos">🍽️ Alimentos</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="config">⚙️ Configuración</button>
   </div>
@@ -878,11 +1182,11 @@
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="font-bold text-slate-800 dark:text-white mb-4">Estado del Sistema</h3>
       <div class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
-        <p>📡 Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
-        <p>👤 Usuario actual: <strong id="configUsuario">—</strong></p>
-        <p>🔐 Rol: <strong id="configRol">—</strong></p>
+        <p> Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
+        <p> Usuario actual: <strong id="configUsuario">—</strong></p>
+        <p> Rol: <strong id="configRol">—</strong></p>
         <p>🌐 Estado de conexión: <strong id="configConexion">—</strong></p>
-        <p>📦 Datos en cola offline: <strong id="configCola">0</strong></p>
+        <p> Datos en cola offline: <strong id="configCola">0</strong></p>
       </div>
       <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
         <h4 class="font-bold text-slate-800 dark:text-white mb-3">Acciones rápidas</h4>
@@ -937,7 +1241,7 @@
           <div class="flex gap-3 mt-3 flex-wrap">
             <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>️</span><span id="recetaTiempo">20 min</span></div>
             <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>🎯</span><span id="recetaDificultad">Fácil</span></div>
-            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>👥</span><span id="recetaPorciones">2 porciones</span></div>
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span></span><span id="recetaPorciones">2 porciones</span></div>
           </div>
         </div>
         <button onclick="cerrarModalReceta()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300"></button>
@@ -953,7 +1257,6 @@
         <div id="recetaPasos"></div>
       </div>
       
-      <!-- 🟢 NUEVO: Sistema de valoración con estrellas -->
       <div class="mb-6 p-4 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
         <h4 class="font-bold text-amber-900 dark:text-amber-300 mb-2 flex items-center gap-2">
           <span>⭐</span> Valora esta receta
@@ -1062,9 +1365,9 @@
       <div class="admin-form-group">
         <label>Grupo</label>
         <select id="alimentoGrupo" class="admin-select">
-          <option value="prot">🥩 Proteínas</option>
+          <option value="prot"> Proteínas</option>
           <option value="carb">🍚 Carbohidratos</option>
-          <option value="verd">🥦 Verduras</option>
+          <option value="verd"> Verduras</option>
           <option value="grasa">🥑 Grasas</option>
           <option value="des">☀️ Desayunos</option>
           <option value="mer">🍎 Meriendas</option>
@@ -1089,10 +1392,10 @@
           <label>Temporada</label>
           <select id="alimentoTemporada" class="admin-select">
             <option value="todo_el_año">🌍 Todo el año</option>
-            <option value="primavera">🌸 Primavera</option>
-            <option value="verano">️ Verano</option>
+            <option value="primavera"> Primavera</option>
+            <option value="verano">☀️ Verano</option>
             <option value="otono">🍂 Otoño</option>
-            <option value="invierno">️ Invierno</option>
+            <option value="invierno">❄️ Invierno</option>
           </select>
         </div>
         <div class="admin-form-group">
@@ -1114,7 +1417,7 @@
       </div>
       
       <div class="border-t border-slate-200 dark:border-slate-700 pt-4 mt-4">
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3"> Receta detallada (opcional)</h4>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3">📖 Receta detallada (opcional)</h4>
         <div class="grid grid-cols-3 gap-3">
           <div class="admin-form-group">
             <label>Tiempo</label>
@@ -1173,17 +1476,19 @@ let chartSemanal = null;
 let currentSwap = null;
 let filtroSoloTemporada = false;
 
-// 🟢 DATOS DINÁMICOS DESDE BD
+// 🟢 NUEVO FASE 2: Offset de semanas para navegación en planificador
+let plannerWeekOffset = 0; // 0 = semana actual, -1 = anterior, +1 = siguiente
+let plannerCurrentView = 'calendario'; // 'calendario' o 'batch'
+
 let FOODS_DB = {};
 let RECIPES_DB = {};
 let ADS_DB = { top: null, sidebar: null, inline: null, footer: null };
 
-// 🟢 NUEVO: Sistema de valoraciones y favoritos
-let USER_RATINGS = {}; // { food_id: { rating, is_favorite, is_excluded } }
-let currentRecipeFoodId = null; // Para saber qué alimento se está valorando
+let USER_RATINGS = {};
+let currentRecipeFoodId = null;
 
 // ==========================================
-//  SISTEMA DE TEMPORADA
+// 🌱 SISTEMA DE TEMPORADA
 // ==========================================
 function obtenerEstacion() {
   const mes = new Date().getMonth();
@@ -1223,9 +1528,10 @@ function getBadgeTemporada(alimento) {
 
 function toggleFiltroTemporada() {
   filtroSoloTemporada = document.getElementById('soloTemporada').checked;
-  mostrarToast(filtroSoloTemporada ? '🌱 Filtro de temporada activado' : '🌍 Mostrando todos los alimentos');
+  mostrarToast(filtroSoloTemporada ? ' Filtro de temporada activado' : ' Mostrando todos los alimentos');
   if (menuData) {
     generarMenu();
+    renderPlanificador();
   }
 }
 
@@ -1239,16 +1545,11 @@ function actualizarBannerEstacion() {
 // ==========================================
 // ⭐ SISTEMA DE VALORACIONES Y FAVORITOS
 // ==========================================
-
-// Cargar valoraciones del usuario desde BD
 async function cargarValoracionesUsuario() {
   if (!currentUser) return;
   try {
     const { data, error } = await sb.from('user_ratings').select('*').eq('user_id', currentUser.id);
-    if (error) {
-      console.error('Error cargando valoraciones:', error);
-      return;
-    }
+    if (error) { console.error('Error cargando valoraciones:', error); return; }
     USER_RATINGS = {};
     if (data) {
       data.forEach(r => {
@@ -1259,13 +1560,9 @@ async function cargarValoracionesUsuario() {
         };
       });
     }
-    console.log(`[NutriPro] Cargadas ${Object.keys(USER_RATINGS).length} valoraciones`);
-  } catch (err) {
-    console.error('Error en cargarValoracionesUsuario:', err);
-  }
+  } catch (err) { console.error('Error en cargarValoracionesUsuario:', err); }
 }
 
-// Guardar/actualizar valoración en BD
 async function guardarValoracion(foodId, updates) {
   if (!currentUser) return;
   try {
@@ -1280,97 +1577,70 @@ async function guardarValoracion(foodId, updates) {
     };
     
     const { error } = await sb.from('user_ratings').upsert(data, { onConflict: 'user_id,food_id' });
-    if (error) {
-      console.error('Error guardando valoración:', error);
-      mostrarToast('❌ Error al guardar');
-      return false;
-    }
+    if (error) { console.error('Error guardando valoración:', error); mostrarToast('❌ Error al guardar'); return false; }
     
-    // Actualizar local
     USER_RATINGS[foodId] = {
       rating: data.rating,
       is_favorite: data.is_favorite,
       is_excluded: data.is_excluded
     };
     return true;
-  } catch (err) {
-    console.error('Error en guardarValoracion:', err);
-    return false;
-  }
+  } catch (err) { console.error('Error en guardarValoracion:', err); return false; }
 }
 
-// Toggle favorito
 async function toggleFavorito(foodId, event) {
   if (event) { event.stopPropagation(); event.preventDefault(); }
   const current = USER_RATINGS[foodId] || {};
   const newFav = !current.is_favorite;
-  
   const ok = await guardarValoracion(foodId, { is_favorite: newFav });
   if (ok) {
-    mostrarToast(newFav ? '❤️ Añadido a favoritos' : '💔 Eliminado de favoritos');
-    // Actualizar UI si estamos en el menú
-    if (menuData) renderMenu();
-    // Actualizar contadores en perfil
+    mostrarToast(newFav ? '❤️ Añadido a favoritos' : ' Eliminado de favoritos');
+    if (menuData) { renderMenu(); renderPlanificador(); }
     actualizarContadoresPerfil();
     renderMisFavoritos();
     renderMisExcluidos();
   }
 }
 
-// Toggle excluido
 async function toggleExcluido(foodId, event) {
   if (event) { event.stopPropagation(); event.preventDefault(); }
   const current = USER_RATINGS[foodId] || {};
   const newExc = !current.is_excluded;
-  
   const ok = await guardarValoracion(foodId, { is_excluded: newExc });
   if (ok) {
     mostrarToast(newExc ? '🚫 Alimento excluido del menú' : '✅ Alimento incluido de nuevo');
-    if (menuData) renderMenu();
+    if (menuData) { renderMenu(); renderPlanificador(); }
     actualizarContadoresPerfil();
     renderMisFavoritos();
     renderMisExcluidos();
   }
 }
 
-// Guardar valoración con estrellas
 async function guardarRatingEstrellas(rating) {
   if (!currentRecipeFoodId) return;
   const ok = await guardarValoracion(currentRecipeFoodId, { rating });
-  if (ok) {
-    mostrarToast(`⭐ Valoración guardada: ${rating}/5`);
-  }
+  if (ok) { mostrarToast(`⭐ Valoración guardada: ${rating}/5`); }
 }
 
-// Renderizar estrellas en el modal de receta
 function renderStars(rating) {
   const stars = document.querySelectorAll('#starRating .star');
   stars.forEach((star, idx) => {
     star.classList.remove('filled', 'hovered');
     if (idx < rating) star.classList.add('filled');
   });
-  const texts = ['Sin valorar', 'Malo 😕', 'Regular 😐', 'Bueno 🙂', 'Muy bueno 😊', 'Excelente 🤩'];
+  const texts = ['Sin valorar', 'Malo 😕', 'Regular 😐', 'Bueno 🙂', 'Muy bueno 😊', 'Excelente '];
   document.getElementById('ratingText').textContent = texts[rating] || 'Sin valorar';
 }
 
-// Inicializar eventos de estrellas
 function initStarRating() {
   const container = document.getElementById('starRating');
   const stars = container.querySelectorAll('.star');
-  let currentHover = 0;
-  
   stars.forEach(star => {
     star.addEventListener('mouseenter', () => {
       const val = parseInt(star.dataset.value);
-      stars.forEach((s, idx) => {
-        s.classList.toggle('hovered', idx < val);
-      });
+      stars.forEach((s, idx) => { s.classList.toggle('hovered', idx < val); });
     });
-    
-    star.addEventListener('mouseleave', () => {
-      stars.forEach(s => s.classList.remove('hovered'));
-    });
-    
+    star.addEventListener('mouseleave', () => { stars.forEach(s => s.classList.remove('hovered')); });
     star.addEventListener('click', async () => {
       const rating = parseInt(star.dataset.value);
       renderStars(rating);
@@ -1379,16 +1649,13 @@ function initStarRating() {
   });
 }
 
-// Renderizar lista de favoritos en perfil
 function renderMisFavoritos() {
   const cont = document.getElementById('listaFavoritos');
   const favoritos = Object.entries(USER_RATINGS).filter(([_, r]) => r.is_favorite);
-  
   if (favoritos.length === 0) {
     cont.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">Aún no tienes favoritos. Marca alimentos con ❤️ en el menú.</p>';
     return;
   }
-  
   cont.innerHTML = favoritos.map(([foodId, r]) => {
     const food = FOODS_DB[foodId];
     if (!food) return '';
@@ -1400,25 +1667,22 @@ function renderMisFavoritos() {
           <div class="font-semibold text-slate-800 dark:text-white text-sm truncate">${DOMPurify.sanitize(food.nombre)}</div>
           <div class="flex items-center gap-2 mt-1">
             <span class="text-xs text-amber-600">${starsHtml}</span>
-            <span class="macro-chip bg-slate-100 dark:bg-slate-700 text-xs"> ${food.kcal} kcal</span>
+            <span class="macro-chip bg-slate-100 dark:bg-slate-700 text-xs">🔥 ${food.kcal} kcal</span>
           </div>
         </div>
-        <button onclick="toggleFavorito('${foodId}')" class="admin-btn admin-btn-danger" title="Quitar de favoritos"></button>
+        <button onclick="toggleFavorito('${foodId}')" class="admin-btn admin-btn-danger" title="Quitar de favoritos">🗑️</button>
       </div>
     `;
   }).join('');
 }
 
-// Renderizar lista de excluidos en perfil
 function renderMisExcluidos() {
   const cont = document.getElementById('listaExcluidos');
   const excluidos = Object.entries(USER_RATINGS).filter(([_, r]) => r.is_excluded);
-  
   if (excluidos.length === 0) {
     cont.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">No has excluido ningún alimento.</p>';
     return;
   }
-  
   cont.innerHTML = excluidos.map(([foodId, r]) => {
     const food = FOODS_DB[foodId];
     if (!food) return '';
@@ -1435,7 +1699,6 @@ function renderMisExcluidos() {
   }).join('');
 }
 
-// Actualizar contadores en tabs de perfil
 function actualizarContadoresPerfil() {
   const favs = Object.values(USER_RATINGS).filter(r => r.is_favorite).length;
   const excs = Object.values(USER_RATINGS).filter(r => r.is_excluded).length;
@@ -1517,14 +1780,14 @@ async function processOfflineQueue() {
   else { localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(newQueue)); }
   if (successCount > 0) {
     mostrarToast(`✅ ${successCount} registro(s) sincronizado(s).`);
-    if (userData) { actualizarDashboard(); generarMenu(); generarListaCompra(); generarEjercicio(); cargarDatosEnFormularioEvaluacion(); }
+    if (userData) { actualizarDashboard(); generarMenu(); generarListaCompra(); generarEjercicio(); cargarDatosEnFormularioEvaluacion(); renderPlanificador(); }
     renderSeguimiento();
     renderComentarios();
   }
 }
 
 window.addEventListener('online', () => { appIsOnline = true; updateOnlineStatusUI(); checkRealConnection().then(() => { if (appIsOnline && currentUser) processOfflineQueue(); }); });
-window.addEventListener('offline', () => { appIsOnline = false; mostrarToast(' Sin conexión. Los datos se guardarán localmente.'); updateOnlineStatusUI(); });
+window.addEventListener('offline', () => { appIsOnline = false; mostrarToast('🔴 Sin conexión. Los datos se guardarán localmente.'); updateOnlineStatusUI(); });
 
 function saveUserDataToLocal(data) { localStorage.setItem('nutripro_user_data', JSON.stringify(data)); }
 
@@ -1582,10 +1845,10 @@ async function checkAuth() {
     currentUser = { id: session.user.id, email: session.user.email, nombre: profile.nombre, rol: profile.rol };
     showMainApp();
     await cargarDatosDinamicos();
-    await cargarValoracionesUsuario(); // 🟢 NUEVO
+    await cargarValoracionesUsuario();
     await loadUserDataFromDB();
     actualizarBannerEstacion();
-    actualizarContadoresPerfil(); // 🟢 NUEVO
+    actualizarContadoresPerfil();
     initDarkMode();
     await checkRealConnection();
     if (appIsOnline) { await processOfflineQueue(); }
@@ -1623,9 +1886,7 @@ async function cargarDatosDinamicos() {
       });
       renderAnuncios();
     }
-  } catch (err) {
-    console.error('Error cargando datos dinámicos:', err);
-  }
+  } catch (err) { console.error('Error cargando datos dinámicos:', err); }
 }
 
 function renderAnuncios() {
@@ -1680,7 +1941,7 @@ function updateUserUI() {
   document.getElementById('dropdownEmail').textContent = currentUser.email;
   const roleEl = document.getElementById('dropdownRole');
   if (currentUser.rol === 'admin') {
-    roleEl.innerHTML = '<span class="status-badge bg-purple-100 text-purple-700">⚙️ Administrador</span>';
+    roleEl.innerHTML = '<span class="status-badge bg-purple-100 text-purple-700">️ Administrador</span>';
     document.getElementById('adminMenuItem').classList.remove('hidden');
   } else {
     roleEl.innerHTML = '<span class="status-badge bg-teal-100 text-teal-700">✓ Usuario</span>';
@@ -1730,7 +1991,7 @@ document.getElementById('formRegister').addEventListener('submit', async (e) => 
   btn.textContent = 'Creando cuenta...';
   try {
     const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { nombre } } });
-    if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } 
+    if (error) { err.textContent = ' ' + error.message; err.classList.remove('hidden'); } 
     else {
       if (data.session) { mostrarToast('✅ Cuenta creada.'); setTimeout(() => location.reload(), 1000); } 
       else { alert('✅ Revisa tu email para confirmar la cuenta.'); document.querySelector('.auth-tab[data-auth="login"]').click(); }
@@ -1764,6 +2025,7 @@ async function loadUserDataFromDB() {
       generarListaCompra();
       generarEjercicio();
       cargarDatosEnFormularioEvaluacion();
+      renderPlanificador();
     }
     const { data: wData } = await sb.from('weight_logs').select('*').eq('user_id', currentUser.id).order('fecha', { ascending: true });
     if (wData) {
@@ -1807,6 +2069,7 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
     generarListaCompra();
     generarEjercicio();
     cargarDatosEnFormularioEvaluacion();
+    renderPlanificador();
     switchTab('dashboard');
     return;
   }
@@ -1822,6 +2085,7 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
       generarListaCompra();
       generarEjercicio();
       cargarDatosEnFormularioEvaluacion();
+      renderPlanificador();
       switchTab('dashboard');
       mostrarToast('✅ Evaluación guardada');
     }
@@ -1854,7 +2118,7 @@ async function agregarPeso() {
 
 async function publicarComentario() {
   const texto = document.getElementById('nuevoComentario').value.trim();
-  if (!texto) { mostrarToast('️ Escribe un comentario'); return; }
+  if (!texto) { mostrarToast('⚠️ Escribe un comentario'); return; }
   const anonimo = document.getElementById('comentarioAnonimo').checked;
   const commentData = { texto, anonimo };
   if (!appIsOnline) {
@@ -1877,7 +2141,7 @@ async function renderComentarios() {
     const { data: comments } = await sb.from('comments').select('*').order('created_at', { ascending: false });
     const cont = document.getElementById('listaComentarios');
     if (!comments || comments.length === 0) {
-      cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia 💬</div>';
+      cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia </div>';
       return;
     }
     cont.innerHTML = comments.map(c => {
@@ -1942,16 +2206,13 @@ function actualizarDashboard() {
   document.getElementById('barGrasas').style.width = pctGrasas + '%';
 }
 
-function obtenerReceta(alimentoId) {
-  return RECIPES_DB[alimentoId] || null;
-}
+function obtenerReceta(alimentoId) { return RECIPES_DB[alimentoId] || null; }
 
-// 🟢 NUEVO: Modal de receta con sistema de valoración
 function abrirModalReceta(alimentoId) {
   const alimento = FOODS_DB[alimentoId];
   if (!alimento) return;
   const receta = obtenerReceta(alimentoId);
-  currentRecipeFoodId = alimentoId; // 🟢 Guardar ID actual para valoración
+  currentRecipeFoodId = alimentoId;
   document.getElementById('recetaTitulo').textContent = alimento.nombre;
   if (receta) {
     document.getElementById('recetaTiempo').textContent = receta.tiempo || '—';
@@ -1970,18 +2231,12 @@ function abrirModalReceta(alimentoId) {
     document.getElementById('recetaPasos').innerHTML = '';
     document.getElementById('recetaConsejo').classList.add('hidden');
   }
-  
-  // 🟢 NUEVO: Mostrar valoración actual del usuario
   const rating = USER_RATINGS[alimentoId]?.rating || 0;
   renderStars(rating);
-  
   document.getElementById('modalReceta').classList.remove('hidden');
 }
 
-function cerrarModalReceta() { 
-  document.getElementById('modalReceta').classList.add('hidden'); 
-  currentRecipeFoodId = null;
-}
+function cerrarModalReceta() { document.getElementById('modalReceta').classList.add('hidden'); currentRecipeFoodId = null; }
 function toggleIngrediente(el) { el.classList.toggle('checked'); const cb = el.querySelector('input[type="checkbox"]'); cb.checked = !cb.checked; }
 
 function getGrupoById(id) {
@@ -1991,26 +2246,12 @@ function getGrupoById(id) {
 }
 
 function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-function filtrarPorTemporada(arr) {
-  if (!filtroSoloTemporada) return arr;
-  const enTemporada = arr.filter(a => esDeTemporada(a));
-  return enTemporada.length > 0 ? enTemporada : arr;
-}
-
-// 🟢 NUEVO: Función para excluir alimentos marcados como "no me gusta"
-function excluirNoMeGusta(arr) {
-  return arr.filter(a => !USER_RATINGS[a.id]?.is_excluded);
-}
-
-// 🟢 NUEVO: Función para priorizar favoritos (mayor probabilidad de ser elegidos)
+function filtrarPorTemporada(arr) { if (!filtroSoloTemporada) return arr; const enTemporada = arr.filter(a => esDeTemporada(a)); return enTemporada.length > 0 ? enTemporada : arr; }
+function excluirNoMeGusta(arr) { return arr.filter(a => !USER_RATINGS[a.id]?.is_excluded); }
 function pickRandomConFavoritos(arr) {
   if (arr.length === 0) return null;
   const favoritos = arr.filter(a => USER_RATINGS[a.id]?.is_favorite);
-  // 70% de probabilidad de elegir un favorito si hay
-  if (favoritos.length > 0 && Math.random() < 0.7) {
-    return pickRandom(favoritos);
-  }
+  if (favoritos.length > 0 && Math.random() < 0.7) return pickRandom(favoritos);
   return pickRandom(arr);
 }
 
@@ -2061,11 +2302,10 @@ function generarMenu() {
   document.getElementById('menuContent').classList.remove('hidden');
   document.getElementById('weekIndicator').classList.remove('hidden');
   
+  // 🟢 CORRECCIÓN FASE 2: Usar semana del mes en lugar de semana del año
   const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const diff = now - start + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
-  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const menuIndex = Math.floor(dayOfYear / 7) % 4;
+  const dayOfMonth = now.getDate();
+  const menuIndex = Math.floor((dayOfMonth - 1) / 7); // 0, 1, 2, o 3
   document.getElementById('weekText').textContent = `Semana ${menuIndex + 1} de 4`;
   
   const menus = [];
@@ -2073,17 +2313,13 @@ function generarMenu() {
   for (let m = 0; m < 4; m++) {
     const menu = [];
     planSemanal.forEach((plan, diaIdx) => {
-      // 🟢 Usar pickRandomConFavoritos para priorizar favoritos
       const protComida = pickRandomConFavoritos(plan.protComida);
       const protCena = pickRandomConFavoritos(plan.protCena.filter(p => p.id !== protComida.id) || plan.protCena);
-      
       const carbOpciones = grupos.carb.filter(c => !/gazpacho|salmorejo|escalivada/i.test(c.nombre));
       const comidaCarb = pickRandomConFavoritos(carbOpciones);
-      
       const verdurasDisponibles = filtrarPorTemporada(grupos.verd);
       const verdComida = pickRandomConFavoritos(verdurasDisponibles);
       const verdCena = pickRandomConFavoritos(verdurasDisponibles.filter(v => v.id !== verdComida.id) || verdurasDisponibles);
-      
       const comidaGrasa = pickRandomConFavoritos(grupos.grasa);
       const desayuno = pickRandomConFavoritos(grupos.des);
       const merienda = pickRandomConFavoritos(grupos.mer);
@@ -2091,17 +2327,9 @@ function generarMenu() {
       menu.push({
         dia: plan.dia,
         desayuno: { ...desayuno },
-        comida: {
-          prot: { ...protComida },
-          carb: { ...comidaCarb },
-          verdura: { ...verdComida },
-          grasa: { ...comidaGrasa }
-        },
+        comida: { prot: { ...protComida }, carb: { ...comidaCarb }, verdura: { ...verdComida }, grasa: { ...comidaGrasa } },
         merienda: { ...merienda },
-        cena: {
-          prot: { ...protCena },
-          verdura: { ...verdCena }
-        }
+        cena: { prot: { ...protCena }, verdura: { ...verdCena } }
       });
     });
     menus.push(menu);
@@ -2135,7 +2363,6 @@ function calcularKcalDia(dia) {
 function regenerarMenu() { sustituciones = {}; generarMenu(); }
 function resetSustituciones() { if (!confirm('¿Restaurar menú original?')) return; sustituciones = {}; generarMenu(); }
 
-// 🟢 NUEVO: renderMenu con botones de favorito y excluido
 function renderMenu() {
   const cont = document.getElementById('menuContent');
   cont.innerHTML = '';
@@ -2160,12 +2387,12 @@ function renderMenu() {
             <div class="flex gap-1 mt-1.5 flex-wrap flex-wrap">
               ${badgeTemporada}
               ${ratingStars ? `<span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">${ratingStars}</span>` : ''}
-              <span class="macro-chip bg-white/70 dark:bg-slate-700">🔥 ${item.kcal} kcal</span>
+              <span class="macro-chip bg-white/70 dark:bg-slate-700"> ${item.kcal} kcal</span>
               ${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}
             </div>
           </div>
           <div class="flex flex-col gap-1">
-            <button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍</button>
+            <button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨🍳</button>
             <button class="fav-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isFav ? 'fav-icon-active' : ''}" onclick="toggleFavorito('${item.id}', event)" title="${isFav ? 'Quitar de favoritos' : 'Añadir a favoritos'}">${isFav ? '❤️' : '🤍'}</button>
             <button class="exclude-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isExc ? 'exclude-icon-active' : ''}" onclick="toggleExcluido('${item.id}', event)" title="${isExc ? 'Incluir en menú' : 'Excluir del menú'}">${isExc ? '🚫' : '⊘'}</button>
           </div>
@@ -2180,7 +2407,6 @@ function renderMenu() {
   });
 }
 
-// 🟢 NUEVO: Modal de sustitución con favoritos primero y excluidos al final
 function abrirModalSustitucion(diaIdx, path, currentId) {
   const current = FOODS_DB[currentId];
   if (!current) return;
@@ -2193,7 +2419,6 @@ function abrirModalSustitucion(diaIdx, path, currentId) {
   const cont = document.getElementById('modalOpciones');
   cont.innerHTML = '';
   
-  // 🟢 Ordenar: 1) actuales, 2) favoritos, 3) mejor valorados, 4) por kcal, 5) excluidos al final
   const ordenados = [...grupo].sort((a, b) => {
     if (a.id === currentId) return -1;
     if (b.id === currentId) return 1;
@@ -2258,6 +2483,7 @@ function aplicarSustitucion(nuevoId) {
   cerrarModal();
   renderMenu();
   renderListaCompra();
+  renderPlanificador();
   mostrarToast(`✓ ${nuevo.nombre} sustituido`);
 }
 
@@ -2286,8 +2512,8 @@ function categorizarIngrediente(ing) {
   if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|lentejas|garbanzos|alubias|ternera/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
   if (/arroz|quinoa|pasta|batata|avena|pan|cuscús|bulgur|boniato|tortita/.test(lower)) return { cat: '🍚 Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
   if (/aceite|aguacate|almendra|nueces|pistacho|anacardo|semilla|tahini|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
-  if (/manzana|plátano|pera|fresa|cereza|sandía|melón|melocotón|nectarina|albaricoque|higo|granada|uva|caqui|mandarina|naranja|kiwi|pomelo|lima|frutos rojos|membrillo|pasas/.test(lower)) return { cat: ' Frutas', color: 'from-red-500 to-rose-500' };
-  if (/brócoli|espinaca|tomate|calabacín|lechuga|pepino|cebolla|pimiento|berenjena|coliflor|alcachofa|espárrago|judía|acelga|col|seta|champiñón|puerro|hinojo|apio|remolacha|zanahoria|guisante|haba|calabaza|col lombarda|coles de bruselas|menestra|pisto|escalivada|gazpacho|salmorejo|hummus/.test(lower)) return { cat: ' Verduras', color: 'from-green-500 to-emerald-500' };
+  if (/manzana|plátano|pera|fresa|cereza|sandía|melón|melocotón|nectarina|albaricoque|higo|granada|uva|caqui|mandarina|naranja|kiwi|pomelo|lima|frutos rojos|membrillo|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
+  if (/brócoli|espinaca|tomate|calabacín|lechuga|pepino|cebolla|pimiento|berenjena|coliflor|alcachofa|espárrago|judía|acelga|col|seta|champiñón|puerro|hinojo|apio|remolacha|zanahoria|guisante|haba|calabaza|col lombarda|coles de bruselas|menestra|pisto|escalivada|gazpacho|salmorejo|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
   return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
 }
 
@@ -2362,7 +2588,7 @@ function exportarCompraPDF() {
     yPos += 8;
   });
   doc.save(`Lista_Compra_NutriPro.pdf`);
-  mostrarToast(' Lista exportada');
+  mostrarToast('📄 Lista exportada');
 }
 
 function exportarProgresoPDF() {
@@ -2391,11 +2617,11 @@ function exportarInformeCompletoPDF() {
   const lines = [`Usuario: ${currentUser.nombre}`, `TMB: ${userData.tmb} kcal/día`, `GETD: ${userData.getd} kcal/día`, `Objetivo: ${userData.caloriasObjetivo} kcal/día`, `IMC: ${userData.imc}`, `Peso actual: ${userData.peso} kg`, `Proteínas: ${userData.protG}g | Carbohidratos: ${userData.carbG}g | Grasas: ${userData.grasasG}g`];
   lines.forEach(l => { doc.text(l, 14, yPos); yPos += 8; });
   doc.save(`Informe_NutriPro.pdf`);
-  mostrarToast('📊 Informe exportado');
+  mostrarToast(' Informe exportado');
 }
 
 const HABITOS_SALUD = [
-  { icon: '🚭', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos.', videos: ['beneficios de dejar de fumar'] },
+  { icon: '', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos.', videos: ['beneficios de dejar de fumar'] },
   { icon: '😴', titulo: 'Dormir 7-9 horas', texto: 'Regula hormonas del hambre y saciedad.', videos: ['higiene del sueño'] },
   { icon: '💧', titulo: 'Hidratación', texto: 'Mejora rendimiento y saciedad.', videos: ['cuánta agua beber'] },
   { icon: '🚶', titulo: 'Moverse cada día', texto: 'El NEAT suma al gasto diario.', videos: ['qué es el NEAT'] }
@@ -2466,7 +2692,214 @@ function renderAnalisis() {
 }
 
 // ==========================================
-//  PANEL ADMIN COMPLETO
+// 🟢 NUEVO FASE 2: PLANIFICADOR SEMANAL
+// ==========================================
+
+// Obtener el lunes de la semana actual + offset
+function getLunesSemana(offset = 0) {
+  const hoy = new Date();
+  const diaSemana = hoy.getDay(); // 0=domingo, 1=lunes...
+  const diff = hoy.getDate() - diaSemana + (diaSemana === 0 ? -6 : 1) + (offset * 7);
+  const lunes = new Date(hoy);
+  lunes.setDate(diff);
+  lunes.setHours(0, 0, 0, 0);
+  return lunes;
+}
+
+function getDomingoSemana(offset = 0) {
+  const lunes = getLunesSemana(offset);
+  const domingo = new Date(lunes);
+  domingo.setDate(lunes.getDate() + 6);
+  return domingo;
+}
+
+function formatDateShort(date) {
+  return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+}
+
+function isToday(date) {
+  const hoy = new Date();
+  return date.toDateString() === hoy.toDateString();
+}
+
+function navegarSemana(offset) {
+  if (offset === 0) {
+    plannerWeekOffset = 0;
+  } else {
+    plannerWeekOffset += offset;
+  }
+  renderPlanificador();
+}
+
+function cambiarVistaPlanificador(vista) {
+  plannerCurrentView = vista;
+  document.querySelectorAll('.planner-view-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === vista);
+  });
+  document.getElementById('vistaCalendario').classList.toggle('hidden', vista !== 'calendario');
+  document.getElementById('vistaBatch').classList.toggle('hidden', vista !== 'batch');
+}
+
+function renderPlanificador() {
+  if (!userData || !menuData) {
+    document.getElementById('planificadorNoData').classList.remove('hidden');
+    document.getElementById('planificadorContent').classList.add('hidden');
+    return;
+  }
+  document.getElementById('planificadorNoData').classList.add('hidden');
+  document.getElementById('planificadorContent').classList.remove('hidden');
+  
+  const lunes = getLunesSemana(plannerWeekOffset);
+  const domingo = getDomingoSemana(plannerWeekOffset);
+  
+  // Actualizar header
+  const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  document.getElementById('plannerMonthYear').textContent = `${meses[lunes.getMonth()]} ${lunes.getFullYear()}`;
+  document.getElementById('plannerWeekRange').textContent = `${formatDateShort(lunes)} - ${formatDateShort(domingo)}`;
+  
+  // Renderizar grid de días
+  const grid = document.getElementById('plannerGrid');
+  grid.innerHTML = '';
+  const diasCortos = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
+  
+  let totalKcalSemana = 0;
+  let totalProteinas = 0;
+  const alimentosUsados = new Set();
+  
+  for (let i = 0; i < 7; i++) {
+    const fecha = new Date(lunes);
+    fecha.setDate(lunes.getDate() + i);
+    
+    // Usar el menú correspondiente (rotación de 4 semanas)
+    const menuIdx = i;
+    const diaMenu = menuData.menu[menuIdx];
+    const kcalDia = calcularKcalDia(diaMenu);
+    totalKcalSemana += kcalDia;
+    totalProteinas += (diaMenu.comida.prot.prot || 0) + (diaMenu.cena.prot.prot || 0);
+    
+    // Registrar alimentos usados
+    [diaMenu.desayuno, diaMenu.comida.prot, diaMenu.comida.carb, diaMenu.comida.verdura, diaMenu.comida.grasa, diaMenu.merienda, diaMenu.cena.prot, diaMenu.cena.verdura].forEach(a => {
+      if (a && a.id) alimentosUsados.add(a.id);
+    });
+    
+    const card = document.createElement('div');
+    card.className = `planner-day-card ${isToday(fecha) ? 'today' : ''}`;
+    card.onclick = () => {
+      switchTab('menu');
+      // Scroll al día correspondiente
+      setTimeout(() => {
+        const cards = document.querySelectorAll('#menuContent > div');
+        if (cards[menuIdx]) cards[menuIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    };
+    
+    card.innerHTML = `
+      <div class="planner-day-name">${diasCortos[i]}</div>
+      <div class="planner-day-date">${formatDateShort(fecha)}${isToday(fecha) ? ' · Hoy' : ''}</div>
+      <div class="planner-meal planner-meal-breakfast" title="${DOMPurify.sanitize(diaMenu.desayuno.nombre)}">☀️ ${diaMenu.desayuno.nombre.substring(0, 25)}${diaMenu.desayuno.nombre.length > 25 ? '...' : ''}</div>
+      <div class="planner-meal planner-meal-lunch" title="${DOMPurify.sanitize(diaMenu.comida.prot.nombre)}">🍽️ ${diaMenu.comida.prot.nombre.substring(0, 25)}${diaMenu.comida.prot.nombre.length > 25 ? '...' : ''}</div>
+      <div class="planner-meal planner-meal-dinner" title="${DOMPurify.sanitize(diaMenu.cena.prot.nombre)}">🌙 ${diaMenu.cena.prot.nombre.substring(0, 25)}${diaMenu.cena.prot.nombre.length > 25 ? '...' : ''}</div>
+      <div class="planner-kcal">🔥 ${kcalDia} kcal</div>
+    `;
+    grid.appendChild(card);
+  }
+  
+  // Actualizar resumen
+  document.getElementById('resumenKcalSemana').textContent = totalKcalSemana.toLocaleString('es-ES');
+  document.getElementById('resumenKcalDiario').textContent = Math.round(totalKcalSemana / 7).toLocaleString('es-ES');
+  document.getElementById('resumenProteinas').textContent = Math.round(totalProteinas / 7) + 'g';
+  document.getElementById('resumenVariedad').textContent = alimentosUsados.size;
+  
+  // Renderizar Batch Cooking
+  renderBatchCooking();
+}
+
+function renderBatchCooking() {
+  if (!menuData) return;
+  
+  // Agrupar tareas por tipo de preparación
+  const tareas = [
+    { tiempo: '16:00', duracion: '30 min', tarea: '🫘 Cocer legumbres (garbanzos, lentejas, alubias)', tipo: 'base' },
+    { tiempo: '16:30', duracion: '45 min', tarea: ' Cocinar arroces y pastas para la semana', tipo: 'base' },
+    { tiempo: '17:00', duracion: '40 min', tarea: ' Asar verduras (berenjenas, pimientos, calabacín)', tipo: 'verduras' },
+    { tiempo: '17:30', duracion: '45 min', tarea: '🍗 Cocinar proteínas (pollo, pescado, huevos)', tipo: 'proteinas' },
+    { tiempo: '18:00', duracion: '20 min', tarea: '🥗 Preparar ensaladas y gazpacho', tipo: 'frio' },
+    { tiempo: '18:20', duracion: '25 min', tarea: '📦 Envasar en tuppers y etiquetar', tipo: 'envasado' },
+    { tiempo: '18:45', duracion: '15 min', tarea: '🧹 Limpieza de cocina', tipo: 'limpieza' }
+  ];
+  
+  const cont = document.getElementById('batchTasks');
+  cont.innerHTML = tareas.map((t, i) => `
+    <div class="batch-task" onclick="this.classList.toggle('completed')">
+      <input type="checkbox" class="batch-check">
+      <div class="batch-time">${t.tiempo}</div>
+      <div class="flex-1">
+        <div class="font-semibold text-slate-800 dark:text-white text-sm">${t.tarea}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">⏱️ ${t.duracion}</div>
+      </div>
+    </div>
+  `).join('');
+  
+  // Actualizar contadores
+  document.getElementById('batchTuppersComida').textContent = '7';
+  document.getElementById('batchTuppersCena').textContent = '7';
+  document.getElementById('batchDesayunos').textContent = '7';
+  document.getElementById('batchMeriendas').textContent = '7';
+}
+
+// 🟢 NUEVO FASE 2: Exportar planificador a PDF
+function exportarPlanificadorPDF() {
+  if (!menuData) { alert('Genera tu menú primero'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('landscape');
+  
+  doc.setFillColor(13, 148, 136);
+  doc.rect(0, 0, 297, 25, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.setFont('helvetica', 'bold');
+  doc.text('NutriPro · Planificador Semanal', 14, 17);
+  
+  doc.setTextColor(100, 100, 100);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  const lunes = getLunesSemana(plannerWeekOffset);
+  const domingo = getDomingoSemana(plannerWeekOffset);
+  doc.text(`Semana del ${formatDateShort(lunes)} al ${formatDateShort(domingo)}`, 14, 32);
+  
+  let yPos = 40;
+  const diasCortos = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  
+  menuData.menu.forEach((dia, i) => {
+    if (yPos > 180) { doc.addPage(); yPos = 20; }
+    
+    doc.setFillColor(240, 253, 250);
+    doc.rect(14, yPos - 5, 270, 8, 'F');
+    doc.setTextColor(13, 148, 136);
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${diasCortos[i]} - ${calcularKcalDia(dia)} kcal`, 16, yPos);
+    yPos += 8;
+    
+    doc.setTextColor(50, 50, 50);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    const rows = [
+      ['☀️ Desayuno', dia.desayuno.nombre],
+      ['️ Comida', `${dia.comida.prot.nombre} + ${dia.comida.carb.nombre} + ${dia.comida.verdura.nombre} + ${dia.comida.grasa.nombre}`],
+      ['🍎 Merienda', dia.merienda.nombre],
+      ['🌙 Cena', `${dia.cena.prot.nombre} + ${dia.cena.verdura.nombre}`]
+    ];
+    doc.autoTable({ startY: yPos, body: rows, theme: 'plain', margin: { left: 14, right: 14 }, columnStyles: { 0: { cellWidth: 40, fontStyle: 'bold' } } });
+    yPos = doc.lastAutoTable.finalY + 6;
+  });
+  
+  doc.save(`Planificador_NutriPro.pdf`);
+  mostrarToast(' Planificador exportado');
+}
+
+// ==========================================
+// 🟢 PANEL ADMIN COMPLETO
 // ==========================================
 async function cargarPanelAdmin() {
   if (!currentUser || currentUser.rol !== 'admin') return;
@@ -2504,8 +2937,8 @@ async function cargarPanelAdmin() {
                   <div class="font-semibold text-slate-800 dark:text-white text-sm truncate">${DOMPurify.sanitize(u.nombre || 'Sin nombre')}</div>
                   <div class="text-xs text-slate-500 dark:text-slate-400 truncate">${idCorto}</div>
                   <div class="flex gap-1 mt-1 flex-wrap">
-                    ${esAdmin ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">⚙️ Admin</span>' : '<span class="status-badge bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">👤 Usuario</span>'}
-                    ${estaBloqueado ? '<span class="status-badge bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"> Bloqueado</span>' : '<span class="status-badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">✅ Activo</span>'}
+                    ${esAdmin ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">⚙️ Admin</span>' : '<span class="status-badge bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"> Usuario</span>'}
+                    ${estaBloqueado ? '<span class="status-badge bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">🚫 Bloqueado</span>' : '<span class="status-badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">✅ Activo</span>'}
                     ${esYo ? '<span class="status-badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">👤 Tú</span>' : ''}
                   </div>
                 </div>
@@ -2521,7 +2954,7 @@ async function cargarPanelAdmin() {
     }
     document.getElementById('configUsuario').textContent = currentUser.nombre;
     document.getElementById('configRol').textContent = currentUser.rol;
-    document.getElementById('configConexion').textContent = appIsOnline ? '🟢 Online' : '🔴 Offline';
+    document.getElementById('configConexion').textContent = appIsOnline ? '🟢 Online' : ' Offline';
     document.getElementById('configCola').textContent = getOfflineQueue().length;
   } catch (err) {
     console.error('Error en cargarPanelAdmin:', err);
@@ -2540,25 +2973,13 @@ async function toggleBloqueoUsuario(userId, bloquear) {
 }
 
 async function resetPasswordUsuario(userId, email) {
-  if (!email) {
-    alert('Este usuario no tiene email registrado. No se puede resetear la contraseña.');
-    return;
-  }
-  if (!confirm(`¿Enviar email de reseteo de contraseña a ${email}?\n\nEl usuario recibirá un enlace para crear una nueva contraseña.`)) return;
+  if (!email) { alert('Este usuario no tiene email registrado.'); return; }
+  if (!confirm(`¿Enviar email de reseteo a ${email}?`)) return;
   try {
-    const { error } = await sb.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + window.location.pathname
-    });
-    if (error) {
-      console.error('Error reseteando contraseña:', error);
-      mostrarToast('❌ Error: ' + error.message);
-      return;
-    }
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + window.location.pathname });
+    if (error) { mostrarToast('❌ Error: ' + error.message); return; }
     mostrarToast('✅ Email de reseteo enviado a ' + email);
-  } catch (err) {
-    console.error('Error en resetPasswordUsuario:', err);
-    mostrarToast('❌ Error inesperado');
-  }
+  } catch (err) { console.error('Error en resetPasswordUsuario:', err); mostrarToast('❌ Error inesperado'); }
 }
 
 async function cargarComentariosAdmin() {
@@ -2604,10 +3025,10 @@ async function cargarAnunciosAdmin() {
   try {
     const { data: ads } = await sb.from('ads').select('*').order('order_index');
     if (!ads || ads.length === 0) {
-      document.getElementById('listaAnunciosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay anuncios. Haz clic en "Nuevo anuncio" para crear el primero.</p>';
+      document.getElementById('listaAnunciosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay anuncios.</p>';
       return;
     }
-    const positionNames = { top: '🔝 Superior', sidebar: '📎 Lateral', inline: ' En línea', footer: '📍 Inferior' };
+    const positionNames = { top: '🔝 Superior', sidebar: '📎 Lateral', inline: '📏 En línea', footer: ' Inferior' };
     document.getElementById('listaAnunciosAdmin').innerHTML = ads.map(ad => `
       <div class="admin-ad-row">
         <div class="flex justify-between items-start gap-3 mb-2">
@@ -2665,11 +3086,8 @@ async function guardarAnuncio() {
   if (!data.title) { alert('El título es obligatorio'); return; }
   try {
     let error;
-    if (id) {
-      ({ error } = await sb.from('ads').update({ ...data, updated_at: new Date() }).eq('id', id));
-    } else {
-      ({ error } = await sb.from('ads').insert([data]));
-    }
+    if (id) { ({ error } = await sb.from('ads').update({ ...data, updated_at: new Date() }).eq('id', id)); }
+    else { ({ error } = await sb.from('ads').insert([data])); }
     if (error) { mostrarToast('❌ Error: ' + error.message); return; }
     mostrarToast(id ? '✅ Anuncio actualizado' : '✅ Anuncio creado');
     cerrarModalAnuncio();
@@ -2703,11 +3121,11 @@ async function cargarAlimentosAdmin() {
   try {
     const { data: foods } = await sb.from('foods').select('*').order('grupo', { ascending: true }).order('nombre');
     if (!foods || foods.length === 0) {
-      document.getElementById('listaAlimentosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay alimentos. Haz clic en "Nuevo alimento" para crear el primero.</p>';
+      document.getElementById('listaAlimentosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay alimentos.</p>';
       return;
     }
     const grupoNames = { prot: '🥩 Proteínas', carb: '🍚 Carbohidratos', verd: '🥦 Verduras', grasa: '🥑 Grasas', des: '️ Desayunos', mer: ' Meriendas' };
-    const temporadaNames = { todo_el_año: '🌍 Todo el año', primavera: '🌸 Primavera', verano: '☀️ Verano', otono: '🍂 Otoño', invierno: '️ Invierno' };
+    const temporadaNames = { todo_el_año: '🌍 Todo el año', primavera: '🌸 Primavera', verano: '☀️ Verano', otono: '🍂 Otoño', invierno: '❄️ Invierno' };
     let html = '';
     let currentGrupo = null;
     foods.forEach(f => {
@@ -2728,7 +3146,7 @@ async function cargarAlimentosAdmin() {
                 ${f.es_fruta ? '<span class="status-badge bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">🍎 Fruta</span>' : ''}
                 <span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">🔥 ${f.kcal} kcal</span>
                 ${f.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${f.prot}g</span>` : ''}
-                ${tieneReceta ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">📖 Con receta</span>' : '<span class="status-badge bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400"> Sin receta</span>'}
+                ${tieneReceta ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">📖 Con receta</span>' : '<span class="status-badge bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">📄 Sin receta</span>'}
               </div>
               <p class="text-xs text-slate-500 dark:text-slate-400">ID: <code class="bg-slate-100 dark:bg-slate-700 px-1 rounded">${f.id}</code></p>
             </div>
@@ -2803,11 +3221,8 @@ async function guardarAlimento() {
   if (!foodData.nombre || !foodData.id) { alert('El ID y el nombre son obligatorios'); return; }
   try {
     let error;
-    if (id) {
-      ({ error } = await sb.from('foods').update(foodData).eq('id', id));
-    } else {
-      ({ error } = await sb.from('foods').insert([foodData]));
-    }
+    if (id) { ({ error } = await sb.from('foods').update(foodData).eq('id', id)); }
+    else { ({ error } = await sb.from('foods').insert([foodData])); }
     if (error) { mostrarToast('❌ Error: ' + error.message); return; }
     
     const recetaIngredientesRaw = document.getElementById('recetaIngredientesInput').value.trim();
@@ -2823,16 +3238,7 @@ async function guardarAlimento() {
         return { nombre: nombre || l, cantidad: cantidad || '' };
       });
       const pasos = recetaPasosRaw.split('\n').filter(l => l.trim());
-      const recipeData = {
-        food_id: foodData.id,
-        tiempo: recetaTiempo,
-        dificultad: recetaDificultad,
-        porciones: recetaPorciones,
-        ingredientes,
-        pasos,
-        consejo: recetaConsejo,
-        updated_at: new Date()
-      };
+      const recipeData = { food_id: foodData.id, tiempo: recetaTiempo, dificultad: recetaDificultad, porciones: recetaPorciones, ingredientes, pasos, consejo: recetaConsejo, updated_at: new Date() };
       const { error: recipeError } = await sb.from('recipes').upsert(recipeData, { onConflict: 'food_id' });
       if (recipeError) console.error('Error guardando receta:', recipeError);
     } else {
@@ -2850,26 +3256,26 @@ async function toggleAlimento(id, active) {
   try {
     const { error } = await sb.from('foods').update({ active }).eq('id', id);
     if (error) { mostrarToast('❌ Error'); return; }
-    mostrarToast(active ? '✅ Alimento activado' : '⏸️ Alimento ocultado');
+    mostrarToast(active ? '✅ Alimento activado' : '️ Alimento ocultado');
     await cargarAlimentosAdmin();
     await cargarDatosDinamicos();
   } catch (err) { console.error('Error toggling alimento:', err); }
 }
 
 async function eliminarAlimento(id) {
-  if (!confirm('¿Eliminar este alimento y su receta? Esta acción no se puede deshacer.')) return;
+  if (!confirm('¿Eliminar este alimento y su receta?')) return;
   try {
     await sb.from('recipes').delete().eq('food_id', id);
     const { error } = await sb.from('foods').delete().eq('id', id);
-    if (error) { mostrarToast(' Error'); return; }
-    mostrarToast('️ Alimento eliminado');
+    if (error) { mostrarToast('❌ Error'); return; }
+    mostrarToast('🗑️ Alimento eliminado');
     await cargarAlimentosAdmin();
     await cargarDatosDinamicos();
   } catch (err) { console.error('Error eliminando alimento:', err); }
 }
 
 async function forzarSincronizacion() {
-  if (!appIsOnline) { mostrarToast('️ No hay conexión.'); return; }
+  if (!appIsOnline) { mostrarToast('⚠️ No hay conexión.'); return; }
   await processOfflineQueue();
   document.getElementById('configCola').textContent = getOfflineQueue().length;
 }
@@ -2899,20 +3305,12 @@ function switchTab(tab) {
   if (tab === 'analisis') renderAnalisis();
   if (tab === 'seguimiento') renderSeguimiento();
   if (tab === 'salud') renderSalud();
-  if (tab === 'perfil') {
-    renderMisFavoritos();
-    renderMisExcluidos();
-  }
-  if (tab === 'admin') {
-    cargarPanelAdmin();
-    cargarComentariosAdmin();
-    cargarAnunciosAdmin();
-    cargarAlimentosAdmin();
-  }
+  if (tab === 'planificador') renderPlanificador();
+  if (tab === 'perfil') { renderMisFavoritos(); renderMisExcluidos(); }
+  if (tab === 'admin') { cargarPanelAdmin(); cargarComentariosAdmin(); cargarAnunciosAdmin(); cargarAlimentosAdmin(); }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 🟢 NUEVO: Tabs de perfil
 document.querySelectorAll('.profile-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
@@ -2965,9 +3363,7 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
   } catch (err) { mostrarToast('❌ Error de conexión'); }
 });
 
-// 🟢 Inicializar sistema de estrellas al cargar
 initStarRating();
-
 checkAuth();
 </script>
 </body>
