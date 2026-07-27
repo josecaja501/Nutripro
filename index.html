@@ -55,6 +55,7 @@
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
   @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes pulse-heart { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
   .fade-in { animation: fadeIn 0.4s ease-out; }
   .metric-card, .meal-card, .comment-card, .admin-stat, .auth-card, .modal-content { 
     background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main);
@@ -63,65 +64,20 @@
   .meal-card:hover { transform: scale(1.02); }
   .food-item { transition: all 0.2s ease; cursor: pointer; position: relative; }
   .food-item:hover { background: rgba(13,148,136,0.08); transform: translateX(2px); }
-  .food-item:hover .swap-icon, .food-item:hover .recipe-btn { opacity: 1; transform: translateY(0); }
-  .swap-icon, .recipe-btn { opacity: 0; transform: translateY(5px); transition: all 0.2s ease; }
+  .food-item:hover .swap-icon, .food-item:hover .recipe-btn, .food-item:hover .fav-btn, .food-item:hover .exclude-btn { opacity: 1; transform: translateY(0); }
+  .swap-icon, .recipe-btn, .fav-btn, .exclude-btn { opacity: 0; transform: translateY(5px); transition: all 0.2s ease; }
   .food-item.substituted { background: linear-gradient(90deg, rgba(245,158,11,0.08), transparent); border-left: 3px solid #f59e0b; }
-  /* 🟢 NUEVO: Badges de temporada */
-  .temporada-badge { 
-    display: inline-flex; 
-    align-items: center; 
-    gap: 2px; 
-    font-size: 9px; 
-    padding: 2px 6px; 
-    border-radius: 999px; 
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .temporada-actual { 
-    background: linear-gradient(135deg, #d1fae5, #a7f3d0); 
-    color: #065f46; 
-    border: 1px solid #10b981;
-  }
-  .dark .temporada-actual {
-    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.1));
-    color: #6ee7b7;
-  }
-  .temporada-todo { 
-    background: #f1f5f9; 
-    color: #475569; 
-    border: 1px solid #cbd5e1;
-  }
-  .dark .temporada-todo {
-    background: rgba(100,116,139,0.2);
-    color: #94a3b8;
-  }
-  .temporada-otra { 
-    background: #fef3c7; 
-    color: #92400e; 
-    border: 1px solid #f59e0b;
-    opacity: 0.7;
-  }
-  .dark .temporada-otra {
-    background: rgba(245,158,11,0.15);
-    color: #fcd34d;
-  }
-  .season-indicator {
-    background: linear-gradient(135deg, #f0fdfa, #ecfeff);
-    border: 1px solid #99f6e4;
-    border-radius: 0.75rem;
-    padding: 0.75rem 1rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #0f766e;
-  }
-  .dark .season-indicator {
-    background: linear-gradient(135deg, rgba(15,118,110,0.2), rgba(20,184,166,0.1));
-    border-color: rgba(15,118,110,0.4);
-    color: #5eead4;
-  }
+  .food-item.is-favorite { border-left: 3px solid #ef4444; }
+  .food-item.is-excluded { opacity: 0.5; border-left: 3px solid #64748b; }
+  .temporada-badge { display: inline-flex; align-items: center; gap: 2px; font-size: 9px; padding: 2px 6px; border-radius: 999px; font-weight: 600; white-space: nowrap; }
+  .temporada-actual { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #065f46; border: 1px solid #10b981; }
+  .dark .temporada-actual { background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.1)); color: #6ee7b7; }
+  .temporada-todo { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+  .dark .temporada-todo { background: rgba(100,116,139,0.2); color: #94a3b8; }
+  .temporada-otra { background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; opacity: 0.7; }
+  .dark .temporada-otra { background: rgba(245,158,11,0.15); color: #fcd34d; }
+  .season-indicator { background: linear-gradient(135deg, #f0fdfa, #ecfeff); border: 1px solid #99f6e4; border-radius: 0.75rem; padding: 0.75rem 1rem; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 600; color: #0f766e; }
+  .dark .season-indicator { background: linear-gradient(135deg, rgba(15,118,110,0.2), rgba(20,184,166,0.1)); border-color: rgba(15,118,110,0.4); color: #5eead4; }
   .tab-content { display: none; }
   .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
   ::-webkit-scrollbar { width: 8px; }
@@ -136,6 +92,8 @@
   .sub-option { transition: all 0.2s ease; cursor: pointer; }
   .sub-option:hover { background: linear-gradient(135deg, #f0fdfa, #ecfeff); border-color: #0d9488; transform: translateX(4px); }
   .sub-option.current { background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-color: #10b981; }
+  .sub-option.is-favorite-sub { border-left: 4px solid #ef4444; }
+  .sub-option.is-excluded-sub { opacity: 0.5; border-left: 4px solid #64748b; }
   .macro-chip { display: inline-flex; align-items: center; gap: 2px; font-size: 10px; padding: 2px 6px; border-radius: 999px; font-weight: 600; }
   .auth-screen { min-height: 100vh; background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #0284c7 100%); display: flex; align-items: center; justify-content: center; padding: 1rem; }
   .auth-card { border-radius: 1.5rem; max-width: 440px; width: 100%; padding: 2.5rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); }
@@ -195,13 +153,33 @@
   .admin-select { width: 100%; padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-main); font-size: 0.875rem; }
   .admin-form-group { margin-bottom: 1rem; }
   .admin-form-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--text-main); }
-  /* Toggle switch para filtro de temporada */
   .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
   .toggle-switch input { opacity: 0; width: 0; height: 0; }
   .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 24px; }
   .toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
   input:checked + .toggle-slider { background-color: #0d9488; }
   input:checked + .toggle-slider:before { transform: translateX(20px); }
+  
+  /* 🟢 NUEVO: Sistema de estrellas */
+  .star-rating { display: inline-flex; gap: 2px; }
+  .star-rating .star { cursor: pointer; font-size: 1.5rem; color: #cbd5e1; transition: all 0.15s; user-select: none; }
+  .star-rating .star:hover, .star-rating .star.hovered { color: #fbbf24; transform: scale(1.15); }
+  .star-rating .star.filled { color: #f59e0b; }
+  .star-rating .star.filled:hover { color: #fbbf24; }
+  .star-rating.readonly .star { cursor: default; }
+  .star-rating.readonly .star:hover { transform: none; }
+  .fav-icon-active { color: #ef4444 !important; animation: pulse-heart 0.4s ease; }
+  .exclude-icon-active { color: #64748b !important; }
+  
+  /* 🟢 NUEVO: Tabs de perfil */
+  .profile-tab { padding: 0.75rem 1rem; border-bottom: 2px solid transparent; cursor: pointer; font-weight: 600; color: #64748b; transition: all 0.2s; }
+  .profile-tab:hover { color: #0d9488; }
+  .profile-tab.active { color: #0d9488; border-bottom-color: #0d9488; }
+  .profile-panel { display: none; }
+  .profile-panel.active { display: block; animation: fadeIn 0.3s ease-out; }
+  
+  .food-card-mini { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--bg); border-radius: 0.5rem; margin-bottom: 0.5rem; transition: all 0.2s; }
+  .food-card-mini:hover { background: rgba(13,148,136,0.05); }
 </style>
 </head>
 <body class="min-h-screen">
@@ -210,7 +188,7 @@
 <div id="authScreen" class="auth-screen hidden">
   <div class="auth-card">
     <div class="text-center mb-6">
-      <div class="inline-flex w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl items-center justify-center text-3xl mb-3 shadow-lg"></div>
+      <div class="inline-flex w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl items-center justify-center text-3xl mb-3 shadow-lg">🥗</div>
       <h1 class="text-2xl font-bold text-slate-800 dark:text-white">NutriPro</h1>
       <p class="text-sm text-slate-500 mt-1 dark:text-slate-400">Nutrición Clínica · Déficit Sostenible</p>
     </div>
@@ -284,11 +262,11 @@
       </div>
       <div class="flex items-center gap-3">
         <div id="connectionStatus" class="hidden items-center gap-1 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">📴 Sin conexión</div>
-        <button onclick="compartirApp()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold"> Compartir</button>
+        <button onclick="compartirApp()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold">📤 Compartir</button>
         <button onclick="compartirApp()" class="md:hidden w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all">📤</button>
         <button id="darkModeToggle" class="w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all"><span id="darkModeIcon">☀️</span></button>
         <div class="hidden md:flex items-center gap-2 text-xs">
-          <span class="px-3 py-1 bg-white/15 rounded-full">🔬 Evidencia</span>
+          <span class="px-3 py-1 bg-white/15 rounded-full"> Evidencia</span>
           <span class="px-3 py-1 bg-white/15 rounded-full">☁️ Cloud Sync</span>
         </div>
         <div class="user-menu">
@@ -304,13 +282,13 @@
               <div id="dropdownRole" class="mt-1"></div>
             </div>
             <div id="adminMenuItem" class="hidden">
-              <div class="user-dropdown-item" onclick="switchTab('admin')"><span>️</span> <span>Panel Admin</span></div>
+              <div class="user-dropdown-item" onclick="switchTab('admin')"><span>⚙️</span> <span>Panel Admin</span></div>
               <div class="user-dropdown-divider"></div>
             </div>
-            <div class="user-dropdown-item" onclick="switchTab('perfil')"><span>👤</span> <span>Mi perfil</span></div>
+            <div class="user-dropdown-item" onclick="switchTab('perfil')"><span></span> <span>Mi perfil</span></div>
             <div class="user-dropdown-item" onclick="switchTab('comentarios')"><span>💬</span> <span>Comunidad</span></div>
             <div class="user-dropdown-divider"></div>
-            <div class="user-dropdown-item text-red-600" onclick="cerrarSesion()"><span></span> <span>Cerrar sesión</span></div>
+            <div class="user-dropdown-item text-red-600" onclick="cerrarSesion()"><span>🚪</span> <span>Cerrar sesión</span></div>
           </div>
         </div>
       </div>
@@ -322,14 +300,14 @@
   <nav class="max-w-7xl mx-auto px-6 pb-3">
     <div class="flex gap-2 overflow-x-auto">
       <button class="nav-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all" data-tab="evaluacion">📋 Evaluación</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard">📊 Dashboard</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="dashboard"> Dashboard</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="menu">🍽️ Menú</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra"> Compra</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra">🛒 Compra</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="seguimiento">📈 Seguimiento</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="salud">❤️ Salud</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios"> Comunidad</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
     </div>
   </nav>
 </header>
@@ -347,7 +325,7 @@
       <h3 class="font-bold text-green-800 dark:text-green-300 flex items-center gap-2">✅ Evaluación completada y guardada</h3>
       <p class="text-sm text-green-700 dark:text-green-400 mt-1">Tu plan está activo. Solo modifica estos datos si tu peso, altura u objetivos han cambiado recientemente.</p>
     </div>
-    <button onclick="mostrarFormularioEvaluacion()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">️ Modificar datos</button>
+    <button onclick="mostrarFormularioEvaluacion()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">✏️ Modificar datos</button>
   </div>
   <div class="grid lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-8 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
@@ -480,11 +458,11 @@
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barProt" class="h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🍞 Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barCarb" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🥑 Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barGrasas" class="h-full bg-gradient-to-r from-rose-400 to-rose-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
         </div>
@@ -516,7 +494,6 @@
     </div>
   </div>
   
-  <!--  NUEVO: Indicador de temporada -->
   <div id="seasonBanner" class="mb-6 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between flex-wrap">
     <div class="season-indicator">
       <span id="seasonEmoji" class="text-2xl">🌸</span>
@@ -611,7 +588,7 @@
         </div>
       </div>
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-        <div class="text-2xl mb-2"></div>
+        <div class="text-2xl mb-2">💬</div>
         <p class="text-sm text-slate-700 dark:text-slate-300" id="feedbackTexto">Registra tu primer peso para comenzar el análisis.</p>
       </div>
     </div>
@@ -722,7 +699,7 @@
     </div>
     <div class="space-y-4">
       <div class="info-card bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
-        <div class="text-3xl mb-2">🤝</div>
+        <div class="text-3xl mb-2"></div>
         <h4 class="font-bold text-slate-800 dark:text-white mb-2">Normas de la comunidad</h4>
         <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
           <li>✓ Sé respetuoso con los demás</li>
@@ -732,7 +709,7 @@
         </ul>
       </div>
       <div id="adFooter" class="ad-space py-8" data-pos="footer">
-        <div class="text-3xl mb-2"></div>
+        <div class="text-3xl mb-2">📢</div>
         <div class="font-semibold text-slate-500">Espacio publicitario inferior</div>
         <div class="text-xs mt-1">300 × 250</div>
       </div>
@@ -740,13 +717,23 @@
   </div>
 </section>
 
-<!-- PERFIL -->
+<!--  NUEVO: PERFIL MEJORADO CON FAVORITOS Y EXCLUIDOS -->
 <section id="perfil" class="tab-content">
   <div class="mb-6">
     <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Mi Perfil</h2>
-    <p class="text-slate-600 dark:text-slate-400 mt-2">Gestiona tu información personal y contraseña.</p>
+    <p class="text-slate-600 dark:text-slate-400 mt-2">Gestiona tu información personal, favoritos y preferencias.</p>
   </div>
-  <div class="grid md:grid-cols-2 gap-6">
+  
+  <!-- Tabs de perfil -->
+  <div class="flex gap-2 mb-6 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
+    <button class="profile-tab active" data-ptab="datos">👤 Datos personales</button>
+    <button class="profile-tab" data-ptab="favoritos">❤️ Mis favoritos <span id="favCount" class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full ml-1">0</span></button>
+    <button class="profile-tab" data-ptab="excluidos">🚫 Excluidos <span id="excCount" class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full ml-1">0</span></button>
+    <button class="profile-tab" data-ptab="password">🔒 Contraseña</button>
+  </div>
+  
+  <!-- Panel: Datos personales -->
+  <div id="perfil-datos" class="profile-panel active">
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="font-bold text-slate-800 dark:text-white mb-4">Información personal</h3>
       <form id="formPerfil" class="space-y-4">
@@ -761,6 +748,36 @@
         <button type="submit" class="w-full bg-teal-600 text-white py-2.5 rounded-lg font-semibold hover:bg-teal-700">Guardar cambios</button>
       </form>
     </div>
+  </div>
+  
+  <!-- Panel: Favoritos -->
+  <div id="perfil-favoritos" class="profile-panel">
+    <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-bold text-slate-800 dark:text-white">❤️ Mis alimentos favoritos</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Aparecerán prioritariamente en tus menús</p>
+      </div>
+      <div id="listaFavoritos" class="space-y-2">
+        <p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">Aún no tienes favoritos. Marca alimentos con ❤️ en el menú.</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Panel: Excluidos -->
+  <div id="perfil-excluidos" class="profile-panel">
+    <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-bold text-slate-800 dark:text-white">🚫 Alimentos excluidos</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">No aparecerán en tus menús</p>
+      </div>
+      <div id="listaExcluidos" class="space-y-2">
+        <p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">No has excluido ningún alimento.</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Panel: Contraseña -->
+  <div id="perfil-password" class="profile-panel">
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="font-bold text-slate-800 dark:text-white mb-4">Cambiar contraseña</h3>
       <form id="formPassword" class="space-y-4">
@@ -782,7 +799,7 @@
 <section id="admin" class="tab-content">
   <div class="mb-6">
     <div class="flex items-center gap-3">
-      <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-2xl">⚙️</div>
+      <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-2xl">️</div>
       <div>
         <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Panel de Administrador</h2>
         <p class="text-slate-600 dark:text-slate-400 mt-1">Control total de la aplicación sin tocar código.</p>
@@ -812,9 +829,9 @@
   <div class="flex gap-2 mb-4 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
     <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600 whitespace-nowrap" data-atab="usuarios">👥 Usuarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="comentarios">💬 Comentarios</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="publicidad">📢 Publicidad</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="publicidad"> Publicidad</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="alimentos">🍽️ Alimentos</button>
-    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="config">️ Configuración</button>
+    <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="config">⚙️ Configuración</button>
   </div>
 
   <div id="admin-usuarios" class="admin-panel">
@@ -851,7 +868,7 @@
     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
       <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700">
         <h3 class="font-bold text-slate-800 dark:text-white">Gestión de alimentos y menús</h3>
-        <button onclick="abrirModalAlimento()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold"> Nuevo alimento</button>
+        <button onclick="abrirModalAlimento()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold">➕ Nuevo alimento</button>
       </div>
       <div id="listaAlimentosAdmin" class="p-4"><div class="loading-spinner"></div></div>
     </div>
@@ -861,11 +878,11 @@
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="font-bold text-slate-800 dark:text-white mb-4">Estado del Sistema</h3>
       <div class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
-        <p> Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
-        <p> Usuario actual: <strong id="configUsuario">—</strong></p>
-        <p> Rol: <strong id="configRol">—</strong></p>
+        <p>📡 Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
+        <p>👤 Usuario actual: <strong id="configUsuario">—</strong></p>
+        <p>🔐 Rol: <strong id="configRol">—</strong></p>
         <p>🌐 Estado de conexión: <strong id="configConexion">—</strong></p>
-        <p> Datos en cola offline: <strong id="configCola">0</strong></p>
+        <p>📦 Datos en cola offline: <strong id="configCola">0</strong></p>
       </div>
       <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
         <h4 class="font-bold text-slate-800 dark:text-white mb-3">Acciones rápidas</h4>
@@ -918,26 +935,45 @@
           <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">👨‍🍳 Receta detallada</div>
           <h3 class="text-xl font-bold text-slate-800 dark:text-white" id="recetaTitulo">Nombre del plato</h3>
           <div class="flex gap-3 mt-3 flex-wrap">
-            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>⏱️</span><span id="recetaTiempo">20 min</span></div>
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>️</span><span id="recetaTiempo">20 min</span></div>
             <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>🎯</span><span id="recetaDificultad">Fácil</span></div>
             <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>👥</span><span id="recetaPorciones">2 porciones</span></div>
           </div>
         </div>
-        <button onclick="cerrarModalReceta()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300">✕</button>
+        <button onclick="cerrarModalReceta()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300"></button>
       </div>
     </div>
     <div class="p-6">
       <div class="mb-6">
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">🛒</span> Ingredientes</h4>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg"></span> Ingredientes</h4>
         <div id="recetaIngredientes"></div>
       </div>
       <div class="mb-6">
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">👨‍</span> Preparación</h4>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">👨‍🍳</span> Preparación</h4>
         <div id="recetaPasos"></div>
       </div>
+      
+      <!-- 🟢 NUEVO: Sistema de valoración con estrellas -->
+      <div class="mb-6 p-4 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
+        <h4 class="font-bold text-amber-900 dark:text-amber-300 mb-2 flex items-center gap-2">
+          <span>⭐</span> Valora esta receta
+        </h4>
+        <div class="flex items-center gap-3">
+          <div class="star-rating" id="starRating">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+          <span class="text-sm text-amber-800 dark:text-amber-300" id="ratingText">Sin valorar</span>
+        </div>
+        <p class="text-xs text-amber-700 dark:text-amber-400 mt-2">Tu valoración ayuda a personalizar tus menús futuros</p>
+      </div>
+      
       <div id="recetaConsejo" class="recipe-chef-tip hidden">
         <div class="flex items-start gap-2">
-          <span class="text-xl"></span>
+          <span class="text-xl">💡</span>
           <div>
             <div class="font-bold text-amber-800 dark:text-amber-300 text-sm mb-1">Consejo del chef</div>
             <p class="text-sm text-amber-900 dark:text-amber-200" id="recetaConsejoTexto"></p>
@@ -957,7 +993,7 @@
     <div class="p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10 dark:bg-slate-800 dark:border-slate-700">
       <div class="flex justify-between items-start">
         <div>
-          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1"> Gestión de anuncio</div>
+          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">📢 Gestión de anuncio</div>
           <h3 class="text-xl font-bold text-slate-800 dark:text-white" id="anuncioModalTitulo">Nuevo anuncio</h3>
         </div>
         <button onclick="cerrarModalAnuncio()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300">✕</button>
@@ -999,7 +1035,7 @@
     </div>
     <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-3xl dark:bg-slate-900 dark:border-slate-700 flex gap-2">
       <button onclick="cerrarModalAnuncio()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-semibold dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white">Cancelar</button>
-      <button onclick="guardarAnuncio()" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-lg font-semibold"> Guardar</button>
+      <button onclick="guardarAnuncio()" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-lg font-semibold">💾 Guardar</button>
     </div>
   </div>
 </div>
@@ -1054,9 +1090,9 @@
           <select id="alimentoTemporada" class="admin-select">
             <option value="todo_el_año">🌍 Todo el año</option>
             <option value="primavera">🌸 Primavera</option>
-            <option value="verano">☀️ Verano</option>
+            <option value="verano">️ Verano</option>
             <option value="otono">🍂 Otoño</option>
-            <option value="invierno">❄️ Invierno</option>
+            <option value="invierno">️ Invierno</option>
           </select>
         </div>
         <div class="admin-form-group">
@@ -1078,7 +1114,7 @@
       </div>
       
       <div class="border-t border-slate-200 dark:border-slate-700 pt-4 mt-4">
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3">📖 Receta detallada (opcional)</h4>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3"> Receta detallada (opcional)</h4>
         <div class="grid grid-cols-3 gap-3">
           <div class="admin-form-group">
             <label>Tiempo</label>
@@ -1135,22 +1171,26 @@ let sustituciones = {};
 let chartPeso = null;
 let chartSemanal = null;
 let currentSwap = null;
-let filtroSoloTemporada = false; // 🟢 NUEVO: estado del filtro
+let filtroSoloTemporada = false;
 
 // 🟢 DATOS DINÁMICOS DESDE BD
 let FOODS_DB = {};
 let RECIPES_DB = {};
 let ADS_DB = { top: null, sidebar: null, inline: null, footer: null };
 
+// 🟢 NUEVO: Sistema de valoraciones y favoritos
+let USER_RATINGS = {}; // { food_id: { rating, is_favorite, is_excluded } }
+let currentRecipeFoodId = null; // Para saber qué alimento se está valorando
+
 // ==========================================
-// 🌱 SISTEMA DE TEMPORADA
+//  SISTEMA DE TEMPORADA
 // ==========================================
 function obtenerEstacion() {
-  const mes = new Date().getMonth(); // 0-11
-  if (mes >= 2 && mes <= 4) return 'primavera'; // Marzo-Mayo
-  if (mes >= 5 && mes <= 7) return 'verano';    // Junio-Agosto
-  if (mes >= 8 && mes <= 10) return 'otono';    // Septiembre-Noviembre
-  return 'invierno';                             // Diciembre-Febrero
+  const mes = new Date().getMonth();
+  if (mes >= 2 && mes <= 4) return 'primavera';
+  if (mes >= 5 && mes <= 7) return 'verano';
+  if (mes >= 8 && mes <= 10) return 'otono';
+  return 'invierno';
 }
 
 function obtenerInfoEstacion(estacion) {
@@ -1183,7 +1223,7 @@ function getBadgeTemporada(alimento) {
 
 function toggleFiltroTemporada() {
   filtroSoloTemporada = document.getElementById('soloTemporada').checked;
-  mostrarToast(filtroSoloTemporada ? ' Filtro de temporada activado' : ' Mostrando todos los alimentos');
+  mostrarToast(filtroSoloTemporada ? '🌱 Filtro de temporada activado' : '🌍 Mostrando todos los alimentos');
   if (menuData) {
     generarMenu();
   }
@@ -1194,6 +1234,213 @@ function actualizarBannerEstacion() {
   const info = obtenerInfoEstacion(estacion);
   document.getElementById('seasonEmoji').textContent = info.emoji;
   document.getElementById('seasonName').textContent = info.nombre;
+}
+
+// ==========================================
+// ⭐ SISTEMA DE VALORACIONES Y FAVORITOS
+// ==========================================
+
+// Cargar valoraciones del usuario desde BD
+async function cargarValoracionesUsuario() {
+  if (!currentUser) return;
+  try {
+    const { data, error } = await sb.from('user_ratings').select('*').eq('user_id', currentUser.id);
+    if (error) {
+      console.error('Error cargando valoraciones:', error);
+      return;
+    }
+    USER_RATINGS = {};
+    if (data) {
+      data.forEach(r => {
+        USER_RATINGS[r.food_id] = {
+          rating: r.rating,
+          is_favorite: r.is_favorite || false,
+          is_excluded: r.is_excluded || false
+        };
+      });
+    }
+    console.log(`[NutriPro] Cargadas ${Object.keys(USER_RATINGS).length} valoraciones`);
+  } catch (err) {
+    console.error('Error en cargarValoracionesUsuario:', err);
+  }
+}
+
+// Guardar/actualizar valoración en BD
+async function guardarValoracion(foodId, updates) {
+  if (!currentUser) return;
+  try {
+    const existing = USER_RATINGS[foodId] || {};
+    const data = {
+      user_id: currentUser.id,
+      food_id: foodId,
+      rating: updates.rating !== undefined ? updates.rating : existing.rating,
+      is_favorite: updates.is_favorite !== undefined ? updates.is_favorite : (existing.is_favorite || false),
+      is_excluded: updates.is_excluded !== undefined ? updates.is_excluded : (existing.is_excluded || false),
+      updated_at: new Date()
+    };
+    
+    const { error } = await sb.from('user_ratings').upsert(data, { onConflict: 'user_id,food_id' });
+    if (error) {
+      console.error('Error guardando valoración:', error);
+      mostrarToast('❌ Error al guardar');
+      return false;
+    }
+    
+    // Actualizar local
+    USER_RATINGS[foodId] = {
+      rating: data.rating,
+      is_favorite: data.is_favorite,
+      is_excluded: data.is_excluded
+    };
+    return true;
+  } catch (err) {
+    console.error('Error en guardarValoracion:', err);
+    return false;
+  }
+}
+
+// Toggle favorito
+async function toggleFavorito(foodId, event) {
+  if (event) { event.stopPropagation(); event.preventDefault(); }
+  const current = USER_RATINGS[foodId] || {};
+  const newFav = !current.is_favorite;
+  
+  const ok = await guardarValoracion(foodId, { is_favorite: newFav });
+  if (ok) {
+    mostrarToast(newFav ? '❤️ Añadido a favoritos' : '💔 Eliminado de favoritos');
+    // Actualizar UI si estamos en el menú
+    if (menuData) renderMenu();
+    // Actualizar contadores en perfil
+    actualizarContadoresPerfil();
+    renderMisFavoritos();
+    renderMisExcluidos();
+  }
+}
+
+// Toggle excluido
+async function toggleExcluido(foodId, event) {
+  if (event) { event.stopPropagation(); event.preventDefault(); }
+  const current = USER_RATINGS[foodId] || {};
+  const newExc = !current.is_excluded;
+  
+  const ok = await guardarValoracion(foodId, { is_excluded: newExc });
+  if (ok) {
+    mostrarToast(newExc ? '🚫 Alimento excluido del menú' : '✅ Alimento incluido de nuevo');
+    if (menuData) renderMenu();
+    actualizarContadoresPerfil();
+    renderMisFavoritos();
+    renderMisExcluidos();
+  }
+}
+
+// Guardar valoración con estrellas
+async function guardarRatingEstrellas(rating) {
+  if (!currentRecipeFoodId) return;
+  const ok = await guardarValoracion(currentRecipeFoodId, { rating });
+  if (ok) {
+    mostrarToast(`⭐ Valoración guardada: ${rating}/5`);
+  }
+}
+
+// Renderizar estrellas en el modal de receta
+function renderStars(rating) {
+  const stars = document.querySelectorAll('#starRating .star');
+  stars.forEach((star, idx) => {
+    star.classList.remove('filled', 'hovered');
+    if (idx < rating) star.classList.add('filled');
+  });
+  const texts = ['Sin valorar', 'Malo 😕', 'Regular 😐', 'Bueno 🙂', 'Muy bueno 😊', 'Excelente 🤩'];
+  document.getElementById('ratingText').textContent = texts[rating] || 'Sin valorar';
+}
+
+// Inicializar eventos de estrellas
+function initStarRating() {
+  const container = document.getElementById('starRating');
+  const stars = container.querySelectorAll('.star');
+  let currentHover = 0;
+  
+  stars.forEach(star => {
+    star.addEventListener('mouseenter', () => {
+      const val = parseInt(star.dataset.value);
+      stars.forEach((s, idx) => {
+        s.classList.toggle('hovered', idx < val);
+      });
+    });
+    
+    star.addEventListener('mouseleave', () => {
+      stars.forEach(s => s.classList.remove('hovered'));
+    });
+    
+    star.addEventListener('click', async () => {
+      const rating = parseInt(star.dataset.value);
+      renderStars(rating);
+      await guardarRatingEstrellas(rating);
+    });
+  });
+}
+
+// Renderizar lista de favoritos en perfil
+function renderMisFavoritos() {
+  const cont = document.getElementById('listaFavoritos');
+  const favoritos = Object.entries(USER_RATINGS).filter(([_, r]) => r.is_favorite);
+  
+  if (favoritos.length === 0) {
+    cont.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">Aún no tienes favoritos. Marca alimentos con ❤️ en el menú.</p>';
+    return;
+  }
+  
+  cont.innerHTML = favoritos.map(([foodId, r]) => {
+    const food = FOODS_DB[foodId];
+    if (!food) return '';
+    const starsHtml = r.rating ? '⭐'.repeat(r.rating) + '☆'.repeat(5 - r.rating) : 'Sin valorar';
+    return `
+      <div class="food-card-mini">
+        <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-lg">❤️</div>
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-slate-800 dark:text-white text-sm truncate">${DOMPurify.sanitize(food.nombre)}</div>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="text-xs text-amber-600">${starsHtml}</span>
+            <span class="macro-chip bg-slate-100 dark:bg-slate-700 text-xs"> ${food.kcal} kcal</span>
+          </div>
+        </div>
+        <button onclick="toggleFavorito('${foodId}')" class="admin-btn admin-btn-danger" title="Quitar de favoritos"></button>
+      </div>
+    `;
+  }).join('');
+}
+
+// Renderizar lista de excluidos en perfil
+function renderMisExcluidos() {
+  const cont = document.getElementById('listaExcluidos');
+  const excluidos = Object.entries(USER_RATINGS).filter(([_, r]) => r.is_excluded);
+  
+  if (excluidos.length === 0) {
+    cont.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">No has excluido ningún alimento.</p>';
+    return;
+  }
+  
+  cont.innerHTML = excluidos.map(([foodId, r]) => {
+    const food = FOODS_DB[foodId];
+    if (!food) return '';
+    return `
+      <div class="food-card-mini" style="opacity: 0.7;">
+        <div class="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-lg">🚫</div>
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-slate-800 dark:text-white text-sm truncate">${DOMPurify.sanitize(food.nombre)}</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">No aparecerá en tus menús</div>
+        </div>
+        <button onclick="toggleExcluido('${foodId}')" class="admin-btn admin-btn-success" title="Incluir de nuevo">✅</button>
+      </div>
+    `;
+  }).join('');
+}
+
+// Actualizar contadores en tabs de perfil
+function actualizarContadoresPerfil() {
+  const favs = Object.values(USER_RATINGS).filter(r => r.is_favorite).length;
+  const excs = Object.values(USER_RATINGS).filter(r => r.is_excluded).length;
+  document.getElementById('favCount').textContent = favs;
+  document.getElementById('excCount').textContent = excs;
 }
 
 // ==========================================
@@ -1277,7 +1524,7 @@ async function processOfflineQueue() {
 }
 
 window.addEventListener('online', () => { appIsOnline = true; updateOnlineStatusUI(); checkRealConnection().then(() => { if (appIsOnline && currentUser) processOfflineQueue(); }); });
-window.addEventListener('offline', () => { appIsOnline = false; mostrarToast('🔴 Sin conexión. Los datos se guardarán localmente.'); updateOnlineStatusUI(); });
+window.addEventListener('offline', () => { appIsOnline = false; mostrarToast(' Sin conexión. Los datos se guardarán localmente.'); updateOnlineStatusUI(); });
 
 function saveUserDataToLocal(data) { localStorage.setItem('nutripro_user_data', JSON.stringify(data)); }
 
@@ -1335,8 +1582,10 @@ async function checkAuth() {
     currentUser = { id: session.user.id, email: session.user.email, nombre: profile.nombre, rol: profile.rol };
     showMainApp();
     await cargarDatosDinamicos();
+    await cargarValoracionesUsuario(); // 🟢 NUEVO
     await loadUserDataFromDB();
-    actualizarBannerEstacion(); // 🟢 NUEVO: Mostrar estación actual
+    actualizarBannerEstacion();
+    actualizarContadoresPerfil(); // 🟢 NUEVO
     initDarkMode();
     await checkRealConnection();
     if (appIsOnline) { await processOfflineQueue(); }
@@ -1481,7 +1730,7 @@ document.getElementById('formRegister').addEventListener('submit', async (e) => 
   btn.textContent = 'Creando cuenta...';
   try {
     const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { nombre } } });
-    if (error) { err.textContent = ' ' + error.message; err.classList.remove('hidden'); } 
+    if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } 
     else {
       if (data.session) { mostrarToast('✅ Cuenta creada.'); setTimeout(() => location.reload(), 1000); } 
       else { alert('✅ Revisa tu email para confirmar la cuenta.'); document.querySelector('.auth-tab[data-auth="login"]').click(); }
@@ -1605,7 +1854,7 @@ async function agregarPeso() {
 
 async function publicarComentario() {
   const texto = document.getElementById('nuevoComentario').value.trim();
-  if (!texto) { mostrarToast('⚠️ Escribe un comentario'); return; }
+  if (!texto) { mostrarToast('️ Escribe un comentario'); return; }
   const anonimo = document.getElementById('comentarioAnonimo').checked;
   const commentData = { texto, anonimo };
   if (!appIsOnline) {
@@ -1628,7 +1877,7 @@ async function renderComentarios() {
     const { data: comments } = await sb.from('comments').select('*').order('created_at', { ascending: false });
     const cont = document.getElementById('listaComentarios');
     if (!comments || comments.length === 0) {
-      cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia </div>';
+      cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia 💬</div>';
       return;
     }
     cont.innerHTML = comments.map(c => {
@@ -1697,10 +1946,12 @@ function obtenerReceta(alimentoId) {
   return RECIPES_DB[alimentoId] || null;
 }
 
+// 🟢 NUEVO: Modal de receta con sistema de valoración
 function abrirModalReceta(alimentoId) {
   const alimento = FOODS_DB[alimentoId];
   if (!alimento) return;
   const receta = obtenerReceta(alimentoId);
+  currentRecipeFoodId = alimentoId; // 🟢 Guardar ID actual para valoración
   document.getElementById('recetaTitulo').textContent = alimento.nombre;
   if (receta) {
     document.getElementById('recetaTiempo').textContent = receta.tiempo || '—';
@@ -1719,10 +1970,18 @@ function abrirModalReceta(alimentoId) {
     document.getElementById('recetaPasos').innerHTML = '';
     document.getElementById('recetaConsejo').classList.add('hidden');
   }
+  
+  // 🟢 NUEVO: Mostrar valoración actual del usuario
+  const rating = USER_RATINGS[alimentoId]?.rating || 0;
+  renderStars(rating);
+  
   document.getElementById('modalReceta').classList.remove('hidden');
 }
 
-function cerrarModalReceta() { document.getElementById('modalReceta').classList.add('hidden'); }
+function cerrarModalReceta() { 
+  document.getElementById('modalReceta').classList.add('hidden'); 
+  currentRecipeFoodId = null;
+}
 function toggleIngrediente(el) { el.classList.toggle('checked'); const cb = el.querySelector('input[type="checkbox"]'); cb.checked = !cb.checked; }
 
 function getGrupoById(id) {
@@ -1733,26 +1992,41 @@ function getGrupoById(id) {
 
 function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-// 🟢 Función auxiliar para filtrar por temporada
 function filtrarPorTemporada(arr) {
   if (!filtroSoloTemporada) return arr;
   const enTemporada = arr.filter(a => esDeTemporada(a));
-  return enTemporada.length > 0 ? enTemporada : arr; // Fallback si no hay nada en temporada
+  return enTemporada.length > 0 ? enTemporada : arr;
+}
+
+// 🟢 NUEVO: Función para excluir alimentos marcados como "no me gusta"
+function excluirNoMeGusta(arr) {
+  return arr.filter(a => !USER_RATINGS[a.id]?.is_excluded);
+}
+
+// 🟢 NUEVO: Función para priorizar favoritos (mayor probabilidad de ser elegidos)
+function pickRandomConFavoritos(arr) {
+  if (arr.length === 0) return null;
+  const favoritos = arr.filter(a => USER_RATINGS[a.id]?.is_favorite);
+  // 70% de probabilidad de elegir un favorito si hay
+  if (favoritos.length > 0 && Math.random() < 0.7) {
+    return pickRandom(favoritos);
+  }
+  return pickRandom(arr);
 }
 
 // ==========================================
-// 🌱 ALGORITMO INTELIGENTE CON TEMPORADA
+// 🌱 ALGORITMO INTELIGENTE CON TEMPORADA Y FAVORITOS
 // ==========================================
 function generarMenu() {
   if (!userData) return;
   
   const grupos = {
-    prot: Object.values(FOODS_DB).filter(f => f.grupo === 'prot' && f.active),
-    carb: Object.values(FOODS_DB).filter(f => f.grupo === 'carb' && f.active),
-    verd: Object.values(FOODS_DB).filter(f => f.grupo === 'verd' && f.active),
-    grasa: Object.values(FOODS_DB).filter(f => f.grupo === 'grasa' && f.active),
-    des: Object.values(FOODS_DB).filter(f => f.grupo === 'des' && f.active),
-    mer: Object.values(FOODS_DB).filter(f => f.grupo === 'mer' && f.active)
+    prot: excluirNoMeGusta(Object.values(FOODS_DB).filter(f => f.grupo === 'prot' && f.active)),
+    carb: excluirNoMeGusta(Object.values(FOODS_DB).filter(f => f.grupo === 'carb' && f.active)),
+    verd: excluirNoMeGusta(Object.values(FOODS_DB).filter(f => f.grupo === 'verd' && f.active)),
+    grasa: excluirNoMeGusta(Object.values(FOODS_DB).filter(f => f.grupo === 'grasa' && f.active)),
+    des: excluirNoMeGusta(Object.values(FOODS_DB).filter(f => f.grupo === 'des' && f.active)),
+    mer: excluirNoMeGusta(Object.values(FOODS_DB).filter(f => f.grupo === 'mer' && f.active))
   };
   
   if (Object.values(grupos).some(g => g.length === 0)) {
@@ -1799,20 +2073,20 @@ function generarMenu() {
   for (let m = 0; m < 4; m++) {
     const menu = [];
     planSemanal.forEach((plan, diaIdx) => {
-      const protComida = pickRandom(plan.protComida);
-      const protCena = pickRandom(plan.protCena.filter(p => p.id !== protComida.id) || plan.protCena);
+      // 🟢 Usar pickRandomConFavoritos para priorizar favoritos
+      const protComida = pickRandomConFavoritos(plan.protComida);
+      const protCena = pickRandomConFavoritos(plan.protCena.filter(p => p.id !== protComida.id) || plan.protCena);
       
       const carbOpciones = grupos.carb.filter(c => !/gazpacho|salmorejo|escalivada/i.test(c.nombre));
-      const comidaCarb = pickRandom(carbOpciones);
+      const comidaCarb = pickRandomConFavoritos(carbOpciones);
       
-      // 🟢 NUEVO: Filtrar verduras por temporada si el filtro está activo
       const verdurasDisponibles = filtrarPorTemporada(grupos.verd);
-      const verdComida = pickRandom(verdurasDisponibles);
-      const verdCena = pickRandom(verdurasDisponibles.filter(v => v.id !== verdComida.id) || verdurasDisponibles);
+      const verdComida = pickRandomConFavoritos(verdurasDisponibles);
+      const verdCena = pickRandomConFavoritos(verdurasDisponibles.filter(v => v.id !== verdComida.id) || verdurasDisponibles);
       
-      const comidaGrasa = pickRandom(grupos.grasa);
-      const desayuno = pickRandom(grupos.des);
-      const merienda = pickRandom(grupos.mer);
+      const comidaGrasa = pickRandomConFavoritos(grupos.grasa);
+      const desayuno = pickRandomConFavoritos(grupos.des);
+      const merienda = pickRandomConFavoritos(grupos.mer);
       
       menu.push({
         dia: plan.dia,
@@ -1861,6 +2135,7 @@ function calcularKcalDia(dia) {
 function regenerarMenu() { sustituciones = {}; generarMenu(); }
 function resetSustituciones() { if (!confirm('¿Restaurar menú original?')) return; sustituciones = {}; generarMenu(); }
 
+// 🟢 NUEVO: renderMenu con botones de favorito y excluido
 function renderMenu() {
   const cont = document.getElementById('menuContent');
   cont.innerHTML = '';
@@ -1871,14 +2146,41 @@ function renderMenu() {
     const foodItemHTML = (item, path, label, color, emoji) => {
       const key = `${diaIdx}|${path}`;
       const isSub = sustituciones[key] !== undefined;
+      const rating = USER_RATINGS[item.id];
+      const isFav = rating?.is_favorite || false;
+      const isExc = rating?.is_excluded || false;
       const badgeTemporada = getBadgeTemporada(item);
-      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap">${badgeTemporada}<span class="macro-chip bg-white/70 dark:bg-slate-700">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="flex gap-1"><button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍🍳</button><div class="swap-icon w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600" title="Sustituir"><span class="text-sm">🔄</span></div></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}</div>`;
+      const ratingStars = rating?.rating ? '⭐'.repeat(rating.rating) : '';
+      
+      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''} ${isFav ? 'is-favorite' : ''} ${isExc ? 'is-excluded' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')">
+        <div class="flex justify-between items-start gap-2">
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div>
+            <div class="text-slate-700 dark:text-slate-300 text-sm font-medium">${item.nombre}</div>
+            <div class="flex gap-1 mt-1.5 flex-wrap flex-wrap">
+              ${badgeTemporada}
+              ${ratingStars ? `<span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">${ratingStars}</span>` : ''}
+              <span class="macro-chip bg-white/70 dark:bg-slate-700">🔥 ${item.kcal} kcal</span>
+              ${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍</button>
+            <button class="fav-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isFav ? 'fav-icon-active' : ''}" onclick="toggleFavorito('${item.id}', event)" title="${isFav ? 'Quitar de favoritos' : 'Añadir a favoritos'}">${isFav ? '❤️' : '🤍'}</button>
+            <button class="exclude-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isExc ? 'exclude-icon-active' : ''}" onclick="toggleExcluido('${item.id}', event)" title="${isExc ? 'Incluir en menú' : 'Excluir del menú'}">${isExc ? '🚫' : '⊘'}</button>
+          </div>
+        </div>
+        ${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}
+        ${isFav ? `<div class="text-xs text-red-600 dark:text-red-400 mt-1 font-semibold">❤️ Favorito</div>` : ''}
+        ${isExc ? `<div class="text-xs text-slate-500 mt-1 font-semibold">🚫 Excluido</div>` : ''}
+      </div>`;
     };
     card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20', '🥬')}</div>`;
     cont.appendChild(card);
   });
 }
 
+// 🟢 NUEVO: Modal de sustitución con favoritos primero y excluidos al final
 function abrirModalSustitucion(diaIdx, path, currentId) {
   const current = FOODS_DB[currentId];
   if (!current) return;
@@ -1891,24 +2193,51 @@ function abrirModalSustitucion(diaIdx, path, currentId) {
   const cont = document.getElementById('modalOpciones');
   cont.innerHTML = '';
   
-  // 🟢 NUEVO: Ordenar poniendo primero los de temporada
+  // 🟢 Ordenar: 1) actuales, 2) favoritos, 3) mejor valorados, 4) por kcal, 5) excluidos al final
   const ordenados = [...grupo].sort((a, b) => {
     if (a.id === currentId) return -1;
     if (b.id === currentId) return 1;
-    const aTemp = esDeTemporada(a) ? 0 : 1;
-    const bTemp = esDeTemporada(b) ? 0 : 1;
-    if (aTemp !== bTemp) return aTemp - bTemp;
+    const aExc = USER_RATINGS[a.id]?.is_excluded ? 1 : 0;
+    const bExc = USER_RATINGS[b.id]?.is_excluded ? 1 : 0;
+    if (aExc !== bExc) return aExc - bExc;
+    const aFav = USER_RATINGS[a.id]?.is_favorite ? 1 : 0;
+    const bFav = USER_RATINGS[b.id]?.is_favorite ? 1 : 0;
+    if (aFav !== bFav) return bFav - aFav;
+    const aRating = USER_RATINGS[a.id]?.rating || 0;
+    const bRating = USER_RATINGS[b.id]?.rating || 0;
+    if (aRating !== bRating) return bRating - aRating;
     return Math.abs(a.kcal - current.kcal) - Math.abs(b.kcal - current.kcal);
   });
   
   ordenados.forEach(alim => {
     const isCurrent = alim.id === currentId;
     const diffKcal = alim.kcal - current.kcal;
+    const rating = USER_RATINGS[alim.id];
+    const isFav = rating?.is_favorite || false;
+    const isExc = rating?.is_excluded || false;
     const badgeTemporada = getBadgeTemporada(alim);
+    const starsHtml = rating?.rating ? '⭐'.repeat(rating.rating) : '';
     const opt = document.createElement('div');
-    opt.className = `sub-option p-4 border-2 rounded-xl ${isCurrent ? 'current border-green-300' : 'border-slate-200 dark:border-slate-700'}`;
-    opt.innerHTML = `<div class="flex justify-between items-start gap-3"><div class="flex-1"><div class="flex items-center gap-2 flex-wrap mb-1"><span class="font-bold text-slate-800 dark:text-white">${alim.nombre}</span>${isCurrent ? '<span class="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">ACTUAL</span>' : ''}</div><div class="flex gap-1.5 mt-2 flex-wrap">${badgeTemporada}<span class="macro-chip bg-slate-100 dark:bg-slate-700">🔥 ${alim.kcal} kcal</span>${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}</div></div>${!isCurrent ? `<button class="flex-shrink-0 bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir</button>` : ''}</div>`;
-    if (!isCurrent) opt.addEventListener('click', () => aplicarSustitucion(alim.id));
+    opt.className = `sub-option p-4 border-2 rounded-xl ${isCurrent ? 'current border-green-300' : 'border-slate-200 dark:border-slate-700'} ${isFav ? 'is-favorite-sub' : ''} ${isExc ? 'is-excluded-sub' : ''}`;
+    opt.innerHTML = `<div class="flex justify-between items-start gap-3">
+      <div class="flex-1">
+        <div class="flex items-center gap-2 flex-wrap mb-1">
+          <span class="font-bold text-slate-800 dark:text-white">${alim.nombre}</span>
+          ${isCurrent ? '<span class="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">ACTUAL</span>' : ''}
+          ${isFav ? '<span class="text-xs">❤️</span>' : ''}
+          ${isExc ? '<span class="text-xs bg-slate-400 text-white px-2 py-0.5 rounded-full font-bold">EXCLUIDO</span>' : ''}
+        </div>
+        <div class="flex gap-1.5 mt-2 flex-wrap flex-wrap">
+          ${badgeTemporada}
+          ${starsHtml ? `<span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">${starsHtml}</span>` : ''}
+          <span class="macro-chip bg-slate-100 dark:bg-slate-700">🔥 ${alim.kcal} kcal</span>
+          ${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}
+          ${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}
+        </div>
+      </div>
+      ${!isCurrent && !isExc ? `<button class="flex-shrink-0 bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir</button>` : ''}
+    </div>`;
+    if (!isCurrent && !isExc) opt.addEventListener('click', () => aplicarSustitucion(alim.id));
     cont.appendChild(opt);
   });
   document.getElementById('modalSustitucion').classList.remove('hidden');
@@ -1957,8 +2286,8 @@ function categorizarIngrediente(ing) {
   if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|lentejas|garbanzos|alubias|ternera/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
   if (/arroz|quinoa|pasta|batata|avena|pan|cuscús|bulgur|boniato|tortita/.test(lower)) return { cat: '🍚 Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
   if (/aceite|aguacate|almendra|nueces|pistacho|anacardo|semilla|tahini|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
-  if (/manzana|plátano|pera|fresa|cereza|sandía|melón|melocotón|nectarina|albaricoque|higo|granada|uva|caqui|mandarina|naranja|kiwi|pomelo|lima|frutos rojos|membrillo|naranja|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
-  if (/brócoli|espinaca|tomate|calabacín|lechuga|pepino|cebolla|pimiento|berenjena|coliflor|alcachofa|espárrago|judía|acelga|col|seta|champiñón|puerro|hinojo|apio|remolacha|zanahoria|guisante|haba|calabaza|col lombarda|coles de bruselas|menestra|pisto|escalivada|gazpacho|salmorejo|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
+  if (/manzana|plátano|pera|fresa|cereza|sandía|melón|melocotón|nectarina|albaricoque|higo|granada|uva|caqui|mandarina|naranja|kiwi|pomelo|lima|frutos rojos|membrillo|pasas/.test(lower)) return { cat: ' Frutas', color: 'from-red-500 to-rose-500' };
+  if (/brócoli|espinaca|tomate|calabacín|lechuga|pepino|cebolla|pimiento|berenjena|coliflor|alcachofa|espárrago|judía|acelga|col|seta|champiñón|puerro|hinojo|apio|remolacha|zanahoria|guisante|haba|calabaza|col lombarda|coles de bruselas|menestra|pisto|escalivada|gazpacho|salmorejo|hummus/.test(lower)) return { cat: ' Verduras', color: 'from-green-500 to-emerald-500' };
   return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
 }
 
@@ -2033,7 +2362,7 @@ function exportarCompraPDF() {
     yPos += 8;
   });
   doc.save(`Lista_Compra_NutriPro.pdf`);
-  mostrarToast('📄 Lista exportada');
+  mostrarToast(' Lista exportada');
 }
 
 function exportarProgresoPDF() {
@@ -2137,7 +2466,7 @@ function renderAnalisis() {
 }
 
 // ==========================================
-// 🟢 PANEL ADMIN COMPLETO
+//  PANEL ADMIN COMPLETO
 // ==========================================
 async function cargarPanelAdmin() {
   if (!currentUser || currentUser.rol !== 'admin') return;
@@ -2176,7 +2505,7 @@ async function cargarPanelAdmin() {
                   <div class="text-xs text-slate-500 dark:text-slate-400 truncate">${idCorto}</div>
                   <div class="flex gap-1 mt-1 flex-wrap">
                     ${esAdmin ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">⚙️ Admin</span>' : '<span class="status-badge bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">👤 Usuario</span>'}
-                    ${estaBloqueado ? '<span class="status-badge bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">🚫 Bloqueado</span>' : '<span class="status-badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">✅ Activo</span>'}
+                    ${estaBloqueado ? '<span class="status-badge bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"> Bloqueado</span>' : '<span class="status-badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">✅ Activo</span>'}
                     ${esYo ? '<span class="status-badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">👤 Tú</span>' : ''}
                   </div>
                 </div>
@@ -2204,7 +2533,7 @@ async function toggleBloqueoUsuario(userId, bloquear) {
   if (!confirm(`¿${bloquear ? 'Bloquear' : 'Desbloquear'} este usuario?`)) return;
   try {
     const { error } = await sb.from('profiles').update({ bloqueado: bloquear }).eq('id', userId);
-    if (error) { mostrarToast(' Error al actualizar usuario'); return; }
+    if (error) { mostrarToast('❌ Error al actualizar usuario'); return; }
     mostrarToast(`✅ Usuario ${bloquear ? 'bloqueado' : 'desbloqueado'}`);
     await cargarPanelAdmin();
   } catch (err) { mostrarToast('❌ Error inesperado'); }
@@ -2278,7 +2607,7 @@ async function cargarAnunciosAdmin() {
       document.getElementById('listaAnunciosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay anuncios. Haz clic en "Nuevo anuncio" para crear el primero.</p>';
       return;
     }
-    const positionNames = { top: '🔝 Superior', sidebar: ' Lateral', inline: '📏 En línea', footer: '📍 Inferior' };
+    const positionNames = { top: '🔝 Superior', sidebar: '📎 Lateral', inline: ' En línea', footer: '📍 Inferior' };
     document.getElementById('listaAnunciosAdmin').innerHTML = ads.map(ad => `
       <div class="admin-ad-row">
         <div class="flex justify-between items-start gap-3 mb-2">
@@ -2294,7 +2623,7 @@ async function cargarAnunciosAdmin() {
           <div class="flex gap-1 flex-shrink-0">
             <button onclick="editarAnuncio('${ad.id}')" class="admin-btn admin-btn-primary">✏️ Editar</button>
             <button onclick="toggleAnuncio('${ad.id}', ${!ad.active})" class="admin-btn ${ad.active ? 'admin-btn-warning' : 'admin-btn-success'}">${ad.active ? '⏸️ Pausar' : '✅ Activar'}</button>
-            <button onclick="eliminarAnuncio('${ad.id}')" class="admin-btn admin-btn-danger">️</button>
+            <button onclick="eliminarAnuncio('${ad.id}')" class="admin-btn admin-btn-danger">🗑️</button>
           </div>
         </div>
       </div>
@@ -2377,8 +2706,8 @@ async function cargarAlimentosAdmin() {
       document.getElementById('listaAlimentosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay alimentos. Haz clic en "Nuevo alimento" para crear el primero.</p>';
       return;
     }
-    const grupoNames = { prot: ' Proteínas', carb: '🍚 Carbohidratos', verd: '🥦 Verduras', grasa: '🥑 Grasas', des: '☀️ Desayunos', mer: '🍎 Meriendas' };
-    const temporadaNames = { todo_el_año: '🌍 Todo el año', primavera: ' Primavera', verano: '☀️ Verano', otono: '🍂 Otoño', invierno: '❄️ Invierno' };
+    const grupoNames = { prot: '🥩 Proteínas', carb: '🍚 Carbohidratos', verd: '🥦 Verduras', grasa: '🥑 Grasas', des: '️ Desayunos', mer: ' Meriendas' };
+    const temporadaNames = { todo_el_año: '🌍 Todo el año', primavera: '🌸 Primavera', verano: '☀️ Verano', otono: '🍂 Otoño', invierno: '️ Invierno' };
     let html = '';
     let currentGrupo = null;
     foods.forEach(f => {
@@ -2399,7 +2728,7 @@ async function cargarAlimentosAdmin() {
                 ${f.es_fruta ? '<span class="status-badge bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">🍎 Fruta</span>' : ''}
                 <span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">🔥 ${f.kcal} kcal</span>
                 ${f.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${f.prot}g</span>` : ''}
-                ${tieneReceta ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">📖 Con receta</span>' : '<span class="status-badge bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">📄 Sin receta</span>'}
+                ${tieneReceta ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">📖 Con receta</span>' : '<span class="status-badge bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400"> Sin receta</span>'}
               </div>
               <p class="text-xs text-slate-500 dark:text-slate-400">ID: <code class="bg-slate-100 dark:bg-slate-700 px-1 rounded">${f.id}</code></p>
             </div>
@@ -2532,15 +2861,15 @@ async function eliminarAlimento(id) {
   try {
     await sb.from('recipes').delete().eq('food_id', id);
     const { error } = await sb.from('foods').delete().eq('id', id);
-    if (error) { mostrarToast('❌ Error'); return; }
-    mostrarToast('🗑️ Alimento eliminado');
+    if (error) { mostrarToast(' Error'); return; }
+    mostrarToast('️ Alimento eliminado');
     await cargarAlimentosAdmin();
     await cargarDatosDinamicos();
   } catch (err) { console.error('Error eliminando alimento:', err); }
 }
 
 async function forzarSincronizacion() {
-  if (!appIsOnline) { mostrarToast('⚠️ No hay conexión.'); return; }
+  if (!appIsOnline) { mostrarToast('️ No hay conexión.'); return; }
   await processOfflineQueue();
   document.getElementById('configCola').textContent = getOfflineQueue().length;
 }
@@ -2570,6 +2899,10 @@ function switchTab(tab) {
   if (tab === 'analisis') renderAnalisis();
   if (tab === 'seguimiento') renderSeguimiento();
   if (tab === 'salud') renderSalud();
+  if (tab === 'perfil') {
+    renderMisFavoritos();
+    renderMisExcluidos();
+  }
   if (tab === 'admin') {
     cargarPanelAdmin();
     cargarComentariosAdmin();
@@ -2578,6 +2911,17 @@ function switchTab(tab) {
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// 🟢 NUEVO: Tabs de perfil
+document.querySelectorAll('.profile-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.profile-panel').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById('perfil-' + tab.dataset.ptab);
+    if (panel) panel.classList.add('active');
+  });
+});
 
 document.querySelectorAll('.admin-tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -2613,13 +2957,16 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
   const conf = document.getElementById('passConfirm').value;
   if (nueva !== conf) { mostrarToast('❌ Las contraseñas no coinciden'); return; }
   if (nueva.length < 6) { mostrarToast('❌ Mínimo 6 caracteres'); return; }
-  if (!appIsOnline) { mostrarToast('⚠️ Se requiere conexión'); return; }
+  if (!appIsOnline) { mostrarToast('️ Se requiere conexión'); return; }
   try {
     const { error } = await sb.auth.updateUser({ password: nueva });
     if (error) { mostrarToast('❌ Error: ' + error.message); } 
     else { document.getElementById('formPassword').reset(); mostrarToast('✓ Contraseña cambiada'); }
   } catch (err) { mostrarToast('❌ Error de conexión'); }
 });
+
+// 🟢 Inicializar sistema de estrellas al cargar
+initStarRating();
 
 checkAuth();
 </script>
