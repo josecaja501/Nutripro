@@ -1,1 +1,1348 @@
+/* ============================================
+   NUTRIPRO - STYLESHEET PRINCIPAL
+   ============================================ */
 
+/* ============================================
+   1. VARIABLES Y TEMAS
+   ============================================ */
+:root { 
+  --primary: #0d9488; 
+  --bg: #f8fafc; 
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --checkbox-bg: #f1f5f9;
+  --sidebar-card-bg: #f8fafc;
+}
+
+.dark {
+  --bg: #0f172a;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --card-bg: #1e293b;
+  --border-color: #334155;
+  --input-bg: #334155;
+  --input-border: #475569;
+  --checkbox-bg: #334155;
+  --sidebar-card-bg: #1e293b;
+}
+
+/* ============================================
+   2. RESET Y BASE
+   ============================================ */
+* { 
+  font-family: 'Inter', sans-serif; 
+  box-sizing: border-box; 
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; 
+}
+
+body { 
+  background: var(--bg); 
+  margin: 0; 
+  padding: 0; 
+  color: var(--text-main); 
+}
+
+input, select, textarea { 
+  background: var(--input-bg); 
+  border-color: var(--input-border); 
+  color: var(--text-main); 
+}
+
+label.flex.items-center.gap-2.p-2.border { 
+  background: var(--checkbox-bg); 
+}
+
+.info-card { 
+  background: var(--sidebar-card-bg); 
+}
+
+/* ============================================
+   3. ANIMACIONES
+   ============================================ */
+@keyframes fadeIn { 
+  from { opacity: 0; transform: translateY(10px); } 
+  to { opacity: 1; transform: translateY(0); } 
+}
+
+@keyframes modalIn { 
+  from { opacity: 0; transform: scale(0.95); } 
+  to { opacity: 1; transform: scale(1); } 
+}
+
+@keyframes slideIn { 
+  from { opacity: 0; transform: translateX(-10px); } 
+  to { opacity: 1; transform: translateX(0); } 
+}
+
+@keyframes pulse-heart { 
+  0%, 100% { transform: scale(1); } 
+  50% { transform: scale(1.2); } 
+}
+
+@keyframes shimmer { 
+  0% { background-position: -200% 0; } 
+  100% { background-position: 200% 0; } 
+}
+
+@keyframes achievementUnlock { 
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; } 
+  50% { transform: scale(1.2) rotate(10deg); } 
+  100% { transform: scale(1) rotate(0deg); opacity: 1; } 
+}
+
+@keyframes spin { 
+  0% { transform: rotate(0deg); } 
+  100% { transform: rotate(360deg); } 
+}
+
+.fade-in { animation: fadeIn 0.4s ease-out; }
+
+/* ============================================
+   4. HEADER Y NAVEGACIÓN
+   ============================================ */
+.gradient-hero { 
+  background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #0284c7 100%); 
+}
+
+.nav-btn.active { 
+  background: white; 
+  color: #0d9488; 
+  box-shadow: 0 4px 12px rgba(13,148,136,0.2); 
+}
+
+.dark .nav-btn:not(.active) { 
+  color: rgba(255,255,255,0.7); 
+}
+
+.dark .nav-btn:not(.active):hover { 
+  background: rgba(255,255,255,0.1); 
+}
+
+/* ============================================
+   5. TABS Y CONTENIDO
+   ============================================ */
+.tab-content { 
+  display: none; 
+}
+
+.tab-content.active { 
+  display: block; 
+  animation: fadeIn 0.4s ease-out; 
+}
+
+/* ============================================
+   6. CARDS Y COMPONENTES BASE
+   ============================================ */
+.metric-card, .meal-card, .comment-card, .admin-stat, .auth-card, .modal-content { 
+  background: var(--card-bg); 
+  border: 1px solid var(--border-color); 
+  color: var(--text-main);
+}
+
+.metric-card:hover { 
+  transform: translateY(-4px); 
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08); 
+}
+
+.meal-card:hover { 
+  transform: scale(1.02); 
+}
+
+/* ============================================
+   7. ALIMENTOS Y MENÚ
+   ============================================ */
+.food-item { 
+  transition: all 0.2s ease; 
+  cursor: pointer; 
+  position: relative; 
+}
+
+.food-item:hover { 
+  background: rgba(13,148,136,0.08); 
+  transform: translateX(2px); 
+}
+
+.food-item:hover .swap-icon, 
+.food-item:hover .recipe-btn, 
+.food-item:hover .fav-btn, 
+.food-item:hover .exclude-btn { 
+  opacity: 1; 
+  transform: translateY(0); 
+}
+
+.swap-icon, .recipe-btn, .fav-btn, .exclude-btn { 
+  opacity: 0; 
+  transform: translateY(5px); 
+  transition: all 0.2s ease; 
+}
+
+.food-item.substituted { 
+  background: linear-gradient(90deg, rgba(245,158,11,0.08), transparent); 
+  border-left: 3px solid #f59e0b; 
+}
+
+.food-item.is-favorite { 
+  border-left: 3px solid #ef4444; 
+}
+
+.food-item.is-excluded { 
+  opacity: 0.5; 
+  border-left: 3px solid #64748b; 
+}
+
+/* ============================================
+   8. BADGES DE TEMPORADA
+   ============================================ */
+.temporada-badge { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 2px; 
+  font-size: 9px; 
+  padding: 2px 6px; 
+  border-radius: 999px; 
+  font-weight: 600; 
+  white-space: nowrap; 
+}
+
+.temporada-actual { 
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0); 
+  color: #065f46; 
+  border: 1px solid #10b981; 
+}
+
+.dark .temporada-actual { 
+  background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.1)); 
+  color: #6ee7b7; 
+}
+
+.temporada-todo { 
+  background: #f1f5f9; 
+  color: #475569; 
+  border: 1px solid #cbd5e1; 
+}
+
+.dark .temporada-todo { 
+  background: rgba(100,116,139,0.2); 
+  color: #94a3b8; 
+}
+
+.temporada-otra { 
+  background: #fef3c7; 
+  color: #92400e; 
+  border: 1px solid #f59e0b; 
+  opacity: 0.7; 
+}
+
+.dark .temporada-otra { 
+  background: rgba(245,158,11,0.15); 
+  color: #fcd34d; 
+}
+
+/* ============================================
+   9. INDICADOR DE ESTACIÓN
+   ============================================ */
+.season-indicator { 
+  background: linear-gradient(135deg, #f0fdfa, #ecfeff); 
+  border: 1px solid #99f6e4; 
+  border-radius: 0.75rem; 
+  padding: 0.75rem 1rem; 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 0.5rem; 
+  font-size: 0.875rem; 
+  font-weight: 600; 
+  color: #0f766e; 
+}
+
+.dark .season-indicator { 
+  background: linear-gradient(135deg, rgba(15,118,110,0.2), rgba(20,184,166,0.1)); 
+  border-color: rgba(15,118,110,0.4); 
+  color: #5eead4; 
+}
+
+/* ============================================
+   10. SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar { 
+  width: 8px; 
+}
+
+::-webkit-scrollbar-track { 
+  background: var(--bg); 
+}
+
+::-webkit-scrollbar-thumb { 
+  background: #94a3b8; 
+  border-radius: 4px; 
+}
+
+/* ============================================
+   11. ALERTAS
+   ============================================ */
+.alert-warning { 
+  background: linear-gradient(135deg, #fef3c7, #fde68a); 
+  border-left: 4px solid #f59e0b; 
+  color: #92400e; 
+}
+
+.alert-success { 
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0); 
+  border-left: 4px solid #10b981; 
+  color: #065f46; 
+}
+
+.alert-danger { 
+  background: linear-gradient(135deg, #fee2e2, #fecaca); 
+  border-left: 4px solid #ef4444; 
+  color: #991b1b; 
+}
+
+/* ============================================
+   12. MODALES
+   ============================================ */
+.modal-overlay { 
+  position: fixed; 
+  inset: 0; 
+  background: rgba(15,23,42,0.6); 
+  backdrop-filter: blur(4px); 
+  z-index: 100; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  padding: 1rem; 
+  animation: fadeIn 0.2s ease-out; 
+}
+
+.modal-content { 
+  border-radius: 1.5rem; 
+  max-width: 560px; 
+  width: 100%; 
+  max-height: 85vh; 
+  overflow-y: auto; 
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25); 
+  animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+}
+
+.modal-content.recipe-modal, 
+.modal-content.admin-modal { 
+  max-width: 800px; 
+  max-height: 90vh; 
+}
+
+/* ============================================
+   13. OPCIONES DE SUSTITUCIÓN
+   ============================================ */
+.sub-option { 
+  transition: all 0.2s ease; 
+  cursor: pointer; 
+}
+
+.sub-option:hover { 
+  background: linear-gradient(135deg, #f0fdfa, #ecfeff); 
+  border-color: #0d9488; 
+  transform: translateX(4px); 
+}
+
+.sub-option.current { 
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5); 
+  border-color: #10b981; 
+}
+
+.sub-option.is-favorite-sub { 
+  border-left: 4px solid #ef4444; 
+}
+
+.sub-option.is-excluded-sub { 
+  opacity: 0.5; 
+  border-left: 4px solid #64748b; 
+}
+
+/* ============================================
+   14. MACRO CHIPS
+   ============================================ */
+.macro-chip { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 2px; 
+  font-size: 10px; 
+  padding: 2px 6px; 
+  border-radius: 999px; 
+  font-weight: 600; 
+}
+
+/* ============================================
+   15. AUTH SCREEN
+   ============================================ */
+.auth-screen { 
+  min-height: 100vh; 
+  background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #0284c7 100%); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  padding: 1rem; 
+}
+
+.auth-card { 
+  border-radius: 1.5rem; 
+  max-width: 440px; 
+  width: 100%; 
+  padding: 2.5rem; 
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25); 
+}
+
+.auth-tabs { 
+  display: flex; 
+  background: #f1f5f9; 
+  border-radius: 0.75rem; 
+  padding: 4px; 
+  margin-bottom: 1.5rem; 
+}
+
+.auth-tab { 
+  flex: 1; 
+  padding: 0.6rem; 
+  text-align: center; 
+  border-radius: 0.6rem; 
+  font-weight: 600; 
+  font-size: 0.875rem; 
+  cursor: pointer; 
+  transition: all 0.2s; 
+  color: #64748b; 
+}
+
+.auth-tab.active { 
+  background: white; 
+  color: #0d9488; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+}
+
+/* ============================================
+   16. ESPACIOS PUBLICITARIOS
+   ============================================ */
+.ad-space { 
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9); 
+  border: 1px dashed #cbd5e1; 
+  border-radius: 0.75rem; 
+  padding: 1rem; 
+  text-align: center; 
+  position: relative; 
+  color: #94a3b8; 
+  font-size: 0.75rem; 
+  margin: 1rem 0; 
+}
+
+.ad-space::before { 
+  content: 'Publicidad'; 
+  position: absolute; 
+  top: 4px; 
+  right: 8px; 
+  font-size: 0.625rem; 
+  color: #94a3b8; 
+  text-transform: uppercase; 
+  letter-spacing: 0.05em; 
+  font-weight: 600; 
+}
+
+.ad-space.has-link { 
+  cursor: pointer; 
+  border-style: solid; 
+}
+
+.ad-space.has-link:hover { 
+  background: linear-gradient(135deg, #f0fdfa, #ecfeff); 
+  border-color: #0d9488; 
+}
+
+/* ============================================
+   17. MENÚ USUARIO
+   ============================================ */
+.user-menu { 
+  position: relative; 
+}
+
+.user-dropdown { 
+  position: absolute; 
+  top: calc(100% + 8px); 
+  right: 0; 
+  background: var(--card-bg); 
+  border: 1px solid var(--border-color); 
+  border-radius: 1rem; 
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15); 
+  min-width: 240px; 
+  padding: 0.5rem; 
+  z-index: 60; 
+  display: none; 
+}
+
+.user-dropdown.show { 
+  display: block; 
+  animation: fadeIn 0.2s ease-out; 
+}
+
+.user-dropdown-item { 
+  display: flex; 
+  align-items: center; 
+  gap: 0.5rem; 
+  padding: 0.6rem 0.8rem; 
+  border-radius: 0.5rem; 
+  cursor: pointer; 
+  font-size: 0.875rem; 
+  color: var(--text-main); 
+  transition: background 0.15s; 
+}
+
+.user-dropdown-item:hover { 
+  background: rgba(13,148,136,0.1); 
+}
+
+.user-dropdown-divider { 
+  height: 1px; 
+  background: var(--border-color); 
+  margin: 0.4rem 0; 
+}
+
+/* ============================================
+   18. COMENTARIOS
+   ============================================ */
+.comment-card { 
+  border-radius: 1rem; 
+  padding: 1rem; 
+  transition: all 0.2s; 
+}
+
+.comment-card:hover { 
+  border-color: #0d9488; 
+  box-shadow: 0 4px 12px rgba(13,148,136,0.08); 
+}
+
+/* ============================================
+   19. ADMIN STATS Y BADGES
+   ============================================ */
+.admin-stat { 
+  border-radius: 1rem; 
+  padding: 1.5rem; 
+}
+
+.status-badge { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 4px; 
+  padding: 2px 8px; 
+  border-radius: 999px; 
+  font-size: 0.7rem; 
+  font-weight: 600; 
+}
+
+/* ============================================
+   20. BOTONES
+   ============================================ */
+.btn-pdf { 
+  background: linear-gradient(135deg, #ef4444, #dc2626); 
+  color: white; 
+  transition: all 0.2s; 
+}
+
+.btn-pdf:hover { 
+  transform: translateY(-1px); 
+  box-shadow: 0 4px 12px rgba(239,68,68,0.3); 
+}
+
+.loading-spinner { 
+  border: 4px solid #f3f3f3; 
+  border-top: 4px solid #0d9488; 
+  border-radius: 50%; 
+  width: 30px; 
+  height: 30px; 
+  animation: spin 1s linear infinite; 
+  margin: 20px auto; 
+}
+
+/* ============================================
+   21. HÁBITOS Y SALUD
+   ============================================ */
+.habit-card { 
+  background: var(--card-bg); 
+  border: 1px solid var(--border-color); 
+  border-radius: 1.25rem; 
+  padding: 1.5rem; 
+  transition: all 0.2s ease; 
+}
+
+.habit-card:hover { 
+  transform: translateY(-3px); 
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08); 
+}
+
+.habit-video-btn { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 0.4rem; 
+  background: #eff6ff; 
+  color: #2563eb; 
+  padding: 0.45rem 0.75rem; 
+  border-radius: 0.6rem; 
+  font-size: 0.8rem; 
+  font-weight: 600; 
+  cursor: pointer; 
+  transition: background 0.15s; 
+}
+
+.habit-video-btn:hover { 
+  background: #dbeafe; 
+}
+
+.dark .habit-video-btn { 
+  background: rgba(37,99,235,0.18); 
+  color: #93c5fd; 
+}
+
+.dark .habit-video-btn:hover { 
+  background: rgba(37,99,235,0.30); 
+}
+
+/* ============================================
+   22. RECETAS
+   ============================================ */
+.recipe-step { 
+  display: flex; 
+  gap: 1rem; 
+  padding: 1rem; 
+  border-radius: 0.75rem; 
+  background: var(--bg); 
+  margin-bottom: 0.75rem; 
+  animation: slideIn 0.3s ease-out; 
+}
+
+.recipe-step-number { 
+  flex-shrink: 0; 
+  width: 2rem; 
+  height: 2rem; 
+  background: linear-gradient(135deg, #0d9488, #0891b2); 
+  color: white; 
+  border-radius: 50%; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-weight: bold; 
+  font-size: 0.875rem; 
+}
+
+.recipe-ingredient { 
+  display: flex; 
+  align-items: center; 
+  gap: 0.75rem; 
+  padding: 0.75rem; 
+  border-radius: 0.5rem; 
+  background: var(--bg); 
+  margin-bottom: 0.5rem; 
+  cursor: pointer; 
+  transition: all 0.2s; 
+}
+
+.recipe-ingredient:hover { 
+  background: rgba(13,148,136,0.1); 
+}
+
+.recipe-ingredient.checked { 
+  opacity: 0.6; 
+  text-decoration: line-through; 
+}
+
+.recipe-chef-tip { 
+  background: linear-gradient(135deg, #fef3c7, #fde68a); 
+  border-left: 4px solid #f59e0b; 
+  padding: 1rem; 
+  border-radius: 0.75rem; 
+  margin-top: 1rem; 
+}
+
+.dark .recipe-chef-tip { 
+  background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(253,230,138,0.1)); 
+}
+
+/* ============================================
+   23. PANEL ADMIN - FILAS
+   ============================================ */
+.admin-user-row { 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  padding: 1rem; 
+  border-radius: 0.75rem; 
+  background: var(--bg); 
+  margin-bottom: 0.5rem; 
+  transition: all 0.2s; 
+}
+
+.admin-user-row:hover { 
+  background: rgba(13,148,136,0.05); 
+}
+
+.admin-comment-row, 
+.admin-ad-row, 
+.admin-food-row { 
+  padding: 1rem; 
+  border-radius: 0.75rem; 
+  background: var(--bg); 
+  margin-bottom: 0.5rem; 
+}
+
+/* ============================================
+   24. BOTONES ADMIN
+   ============================================ */
+.admin-btn { 
+  padding: 0.4rem 0.8rem; 
+  border-radius: 0.5rem; 
+  font-size: 0.75rem; 
+  font-weight: 600; 
+  cursor: pointer; 
+  transition: all 0.2s; 
+  border: none; 
+}
+
+.admin-btn-danger { 
+  background: #fee2e2; 
+  color: #991b1b; 
+}
+
+.admin-btn-danger:hover { 
+  background: #fecaca; 
+}
+
+.admin-btn-warning { 
+  background: #fef3c7; 
+  color: #92400e; 
+}
+
+.admin-btn-warning:hover { 
+  background: #fde68a; 
+}
+
+.admin-btn-success { 
+  background: #d1fae5; 
+  color: #065f46; 
+}
+
+.admin-btn-success:hover { 
+  background: #a7f3d0; 
+}
+
+.admin-btn-primary { 
+  background: #dbeafe; 
+  color: #1e40af; 
+}
+
+.admin-btn-primary:hover { 
+  background: #bfdbfe; 
+}
+
+/* ============================================
+   25. FORMULARIOS ADMIN
+   ============================================ */
+.admin-input { 
+  width: 100%; 
+  padding: 0.5rem 0.75rem; 
+  border-radius: 0.5rem; 
+  border: 1px solid var(--input-border); 
+  background: var(--input-bg); 
+  color: var(--text-main); 
+  font-size: 0.875rem; 
+}
+
+.admin-textarea { 
+  width: 100%; 
+  padding: 0.5rem 0.75rem; 
+  border-radius: 0.5rem; 
+  border: 1px solid var(--input-border); 
+  background: var(--input-bg); 
+  color: var(--text-main); 
+  font-size: 0.875rem; 
+  resize: vertical; 
+  min-height: 80px; 
+}
+
+.admin-select { 
+  width: 100%; 
+  padding: 0.5rem 0.75rem; 
+  border-radius: 0.5rem; 
+  border: 1px solid var(--input-border); 
+  background: var(--input-bg); 
+  color: var(--text-main); 
+  font-size: 0.875rem; 
+}
+
+.admin-form-group { 
+  margin-bottom: 1rem; 
+}
+
+.admin-form-group label { 
+  display: block; 
+  font-size: 0.875rem; 
+  font-weight: 600; 
+  margin-bottom: 0.25rem; 
+  color: var(--text-main); 
+}
+
+/* ============================================
+   26. TOGGLE SWITCH
+   ============================================ */
+.toggle-switch { 
+  position: relative; 
+  display: inline-block; 
+  width: 44px; 
+  height: 24px; 
+}
+
+.toggle-switch input { 
+  opacity: 0; 
+  width: 0; 
+  height: 0; 
+}
+
+.toggle-slider { 
+  position: absolute; 
+  cursor: pointer; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  background-color: #cbd5e1; 
+  transition: .3s; 
+  border-radius: 24px; 
+}
+
+.toggle-slider:before { 
+  position: absolute; 
+  content: ""; 
+  height: 18px; 
+  width: 18px; 
+  left: 3px; 
+  bottom: 3px; 
+  background-color: white; 
+  transition: .3s; 
+  border-radius: 50%; 
+}
+
+input:checked + .toggle-slider { 
+  background-color: #0d9488; 
+}
+
+input:checked + .toggle-slider:before { 
+  transform: translateX(20px); 
+}
+
+/* ============================================
+   27. SISTEMA DE ESTRELLAS
+   ============================================ */
+.star-rating { 
+  display: inline-flex; 
+  gap: 2px; 
+}
+
+.star-rating .star { 
+  cursor: pointer; 
+  font-size: 1.5rem; 
+  color: #cbd5e1; 
+  transition: all 0.15s; 
+  user-select: none; 
+}
+
+.star-rating .star:hover, 
+.star-rating .star.hovered { 
+  color: #fbbf24; 
+  transform: scale(1.15); 
+}
+
+.star-rating .star.filled { 
+  color: #f59e0b; 
+}
+
+.star-rating.readonly .star { 
+  cursor: default; 
+}
+
+.star-rating.readonly .star:hover { 
+  transform: none; 
+}
+
+.fav-icon-active { 
+  color: #ef4444 !important; 
+  animation: pulse-heart 0.4s ease; 
+}
+
+.exclude-icon-active { 
+  color: #64748b !important; 
+}
+
+/* ============================================
+   28. PERFIL - TABS Y PANELES
+   ============================================ */
+.profile-tab { 
+  padding: 0.75rem 1rem; 
+  border-bottom: 2px solid transparent; 
+  cursor: pointer; 
+  font-weight: 600; 
+  color: #64748b; 
+  transition: all 0.2s; 
+}
+
+.profile-tab:hover { 
+  color: #0d9488; 
+}
+
+.profile-tab.active { 
+  color: #0d9488; 
+  border-bottom-color: #0d9488; 
+}
+
+.profile-panel { 
+  display: none; 
+}
+
+.profile-panel.active { 
+  display: block; 
+  animation: fadeIn 0.3s ease-out; 
+}
+
+.food-card-mini { 
+  display: flex; 
+  align-items: center; 
+  gap: 0.75rem; 
+  padding: 0.75rem; 
+  background: var(--bg); 
+  border-radius: 0.5rem; 
+  margin-bottom: 0.5rem; 
+  transition: all 0.2s; 
+}
+
+.food-card-mini:hover { 
+  background: rgba(13,148,136,0.05); 
+}
+
+/* ============================================
+   29. PLANIFICADOR SEMANAL
+   ============================================ */
+.planner-header { 
+  background: linear-gradient(135deg, #0d9488, #0891b2); 
+  border-radius: 1rem; 
+  padding: 1.5rem; 
+  color: white; 
+  margin-bottom: 1.5rem; 
+}
+
+.planner-nav-btn { 
+  background: rgba(255,255,255,0.2); 
+  border: none; 
+  color: white; 
+  padding: 0.5rem 1rem; 
+  border-radius: 0.5rem; 
+  cursor: pointer; 
+  font-weight: 600; 
+  transition: all 0.2s; 
+}
+
+.planner-nav-btn:hover { 
+  background: rgba(255,255,255,0.3); 
+}
+
+.planner-grid { 
+  display: grid; 
+  grid-template-columns: repeat(7, 1fr); 
+  gap: 0.75rem; 
+  margin-bottom: 1.5rem; 
+}
+
+@media (max-width: 1024px) { 
+  .planner-grid { 
+    grid-template-columns: repeat(4, 1fr); 
+  } 
+}
+
+@media (max-width: 640px) { 
+  .planner-grid { 
+    grid-template-columns: repeat(2, 1fr); 
+  } 
+}
+
+.planner-day-card { 
+  background: var(--card-bg); 
+  border: 1px solid var(--border-color); 
+  border-radius: 0.75rem; 
+  padding: 1rem; 
+  transition: all 0.2s; 
+  cursor: pointer; 
+}
+
+.planner-day-card:hover { 
+  transform: translateY(-2px); 
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1); 
+  border-color: #0d9488; 
+}
+
+.planner-day-card.today { 
+  border: 2px solid #0d9488; 
+  background: linear-gradient(135deg, rgba(13,148,136,0.05), rgba(8,145,178,0.05)); 
+}
+
+.planner-day-name { 
+  font-weight: 700; 
+  font-size: 0.875rem; 
+  color: #0d9488; 
+  text-transform: uppercase; 
+  margin-bottom: 0.5rem; 
+}
+
+.planner-day-date { 
+  font-size: 0.75rem; 
+  color: var(--text-muted); 
+  margin-bottom: 0.75rem; 
+}
+
+.planner-meal { 
+  font-size: 0.7rem; 
+  padding: 0.25rem 0.5rem; 
+  border-radius: 0.375rem; 
+  margin-bottom: 0.25rem; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+
+.planner-meal-breakfast { 
+  background: #fef3c7; 
+  color: #92400e; 
+}
+
+.dark .planner-meal-breakfast { 
+  background: rgba(251,191,36,0.15); 
+  color: #fcd34d; 
+}
+
+.planner-meal-lunch { 
+  background: #fed7aa; 
+  color: #9a3412; 
+}
+
+.dark .planner-meal-lunch { 
+  background: rgba(251,146,60,0.15); 
+  color: #fdba74; 
+}
+
+.planner-meal-dinner { 
+  background: #e0e7ff; 
+  color: #3730a3; 
+}
+
+.dark .planner-meal-dinner { 
+  background: rgba(99,102,241,0.15); 
+  color: #a5b4fc; 
+}
+
+.planner-kcal { 
+  font-size: 0.75rem; 
+  font-weight: 700; 
+  color: #0d9488; 
+  margin-top: 0.5rem; 
+  text-align: right; 
+}
+
+.planner-view-toggle { 
+  display: flex; 
+  gap: 0.5rem; 
+  margin-bottom: 1rem; 
+  background: var(--card-bg); 
+  padding: 0.25rem; 
+  border-radius: 0.75rem; 
+  border: 1px solid var(--border-color); 
+}
+
+.planner-view-btn { 
+  flex: 1; 
+  padding: 0.5rem 1rem; 
+  border: none; 
+  background: transparent; 
+  color: var(--text-muted); 
+  font-weight: 600; 
+  border-radius: 0.5rem; 
+  cursor: pointer; 
+  transition: all 0.2s; 
+}
+
+.planner-view-btn.active { 
+  background: #0d9488; 
+  color: white; 
+}
+
+/* ============================================
+   30. BATCH COOKING
+   ============================================ */
+.batch-container { 
+  background: linear-gradient(135deg, #fef3c7, #fde68a); 
+  border-radius: 1rem; 
+  padding: 1.5rem; 
+  margin-top: 1.5rem; 
+}
+
+.dark .batch-container { 
+  background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(253,230,138,0.1)); 
+}
+
+.batch-task { 
+  display: flex; 
+  align-items: center; 
+  gap: 0.75rem; 
+  padding: 0.75rem; 
+  background: var(--card-bg); 
+  border-radius: 0.5rem; 
+  margin-bottom: 0.5rem; 
+  transition: all 0.2s; 
+}
+
+.batch-task:hover { 
+  transform: translateX(4px); 
+}
+
+.batch-task.completed { 
+  opacity: 0.6; 
+  text-decoration: line-through; 
+}
+
+.batch-task input[type="checkbox"] { 
+  width: 1.25rem; 
+  height: 1.25rem; 
+  accent-color: #0d9488; 
+}
+
+.batch-time { 
+  font-size: 0.75rem; 
+  font-weight: 700; 
+  color: #0d9488; 
+  min-width: 3rem; 
+}
+
+.batch-summary { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+  gap: 1rem; 
+  margin-top: 1rem; 
+}
+
+.batch-stat { 
+  background: var(--card-bg); 
+  padding: 1rem; 
+  border-radius: 0.75rem; 
+  text-align: center; 
+}
+
+.batch-stat-value { 
+  font-size: 1.5rem; 
+  font-weight: 700; 
+  color: #0d9488; 
+}
+
+.batch-stat-label { 
+  font-size: 0.75rem; 
+  color: var(--text-muted); 
+}
+
+/* ============================================
+   31. 🏆 LOGROS E INSIGNIAS (FASE 3)
+   ============================================ */
+.achievements-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+  gap: 1rem; 
+}
+
+@media (max-width: 640px) { 
+  .achievements-grid { 
+    grid-template-columns: repeat(2, 1fr); 
+  } 
+}
+
+.achievement-card { 
+  background: var(--card-bg); 
+  border: 2px solid var(--border-color); 
+  border-radius: 1rem; 
+  padding: 1rem; 
+  text-align: center; 
+  transition: all 0.3s; 
+  position: relative; 
+  overflow: hidden; 
+}
+
+.achievement-card.unlocked { 
+  border-color: #f59e0b; 
+  background: linear-gradient(135deg, rgba(245,158,11,0.05), rgba(251,191,36,0.05)); 
+}
+
+.achievement-card.unlocked::before { 
+  content: ''; 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  height: 3px; 
+  background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b); 
+  background-size: 200% 100%; 
+  animation: shimmer 2s linear infinite; 
+}
+
+.achievement-card.locked { 
+  opacity: 0.5; 
+  filter: grayscale(0.8); 
+}
+
+.achievement-card:hover { 
+  transform: translateY(-2px); 
+}
+
+.achievement-icon { 
+  font-size: 2.5rem; 
+  margin-bottom: 0.5rem; 
+  display: block; 
+}
+
+.achievement-card.unlocked .achievement-icon { 
+  animation: achievementUnlock 0.6s ease-out; 
+}
+
+.achievement-name { 
+  font-weight: 700; 
+  font-size: 0.875rem; 
+  color: var(--text-main); 
+  margin-bottom: 0.25rem; 
+}
+
+.achievement-desc { 
+  font-size: 0.75rem; 
+  color: var(--text-muted); 
+  line-height: 1.3; 
+}
+
+.achievement-category { 
+  display: inline-block; 
+  font-size: 0.625rem; 
+  padding: 2px 8px; 
+  border-radius: 999px; 
+  background: #f1f5f9; 
+  color: #64748b; 
+  margin-top: 0.5rem; 
+  text-transform: uppercase; 
+  font-weight: 600; 
+}
+
+.dark .achievement-category { 
+  background: #334155; 
+  color: #94a3b8; 
+}
+
+.achievement-progress { 
+  margin-top: 0.75rem; 
+  font-size: 0.75rem; 
+  color: var(--text-muted); 
+}
+
+.achievement-progress-bar { 
+  height: 4px; 
+  background: #e2e8f0; 
+  border-radius: 2px; 
+  margin-top: 4px; 
+  overflow: hidden; 
+}
+
+.dark .achievement-progress-bar { 
+  background: #334155; 
+}
+
+.achievement-progress-fill { 
+  height: 100%; 
+  background: linear-gradient(90deg, #f59e0b, #fbbf24); 
+  border-radius: 2px; 
+  transition: width 0.5s ease; 
+}
+
+.achievement-stats { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+  gap: 1rem; 
+  margin-bottom: 2rem; 
+}
+
+.achievement-stat-card { 
+  background: var(--card-bg); 
+  border: 1px solid var(--border-color); 
+  border-radius: 0.75rem; 
+  padding: 1rem; 
+  text-align: center; 
+}
+
+.achievement-stat-value { 
+  font-size: 1.5rem; 
+  font-weight: 700; 
+  color: #f59e0b; 
+}
+
+.achievement-stat-label { 
+  font-size: 0.75rem; 
+  color: var(--text-muted); 
+  margin-top: 0.25rem; 
+}
+
+.achievement-unlock-modal { 
+  position: fixed; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+  background: linear-gradient(135deg, #fef3c7, #fde68a); 
+  border: 3px solid #f59e0b; 
+  border-radius: 1.5rem; 
+  padding: 2rem; 
+  text-align: center; 
+  z-index: 1000; 
+  box-shadow: 0 25px 50px rgba(0,0,0,0.3); 
+  animation: achievementUnlock 0.6s ease-out; 
+  max-width: 320px; 
+}
+
+.dark .achievement-unlock-modal { 
+  background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(251,191,36,0.1)); 
+}
+
+.achievement-unlock-icon { 
+  font-size: 4rem; 
+  display: block; 
+  margin-bottom: 1rem; 
+}
+
+.achievement-unlock-title { 
+  font-size: 1.25rem; 
+  font-weight: 700; 
+  color: #92400e; 
+  margin-bottom: 0.5rem; 
+}
+
+.dark .achievement-unlock-title { 
+  color: #fbbf24; 
+}
+
+.achievement-unlock-desc { 
+  font-size: 0.875rem; 
+  color: #78350f; 
+}
+
+.dark .achievement-unlock-desc { 
+  color: #fcd34d; 
+}
+
+.achievement-overlay { 
+  position: fixed; 
+  inset: 0; 
+  background: rgba(0,0,0,0.7); 
+  z-index: 999; 
+  animation: fadeIn 0.3s ease; 
+}
