@@ -268,7 +268,41 @@
     <p class="text-slate-600 dark:text-slate-400 mb-6">Ve a la sección de Evaluación para calcular tus métricas.</p>
     <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
   </div>
-  <div id="dashboardContent" class="hidden space-y-6">
+   <div id="dashboardContent" class="hidden space-y-6">
+
+    <!-- 🧭 BRÚJULA NUTRICIONAL · consejo del día personalizado -->
+    <aside class="brujula" id="brujulaCard" aria-live="polite">
+      <div class="brujula__glow" aria-hidden="true"></div>
+      <span class="brujula__stamp" id="brujulaStamp" aria-hidden="true">—</span>
+
+      <header class="brujula__head">
+        <span class="brujula__kicker">Brújula Nutricional · consejo del día</span>
+        <span class="brujula__meta" id="brujulaMeta">Cargando…</span>
+      </header>
+
+      <div class="brujula__body" id="brujulaBody">
+        <div class="brujula__icon" id="brujulaIcon" aria-hidden="true">🧭</div>
+        <h3 class="brujula__titulo" id="brujulaTitulo">Preparando tu consejo…</h3>
+        <p class="brujula__texto" id="brujulaTexto">En un instante verás una recomendación elegida a tu medida, con el motivo por el que te la mostramos.</p>
+        <div class="brujula__razon">
+          <span class="brujula__razon-dot" aria-hidden="true"></span>
+          <span id="brujulaRazon">Personalizando según tu perfil</span>
+          <span class="brujula__fuente" id="brujulaFuente"></span>
+        </div>
+      </div>
+
+      <div class="brujula__cats">
+        <span class="brujula__cats-label">Temas que iremos tocando</span>
+        <div class="brujula__cats-track" id="brujulaCats"></div>
+      </div>
+
+      <footer class="brujula__foot">
+        <button type="button" class="brujula__btn brujula__btn--solid" id="brujulaOtro">↻ Otro consejo</button>
+        <button type="button" class="brujula__btn brujula__btn--ghost" id="brujulaCopiar"> Copiar</button>
+        <span class="brujula__count" id="brujulaCount"></span>
+      </footer>
+    </aside>
+
     <div class="grid md:grid-cols-4 gap-4">
       <div class="metric-card rounded-2xl p-6">
         <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">TMB</div>
