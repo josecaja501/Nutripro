@@ -13,6 +13,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NutriPro">
 
+<!--  NUEVO: CSS externo -->
+<link rel="stylesheet" href="css/styles.css">
+
+<!-- Librerías externas -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -23,326 +27,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
-
-<style>
-  :root { 
-    --primary: #0d9488; 
-    --bg: #f8fafc; 
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --card-bg: #ffffff;
-    --border-color: #e2e8f0;
-    --input-bg: #ffffff;
-    --input-border: #cbd5e1;
-    --checkbox-bg: #f1f5f9;
-    --sidebar-card-bg: #f8fafc;
-  }
-  .dark {
-    --bg: #0f172a;
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    --card-bg: #1e293b;
-    --border-color: #334155;
-    --input-bg: #334155;
-    --input-border: #475569;
-    --checkbox-bg: #334155;
-    --sidebar-card-bg: #1e293b;
-  }
-  * { font-family: 'Inter', sans-serif; box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
-  body { background: var(--bg); margin: 0; padding: 0; color: var(--text-main); }
-  .gradient-hero { background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #0284c7 100%); }
-  .nav-btn.active { background: white; color: #0d9488; box-shadow: 0 4px 12px rgba(13,148,136,0.2); }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-  @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-  @keyframes pulse-heart { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
-  .fade-in { animation: fadeIn 0.4s ease-out; }
-  .metric-card, .meal-card, .comment-card, .admin-stat, .auth-card, .modal-content { 
-    background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main);
-  }
-  .metric-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
-  .meal-card:hover { transform: scale(1.02); }
-  .food-item { transition: all 0.2s ease; cursor: pointer; position: relative; }
-  .food-item:hover { background: rgba(13,148,136,0.08); transform: translateX(2px); }
-  .food-item:hover .swap-icon, .food-item:hover .recipe-btn, .food-item:hover .fav-btn, .food-item:hover .exclude-btn { opacity: 1; transform: translateY(0); }
-  .swap-icon, .recipe-btn, .fav-btn, .exclude-btn { opacity: 0; transform: translateY(5px); transition: all 0.2s ease; }
-  .food-item.substituted { background: linear-gradient(90deg, rgba(245,158,11,0.08), transparent); border-left: 3px solid #f59e0b; }
-  .food-item.is-favorite { border-left: 3px solid #ef4444; }
-  .food-item.is-excluded { opacity: 0.5; border-left: 3px solid #64748b; }
-  .temporada-badge { display: inline-flex; align-items: center; gap: 2px; font-size: 9px; padding: 2px 6px; border-radius: 999px; font-weight: 600; white-space: nowrap; }
-  .temporada-actual { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #065f46; border: 1px solid #10b981; }
-  .dark .temporada-actual { background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.1)); color: #6ee7b7; }
-  .temporada-todo { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
-  .dark .temporada-todo { background: rgba(100,116,139,0.2); color: #94a3b8; }
-  .temporada-otra { background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; opacity: 0.7; }
-  .dark .temporada-otra { background: rgba(245,158,11,0.15); color: #fcd34d; }
-  .season-indicator { background: linear-gradient(135deg, #f0fdfa, #ecfeff); border: 1px solid #99f6e4; border-radius: 0.75rem; padding: 0.75rem 1rem; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 600; color: #0f766e; }
-  .dark .season-indicator { background: linear-gradient(135deg, rgba(15,118,110,0.2), rgba(20,184,166,0.1)); border-color: rgba(15,118,110,0.4); color: #5eead4; }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
-  .alert-warning { background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; color: #92400e; }
-  .alert-success { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-left: 4px solid #10b981; color: #065f46; }
-  .alert-danger { background: linear-gradient(135deg, #fee2e2, #fecaca); border-left: 4px solid #ef4444; color: #991b1b; }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; animation: fadeIn 0.2s ease-out; }
-  .modal-content { border-radius: 1.5rem; max-width: 560px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-  .modal-content.recipe-modal, .modal-content.admin-modal { max-width: 800px; max-height: 90vh; }
-  .sub-option { transition: all 0.2s ease; cursor: pointer; }
-  .sub-option:hover { background: linear-gradient(135deg, #f0fdfa, #ecfeff); border-color: #0d9488; transform: translateX(4px); }
-  .sub-option.current { background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-color: #10b981; }
-  .sub-option.is-favorite-sub { border-left: 4px solid #ef4444; }
-  .sub-option.is-excluded-sub { opacity: 0.5; border-left: 4px solid #64748b; }
-  .macro-chip { display: inline-flex; align-items: center; gap: 2px; font-size: 10px; padding: 2px 6px; border-radius: 999px; font-weight: 600; }
-  .auth-screen { min-height: 100vh; background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #0284c7 100%); display: flex; align-items: center; justify-content: center; padding: 1rem; }
-  .auth-card { border-radius: 1.5rem; max-width: 440px; width: 100%; padding: 2.5rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); }
-  .auth-tabs { display: flex; background: #f1f5f9; border-radius: 0.75rem; padding: 4px; margin-bottom: 1.5rem; }
-  .auth-tab { flex: 1; padding: 0.6rem; text-align: center; border-radius: 0.6rem; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: all 0.2s; color: #64748b; }
-  .auth-tab.active { background: white; color: #0d9488; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-  .ad-space { background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1px dashed #cbd5e1; border-radius: 0.75rem; padding: 1rem; text-align: center; position: relative; color: #94a3b8; font-size: 0.75rem; margin: 1rem 0; }
-  .ad-space::before { content: 'Publicidad'; position: absolute; top: 4px; right: 8px; font-size: 0.625rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-  .ad-space.has-link { cursor: pointer; border-style: solid; }
-  .ad-space.has-link:hover { background: linear-gradient(135deg, #f0fdfa, #ecfeff); border-color: #0d9488; }
-  .user-menu { position: relative; }
-  .user-dropdown { position: absolute; top: calc(100% + 8px); right: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.15); min-width: 240px; padding: 0.5rem; z-index: 60; display: none; }
-  .user-dropdown.show { display: block; animation: fadeIn 0.2s ease-out; }
-  .user-dropdown-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.8rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; color: var(--text-main); transition: background 0.15s; }
-  .user-dropdown-item:hover { background: rgba(13,148,136,0.1); }
-  .user-dropdown-divider { height: 1px; background: var(--border-color); margin: 0.4rem 0; }
-  .comment-card { border-radius: 1rem; padding: 1rem; transition: all 0.2s; }
-  .comment-card:hover { border-color: #0d9488; box-shadow: 0 4px 12px rgba(13,148,136,0.08); }
-  .admin-stat { border-radius: 1rem; padding: 1.5rem; }
-  .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; }
-  .btn-pdf { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; transition: all 0.2s; }
-  .btn-pdf:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(239,68,68,0.3); }
-  .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #0d9488; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
-  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  input, select, textarea { background: var(--input-bg); border-color: var(--input-border); color: var(--text-main); }
-  label.flex.items-center.gap-2.p-2.border { background: var(--checkbox-bg); }
-  .info-card { background: var(--sidebar-card-bg); }
-  .habit-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1.25rem; padding: 1.5rem; transition: all 0.2s ease; }
-  .habit-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
-  .habit-video-btn { display: inline-flex; align-items: center; gap: 0.4rem; background: #eff6ff; color: #2563eb; padding: 0.45rem 0.75rem; border-radius: 0.6rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
-  .habit-video-btn:hover { background: #dbeafe; }
-  .dark .habit-video-btn { background: rgba(37,99,235,0.18); color: #93c5fd; }
-  .dark .habit-video-btn:hover { background: rgba(37,99,235,0.30); }
-  .dark .nav-btn:not(.active) { color: rgba(255,255,255,0.7); }
-  .dark .nav-btn:not(.active):hover { background: rgba(255,255,255,0.1); }
-  .recipe-step { display: flex; gap: 1rem; padding: 1rem; border-radius: 0.75rem; background: var(--bg); margin-bottom: 0.75rem; animation: slideIn 0.3s ease-out; }
-  .recipe-step-number { flex-shrink: 0; width: 2rem; height: 2rem; background: linear-gradient(135deg, #0d9488, #0891b2); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem; }
-  .recipe-ingredient { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-radius: 0.5rem; background: var(--bg); margin-bottom: 0.5rem; cursor: pointer; transition: all 0.2s; }
-  .recipe-ingredient:hover { background: rgba(13,148,136,0.1); }
-  .recipe-ingredient.checked { opacity: 0.6; text-decoration: line-through; }
-  .recipe-chef-tip { background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 0.75rem; margin-top: 1rem; }
-  .dark .recipe-chef-tip { background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(253,230,138,0.1)); }
-  .admin-user-row { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-radius: 0.75rem; background: var(--bg); margin-bottom: 0.5rem; transition: all 0.2s; }
-  .admin-user-row:hover { background: rgba(13,148,136,0.05); }
-  .admin-comment-row, .admin-ad-row, .admin-food-row { padding: 1rem; border-radius: 0.75rem; background: var(--bg); margin-bottom: 0.5rem; }
-  .admin-btn { padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; }
-  .admin-btn-danger { background: #fee2e2; color: #991b1b; }
-  .admin-btn-danger:hover { background: #fecaca; }
-  .admin-btn-warning { background: #fef3c7; color: #92400e; }
-  .admin-btn-warning:hover { background: #fde68a; }
-  .admin-btn-success { background: #d1fae5; color: #065f46; }
-  .admin-btn-success:hover { background: #a7f3d0; }
-  .admin-btn-primary { background: #dbeafe; color: #1e40af; }
-  .admin-btn-primary:hover { background: #bfdbfe; }
-  .admin-input { width: 100%; padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-main); font-size: 0.875rem; }
-  .admin-textarea { width: 100%; padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-main); font-size: 0.875rem; resize: vertical; min-height: 80px; }
-  .admin-select { width: 100%; padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-main); font-size: 0.875rem; }
-  .admin-form-group { margin-bottom: 1rem; }
-  .admin-form-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--text-main); }
-  .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-  .toggle-switch input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 24px; }
-  .toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
-  input:checked + .toggle-slider { background-color: #0d9488; }
-  input:checked + .toggle-slider:before { transform: translateX(20px); }
-  
-  .star-rating { display: inline-flex; gap: 2px; }
-  .star-rating .star { cursor: pointer; font-size: 1.5rem; color: #cbd5e1; transition: all 0.15s; user-select: none; }
-  .star-rating .star:hover, .star-rating .star.hovered { color: #fbbf24; transform: scale(1.15); }
-  .star-rating .star.filled { color: #f59e0b; }
-  .star-rating.readonly .star { cursor: default; }
-  .star-rating.readonly .star:hover { transform: none; }
-  .fav-icon-active { color: #ef4444 !important; animation: pulse-heart 0.4s ease; }
-  .exclude-icon-active { color: #64748b !important; }
-  
-  .profile-tab { padding: 0.75rem 1rem; border-bottom: 2px solid transparent; cursor: pointer; font-weight: 600; color: #64748b; transition: all 0.2s; }
-  .profile-tab:hover { color: #0d9488; }
-  .profile-tab.active { color: #0d9488; border-bottom-color: #0d9488; }
-  .profile-panel { display: none; }
-  .profile-panel.active { display: block; animation: fadeIn 0.3s ease-out; }
-  
-  .food-card-mini { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--bg); border-radius: 0.5rem; margin-bottom: 0.5rem; transition: all 0.2s; }
-  .food-card-mini:hover { background: rgba(13,148,136,0.05); }
-  
-  /* 🟢 NUEVO FASE 2: Estilos del Planificador Semanal */
-  .planner-header {
-    background: linear-gradient(135deg, #0d9488, #0891b2);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    color: white;
-    margin-bottom: 1.5rem;
-  }
-  .planner-nav-btn {
-    background: rgba(255,255,255,0.2);
-    border: none;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s;
-  }
-  .planner-nav-btn:hover { background: rgba(255,255,255,0.3); }
-  .planner-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-  }
-  @media (max-width: 1024px) {
-    .planner-grid { grid-template-columns: repeat(4, 1fr); }
-  }
-  @media (max-width: 640px) {
-    .planner-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  .planner-day-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 0.75rem;
-    padding: 1rem;
-    transition: all 0.2s;
-    cursor: pointer;
-  }
-  .planner-day-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    border-color: #0d9488;
-  }
-  .planner-day-card.today {
-    border: 2px solid #0d9488;
-    background: linear-gradient(135deg, rgba(13,148,136,0.05), rgba(8,145,178,0.05));
-  }
-  .planner-day-name {
-    font-weight: 700;
-    font-size: 0.875rem;
-    color: #0d9488;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-  }
-  .planner-day-date {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-bottom: 0.75rem;
-  }
-  .planner-meal {
-    font-size: 0.7rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.375rem;
-    margin-bottom: 0.25rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .planner-meal-breakfast { background: #fef3c7; color: #92400e; }
-  .dark .planner-meal-breakfast { background: rgba(251,191,36,0.15); color: #fcd34d; }
-  .planner-meal-lunch { background: #fed7aa; color: #9a3412; }
-  .dark .planner-meal-lunch { background: rgba(251,146,60,0.15); color: #fdba74; }
-  .planner-meal-dinner { background: #e0e7ff; color: #3730a3; }
-  .dark .planner-meal-dinner { background: rgba(99,102,241,0.15); color: #a5b4fc; }
-  .planner-kcal {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #0d9488;
-    margin-top: 0.5rem;
-    text-align: right;
-  }
-  .planner-view-toggle {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    background: var(--card-bg);
-    padding: 0.25rem;
-    border-radius: 0.75rem;
-    border: 1px solid var(--border-color);
-  }
-  .planner-view-btn {
-    flex: 1;
-    padding: 0.5rem 1rem;
-    border: none;
-    background: transparent;
-    color: var(--text-muted);
-    font-weight: 600;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .planner-view-btn.active {
-    background: #0d9488;
-    color: white;
-  }
-  
-  /* 🟢 NUEVO FASE 2: Estilos Batch Cooking */
-  .batch-container {
-    background: linear-gradient(135deg, #fef3c7, #fde68a);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    margin-top: 1.5rem;
-  }
-  .dark .batch-container {
-    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(253,230,138,0.1));
-  }
-  .batch-task {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    background: var(--card-bg);
-    border-radius: 0.5rem;
-    margin-bottom: 0.5rem;
-    transition: all 0.2s;
-  }
-  .batch-task:hover { transform: translateX(4px); }
-  .batch-task.completed {
-    opacity: 0.6;
-    text-decoration: line-through;
-  }
-  .batch-task input[type="checkbox"] {
-    width: 1.25rem;
-    height: 1.25rem;
-    accent-color: #0d9488;
-  }
-  .batch-time {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #0d9488;
-    min-width: 3rem;
-  }
-  .batch-summary {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-  .batch-stat {
-    background: var(--card-bg);
-    padding: 1rem;
-    border-radius: 0.75rem;
-    text-align: center;
-  }
-  .batch-stat-value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #0d9488;
-  }
-  .batch-stat-label {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-</style>
 </head>
 <body class="min-h-screen">
 
@@ -467,7 +151,7 @@
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="planificador">📅 Planificador</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="compra">🛒 Compra</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="seguimiento">📈 Seguimiento</button>
-      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio"> Ejercicio</button>
+      <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="ejercicio">💪 Ejercicio</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="analisis">🎯 Análisis</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="salud">❤️ Salud</button>
       <button class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-white/80 hover:bg-white/10 transition-all" data-tab="comentarios">💬 Comunidad</button>
@@ -566,7 +250,7 @@
         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">¿No encuentras un ingrediente? Haz clic sobre él y te sugeriremos <strong>alternativas con aporte nutricional equivalente</strong>.</p>
       </div>
       <div class="alert-warning rounded-xl p-4">
-        <p class="text-xs"><strong>⚕️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
+        <p class="text-xs"><strong>️ Disclaimer:</strong> Esta herramienta es orientativa y no sustituye la consulta con un médico o nutricionista clínico.</p>
       </div>
     </div>
   </div>
@@ -579,7 +263,7 @@
     <p class="text-slate-600 dark:text-slate-400 mt-2">Tus cifras clave calculadas con base científica.</p>
   </div>
   <div id="dashboardNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4"></div>
+    <div class="text-6xl mb-4">📊</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Aún no has completado la evaluación</h3>
     <p class="text-slate-600 dark:text-slate-400 mb-6">Ve a la sección de Evaluación para calcular tus métricas.</p>
     <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
@@ -617,15 +301,15 @@
         <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Distribución de Macronutrientes</h3>
         <div class="space-y-4">
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Proteínas</span><span class="text-sm font-bold text-teal-600" id="macroProt">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🥩 Proteínas</span><span class="text-sm font-bold text-teal-600" id="macroProt">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barProt" class="h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🍞 Carbohidratos</span><span class="text-sm font-bold text-amber-600" id="macroCarb">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barCarb" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300">🥑 Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
+            <div class="flex justify-between mb-1"><span class="text-sm font-semibold text-slate-700 dark:text-slate-300"> Grasas</span><span class="text-sm font-bold text-rose-600" id="macroGrasas">—</span></div>
             <div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div id="barGrasas" class="h-full bg-gradient-to-r from-rose-400 to-rose-500 rounded-full transition-all" style="width:0%"></div></div>
           </div>
         </div>
@@ -656,7 +340,6 @@
       <button onclick="regenerarMenu()" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2">🔄 Regenerar</button>
     </div>
   </div>
-  
   <div id="seasonBanner" class="mb-6 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between flex-wrap">
     <div class="season-indicator">
       <span id="seasonEmoji" class="text-2xl">🌸</span>
@@ -676,7 +359,6 @@
       </div>
     </label>
   </div>
-  
   <div id="menuNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
     <div class="text-6xl mb-4">🍽️</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
@@ -688,22 +370,19 @@
   <div id="menuContent" class="hidden grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
 </section>
 
-<!-- 🟢 NUEVO FASE 2: PLANIFICADOR SEMANAL -->
+<!-- PLANIFICADOR -->
 <section id="planificador" class="tab-content">
   <div class="mb-6">
-    <h2 class="text-3xl font-bold text-slate-800 dark:text-white"> Planificador Semanal</h2>
+    <h2 class="text-3xl font-bold text-slate-800 dark:text-white">📅 Planificador Semanal</h2>
     <p class="text-slate-600 dark:text-slate-400 mt-2">Vista completa de tu semana con modo Batch Cooking integrado.</p>
   </div>
-  
   <div id="planificadorNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
     <div class="text-6xl mb-4">📅</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Completa tu evaluación primero</h3>
     <p class="text-slate-600 dark:text-slate-400 mb-6">Necesitamos tus datos para generar tu planificador semanal.</p>
     <button onclick="switchTab('evaluacion')" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700">Ir a Evaluación</button>
   </div>
-  
   <div id="planificadorContent" class="hidden">
-    <!-- Header del planificador -->
     <div class="planner-header">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -718,49 +397,26 @@
         </div>
       </div>
     </div>
-    
-    <!-- Toggle de vistas -->
     <div class="planner-view-toggle">
       <button class="planner-view-btn active" data-view="calendario" onclick="cambiarVistaPlanificador('calendario')">📅 Vista Calendario</button>
       <button class="planner-view-btn" data-view="batch" onclick="cambiarVistaPlanificador('batch')">🍳 Batch Cooking</button>
     </div>
-    
-    <!-- Vista Calendario -->
     <div id="vistaCalendario">
-      <div class="planner-grid" id="plannerGrid">
-        <!-- Se genera dinámicamente -->
-      </div>
-      
-      <!-- Resumen semanal -->
+      <div class="planner-grid" id="plannerGrid"></div>
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 mb-6">
         <h3 class="font-bold text-slate-800 dark:text-white mb-4">📊 Resumen Semanal</h3>
         <div class="grid md:grid-cols-4 gap-4">
-          <div class="text-center p-4 bg-teal-50 dark:bg-teal-900/20 rounded-xl">
-            <div class="text-2xl font-bold text-teal-600" id="resumenKcalSemana">—</div>
-            <div class="text-xs text-slate-600 dark:text-slate-400">Kcal totales semana</div>
-          </div>
-          <div class="text-center p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
-            <div class="text-2xl font-bold text-amber-600" id="resumenKcalDiario">—</div>
-            <div class="text-xs text-slate-600 dark:text-slate-400">Kcal media/día</div>
-          </div>
-          <div class="text-center p-4 bg-rose-50 dark:bg-rose-900/20 rounded-xl">
-            <div class="text-2xl font-bold text-rose-600" id="resumenProteinas">—</div>
-            <div class="text-xs text-slate-600 dark:text-slate-400">Proteína media/día</div>
-          </div>
-          <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
-            <div class="text-2xl font-bold text-purple-600" id="resumenVariedad">—</div>
-            <div class="text-xs text-slate-600 dark:text-slate-400">Alimentos diferentes</div>
-          </div>
+          <div class="text-center p-4 bg-teal-50 dark:bg-teal-900/20 rounded-xl"><div class="text-2xl font-bold text-teal-600" id="resumenKcalSemana">—</div><div class="text-xs text-slate-600 dark:text-slate-400">Kcal totales semana</div></div>
+          <div class="text-center p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl"><div class="text-2xl font-bold text-amber-600" id="resumenKcalDiario">—</div><div class="text-xs text-slate-600 dark:text-slate-400">Kcal media/día</div></div>
+          <div class="text-center p-4 bg-rose-50 dark:bg-rose-900/20 rounded-xl"><div class="text-2xl font-bold text-rose-600" id="resumenProteinas">—</div><div class="text-xs text-slate-600 dark:text-slate-400">Proteína media/día</div></div>
+          <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl"><div class="text-2xl font-bold text-purple-600" id="resumenVariedad">—</div><div class="text-xs text-slate-600 dark:text-slate-400">Alimentos diferentes</div></div>
         </div>
       </div>
-      
       <div class="flex gap-2 flex-wrap">
         <button onclick="exportarPlanificadorPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📄 Exportar Planificador PDF</button>
         <button onclick="regenerarMenu(); renderPlanificador();" class="bg-teal-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-teal-700 flex items-center gap-2">🔄 Regenerar Menú</button>
       </div>
     </div>
-    
-    <!-- Vista Batch Cooking -->
     <div id="vistaBatch" class="hidden">
       <div class="batch-container">
         <div class="flex items-center gap-3 mb-4">
@@ -770,43 +426,19 @@
             <p class="text-sm text-amber-800 dark:text-amber-400">Preparación del domingo para toda la semana</p>
           </div>
         </div>
-        
         <div class="bg-white dark:bg-slate-800 rounded-xl p-4 mb-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-lg">⏱️</span>
-            <span class="font-bold text-slate-800 dark:text-white">Tiempo total estimado:</span>
-            <span class="text-teal-600 font-bold" id="batchTiempoTotal">2h 30min</span>
-          </div>
+          <div class="flex items-center gap-2 mb-2"><span class="text-lg">⏱️</span><span class="font-bold text-slate-800 dark:text-white">Tiempo total estimado:</span><span class="text-teal-600 font-bold" id="batchTiempoTotal">2h 30min</span></div>
           <p class="text-xs text-slate-600 dark:text-slate-400">Recomendamos empezar a las <strong>16:00</strong> para tener todo listo antes de la cena</p>
         </div>
-        
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-          <span>📋</span> Lista de tareas por bloques de tiempo
-        </h4>
-        <div id="batchTasks">
-          <!-- Se genera dinámicamente -->
-        </div>
-        
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span></span> Lista de tareas por bloques de tiempo</h4>
+        <div id="batchTasks"></div>
         <div class="batch-summary">
-          <div class="batch-stat">
-            <div class="batch-stat-value" id="batchTuppersComida">7</div>
-            <div class="batch-stat-label">Tuppers comida</div>
-          </div>
-          <div class="batch-stat">
-            <div class="batch-stat-value" id="batchTuppersCena">7</div>
-            <div class="batch-stat-label">Tuppers cena</div>
-          </div>
-          <div class="batch-stat">
-            <div class="batch-stat-value" id="batchDesayunos">7</div>
-            <div class="batch-stat-label">Desayunos listos</div>
-          </div>
-          <div class="batch-stat">
-            <div class="batch-stat-value" id="batchMeriendas">7</div>
-            <div class="batch-stat-label">Meriendas</div>
-          </div>
+          <div class="batch-stat"><div class="batch-stat-value" id="batchTuppersComida">7</div><div class="batch-stat-label">Tuppers comida</div></div>
+          <div class="batch-stat"><div class="batch-stat-value" id="batchTuppersCena">7</div><div class="batch-stat-label">Tuppers cena</div></div>
+          <div class="batch-stat"><div class="batch-stat-value" id="batchDesayunos">7</div><div class="batch-stat-label">Desayunos listos</div></div>
+          <div class="batch-stat"><div class="batch-stat-value" id="batchMeriendas">7</div><div class="batch-stat-label">Meriendas</div></div>
         </div>
       </div>
-      
       <div class="mt-6 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700">
         <h3 class="font-bold text-slate-800 dark:text-white mb-4">💡 Consejos para Batch Cooking exitoso</h3>
         <div class="grid md:grid-cols-2 gap-4">
@@ -844,7 +476,7 @@
     <button onclick="exportarCompraPDF()" class="btn-pdf px-5 py-3 rounded-lg font-semibold flex items-center gap-2">📄 PDF Lista de compra</button>
   </div>
   <div id="compraNoData" class="bg-white rounded-2xl p-12 text-center border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-    <div class="text-6xl mb-4"></div>
+    <div class="text-6xl mb-4">🛒</div>
     <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Genera primero tu menú semanal</h3>
   </div>
   <div id="compraContent" class="hidden grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
@@ -864,11 +496,8 @@
   </div>
   <div id="adInline" class="ad-space py-6 mb-6" data-pos="inline">
     <div class="flex items-center justify-center gap-4 flex-wrap">
-      <span class="text-2xl">🏋️</span>
-      <div class="text-left">
-        <div class="font-bold text-slate-600 dark:text-slate-400">¿Buscas suplementación deportiva?</div>
-        <div class="text-xs">Descubre nuestra selección de productos recomendados</div>
-      </div>
+      <span class="text-2xl">️</span>
+      <div class="text-left"><div class="font-bold text-slate-600 dark:text-slate-400">¿Buscas suplementación deportiva?</div><div class="text-xs">Descubre nuestra selección de productos recomendados</div></div>
       <span class="text-2xl">💊</span>
     </div>
   </div>
@@ -885,14 +514,8 @@
       <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
         <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Registrar peso</h3>
         <div class="space-y-3">
-          <div>
-            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Fecha</label>
-            <input type="date" id="fechaPeso" class="w-full px-3 py-2 border border-slate-200 rounded-lg mt-1">
-          </div>
-          <div>
-            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Peso (kg)</label>
-            <input type="number" id="valorPeso" step="0.1" placeholder="75.0" class="w-full px-3 py-2 border border-slate-200 rounded-lg mt-1">
-          </div>
+          <div><label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Fecha</label><input type="date" id="fechaPeso" class="w-full px-3 py-2 border border-slate-200 rounded-lg mt-1"></div>
+          <div><label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Peso (kg)</label><input type="number" id="valorPeso" step="0.1" placeholder="75.0" class="w-full px-3 py-2 border border-slate-200 rounded-lg mt-1"></div>
           <button onclick="agregarPeso()" class="w-full bg-teal-600 text-white py-2 rounded-lg font-semibold hover:bg-teal-700">+ Añadir registro</button>
         </div>
       </div>
@@ -922,15 +545,12 @@
     <div class="bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
       <div class="flex items-center gap-3 mb-3">
         <div class="text-4xl" id="ejIconoEdad">🏋️</div>
-        <div>
-          <h3 class="text-xl font-bold" id="ejTituloEdad">Grupo de edad</h3>
-          <p class="text-teal-100 text-sm" id="ejFocoEdad">Enfoque principal</p>
-        </div>
+        <div><h3 class="text-xl font-bold" id="ejTituloEdad">Grupo de edad</h3><p class="text-teal-100 text-sm" id="ejFocoEdad">Enfoque principal</p></div>
       </div>
     </div>
     <div class="grid md:grid-cols-2 gap-4" id="ejerciciosList"></div>
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-      <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4"> Planificación semanal</h3>
+      <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">📅 Planificación semanal</h3>
       <div id="planSemanal" class="grid md:grid-cols-7 gap-2"></div>
     </div>
   </div>
@@ -949,18 +569,9 @@
   </div>
   <div id="analisisContent" class="hidden space-y-6">
     <div class="grid md:grid-cols-3 gap-4">
-      <div class="metric-card rounded-2xl p-6">
-        <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Peso Semana 1</div>
-        <div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="anS1">—</div>
-      </div>
-      <div class="metric-card rounded-2xl p-6">
-        <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Peso Semana 4</div>
-        <div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="anS4">—</div>
-      </div>
-      <div class="metric-card bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl p-6 text-white">
-        <div class="text-xs font-semibold text-teal-100 uppercase">Cambio total</div>
-        <div class="text-3xl font-bold mt-2" id="anCambio">—</div>
-      </div>
+      <div class="metric-card rounded-2xl p-6"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Peso Semana 1</div><div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="anS1">—</div></div>
+      <div class="metric-card rounded-2xl p-6"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Peso Semana 4</div><div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="anS4">—</div></div>
+      <div class="metric-card bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl p-6 text-white"><div class="text-xs font-semibold text-teal-100 uppercase">Cambio total</div><div class="text-3xl font-bold mt-2" id="anCambio">—</div></div>
     </div>
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Evolución por semanas</h3>
@@ -997,10 +608,7 @@
         <h3 class="font-bold text-slate-800 dark:text-white mb-3">Deja tu comentario</h3>
         <textarea id="nuevoComentario" rows="3" placeholder="Comparte tu experiencia, dudas o logros..." class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 resize-none"></textarea>
         <div class="flex justify-between items-center mt-3">
-          <label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-            <input type="checkbox" id="comentarioAnonimo" class="accent-teal-600">
-            Publicar anónimamente
-          </label>
+          <label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"><input type="checkbox" id="comentarioAnonimo" class="accent-teal-600"> Publicar anónimamente</label>
           <button onclick="publicarComentario()" class="bg-teal-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-teal-700">Publicar →</button>
         </div>
       </div>
@@ -1030,28 +638,22 @@
 <section id="perfil" class="tab-content">
   <div class="mb-6">
     <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Mi Perfil</h2>
-    <p class="text-slate-600 dark:text-slate-400 mt-2">Gestiona tu información personal, favoritos y preferencias.</p>
+    <p class="text-slate-600 dark:text-slate-400 mt-2">Gestiona tu información personal, favoritos, logros y preferencias.</p>
   </div>
-  
   <div class="flex gap-2 mb-6 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
     <button class="profile-tab active" data-ptab="datos">👤 Datos personales</button>
     <button class="profile-tab" data-ptab="favoritos">❤️ Mis favoritos <span id="favCount" class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full ml-1">0</span></button>
     <button class="profile-tab" data-ptab="excluidos">🚫 Excluidos <span id="excCount" class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full ml-1">0</span></button>
-    <button class="profile-tab" data-ptab="password"> Contraseña</button>
+    <button class="profile-tab" data-ptab="logros"> Mis Logros <span id="logrosCount" class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ml-1">0</span></button>
+    <button class="profile-tab" data-ptab="password">🔒 Contraseña</button>
   </div>
   
   <div id="perfil-datos" class="profile-panel active">
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="font-bold text-slate-800 dark:text-white mb-4">Información personal</h3>
       <form id="formPerfil" class="space-y-4">
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nombre</label>
-          <input type="text" id="perfilNombre" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
-        </div>
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Correo (no editable)</label>
-          <input type="email" id="perfilEmail" disabled class="w-full px-4 py-2.5 border border-slate-200 rounded-lg bg-slate-50 text-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400">
-        </div>
+        <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nombre</label><input type="text" id="perfilNombre" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500"></div>
+        <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Correo (no editable)</label><input type="email" id="perfilEmail" disabled class="w-full px-4 py-2.5 border border-slate-200 rounded-lg bg-slate-50 text-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400"></div>
         <button type="submit" class="w-full bg-teal-600 text-white py-2.5 rounded-lg font-semibold hover:bg-teal-700">Guardar cambios</button>
       </form>
     </div>
@@ -1063,9 +665,7 @@
         <h3 class="font-bold text-slate-800 dark:text-white">❤️ Mis alimentos favoritos</h3>
         <p class="text-xs text-slate-500 dark:text-slate-400">Aparecerán prioritariamente en tus menús</p>
       </div>
-      <div id="listaFavoritos" class="space-y-2">
-        <p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">Aún no tienes favoritos. Marca alimentos con ❤️ en el menú.</p>
-      </div>
+      <div id="listaFavoritos" class="space-y-2"><p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">Aún no tienes favoritos. Marca alimentos con ❤️ en el menú.</p></div>
     </div>
   </div>
   
@@ -1075,9 +675,23 @@
         <h3 class="font-bold text-slate-800 dark:text-white">🚫 Alimentos excluidos</h3>
         <p class="text-xs text-slate-500 dark:text-slate-400">No aparecerán en tus menús</p>
       </div>
-      <div id="listaExcluidos" class="space-y-2">
-        <p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">No has excluido ningún alimento.</p>
+      <div id="listaExcluidos" class="space-y-2"><p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">No has excluido ningún alimento.</p></div>
+    </div>
+  </div>
+  
+  <!-- 🟢 FASE 3: Panel de logros -->
+  <div id="perfil-logros" class="profile-panel">
+    <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="font-bold text-slate-800 dark:text-white">🏆 Mis Logros e Insignias</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Completa acciones para desbloquear logros</p>
       </div>
+      <div class="achievement-stats" id="achievementStats">
+        <div class="achievement-stat-card"><div class="achievement-stat-value" id="statLogrosDesbloqueados">0</div><div class="achievement-stat-label">Logros desbloqueados</div></div>
+        <div class="achievement-stat-card"><div class="achievement-stat-value" id="statLogrosTotales">12</div><div class="achievement-stat-label">Logros totales</div></div>
+        <div class="achievement-stat-card"><div class="achievement-stat-value" id="statProgresoGeneral">0%</div><div class="achievement-stat-label">Progreso general</div></div>
+      </div>
+      <div class="achievements-grid" id="achievementsGrid"><div class="loading-spinner"></div></div>
     </div>
   </div>
   
@@ -1085,14 +699,8 @@
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="font-bold text-slate-800 dark:text-white mb-4">Cambiar contraseña</h3>
       <form id="formPassword" class="space-y-4">
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nueva contraseña</label>
-          <input type="password" id="passNueva" minlength="6" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
-        </div>
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Confirmar nueva contraseña</label>
-          <input type="password" id="passConfirm" minlength="6" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
-        </div>
+        <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nueva contraseña</label><input type="password" id="passNueva" minlength="6" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500"></div>
+        <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Confirmar nueva contraseña</label><input type="password" id="passConfirm" minlength="6" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500"></div>
         <button type="submit" class="w-full bg-slate-800 text-white py-2.5 rounded-lg font-semibold hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600">Cambiar contraseña</button>
       </form>
     </div>
@@ -1110,83 +718,32 @@
       </div>
     </div>
   </div>
-
   <div class="grid md:grid-cols-4 gap-4 mb-6">
-    <div class="admin-stat">
-      <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios totales</div>
-      <div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="statUsuarios">—</div>
-    </div>
-    <div class="admin-stat">
-      <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios activos</div>
-      <div class="text-3xl font-bold text-green-600 mt-2" id="statActivos">—</div>
-    </div>
-    <div class="admin-stat">
-      <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios bloqueados</div>
-      <div class="text-3xl font-bold text-red-600 mt-2" id="statBloqueados">—</div>
-    </div>
-    <div class="admin-stat">
-      <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Comentarios</div>
-      <div class="text-3xl font-bold text-teal-600 mt-2" id="statComentarios">—</div>
-    </div>
+    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios totales</div><div class="text-3xl font-bold text-slate-800 dark:text-white mt-2" id="statUsuarios">—</div></div>
+    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios activos</div><div class="text-3xl font-bold text-green-600 mt-2" id="statActivos">—</div></div>
+    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Usuarios bloqueados</div><div class="text-3xl font-bold text-red-600 mt-2" id="statBloqueados">—</div></div>
+    <div class="admin-stat"><div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Comentarios</div><div class="text-3xl font-bold text-teal-600 mt-2" id="statComentarios">—</div></div>
   </div>
-
   <div class="flex gap-2 mb-4 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
-    <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600 whitespace-nowrap" data-atab="usuarios"> Usuarios</button>
+    <button class="admin-tab active px-4 py-2 font-semibold text-sm border-b-2 border-teal-600 text-teal-600 whitespace-nowrap" data-atab="usuarios">👥 Usuarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="comentarios">💬 Comentarios</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="publicidad">📢 Publicidad</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="alimentos">🍽️ Alimentos</button>
     <button class="admin-tab px-4 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap" data-atab="config">⚙️ Configuración</button>
   </div>
-
-  <div id="admin-usuarios" class="admin-panel">
-    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
-      <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700">
-        <h3 class="font-bold text-slate-800 dark:text-white">Gestión de usuarios</h3>
-        <button onclick="cargarPanelAdmin()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold">🔄 Actualizar</button>
-      </div>
-      <div id="listaUsuariosAdmin" class="p-4"><div class="loading-spinner"></div></div>
-    </div>
-  </div>
-
-  <div id="admin-comentarios" class="admin-panel hidden">
-    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
-      <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700">
-        <h3 class="font-bold text-slate-800 dark:text-white">Moderación de comentarios</h3>
-        <button onclick="cargarComentariosAdmin()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold">🔄 Actualizar</button>
-      </div>
-      <div id="listaComentariosAdmin" class="p-4"><div class="loading-spinner"></div></div>
-    </div>
-  </div>
-
-  <div id="admin-publicidad" class="admin-panel hidden">
-    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
-      <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700">
-        <h3 class="font-bold text-slate-800 dark:text-white">Gestión de publicidad</h3>
-        <button onclick="abrirModalAnuncio()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold">➕ Nuevo anuncio</button>
-      </div>
-      <div id="listaAnunciosAdmin" class="p-4"><div class="loading-spinner"></div></div>
-    </div>
-  </div>
-
-  <div id="admin-alimentos" class="admin-panel hidden">
-    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
-      <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700">
-        <h3 class="font-bold text-slate-800 dark:text-white">Gestión de alimentos y menús</h3>
-        <button onclick="abrirModalAlimento()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold">➕ Nuevo alimento</button>
-      </div>
-      <div id="listaAlimentosAdmin" class="p-4"><div class="loading-spinner"></div></div>
-    </div>
-  </div>
-
+  <div id="admin-usuarios" class="admin-panel"><div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700"><div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700"><h3 class="font-bold text-slate-800 dark:text-white">Gestión de usuarios</h3><button onclick="cargarPanelAdmin()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold">🔄 Actualizar</button></div><div id="listaUsuariosAdmin" class="p-4"><div class="loading-spinner"></div></div></div></div>
+  <div id="admin-comentarios" class="admin-panel hidden"><div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700"><div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700"><h3 class="font-bold text-slate-800 dark:text-white">Moderación de comentarios</h3><button onclick="cargarComentariosAdmin()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold">🔄 Actualizar</button></div><div id="listaComentariosAdmin" class="p-4"><div class="loading-spinner"></div></div></div></div>
+  <div id="admin-publicidad" class="admin-panel hidden"><div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700"><div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700"><h3 class="font-bold text-slate-800 dark:text-white">Gestión de publicidad</h3><button onclick="abrirModalAnuncio()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold">➕ Nuevo anuncio</button></div><div id="listaAnunciosAdmin" class="p-4"><div class="loading-spinner"></div></div></div></div>
+  <div id="admin-alimentos" class="admin-panel hidden"><div class="bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700"><div class="p-4 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2 dark:border-slate-700"><h3 class="font-bold text-slate-800 dark:text-white">Gestión de alimentos y menús</h3><button onclick="abrirModalAlimento()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg font-semibold">➕ Nuevo alimento</button></div><div id="listaAlimentosAdmin" class="p-4"><div class="loading-spinner"></div></div></div></div>
   <div id="admin-config" class="admin-panel hidden">
     <div class="bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
       <h3 class="font-bold text-slate-800 dark:text-white mb-4">Estado del Sistema</h3>
       <div class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
-        <p> Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
-        <p> Usuario actual: <strong id="configUsuario">—</strong></p>
-        <p> Rol: <strong id="configRol">—</strong></p>
+        <p>📡 Conectado a Supabase Project: <strong>xsuqqesjetgzxtyqqqje</strong></p>
+        <p>👤 Usuario actual: <strong id="configUsuario">—</strong></p>
+        <p>🔐 Rol: <strong id="configRol">—</strong></p>
         <p>🌐 Estado de conexión: <strong id="configConexion">—</strong></p>
-        <p> Datos en cola offline: <strong id="configCola">0</strong></p>
+        <p>📦 Datos en cola offline: <strong id="configCola">0</strong></p>
       </div>
       <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
         <h4 class="font-bold text-slate-800 dark:text-white mb-3">Acciones rápidas</h4>
@@ -1204,7 +761,7 @@
 
 <footer class="max-w-7xl mx-auto px-6 py-8 mt-4 border-t border-slate-200 dark:border-slate-700">
   <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-    <div>🥗 NutriPro · Nutrición basada en evidencia científica</div>
+    <div> NutriPro · Nutrición basada en evidencia científica</div>
     <div>⚕️ Esta herramienta no sustituye la consulta médica profesional</div>
   </div>
 </footer>
@@ -1236,15 +793,15 @@
     <div class="p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10 dark:bg-slate-800 dark:border-slate-700">
       <div class="flex justify-between items-start">
         <div class="flex-1">
-          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">👨‍🍳 Receta detallada</div>
+          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">‍🍳 Receta detallada</div>
           <h3 class="text-xl font-bold text-slate-800 dark:text-white" id="recetaTitulo">Nombre del plato</h3>
           <div class="flex gap-3 mt-3 flex-wrap">
-            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>️</span><span id="recetaTiempo">20 min</span></div>
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>⏱️</span><span id="recetaTiempo">20 min</span></div>
             <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>🎯</span><span id="recetaDificultad">Fácil</span></div>
-            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span></span><span id="recetaPorciones">2 porciones</span></div>
+            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400"><span>👥</span><span id="recetaPorciones">2 porciones</span></div>
           </div>
         </div>
-        <button onclick="cerrarModalReceta()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300"></button>
+        <button onclick="cerrarModalReceta()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300">✕</button>
       </div>
     </div>
     <div class="p-6">
@@ -1256,11 +813,8 @@
         <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">👨‍🍳</span> Preparación</h4>
         <div id="recetaPasos"></div>
       </div>
-      
       <div class="mb-6 p-4 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
-        <h4 class="font-bold text-amber-900 dark:text-amber-300 mb-2 flex items-center gap-2">
-          <span>⭐</span> Valora esta receta
-        </h4>
+        <h4 class="font-bold text-amber-900 dark:text-amber-300 mb-2 flex items-center gap-2"><span>⭐</span> Valora esta receta</h4>
         <div class="flex items-center gap-3">
           <div class="star-rating" id="starRating">
             <span class="star" data-value="1">★</span>
@@ -1273,7 +827,6 @@
         </div>
         <p class="text-xs text-amber-700 dark:text-amber-400 mt-2">Tu valoración ayuda a personalizar tus menús futuros</p>
       </div>
-      
       <div id="recetaConsejo" class="recipe-chef-tip hidden">
         <div class="flex items-start gap-2">
           <span class="text-xl">💡</span>
@@ -1304,37 +857,12 @@
     </div>
     <div class="p-6">
       <input type="hidden" id="anuncioId">
-      <div class="admin-form-group">
-        <label>Posición en la app</label>
-        <select id="anuncioPosition" class="admin-select">
-          <option value="top">Superior (header)</option>
-          <option value="sidebar">Lateral (evaluación)</option>
-          <option value="inline">En línea (seguimiento)</option>
-          <option value="footer">Inferior (comentarios)</option>
-        </select>
-      </div>
-      <div class="admin-form-group">
-        <label>Título del anuncio</label>
-        <input type="text" id="anuncioTitle" class="admin-input" placeholder="Ej: ¿Buscas suplementación deportiva?">
-      </div>
-      <div class="admin-form-group">
-        <label>Contenido / Descripción</label>
-        <textarea id="anuncioContent" class="admin-textarea" placeholder="Texto del anuncio..."></textarea>
-      </div>
-      <div class="admin-form-group">
-        <label>URL de la imagen (opcional)</label>
-        <input type="text" id="anuncioImageUrl" class="admin-input" placeholder="https://...">
-      </div>
-      <div class="admin-form-group">
-        <label>URL de destino al hacer clic (opcional)</label>
-        <input type="text" id="anuncioLinkUrl" class="admin-input" placeholder="https://...">
-      </div>
-      <div class="admin-form-group">
-        <label class="flex items-center gap-2">
-          <input type="checkbox" id="anuncioActive" class="w-4 h-4 accent-teal-600" checked>
-          <span>Anuncio activo (visible para los usuarios)</span>
-        </label>
-      </div>
+      <div class="admin-form-group"><label>Posición en la app</label><select id="anuncioPosition" class="admin-select"><option value="top">Superior (header)</option><option value="sidebar">Lateral (evaluación)</option><option value="inline">En línea (seguimiento)</option><option value="footer">Inferior (comentarios)</option></select></div>
+      <div class="admin-form-group"><label>Título del anuncio</label><input type="text" id="anuncioTitle" class="admin-input" placeholder="Ej: ¿Buscas suplementación deportiva?"></div>
+      <div class="admin-form-group"><label>Contenido / Descripción</label><textarea id="anuncioContent" class="admin-textarea" placeholder="Texto del anuncio..."></textarea></div>
+      <div class="admin-form-group"><label>URL de la imagen (opcional)</label><input type="text" id="anuncioImageUrl" class="admin-input" placeholder="https://..."></div>
+      <div class="admin-form-group"><label>URL de destino al hacer clic (opcional)</label><input type="text" id="anuncioLinkUrl" class="admin-input" placeholder="https://..."></div>
+      <div class="admin-form-group"><label class="flex items-center gap-2"><input type="checkbox" id="anuncioActive" class="w-4 h-4 accent-teal-600" checked><span>Anuncio activo (visible para los usuarios)</span></label></div>
     </div>
     <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-3xl dark:bg-slate-900 dark:border-slate-700 flex gap-2">
       <button onclick="cerrarModalAnuncio()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-semibold dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white">Cancelar</button>
@@ -1349,7 +877,7 @@
     <div class="p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10 dark:bg-slate-800 dark:border-slate-700">
       <div class="flex justify-between items-start">
         <div>
-          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">🍽️ Gestión de alimento</div>
+          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">️ Gestión de alimento</div>
           <h3 class="text-xl font-bold text-slate-800 dark:text-white" id="alimentoModalTitulo">Nuevo alimento</h3>
         </div>
         <button onclick="cerrarModalAlimento()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300">✕</button>
@@ -1357,93 +885,29 @@
     </div>
     <div class="p-6">
       <input type="hidden" id="alimentoId">
-      <div class="admin-form-group">
-        <label>ID único (ej: p1, c2, v3)</label>
-        <input type="text" id="alimentoIdInput" class="admin-input" placeholder="p1">
-        <p class="text-xs text-slate-500 mt-1">Formato: p=proteína, c=carbohidrato, v=verdura, g=grasa, d=desayuno, m=merienda, f=fruta + número</p>
-      </div>
-      <div class="admin-form-group">
-        <label>Grupo</label>
-        <select id="alimentoGrupo" class="admin-select">
-          <option value="prot"> Proteínas</option>
-          <option value="carb">🍚 Carbohidratos</option>
-          <option value="verd"> Verduras</option>
-          <option value="grasa">🥑 Grasas</option>
-          <option value="des">☀️ Desayunos</option>
-          <option value="mer">🍎 Meriendas</option>
-        </select>
-      </div>
-      <div class="admin-form-group">
-        <label>Nombre del alimento</label>
-        <input type="text" id="alimentoNombre" class="admin-input" placeholder="Pechuga de pollo a la plancha">
+      <div class="admin-form-group"><label>ID único (ej: p1, c2, v3)</label><input type="text" id="alimentoIdInput" class="admin-input" placeholder="p1"><p class="text-xs text-slate-500 mt-1">Formato: p=proteína, c=carbohidrato, v=verdura, g=grasa, d=desayuno, m=merienda, f=fruta + número</p></div>
+      <div class="admin-form-group"><label>Grupo</label><select id="alimentoGrupo" class="admin-select"><option value="prot">🥩 Proteínas</option><option value="carb"> Carbohidratos</option><option value="verd">🥦 Verduras</option><option value="grasa">🥑 Grasas</option><option value="des">☀️ Desayunos</option><option value="mer"> Meriendas</option></select></div>
+      <div class="admin-form-group"><label>Nombre del alimento</label><input type="text" id="alimentoNombre" class="admin-input" placeholder="Pechuga de pollo a la plancha"></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="admin-form-group"><label>Calorías (kcal)</label><input type="number" id="alimentoKcal" class="admin-input" placeholder="165"></div>
+        <div class="admin-form-group"><label>Proteínas (g)</label><input type="number" id="alimentoProt" class="admin-input" placeholder="31"></div>
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div class="admin-form-group">
-          <label>Calorías (kcal)</label>
-          <input type="number" id="alimentoKcal" class="admin-input" placeholder="165">
-        </div>
-        <div class="admin-form-group">
-          <label>Proteínas (g)</label>
-          <input type="number" id="alimentoProt" class="admin-input" placeholder="31">
-        </div>
+        <div class="admin-form-group"><label>Temporada</label><select id="alimentoTemporada" class="admin-select"><option value="todo_el_año"> Todo el año</option><option value="primavera">🌸 Primavera</option><option value="verano">☀️ Verano</option><option value="otono">🍂 Otoño</option><option value="invierno">❄️ Invierno</option></select></div>
+        <div class="admin-form-group"><label class="flex items-center gap-2 h-full pt-6"><input type="checkbox" id="alimentoEsFruta" class="w-4 h-4 accent-teal-600"><span>🍎 Es fruta</span></label></div>
       </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div class="admin-form-group">
-          <label>Temporada</label>
-          <select id="alimentoTemporada" class="admin-select">
-            <option value="todo_el_año">🌍 Todo el año</option>
-            <option value="primavera"> Primavera</option>
-            <option value="verano">☀️ Verano</option>
-            <option value="otono">🍂 Otoño</option>
-            <option value="invierno">❄️ Invierno</option>
-          </select>
-        </div>
-        <div class="admin-form-group">
-          <label class="flex items-center gap-2 h-full pt-6">
-            <input type="checkbox" id="alimentoEsFruta" class="w-4 h-4 accent-teal-600">
-            <span>🍎 Es fruta</span>
-          </label>
-        </div>
-      </div>
-      <div class="admin-form-group">
-        <label>Ingredientes (separados por comas)</label>
-        <input type="text" id="alimentoIng" class="admin-input" placeholder="pollo, aceite, sal">
-      </div>
-      <div class="admin-form-group">
-        <label class="flex items-center gap-2">
-          <input type="checkbox" id="alimentoActive" class="w-4 h-4 accent-teal-600" checked>
-          <span>Activo (aparece en los menús)</span>
-        </label>
-      </div>
-      
+      <div class="admin-form-group"><label>Ingredientes (separados por comas)</label><input type="text" id="alimentoIng" class="admin-input" placeholder="pollo, aceite, sal"></div>
+      <div class="admin-form-group"><label class="flex items-center gap-2"><input type="checkbox" id="alimentoActive" class="w-4 h-4 accent-teal-600" checked><span>Activo (aparece en los menús)</span></label></div>
       <div class="border-t border-slate-200 dark:border-slate-700 pt-4 mt-4">
         <h4 class="font-bold text-slate-800 dark:text-white mb-3">📖 Receta detallada (opcional)</h4>
         <div class="grid grid-cols-3 gap-3">
-          <div class="admin-form-group">
-            <label>Tiempo</label>
-            <input type="text" id="recetaTiempoInput" class="admin-input" placeholder="15 min">
-          </div>
-          <div class="admin-form-group">
-            <label>Dificultad</label>
-            <input type="text" id="recetaDificultadInput" class="admin-input" placeholder="Fácil">
-          </div>
-          <div class="admin-form-group">
-            <label>Porciones</label>
-            <input type="number" id="recetaPorcionesInput" class="admin-input" placeholder="2">
-          </div>
+          <div class="admin-form-group"><label>Tiempo</label><input type="text" id="recetaTiempoInput" class="admin-input" placeholder="15 min"></div>
+          <div class="admin-form-group"><label>Dificultad</label><input type="text" id="recetaDificultadInput" class="admin-input" placeholder="Fácil"></div>
+          <div class="admin-form-group"><label>Porciones</label><input type="number" id="recetaPorcionesInput" class="admin-input" placeholder="2"></div>
         </div>
-        <div class="admin-form-group">
-          <label>Ingredientes de la receta (uno por línea, formato: "nombre | cantidad")</label>
-          <textarea id="recetaIngredientesInput" class="admin-textarea" rows="4" placeholder="Pechuga de pollo | 2 unidades (400g)&#10;Aceite de oliva | 1 cda"></textarea>
-        </div>
-        <div class="admin-form-group">
-          <label>Pasos de preparación (uno por línea)</label>
-          <textarea id="recetaPasosInput" class="admin-textarea" rows="4" placeholder="Saca el pollo 10 min antes.&#10;Seca bien con papel."></textarea>
-        </div>
-        <div class="admin-form-group">
-          <label>Consejo del chef</label>
-          <textarea id="recetaConsejoInput" class="admin-textarea" rows="2" placeholder="Marina 30 min en limón..."></textarea>
-        </div>
+        <div class="admin-form-group"><label>Ingredientes de la receta (uno por línea, formato: "nombre | cantidad")</label><textarea id="recetaIngredientesInput" class="admin-textarea" rows="4" placeholder="Pechuga de pollo | 2 unidades (400g)&#10;Aceite de oliva | 1 cda"></textarea></div>
+        <div class="admin-form-group"><label>Pasos de preparación (uno por línea)</label><textarea id="recetaPasosInput" class="admin-textarea" rows="4" placeholder="Saca el pollo 10 min antes.&#10;Seca bien con papel."></textarea></div>
+        <div class="admin-form-group"><label>Consejo del chef</label><textarea id="recetaConsejoInput" class="admin-textarea" rows="2" placeholder="Marina 30 min en limón..."></textarea></div>
       </div>
     </div>
     <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-3xl dark:bg-slate-900 dark:border-slate-700 flex gap-2">
@@ -1453,1918 +917,10 @@
   </div>
 </div>
 
-<script>
-const SUPABASE_URL = 'https://xsuqqesjetgzxtyqqqje.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzdXFxZXNqZXRnenh0eXFxcWplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NTg5NjUsImV4cCI6MjEwMDEzNDk2NX0.OdQddq33d-dsz3fRpTp_xLs6bDJn2_fyFCKmENcs_t8';
+<!-- 🟢 NUEVO: Scripts externos en orden correcto -->
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
 
-let sb = null;
-if (typeof supabase !== 'undefined') {
-    sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-        auth: { storage: sessionStorage, autoRefreshToken: true, persistSession: true, detectSessionInUrl: true }
-    });
-} else {
-    console.error('Error crítico: La librería de Supabase no se ha cargado.');
-}
-
-let currentUser = null;
-let userData = null;
-let menuData = null;
-let pesos = [];
-let sustituciones = {};
-let chartPeso = null;
-let chartSemanal = null;
-let currentSwap = null;
-let filtroSoloTemporada = false;
-
-// 🟢 NUEVO FASE 2: Offset de semanas para navegación en planificador
-let plannerWeekOffset = 0; // 0 = semana actual, -1 = anterior, +1 = siguiente
-let plannerCurrentView = 'calendario'; // 'calendario' o 'batch'
-
-let FOODS_DB = {};
-let RECIPES_DB = {};
-let ADS_DB = { top: null, sidebar: null, inline: null, footer: null };
-
-let USER_RATINGS = {};
-let currentRecipeFoodId = null;
-
-// ==========================================
-// 🌱 SISTEMA DE TEMPORADA
-// ==========================================
-function obtenerEstacion() {
-  const mes = new Date().getMonth();
-  if (mes >= 2 && mes <= 4) return 'primavera';
-  if (mes >= 5 && mes <= 7) return 'verano';
-  if (mes >= 8 && mes <= 10) return 'otono';
-  return 'invierno';
-}
-
-function obtenerInfoEstacion(estacion) {
-  const info = {
-    primavera: { emoji: '🌸', nombre: 'Primavera', meses: 'Marzo - Mayo' },
-    verano: { emoji: '☀️', nombre: 'Verano', meses: 'Junio - Agosto' },
-    otono: { emoji: '🍂', nombre: 'Otoño', meses: 'Septiembre - Noviembre' },
-    invierno: { emoji: '❄️', nombre: 'Invierno', meses: 'Diciembre - Febrero' }
-  };
-  return info[estacion] || info.primavera;
-}
-
-function esDeTemporada(alimento) {
-  if (!alimento.temporada) return true;
-  if (alimento.temporada === 'todo_el_año') return true;
-  return alimento.temporada === obtenerEstacion();
-}
-
-function getBadgeTemporada(alimento) {
-  if (!alimento.temporada || alimento.temporada === 'todo_el_año') {
-    return '<span class="temporada-badge temporada-todo" title="Disponible todo el año">🌍 Todo el año</span>';
-  }
-  const info = obtenerInfoEstacion(alimento.temporada);
-  const estacionActual = obtenerEstacion();
-  if (alimento.temporada === estacionActual) {
-    return `<span class="temporada-badge temporada-actual" title="En temporada: ${info.meses}">${info.emoji} En temporada</span>`;
-  }
-  return `<span class="temporada-badge temporada-otra" title="Fuera de temporada: ${info.meses}">${info.emoji} ${info.nombre}</span>`;
-}
-
-function toggleFiltroTemporada() {
-  filtroSoloTemporada = document.getElementById('soloTemporada').checked;
-  mostrarToast(filtroSoloTemporada ? ' Filtro de temporada activado' : ' Mostrando todos los alimentos');
-  if (menuData) {
-    generarMenu();
-    renderPlanificador();
-  }
-}
-
-function actualizarBannerEstacion() {
-  const estacion = obtenerEstacion();
-  const info = obtenerInfoEstacion(estacion);
-  document.getElementById('seasonEmoji').textContent = info.emoji;
-  document.getElementById('seasonName').textContent = info.nombre;
-}
-
-// ==========================================
-// ⭐ SISTEMA DE VALORACIONES Y FAVORITOS
-// ==========================================
-async function cargarValoracionesUsuario() {
-  if (!currentUser) return;
-  try {
-    const { data, error } = await sb.from('user_ratings').select('*').eq('user_id', currentUser.id);
-    if (error) { console.error('Error cargando valoraciones:', error); return; }
-    USER_RATINGS = {};
-    if (data) {
-      data.forEach(r => {
-        USER_RATINGS[r.food_id] = {
-          rating: r.rating,
-          is_favorite: r.is_favorite || false,
-          is_excluded: r.is_excluded || false
-        };
-      });
-    }
-  } catch (err) { console.error('Error en cargarValoracionesUsuario:', err); }
-}
-
-async function guardarValoracion(foodId, updates) {
-  if (!currentUser) return;
-  try {
-    const existing = USER_RATINGS[foodId] || {};
-    const data = {
-      user_id: currentUser.id,
-      food_id: foodId,
-      rating: updates.rating !== undefined ? updates.rating : existing.rating,
-      is_favorite: updates.is_favorite !== undefined ? updates.is_favorite : (existing.is_favorite || false),
-      is_excluded: updates.is_excluded !== undefined ? updates.is_excluded : (existing.is_excluded || false),
-      updated_at: new Date()
-    };
-    
-    const { error } = await sb.from('user_ratings').upsert(data, { onConflict: 'user_id,food_id' });
-    if (error) { console.error('Error guardando valoración:', error); mostrarToast('❌ Error al guardar'); return false; }
-    
-    USER_RATINGS[foodId] = {
-      rating: data.rating,
-      is_favorite: data.is_favorite,
-      is_excluded: data.is_excluded
-    };
-    return true;
-  } catch (err) { console.error('Error en guardarValoracion:', err); return false; }
-}
-
-async function toggleFavorito(foodId, event) {
-  if (event) { event.stopPropagation(); event.preventDefault(); }
-  const current = USER_RATINGS[foodId] || {};
-  const newFav = !current.is_favorite;
-  const ok = await guardarValoracion(foodId, { is_favorite: newFav });
-  if (ok) {
-    mostrarToast(newFav ? '❤️ Añadido a favoritos' : ' Eliminado de favoritos');
-    if (menuData) { renderMenu(); renderPlanificador(); }
-    actualizarContadoresPerfil();
-    renderMisFavoritos();
-    renderMisExcluidos();
-  }
-}
-
-async function toggleExcluido(foodId, event) {
-  if (event) { event.stopPropagation(); event.preventDefault(); }
-  const current = USER_RATINGS[foodId] || {};
-  const newExc = !current.is_excluded;
-  const ok = await guardarValoracion(foodId, { is_excluded: newExc });
-  if (ok) {
-    mostrarToast(newExc ? '🚫 Alimento excluido del menú' : '✅ Alimento incluido de nuevo');
-    if (menuData) { renderMenu(); renderPlanificador(); }
-    actualizarContadoresPerfil();
-    renderMisFavoritos();
-    renderMisExcluidos();
-  }
-}
-
-async function guardarRatingEstrellas(rating) {
-  if (!currentRecipeFoodId) return;
-  const ok = await guardarValoracion(currentRecipeFoodId, { rating });
-  if (ok) { mostrarToast(`⭐ Valoración guardada: ${rating}/5`); }
-}
-
-function renderStars(rating) {
-  const stars = document.querySelectorAll('#starRating .star');
-  stars.forEach((star, idx) => {
-    star.classList.remove('filled', 'hovered');
-    if (idx < rating) star.classList.add('filled');
-  });
-  const texts = ['Sin valorar', 'Malo 😕', 'Regular 😐', 'Bueno 🙂', 'Muy bueno 😊', 'Excelente '];
-  document.getElementById('ratingText').textContent = texts[rating] || 'Sin valorar';
-}
-
-function initStarRating() {
-  const container = document.getElementById('starRating');
-  const stars = container.querySelectorAll('.star');
-  stars.forEach(star => {
-    star.addEventListener('mouseenter', () => {
-      const val = parseInt(star.dataset.value);
-      stars.forEach((s, idx) => { s.classList.toggle('hovered', idx < val); });
-    });
-    star.addEventListener('mouseleave', () => { stars.forEach(s => s.classList.remove('hovered')); });
-    star.addEventListener('click', async () => {
-      const rating = parseInt(star.dataset.value);
-      renderStars(rating);
-      await guardarRatingEstrellas(rating);
-    });
-  });
-}
-
-function renderMisFavoritos() {
-  const cont = document.getElementById('listaFavoritos');
-  const favoritos = Object.entries(USER_RATINGS).filter(([_, r]) => r.is_favorite);
-  if (favoritos.length === 0) {
-    cont.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">Aún no tienes favoritos. Marca alimentos con ❤️ en el menú.</p>';
-    return;
-  }
-  cont.innerHTML = favoritos.map(([foodId, r]) => {
-    const food = FOODS_DB[foodId];
-    if (!food) return '';
-    const starsHtml = r.rating ? '⭐'.repeat(r.rating) + '☆'.repeat(5 - r.rating) : 'Sin valorar';
-    return `
-      <div class="food-card-mini">
-        <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-lg">❤️</div>
-        <div class="flex-1 min-w-0">
-          <div class="font-semibold text-slate-800 dark:text-white text-sm truncate">${DOMPurify.sanitize(food.nombre)}</div>
-          <div class="flex items-center gap-2 mt-1">
-            <span class="text-xs text-amber-600">${starsHtml}</span>
-            <span class="macro-chip bg-slate-100 dark:bg-slate-700 text-xs">🔥 ${food.kcal} kcal</span>
-          </div>
-        </div>
-        <button onclick="toggleFavorito('${foodId}')" class="admin-btn admin-btn-danger" title="Quitar de favoritos">🗑️</button>
-      </div>
-    `;
-  }).join('');
-}
-
-function renderMisExcluidos() {
-  const cont = document.getElementById('listaExcluidos');
-  const excluidos = Object.entries(USER_RATINGS).filter(([_, r]) => r.is_excluded);
-  if (excluidos.length === 0) {
-    cont.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">No has excluido ningún alimento.</p>';
-    return;
-  }
-  cont.innerHTML = excluidos.map(([foodId, r]) => {
-    const food = FOODS_DB[foodId];
-    if (!food) return '';
-    return `
-      <div class="food-card-mini" style="opacity: 0.7;">
-        <div class="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-lg">🚫</div>
-        <div class="flex-1 min-w-0">
-          <div class="font-semibold text-slate-800 dark:text-white text-sm truncate">${DOMPurify.sanitize(food.nombre)}</div>
-          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">No aparecerá en tus menús</div>
-        </div>
-        <button onclick="toggleExcluido('${foodId}')" class="admin-btn admin-btn-success" title="Incluir de nuevo">✅</button>
-      </div>
-    `;
-  }).join('');
-}
-
-function actualizarContadoresPerfil() {
-  const favs = Object.values(USER_RATINGS).filter(r => r.is_favorite).length;
-  const excs = Object.values(USER_RATINGS).filter(r => r.is_excluded).length;
-  document.getElementById('favCount').textContent = favs;
-  document.getElementById('excCount').textContent = excs;
-}
-
-// ==========================================
-// 📴 SISTEMA OFFLINE-FIRST
-// ==========================================
-const OFFLINE_QUEUE_KEY = 'nutripro_offline_queue';
-let appIsOnline = true;
-
-function getOfflineQueue() {
-  try { 
-    const data = localStorage.getItem(OFFLINE_QUEUE_KEY);
-    if (!data) return [];
-    const parsed = JSON.parse(data);
-    if (!Array.isArray(parsed)) { localStorage.removeItem(OFFLINE_QUEUE_KEY); return []; }
-    return parsed;
-  } catch (e) { localStorage.removeItem(OFFLINE_QUEUE_KEY); return []; }
-}
-
-function addToOfflineQueue(action, data) {
-  const queue = getOfflineQueue();
-  queue.push({ action, data, timestamp: Date.now() });
-  localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
-  mostrarToast('📴 Sin conexión. Guardado localmente.');
-}
-
-function clearOfflineQueue() { localStorage.removeItem(OFFLINE_QUEUE_KEY); }
-
-async function checkRealConnection() {
-  if (!navigator.onLine) { appIsOnline = false; updateOnlineStatusUI(); return; }
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
-    await fetch('https://1.1.1.1/cdn-cgi/trace', { method: 'GET', signal: controller.signal, cache: 'no-store' });
-    clearTimeout(timeoutId);
-    appIsOnline = true;
-  } catch (error) { appIsOnline = false; }
-  updateOnlineStatusUI();
-}
-
-function updateOnlineStatusUI() {
-  const statusEl = document.getElementById('connectionStatus');
-  if (statusEl) {
-    if (appIsOnline) { statusEl.classList.add('hidden'); statusEl.classList.remove('flex'); } 
-    else { statusEl.classList.remove('hidden'); statusEl.classList.add('flex'); }
-  }
-}
-
-async function processOfflineQueue() {
-  const queue = getOfflineQueue();
-  if (queue.length === 0) return;
-  mostrarToast('🔄 Sincronizando datos pendientes...');
-  let successCount = 0;
-  const newQueue = [];
-  for (const item of queue) {
-    try {
-      let success = false;
-      if (item.action === 'add_weight' && currentUser) {
-        const { error } = await sb.from('weight_logs').insert({ user_id: currentUser.id, fecha: item.data.fecha, valor: item.data.valor });
-        if (!error) success = true;
-      } else if (item.action === 'add_comment' && currentUser) {
-        const { error } = await sb.from('comments').insert({ user_id: currentUser.id, user_name: item.data.anonimo ? 'Anónimo' : currentUser.nombre, texto: item.data.texto, is_anonymous: item.data.anonimo });
-        if (!error) success = true;
-      } else if (item.action === 'save_evaluation' && currentUser) {
-        const { error } = await sb.from('user_data').upsert({ user_id: currentUser.id, ...item.data, updated_at: new Date() });
-        if (!error) { userData = item.data; saveUserDataToLocal(userData); success = true; }
-      } else if (item.action === 'update_profile' && currentUser) {
-        const { error } = await sb.from('profiles').update({ nombre: item.data.nombre }).eq('id', currentUser.id);
-        if (!error) { currentUser.nombre = item.data.nombre; updateUserUI(); success = true; }
-      }
-      if (success) { successCount++; } else { newQueue.push(item); }
-    } catch (err) { newQueue.push(item); }
-  }
-  if (newQueue.length === 0) { clearOfflineQueue(); } 
-  else { localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(newQueue)); }
-  if (successCount > 0) {
-    mostrarToast(`✅ ${successCount} registro(s) sincronizado(s).`);
-    if (userData) { actualizarDashboard(); generarMenu(); generarListaCompra(); generarEjercicio(); cargarDatosEnFormularioEvaluacion(); renderPlanificador(); }
-    renderSeguimiento();
-    renderComentarios();
-  }
-}
-
-window.addEventListener('online', () => { appIsOnline = true; updateOnlineStatusUI(); checkRealConnection().then(() => { if (appIsOnline && currentUser) processOfflineQueue(); }); });
-window.addEventListener('offline', () => { appIsOnline = false; mostrarToast('🔴 Sin conexión. Los datos se guardarán localmente.'); updateOnlineStatusUI(); });
-
-function saveUserDataToLocal(data) { localStorage.setItem('nutripro_user_data', JSON.stringify(data)); }
-
-function cargarDatosEnFormularioEvaluacion() {
-  if (!userData) return;
-  document.getElementById('edad').value = userData.edad || 30;
-  document.getElementById('sexo').value = userData.sexo || 'hombre';
-  document.getElementById('peso').value = userData.peso || 75;
-  document.getElementById('altura').value = userData.altura || 175;
-  document.getElementById('actividad').value = userData.factor || 1.375;
-  document.getElementById('objetivo').value = userData.objetivo || 'perder';
-  document.querySelectorAll('.pref').forEach(cb => { cb.checked = userData.prefs && userData.prefs.includes(cb.value); });
-  document.getElementById('evaluacionStatus').classList.remove('hidden');
-}
-
-function mostrarFormularioEvaluacion() { document.getElementById('formEvaluacion').scrollIntoView({ behavior: 'smooth' }); }
-
-function initDarkMode() {
-  const toggle = document.getElementById('darkModeToggle');
-  const icon = document.getElementById('darkModeIcon');
-  const html = document.documentElement;
-  const savedTheme = localStorage.getItem('nutripro-theme');
-  if (!savedTheme || savedTheme === 'dark') {
-    html.classList.add('dark');
-    icon.textContent = '☀️';
-    localStorage.setItem('nutripro-theme', 'dark');
-  } else {
-    html.classList.remove('dark');
-    icon.textContent = '🌙';
-  }
-  toggle.addEventListener('click', () => {
-    html.classList.toggle('dark');
-    const isDark = html.classList.contains('dark');
-    icon.textContent = isDark ? '☀️' : '🌙';
-    localStorage.setItem('nutripro-theme', isDark ? 'dark' : 'light');
-    if (chartPeso) renderChartPeso();
-    if (chartSemanal) renderAnalisis();
-  });
-}
-
-async function checkAuth() {
-  if (!sb) { console.error('Supabase no inicializado.'); return; }
-  try {
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) { showAuthScreen(); return; }
-    const { data: profile, error } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
-    if (error || !profile) {
-      const nombre = session.user.user_metadata?.nombre || session.user.email.split('@')[0];
-      const { error: insertError } = await sb.from('profiles').insert({ id: session.user.id, nombre: nombre, rol: 'user', bloqueado: false });
-      if (insertError) { await sb.auth.signOut(); showAuthScreen(); alert('⚠️ Error al inicializar tu cuenta.'); return; }
-      location.reload();
-      return;
-    }
-    if (profile.bloqueado) { showBlockedScreen('Tu cuenta ha sido bloqueada.'); return; }
-    currentUser = { id: session.user.id, email: session.user.email, nombre: profile.nombre, rol: profile.rol };
-    showMainApp();
-    await cargarDatosDinamicos();
-    await cargarValoracionesUsuario();
-    await loadUserDataFromDB();
-    actualizarBannerEstacion();
-    actualizarContadoresPerfil();
-    initDarkMode();
-    await checkRealConnection();
-    if (appIsOnline) { await processOfflineQueue(); }
-  } catch (err) { console.error('Error en checkAuth:', err); }
-}
-
-async function cargarDatosDinamicos() {
-  try {
-    const { data: foods, error: foodsError } = await sb.from('foods').select('*').eq('active', true);
-    if (!foodsError && foods) {
-      FOODS_DB = {};
-      foods.forEach(f => { FOODS_DB[f.id] = { ...f, ing: Array.isArray(f.ing) ? f.ing : JSON.parse(f.ing || '[]') }; });
-    }
-    
-    const { data: recipes, error: recipesError } = await sb.from('recipes').select('*');
-    if (!recipesError && recipes) {
-      RECIPES_DB = {};
-      recipes.forEach(r => {
-        RECIPES_DB[r.food_id] = {
-          tiempo: r.tiempo,
-          dificultad: r.dificultad,
-          porciones: r.porciones,
-          ingredientes: Array.isArray(r.ingredientes) ? r.ingredientes : JSON.parse(r.ingredientes || '[]'),
-          pasos: Array.isArray(r.pasos) ? r.pasos : JSON.parse(r.pasos || '[]'),
-          consejo: r.consejo
-        };
-      });
-    }
-    
-    const { data: ads, error: adsError } = await sb.from('ads').select('*').eq('active', true).order('order_index');
-    if (!adsError && ads) {
-      ADS_DB = { top: null, sidebar: null, inline: null, footer: null };
-      ads.forEach(ad => {
-        if (!ADS_DB[ad.position]) ADS_DB[ad.position] = ad;
-      });
-      renderAnuncios();
-    }
-  } catch (err) { console.error('Error cargando datos dinámicos:', err); }
-}
-
-function renderAnuncios() {
-  const positions = ['top', 'sidebar', 'inline', 'footer'];
-  positions.forEach(pos => {
-    const el = document.getElementById('ad' + pos.charAt(0).toUpperCase() + pos.slice(1));
-    if (!el) return;
-    const ad = ADS_DB[pos];
-    if (ad) {
-      el.innerHTML = '';
-      if (ad.image_url) {
-        el.innerHTML += `<img src="${DOMPurify.sanitize(ad.image_url)}" alt="" style="max-height: 80px; margin: 0 auto 0.5rem; display: block;">`;
-      }
-      el.innerHTML += `<div class="font-semibold text-slate-600 dark:text-slate-300">${DOMPurify.sanitize(ad.title)}</div>`;
-      if (ad.content) el.innerHTML += `<div class="text-xs mt-1">${DOMPurify.sanitize(ad.content)}</div>`;
-      if (ad.link_url && ad.link_url !== '#') {
-        el.classList.add('has-link');
-        el.onclick = () => window.open(ad.link_url, '_blank');
-      } else {
-        el.classList.remove('has-link');
-        el.onclick = null;
-      }
-    }
-  });
-}
-
-function showAuthScreen() {
-  document.getElementById('authScreen').classList.remove('hidden');
-  document.getElementById('blockedScreen').classList.add('hidden');
-  document.getElementById('mainApp').classList.add('hidden');
-}
-
-function showBlockedScreen(msg) {
-  document.getElementById('authScreen').classList.add('hidden');
-  document.getElementById('blockedScreen').classList.remove('hidden');
-  document.getElementById('mainApp').classList.add('hidden');
-  document.getElementById('blockedMsg').textContent = msg;
-}
-
-function showMainApp() {
-  document.getElementById('authScreen').classList.add('hidden');
-  document.getElementById('blockedScreen').classList.add('hidden');
-  document.getElementById('mainApp').classList.remove('hidden');
-  updateUserUI();
-}
-
-function updateUserUI() {
-  if (!currentUser) return;
-  document.getElementById('userName').textContent = currentUser.nombre.split(' ')[0];
-  document.getElementById('userAvatar').textContent = currentUser.nombre.charAt(0).toUpperCase();
-  document.getElementById('dropdownName').textContent = currentUser.nombre;
-  document.getElementById('dropdownEmail').textContent = currentUser.email;
-  const roleEl = document.getElementById('dropdownRole');
-  if (currentUser.rol === 'admin') {
-    roleEl.innerHTML = '<span class="status-badge bg-purple-100 text-purple-700">️ Administrador</span>';
-    document.getElementById('adminMenuItem').classList.remove('hidden');
-  } else {
-    roleEl.innerHTML = '<span class="status-badge bg-teal-100 text-teal-700">✓ Usuario</span>';
-    document.getElementById('adminMenuItem').classList.add('hidden');
-  }
-  document.getElementById('perfilNombre').value = currentUser.nombre;
-  document.getElementById('perfilEmail').value = currentUser.email;
-}
-
-async function cerrarSesion() {
-  try {
-    await sb.auth.signOut();
-    currentUser = null;
-    document.getElementById('userDropdown').classList.remove('show');
-    showAuthScreen();
-  } catch (err) { mostrarToast('⚠️ Error al cerrar sesión.'); }
-}
-
-document.getElementById('formLogin').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = document.getElementById('loginEmail').value;
-  const pass = document.getElementById('loginPassword').value;
-  const err = document.getElementById('loginError');
-  try {
-    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-    if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); } 
-    else { location.reload(); }
-  } catch (errCatch) { err.textContent = '❌ Error de conexión.'; err.classList.remove('hidden'); }
-});
-
-document.getElementById('formRegister').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const nombre = document.getElementById('regName').value.trim();
-  const email = document.getElementById('regEmail').value.trim();
-  const pass = document.getElementById('regPassword').value;
-  const pass2 = document.getElementById('regPassword2').value;
-  const terms = document.getElementById('regTerms').checked;
-  const err = document.getElementById('regError');
-  const btn = e.target.querySelector('button[type="submit"]');
-  err.classList.add('hidden');
-  if (!nombre) { err.textContent = '❌ El nombre es obligatorio'; err.classList.remove('hidden'); return; }
-  if (!terms) { err.textContent = '❌ Debes aceptar los términos'; err.classList.remove('hidden'); return; }
-  if (pass !== pass2) { err.textContent = '❌ Las contraseñas no coinciden'; err.classList.remove('hidden'); return; }
-  if (pass.length < 6) { err.textContent = '❌ Mínimo 6 caracteres'; err.classList.remove('hidden'); return; }
-  const originalBtnText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Creando cuenta...';
-  try {
-    const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { nombre } } });
-    if (error) { err.textContent = ' ' + error.message; err.classList.remove('hidden'); } 
-    else {
-      if (data.session) { mostrarToast('✅ Cuenta creada.'); setTimeout(() => location.reload(), 1000); } 
-      else { alert('✅ Revisa tu email para confirmar la cuenta.'); document.querySelector('.auth-tab[data-auth="login"]').click(); }
-    }
-  } catch (errCatch) { err.textContent = '❌ Error inesperado.'; err.classList.remove('hidden'); } 
-  finally { btn.disabled = false; btn.textContent = originalBtnText; }
-});
-
-document.querySelectorAll('.auth-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    if (tab.dataset.auth === 'login') {
-      document.getElementById('formLogin').classList.remove('hidden');
-      document.getElementById('formRegister').classList.add('hidden');
-    } else {
-      document.getElementById('formLogin').classList.add('hidden');
-      document.getElementById('formRegister').classList.remove('hidden');
-    }
-  });
-});
-
-async function loadUserDataFromDB() {
-  try {
-    const { data: uData } = await sb.from('user_data').select('*').eq('user_id', currentUser.id).single();
-    if (uData) {
-      userData = uData;
-      saveUserDataToLocal(userData);
-      actualizarDashboard();
-      generarMenu();
-      generarListaCompra();
-      generarEjercicio();
-      cargarDatosEnFormularioEvaluacion();
-      renderPlanificador();
-    }
-    const { data: wData } = await sb.from('weight_logs').select('*').eq('user_id', currentUser.id).order('fecha', { ascending: true });
-    if (wData) {
-      pesos = wData.map(w => ({ fecha: w.fecha, valor: w.valor }));
-      renderSeguimiento();
-    }
-    await renderComentarios();
-  } catch (err) { console.error('Error cargando datos:', err); }
-}
-
-document.getElementById('formEvaluacion').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const edad = parseInt(document.getElementById('edad').value);
-  const sexo = document.getElementById('sexo').value;
-  const peso = parseFloat(document.getElementById('peso').value);
-  const altura = parseFloat(document.getElementById('altura').value);
-  const factor = parseFloat(document.getElementById('actividad').value);
-  const objetivo = document.getElementById('objetivo').value;
-  const prefs = Array.from(document.querySelectorAll('.pref:checked')).map(c => c.value);
-  const tmb = calcularTMB(peso, altura, edad, sexo);
-  const getd = calcularGETD(tmb, factor);
-  const imc = calcularIMC(peso, altura);
-  let deficit = 0;
-  if (objetivo === 'perder') deficit = 500;
-  else if (objetivo === 'perderSuave') deficit = 300;
-  else if (objetivo === 'ganar') deficit = -300;
-  if (deficit > 750) deficit = 750;
-  const caloriasObjetivo = Math.round(getd - deficit);
-  const protG = Math.round(peso * 1.8);
-  const grasasG = Math.max(Math.round(peso * 0.9), 50);
-  const carbKcal = caloriasObjetivo - (protG * 4) - (grasasG * 9);
-  const carbG = Math.round(carbKcal / 4);
-  const newUserData = { edad, sexo, peso, altura, factor, objetivo, prefs, tmb: Math.round(tmb), getd: Math.round(getd), imc: imc.toFixed(1), deficit, caloriasObjetivo, protG, grasasG, carbG };
-  
-  if (!appIsOnline) {
-    addToOfflineQueue('save_evaluation', newUserData);
-    userData = newUserData;
-    saveUserDataToLocal(userData);
-    actualizarDashboard();
-    generarMenu();
-    generarListaCompra();
-    generarEjercicio();
-    cargarDatosEnFormularioEvaluacion();
-    renderPlanificador();
-    switchTab('dashboard');
-    return;
-  }
-  
-  try {
-    const { error } = await sb.from('user_data').upsert({ user_id: currentUser.id, ...newUserData, updated_at: new Date() });
-    if (error) { addToOfflineQueue('save_evaluation', newUserData); } 
-    else {
-      userData = newUserData;
-      saveUserDataToLocal(userData);
-      actualizarDashboard();
-      generarMenu();
-      generarListaCompra();
-      generarEjercicio();
-      cargarDatosEnFormularioEvaluacion();
-      renderPlanificador();
-      switchTab('dashboard');
-      mostrarToast('✅ Evaluación guardada');
-    }
-  } catch (err) { addToOfflineQueue('save_evaluation', newUserData); }
-});
-
-async function agregarPeso() {
-  const fecha = document.getElementById('fechaPeso').value;
-  const valor = parseFloat(document.getElementById('valorPeso').value);
-  if (!fecha || isNaN(valor)) { mostrarToast('⚠️ Introduce fecha y peso válido'); return; }
-  const pesoData = { fecha, valor };
-  if (!appIsOnline) {
-    addToOfflineQueue('add_weight', pesoData);
-    pesos.push(pesoData);
-    pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-    document.getElementById('valorPeso').value = '';
-    renderSeguimiento();
-    return;
-  }
-  try {
-    const { error } = await sb.from('weight_logs').insert({ user_id: currentUser.id, fecha, valor });
-    if (error) { addToOfflineQueue('add_weight', pesoData); return; }
-    pesos.push(pesoData);
-    pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-    document.getElementById('valorPeso').value = '';
-    renderSeguimiento();
-    mostrarToast('✅ Peso registrado');
-  } catch (err) { addToOfflineQueue('add_weight', pesoData); }
-}
-
-async function publicarComentario() {
-  const texto = document.getElementById('nuevoComentario').value.trim();
-  if (!texto) { mostrarToast('⚠️ Escribe un comentario'); return; }
-  const anonimo = document.getElementById('comentarioAnonimo').checked;
-  const commentData = { texto, anonimo };
-  if (!appIsOnline) {
-    addToOfflineQueue('add_comment', commentData);
-    document.getElementById('nuevoComentario').value = '';
-    mostrarToast('📴 Comentario guardado localmente');
-    return;
-  }
-  try {
-    const { error } = await sb.from('comments').insert({ user_id: currentUser.id, user_name: anonimo ? 'Anónimo' : currentUser.nombre, texto, is_anonymous: anonimo });
-    if (error) { addToOfflineQueue('add_comment', commentData); return; }
-    document.getElementById('nuevoComentario').value = '';
-    await renderComentarios();
-    mostrarToast('💬 Comentario publicado');
-  } catch (err) { addToOfflineQueue('add_comment', commentData); }
-}
-
-async function renderComentarios() {
-  try {
-    const { data: comments } = await sb.from('comments').select('*').order('created_at', { ascending: false });
-    const cont = document.getElementById('listaComentarios');
-    if (!comments || comments.length === 0) {
-      cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia </div>';
-      return;
-    }
-    cont.innerHTML = comments.map(c => {
-      const fecha = new Date(c.created_at).toLocaleDateString('es-ES');
-      const textoSeguro = DOMPurify.sanitize(c.texto);
-      const nombreSeguro = DOMPurify.sanitize(c.user_name);
-      return `<div class="comment-card"><div class="flex items-center gap-2 mb-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${nombreSeguro.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${nombreSeguro}</div><div class="text-xs text-slate-400">${fecha}</div></div></div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${textoSeguro}</p></div>`;
-    }).join('');
-  } catch (err) { console.error('Error cargando comentarios:', err); }
-}
-
-function calcularTMB(peso, altura, edad, sexo) {
-  if (sexo === 'hombre') return 10 * peso + 6.25 * altura - 5 * edad + 5;
-  return 10 * peso + 6.25 * altura - 5 * edad - 161;
-}
-function calcularGETD(tmb, factor) { return tmb * factor; }
-function calcularIMC(peso, alturaCm) { return peso / Math.pow(alturaCm / 100, 2); }
-function categoriaIMC(imc) {
-  if (imc < 18.5) return { texto: 'Bajo peso', color: 'text-blue-600' };
-  if (imc < 25) return { texto: 'Normopeso', color: 'text-green-600' };
-  if (imc < 30) return { texto: 'Sobrepeso', color: 'text-amber-600' };
-  return { texto: 'Obesidad', color: 'text-red-600' };
-}
-
-function actualizarDashboard() {
-  if (!userData) return;
-  document.getElementById('dashboardNoData').classList.add('hidden');
-  document.getElementById('dashboardContent').classList.remove('hidden');
-  document.getElementById('metricTMB').textContent = userData.tmb;
-  document.getElementById('metricGETD').textContent = userData.getd;
-  document.getElementById('metricObjetivo').textContent = userData.caloriasObjetivo;
-  document.getElementById('metricDeficit').textContent = userData.deficit > 0 ? `Déficit: ${userData.deficit} kcal` : (userData.deficit < 0 ? `Superávit: ${Math.abs(userData.deficit)} kcal` : 'Mantenimiento');
-  document.getElementById('metricIMC').textContent = userData.imc;
-  const catIMC = categoriaIMC(parseFloat(userData.imc));
-  document.getElementById('metricIMCCat').textContent = catIMC.texto;
-  document.getElementById('metricIMCCat').className = `text-xs font-semibold mt-1 ${catIMC.color}`;
-  const alturaM = userData.altura / 100;
-  const imcActual = parseFloat(userData.imc);
-  const MARGEN_KG = 1.5;
-  let imcReferencia;
-  if (imcActual < 18.5) imcReferencia = 18.5;
-  else if (imcActual > 24.9) imcReferencia = 24.5;
-  else imcReferencia = imcActual;
-  const pesoReferencia = imcReferencia * alturaM * alturaM;
-  const pesoMin = (pesoReferencia - MARGEN_KG).toFixed(1);
-  const pesoMax = (pesoReferencia + MARGEN_KG).toFixed(1);
-  document.getElementById('metricPesoIdeal').textContent = `${pesoMin} – ${pesoMax} kg`;
-  let detalleTexto = '';
-  if (imcActual < 18.5) detalleTexto = `Objetivo: alcanzar IMC saludable (18.5)`;
-  else if (imcActual > 24.9) detalleTexto = `Objetivo: alcanzar IMC 24.5`;
-  else detalleTexto = `Basado en tu IMC actual (${imcActual})`;
-  document.getElementById('metricPesoIdealDetalle').textContent = detalleTexto;
-  const totalKcal = userData.protG * 4 + userData.grasasG * 9 + userData.carbG * 4;
-  const pctProt = Math.round((userData.protG * 4 / totalKcal) * 100);
-  const pctCarb = Math.round((userData.carbG * 4 / totalKcal) * 100);
-  const pctGrasas = 100 - pctProt - pctCarb;
-  document.getElementById('macroProt').textContent = `${userData.protG}g (${pctProt}%)`;
-  document.getElementById('macroCarb').textContent = `${userData.carbG}g (${pctCarb}%)`;
-  document.getElementById('macroGrasas').textContent = `${userData.grasasG}g (${pctGrasas}%)`;
-  document.getElementById('barProt').style.width = pctProt + '%';
-  document.getElementById('barCarb').style.width = pctCarb + '%';
-  document.getElementById('barGrasas').style.width = pctGrasas + '%';
-}
-
-function obtenerReceta(alimentoId) { return RECIPES_DB[alimentoId] || null; }
-
-function abrirModalReceta(alimentoId) {
-  const alimento = FOODS_DB[alimentoId];
-  if (!alimento) return;
-  const receta = obtenerReceta(alimentoId);
-  currentRecipeFoodId = alimentoId;
-  document.getElementById('recetaTitulo').textContent = alimento.nombre;
-  if (receta) {
-    document.getElementById('recetaTiempo').textContent = receta.tiempo || '—';
-    document.getElementById('recetaDificultad').textContent = receta.dificultad || '—';
-    document.getElementById('recetaPorciones').textContent = `${receta.porciones || 2} ${receta.porciones === 1 ? 'porción' : 'porciones'}`;
-    document.getElementById('recetaIngredientes').innerHTML = receta.ingredientes.map(ing => `<div class="recipe-ingredient" onclick="toggleIngrediente(this)"><input type="checkbox" class="w-4 h-4 accent-teal-600"><span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${ing.nombre}</span><span class="text-xs text-slate-500 font-semibold">${ing.cantidad}</span></div>`).join('');
-    document.getElementById('recetaPasos').innerHTML = receta.pasos.map((paso, i) => `<div class="recipe-step"><div class="recipe-step-number">${i + 1}</div><div class="flex-1 text-sm text-slate-700 dark:text-slate-300">${paso}</div></div>`).join('');
-    const consejoEl = document.getElementById('recetaConsejo');
-    if (receta.consejo) { document.getElementById('recetaConsejoTexto').textContent = receta.consejo; consejoEl.classList.remove('hidden'); } 
-    else { consejoEl.classList.add('hidden'); }
-  } else {
-    document.getElementById('recetaTiempo').textContent = '—';
-    document.getElementById('recetaDificultad').textContent = '—';
-    document.getElementById('recetaPorciones').textContent = '—';
-    document.getElementById('recetaIngredientes').innerHTML = '<p class="text-sm text-slate-500">Receta no disponible. El administrador puede añadir una desde el Panel Admin → Alimentos.</p>';
-    document.getElementById('recetaPasos').innerHTML = '';
-    document.getElementById('recetaConsejo').classList.add('hidden');
-  }
-  const rating = USER_RATINGS[alimentoId]?.rating || 0;
-  renderStars(rating);
-  document.getElementById('modalReceta').classList.remove('hidden');
-}
-
-function cerrarModalReceta() { document.getElementById('modalReceta').classList.add('hidden'); currentRecipeFoodId = null; }
-function toggleIngrediente(el) { el.classList.toggle('checked'); const cb = el.querySelector('input[type="checkbox"]'); cb.checked = !cb.checked; }
-
-function getGrupoById(id) {
-  const a = FOODS_DB[id];
-  if (!a) return [];
-  return Object.values(FOODS_DB).filter(f => f.grupo === a.grupo && f.active);
-}
-
-function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-function filtrarPorTemporada(arr) { if (!filtroSoloTemporada) return arr; const enTemporada = arr.filter(a => esDeTemporada(a)); return enTemporada.length > 0 ? enTemporada : arr; }
-function excluirNoMeGusta(arr) { return arr.filter(a => !USER_RATINGS[a.id]?.is_excluded); }
-function pickRandomConFavoritos(arr) {
-  if (arr.length === 0) return null;
-  const favoritos = arr.filter(a => USER_RATINGS[a.id]?.is_favorite);
-  if (favoritos.length > 0 && Math.random() < 0.7) return pickRandom(favoritos);
-  return pickRandom(arr);
-}
-
-// ==========================================
-// 🌱 ALGORITMO INTELIGENTE CON TEMPORADA Y FAVORITOS
-// ==========================================
-function generarMenu() {
-  if (!userData) return;
-  
-  const grupos = {
-    prot: excluirNoMeGusta(Object.values(FOODS_DB).filter(f => f.grupo === 'prot' && f.active)),
-    carb: excluirNoMeGusta(Object.values(FOODS_DB).filter(f => f.grupo === 'carb' && f.active)),
-    verd: excluirNoMeGusta(Object.values(FOODS_DB).filter(f => f.grupo === 'verd' && f.active)),
-    grasa: excluirNoMeGusta(Object.values(FOODS_DB).filter(f => f.grupo === 'grasa' && f.active)),
-    des: excluirNoMeGusta(Object.values(FOODS_DB).filter(f => f.grupo === 'des' && f.active)),
-    mer: excluirNoMeGusta(Object.values(FOODS_DB).filter(f => f.grupo === 'mer' && f.active))
-  };
-  
-  if (Object.values(grupos).some(g => g.length === 0)) {
-    document.getElementById('menuNoData').classList.remove('hidden');
-    document.getElementById('menuContent').classList.add('hidden');
-    document.getElementById('weekIndicator').classList.add('hidden');
-    return;
-  }
-  
-  const protPescadoAzul = grupos.prot.filter(p => /sardina|caballa|atún|boquerón/i.test(p.nombre));
-  const protPescadoBlanco = grupos.prot.filter(p => /merluza|bacalao|dorada|lubina|sepia|pulpo/i.test(p.nombre));
-  const protMarisco = grupos.prot.filter(p => /gamba|mejillón|almeja/i.test(p.nombre));
-  const protLegumbres = grupos.prot.filter(p => /garbanzo|lenteja|alubia/i.test(p.nombre));
-  const protCarneBlanca = grupos.prot.filter(p => /pollo|pavo|conejo/i.test(p.nombre));
-  const protCarneRoja = grupos.prot.filter(p => /ternera|solomillo/i.test(p.nombre));
-  const protHuevo = grupos.prot.filter(p => /huevo|tortilla|queso fresco/i.test(p.nombre));
-  
-  const fallback = grupos.prot;
-  const getProts = (arr) => arr.length > 0 ? arr : fallback;
-  
-  const planSemanal = [
-    { dia: 'Lunes',    protComida: getProts(protLegumbres),     protCena: getProts(protHuevo) },
-    { dia: 'Martes',   protComida: getProts(protPescadoAzul),   protCena: getProts(protHuevo) },
-    { dia: 'Miércoles',protComida: getProts(protCarneBlanca),   protCena: getProts(protPescadoBlanco) },
-    { dia: 'Jueves',   protComida: getProts(protLegumbres),     protCena: getProts(protHuevo) },
-    { dia: 'Viernes',  protComida: getProts(protPescadoBlanco), protCena: getProts(protMarisco.length > 0 ? protMarisco : protPescadoBlanco) },
-    { dia: 'Sábado',   protComida: getProts(protCarneBlanca),   protCena: getProts(protPescadoAzul) },
-    { dia: 'Domingo',  protComida: getProts(protCarneRoja.length > 0 ? protCarneRoja : protCarneBlanca), protCena: getProts(protHuevo) }
-  ];
-  
-  document.getElementById('menuNoData').classList.add('hidden');
-  document.getElementById('menuContent').classList.remove('hidden');
-  document.getElementById('weekIndicator').classList.remove('hidden');
-  
-  // 🟢 CORRECCIÓN FASE 2: Usar semana del mes en lugar de semana del año
-  const now = new Date();
-  const dayOfMonth = now.getDate();
-  const menuIndex = Math.floor((dayOfMonth - 1) / 7); // 0, 1, 2, o 3
-  document.getElementById('weekText').textContent = `Semana ${menuIndex + 1} de 4`;
-  
-  const menus = [];
-  
-  for (let m = 0; m < 4; m++) {
-    const menu = [];
-    planSemanal.forEach((plan, diaIdx) => {
-      const protComida = pickRandomConFavoritos(plan.protComida);
-      const protCena = pickRandomConFavoritos(plan.protCena.filter(p => p.id !== protComida.id) || plan.protCena);
-      const carbOpciones = grupos.carb.filter(c => !/gazpacho|salmorejo|escalivada/i.test(c.nombre));
-      const comidaCarb = pickRandomConFavoritos(carbOpciones);
-      const verdurasDisponibles = filtrarPorTemporada(grupos.verd);
-      const verdComida = pickRandomConFavoritos(verdurasDisponibles);
-      const verdCena = pickRandomConFavoritos(verdurasDisponibles.filter(v => v.id !== verdComida.id) || verdurasDisponibles);
-      const comidaGrasa = pickRandomConFavoritos(grupos.grasa);
-      const desayuno = pickRandomConFavoritos(grupos.des);
-      const merienda = pickRandomConFavoritos(grupos.mer);
-      
-      menu.push({
-        dia: plan.dia,
-        desayuno: { ...desayuno },
-        comida: { prot: { ...protComida }, carb: { ...comidaCarb }, verdura: { ...verdComida }, grasa: { ...comidaGrasa } },
-        merienda: { ...merienda },
-        cena: { prot: { ...protCena }, verdura: { ...verdCena } }
-      });
-    });
-    menus.push(menu);
-  }
-  
-  menuData = { menu: menus[menuIndex], menuIndex, allMenus: menus };
-  aplicarSustitucionesGuardadas();
-  renderMenu();
-  renderListaCompra();
-}
-
-function aplicarSustitucionesGuardadas() {
-  if (!menuData) return;
-  Object.keys(sustituciones).forEach(key => {
-    const [diaIdx, path] = key.split('|');
-    const nuevo = FOODS_DB[sustituciones[key]];
-    if (!nuevo) return;
-    const dia = menuData.menu[parseInt(diaIdx)];
-    if (!dia) return;
-    const partes = path.split('.');
-    let obj = dia;
-    for (let i = 0; i < partes.length - 1; i++) obj = obj[partes[i]];
-    obj[partes[partes.length - 1]] = { ...nuevo };
-  });
-}
-
-function calcularKcalDia(dia) {
-  return Math.round(dia.desayuno.kcal + dia.comida.prot.kcal + dia.comida.carb.kcal + dia.comida.verdura.kcal + dia.comida.grasa.kcal + dia.merienda.kcal + dia.cena.prot.kcal + dia.cena.verdura.kcal);
-}
-
-function regenerarMenu() { sustituciones = {}; generarMenu(); }
-function resetSustituciones() { if (!confirm('¿Restaurar menú original?')) return; sustituciones = {}; generarMenu(); }
-
-function renderMenu() {
-  const cont = document.getElementById('menuContent');
-  cont.innerHTML = '';
-  menuData.menu.forEach((dia, diaIdx) => {
-    const kcalTotales = calcularKcalDia(dia);
-    const card = document.createElement('div');
-    card.className = 'meal-card rounded-2xl p-5 shadow-sm';
-    const foodItemHTML = (item, path, label, color, emoji) => {
-      const key = `${diaIdx}|${path}`;
-      const isSub = sustituciones[key] !== undefined;
-      const rating = USER_RATINGS[item.id];
-      const isFav = rating?.is_favorite || false;
-      const isExc = rating?.is_excluded || false;
-      const badgeTemporada = getBadgeTemporada(item);
-      const ratingStars = rating?.rating ? '⭐'.repeat(rating.rating) : '';
-      
-      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''} ${isFav ? 'is-favorite' : ''} ${isExc ? 'is-excluded' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')">
-        <div class="flex justify-between items-start gap-2">
-          <div class="flex-1 min-w-0">
-            <div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div>
-            <div class="text-slate-700 dark:text-slate-300 text-sm font-medium">${item.nombre}</div>
-            <div class="flex gap-1 mt-1.5 flex-wrap flex-wrap">
-              ${badgeTemporada}
-              ${ratingStars ? `<span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">${ratingStars}</span>` : ''}
-              <span class="macro-chip bg-white/70 dark:bg-slate-700"> ${item.kcal} kcal</span>
-              ${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}
-            </div>
-          </div>
-          <div class="flex flex-col gap-1">
-            <button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨🍳</button>
-            <button class="fav-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isFav ? 'fav-icon-active' : ''}" onclick="toggleFavorito('${item.id}', event)" title="${isFav ? 'Quitar de favoritos' : 'Añadir a favoritos'}">${isFav ? '❤️' : '🤍'}</button>
-            <button class="exclude-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isExc ? 'exclude-icon-active' : ''}" onclick="toggleExcluido('${item.id}', event)" title="${isExc ? 'Incluir en menú' : 'Excluir del menú'}">${isExc ? '🚫' : '⊘'}</button>
-          </div>
-        </div>
-        ${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}
-        ${isFav ? `<div class="text-xs text-red-600 dark:text-red-400 mt-1 font-semibold">❤️ Favorito</div>` : ''}
-        ${isExc ? `<div class="text-xs text-slate-500 mt-1 font-semibold">🚫 Excluido</div>` : ''}
-      </div>`;
-    };
-    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20', '🥬')}</div>`;
-    cont.appendChild(card);
-  });
-}
-
-function abrirModalSustitucion(diaIdx, path, currentId) {
-  const current = FOODS_DB[currentId];
-  if (!current) return;
-  const grupo = getGrupoById(currentId);
-  if (grupo.length <= 1) return;
-  currentSwap = { diaIdx, path, currentId };
-  document.getElementById('modalTitulo').textContent = `Sustituir: ${current.nombre}`;
-  const grupoNombre = { 'prot': 'Proteínas', 'carb': 'Carbohidratos', 'verd': 'Verduras', 'grasa': 'Grasas', 'des': 'Desayunos', 'mer': 'Meriendas' };
-  document.getElementById('modalSubtitulo').textContent = `Grupo: ${grupoNombre[current.grupo]} · ${grupo.length} alternativas`;
-  const cont = document.getElementById('modalOpciones');
-  cont.innerHTML = '';
-  
-  const ordenados = [...grupo].sort((a, b) => {
-    if (a.id === currentId) return -1;
-    if (b.id === currentId) return 1;
-    const aExc = USER_RATINGS[a.id]?.is_excluded ? 1 : 0;
-    const bExc = USER_RATINGS[b.id]?.is_excluded ? 1 : 0;
-    if (aExc !== bExc) return aExc - bExc;
-    const aFav = USER_RATINGS[a.id]?.is_favorite ? 1 : 0;
-    const bFav = USER_RATINGS[b.id]?.is_favorite ? 1 : 0;
-    if (aFav !== bFav) return bFav - aFav;
-    const aRating = USER_RATINGS[a.id]?.rating || 0;
-    const bRating = USER_RATINGS[b.id]?.rating || 0;
-    if (aRating !== bRating) return bRating - aRating;
-    return Math.abs(a.kcal - current.kcal) - Math.abs(b.kcal - current.kcal);
-  });
-  
-  ordenados.forEach(alim => {
-    const isCurrent = alim.id === currentId;
-    const diffKcal = alim.kcal - current.kcal;
-    const rating = USER_RATINGS[alim.id];
-    const isFav = rating?.is_favorite || false;
-    const isExc = rating?.is_excluded || false;
-    const badgeTemporada = getBadgeTemporada(alim);
-    const starsHtml = rating?.rating ? '⭐'.repeat(rating.rating) : '';
-    const opt = document.createElement('div');
-    opt.className = `sub-option p-4 border-2 rounded-xl ${isCurrent ? 'current border-green-300' : 'border-slate-200 dark:border-slate-700'} ${isFav ? 'is-favorite-sub' : ''} ${isExc ? 'is-excluded-sub' : ''}`;
-    opt.innerHTML = `<div class="flex justify-between items-start gap-3">
-      <div class="flex-1">
-        <div class="flex items-center gap-2 flex-wrap mb-1">
-          <span class="font-bold text-slate-800 dark:text-white">${alim.nombre}</span>
-          ${isCurrent ? '<span class="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">ACTUAL</span>' : ''}
-          ${isFav ? '<span class="text-xs">❤️</span>' : ''}
-          ${isExc ? '<span class="text-xs bg-slate-400 text-white px-2 py-0.5 rounded-full font-bold">EXCLUIDO</span>' : ''}
-        </div>
-        <div class="flex gap-1.5 mt-2 flex-wrap flex-wrap">
-          ${badgeTemporada}
-          ${starsHtml ? `<span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">${starsHtml}</span>` : ''}
-          <span class="macro-chip bg-slate-100 dark:bg-slate-700">🔥 ${alim.kcal} kcal</span>
-          ${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}
-          ${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}
-        </div>
-      </div>
-      ${!isCurrent && !isExc ? `<button class="flex-shrink-0 bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir</button>` : ''}
-    </div>`;
-    if (!isCurrent && !isExc) opt.addEventListener('click', () => aplicarSustitucion(alim.id));
-    cont.appendChild(opt);
-  });
-  document.getElementById('modalSustitucion').classList.remove('hidden');
-}
-
-function cerrarModal() { document.getElementById('modalSustitucion').classList.add('hidden'); currentSwap = null; }
-
-function aplicarSustitucion(nuevoId) {
-  if (!currentSwap || !menuData) return;
-  const { diaIdx, path } = currentSwap;
-  const nuevo = FOODS_DB[nuevoId];
-  const dia = menuData.menu[diaIdx];
-  const partes = path.split('.');
-  let obj = dia;
-  for (let i = 0; i < partes.length - 1; i++) obj = obj[partes[i]];
-  obj[partes[partes.length - 1]] = { ...nuevo };
-  sustituciones[`${diaIdx}|${path}`] = nuevoId;
-  cerrarModal();
-  renderMenu();
-  renderListaCompra();
-  renderPlanificador();
-  mostrarToast(`✓ ${nuevo.nombre} sustituido`);
-}
-
-function mostrarToast(mensaje) {
-  const toast = document.createElement('div');
-  toast.className = 'fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl z-[200] font-semibold text-sm';
-  toast.style.animation = 'fadeIn 0.3s ease-out';
-  toast.textContent = mensaje;
-  document.body.appendChild(toast);
-  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 2200);
-}
-
-document.getElementById('modalSustitucion').addEventListener('click', (e) => { if (e.target.id === 'modalSustitucion') cerrarModal(); });
-document.getElementById('modalReceta').addEventListener('click', (e) => { if (e.target.id === 'modalReceta') cerrarModalReceta(); });
-document.getElementById('modalAnuncio').addEventListener('click', (e) => { if (e.target.id === 'modalAnuncio') cerrarModalAnuncio(); });
-document.getElementById('modalAlimento').addEventListener('click', (e) => { if (e.target.id === 'modalAlimento') cerrarModalAlimento(); });
-
-async function compartirApp() {
-  const shareData = { title: 'NutriPro', text: '¡Estoy mejorando mi salud con NutriPro!', url: window.location.href };
-  if (navigator.share) { try { await navigator.share(shareData); } catch (err) {} } 
-  else { window.open(`https://wa.me/?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`, '_blank'); }
-}
-
-function categorizarIngrediente(ing) {
-  const lower = ing.toLowerCase();
-  if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|lentejas|garbanzos|alubias|ternera/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
-  if (/arroz|quinoa|pasta|batata|avena|pan|cuscús|bulgur|boniato|tortita/.test(lower)) return { cat: '🍚 Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
-  if (/aceite|aguacate|almendra|nueces|pistacho|anacardo|semilla|tahini|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
-  if (/manzana|plátano|pera|fresa|cereza|sandía|melón|melocotón|nectarina|albaricoque|higo|granada|uva|caqui|mandarina|naranja|kiwi|pomelo|lima|frutos rojos|membrillo|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
-  if (/brócoli|espinaca|tomate|calabacín|lechuga|pepino|cebolla|pimiento|berenjena|coliflor|alcachofa|espárrago|judía|acelga|col|seta|champiñón|puerro|hinojo|apio|remolacha|zanahoria|guisante|haba|calabaza|col lombarda|coles de bruselas|menestra|pisto|escalivada|gazpacho|salmorejo|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
-  return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
-}
-
-function generarListaCompra() {
-  if (!menuData) return;
-  document.getElementById('compraNoData').classList.add('hidden');
-  document.getElementById('compraContent').classList.remove('hidden');
-  renderListaCompra();
-}
-
-function obtenerIngredientes() {
-  const totales = {};
-  menuData.menu.forEach(dia => {
-    const items = [dia.desayuno.ing, dia.comida.prot.ing, dia.comida.carb.ing, dia.comida.verdura.ing, dia.comida.grasa.ing, dia.merienda.ing, dia.cena.prot.ing, dia.cena.verdura.ing];
-    items.forEach(lista => { if (!lista) return; lista.forEach(ing => { totales[ing] = (totales[ing] || 0) + 1; }); });
-  });
-  return totales;
-}
-
-function renderListaCompra() {
-  if (!menuData) return;
-  const totales = obtenerIngredientes();
-  const cont = document.getElementById('compraContent');
-  cont.innerHTML = '';
-  const categorias = {};
-  Object.keys(totales).forEach(ing => {
-    const { cat, color } = categorizarIngrediente(ing);
-    if (!categorias[cat]) categorias[cat] = { color, items: [] };
-    categorias[cat].items.push({ nombre: ing, cantidad: totales[ing] });
-  });
-  Object.keys(categorias).sort().forEach(cat => {
-    const data = categorias[cat];
-    const card = document.createElement('div');
-    card.className = 'bg-white rounded-2xl border border-slate-100 overflow-hidden dark:bg-slate-800 dark:border-slate-700';
-    card.innerHTML = `<div class="bg-gradient-to-r ${data.color} text-white p-4"><h3 class="font-bold">${cat}</h3><p class="text-xs opacity-90">${data.items.length} productos</p></div><ul class="p-4 space-y-2">${data.items.map(item => `<li class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-teal-600"><span class="flex-1 text-sm text-slate-700 dark:text-slate-300">${item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1)}</span><span class="text-xs text-slate-400">×${item.cantidad}</span></li>`).join('')}</ul>`;
-    cont.appendChild(card);
-  });
-}
-
-function exportarMenuPDF() {
-  if (!menuData) { alert('Genera tu menú primero'); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFillColor(13, 148, 136); doc.rect(0, 0, 210, 25, 'F');
-  doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.setFont('helvetica', 'bold');
-  doc.text(`NutriPro · Menú Semanal`, 14, 16);
-  let yPos = 40;
-  menuData.menu.forEach((dia) => {
-    if (yPos > 250) { doc.addPage(); yPos = 20; }
-    doc.setTextColor(13, 148, 136); doc.setFontSize(12); doc.setFont('helvetica', 'bold');
-    doc.text(`${dia.dia} - ${calcularKcalDia(dia)} kcal`, 14, yPos);
-    yPos += 8;
-    doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.setFont('helvetica', 'normal');
-    const rows = [['Desayuno', dia.desayuno.nombre], ['Comida', `${dia.comida.prot.nombre} + ${dia.comida.carb.nombre} + ${dia.comida.verdura.nombre}`], ['Cena', `${dia.cena.prot.nombre} + ${dia.cena.verdura.nombre}`]];
-    doc.autoTable({ startY: yPos, body: rows, theme: 'plain', margin: { left: 14, right: 14 } });
-    yPos = doc.lastAutoTable.finalY + 8;
-  });
-  doc.save(`Menu_NutriPro.pdf`);
-  mostrarToast('📄 Menú exportado');
-}
-
-function exportarCompraPDF() {
-  if (!menuData) { alert('Genera tu menú primero'); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFontSize(18); doc.text('Lista de la Compra - NutriPro', 14, 20);
-  const totales = obtenerIngredientes();
-  let yPos = 30;
-  Object.keys(totales).forEach(ing => {
-    if (yPos > 280) { doc.addPage(); yPos = 20; }
-    doc.setFontSize(11); doc.text(`☐ ${ing} (×${totales[ing]})`, 14, yPos);
-    yPos += 8;
-  });
-  doc.save(`Lista_Compra_NutriPro.pdf`);
-  mostrarToast('📄 Lista exportada');
-}
-
-function exportarProgresoPDF() {
-  if (pesos.length === 0) { alert('No hay datos'); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFontSize(18); doc.text('Reporte de Progreso - NutriPro', 14, 20);
-  let yPos = 30;
-  pesos.forEach(p => {
-    doc.setFontSize(11); doc.text(`${new Date(p.fecha).toLocaleDateString('es-ES')}: ${p.valor} kg`, 14, yPos);
-    yPos += 8;
-  });
-  doc.save(`Progreso_NutriPro.pdf`);
-  mostrarToast('📈 Reporte exportado');
-}
-
-function exportarInformeCompletoPDF() {
-  if (!userData) { alert('Completa la evaluación primero'); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFillColor(13, 148, 136); doc.rect(0, 0, 210, 25, 'F');
-  doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.setFont('helvetica', 'bold');
-  doc.text('NutriPro - Informe Completo', 14, 16);
-  doc.setTextColor(50, 50, 50); doc.setFontSize(11); doc.setFont('helvetica', 'normal');
-  let yPos = 40;
-  const lines = [`Usuario: ${currentUser.nombre}`, `TMB: ${userData.tmb} kcal/día`, `GETD: ${userData.getd} kcal/día`, `Objetivo: ${userData.caloriasObjetivo} kcal/día`, `IMC: ${userData.imc}`, `Peso actual: ${userData.peso} kg`, `Proteínas: ${userData.protG}g | Carbohidratos: ${userData.carbG}g | Grasas: ${userData.grasasG}g`];
-  lines.forEach(l => { doc.text(l, 14, yPos); yPos += 8; });
-  doc.save(`Informe_NutriPro.pdf`);
-  mostrarToast(' Informe exportado');
-}
-
-const HABITOS_SALUD = [
-  { icon: '', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos.', videos: ['beneficios de dejar de fumar'] },
-  { icon: '😴', titulo: 'Dormir 7-9 horas', texto: 'Regula hormonas del hambre y saciedad.', videos: ['higiene del sueño'] },
-  { icon: '💧', titulo: 'Hidratación', texto: 'Mejora rendimiento y saciedad.', videos: ['cuánta agua beber'] },
-  { icon: '🚶', titulo: 'Moverse cada día', texto: 'El NEAT suma al gasto diario.', videos: ['qué es el NEAT'] }
-];
-
-function renderSalud() {
-  const cont = document.getElementById('saludCards');
-  if (!cont || cont.dataset.rendered === '1') return;
-  cont.innerHTML = HABITOS_SALUD.map(h => `<div class="habit-card"><div class="flex items-start gap-3 mb-3"><div class="text-3xl">${h.icon}</div><h3 class="text-lg font-bold">${h.titulo}</h3></div><p class="text-sm text-slate-600 dark:text-slate-400 mb-4">${h.texto}</p><div class="flex flex-wrap gap-2">${h.videos.map(v => `<button class="habit-video-btn" onclick="buscarVideoHabito('${v}')">▶️ ${v}</button>`).join('')}</div></div>`).join('');
-  cont.dataset.rendered = '1';
-}
-
-function buscarVideoHabito(q) { window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(q), '_blank'); }
-
-function mediaMovil(arr, ventana = 7) {
-  return arr.map((p, i) => {
-    const inicio = Math.max(0, i - ventana + 1);
-    const slice = arr.slice(inicio, i + 1);
-    return { fecha: p.fecha, valor: parseFloat((slice.reduce((s, x) => s + x.valor, 0) / slice.length).toFixed(2)) };
-  });
-}
-
-function renderSeguimiento() {
-  const hist = document.getElementById('historialPeso');
-  if (pesos.length === 0) { hist.innerHTML = '<p class="text-slate-500 text-sm">Sin registros.</p>'; }
-  else { hist.innerHTML = pesos.slice().reverse().slice(0, 10).map(p => `<div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"><span class="text-sm">${new Date(p.fecha).toLocaleDateString('es-ES')}</span><span class="font-bold">${p.valor} kg</span></div>`).join(''); }
-  renderChartPeso();
-}
-
-function renderChartPeso() {
-  const ctx = document.getElementById('chartPeso').getContext('2d');
-  if (chartPeso) chartPeso.destroy();
-  if (pesos.length === 0) return;
-  const labels = pesos.map(p => new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
-  chartPeso = new Chart(ctx, {
-    type: 'line',
-    data: { labels, datasets: [
-      { label: 'Peso real', data: pesos.map(p => p.valor), borderColor: '#0d9488', tension: 0.3, fill: true, backgroundColor: 'rgba(13,148,136,0.1)' },
-      { label: 'Media móvil', data: mediaMovil(pesos).map(p => p.valor), borderColor: '#f59e0b', borderDash: [5, 5], tension: 0.4, pointRadius: 0 }
-    ]},
-    options: { responsive: true, plugins: { legend: { display: false } } }
-  });
-}
-
-function generarEjercicio() {
-  if (!userData) return;
-  document.getElementById('ejercicioNoData').classList.add('hidden');
-  document.getElementById('ejercicioContent').classList.remove('hidden');
-  const edad = userData.edad;
-  let ejercicios;
-  if (edad >= 18 && edad <= 35) ejercicios = [{ nombre: 'Sentadillas búlgaras', reps: '3x12' }, { nombre: 'Flexiones', reps: '3x10' }, { nombre: 'Plancha', reps: '3x30s' }];
-  else if (edad >= 36 && edad <= 55) ejercicios = [{ nombre: 'Sentadilla a silla', reps: '3x12' }, { nombre: 'Flexiones en pared', reps: '3x12' }, { nombre: 'Caminata', reps: '30 min' }];
-  else ejercicios = [{ nombre: 'Sentadilla asistida', reps: '3x10' }, { nombre: 'Bandas elásticas', reps: '3x12' }, { nombre: 'Caminata suave', reps: '20 min' }];
-  document.getElementById('ejerciciosList').innerHTML = ejercicios.map((ej, i) => `<div class="bg-white rounded-2xl p-5 border border-slate-100 dark:bg-slate-800 dark:border-slate-700"><h4 class="font-bold mb-1">${ej.nombre}</h4><p class="text-sm text-teal-600 font-semibold mb-3">${ej.reps}</p><button onclick="buscarVideo('${ej.nombre}')" class="w-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 py-2 rounded-lg text-sm font-semibold">▶️ Ver tutorial</button></div>`).join('');
-}
-
-function buscarVideo(nombre) { window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent('como hacer ' + nombre)}`, '_blank'); }
-
-function renderAnalisis() {
-  if (pesos.length < 4) { document.getElementById('analisisNoData').classList.remove('hidden'); document.getElementById('analisisContent').classList.add('hidden'); return; }
-  document.getElementById('analisisNoData').classList.add('hidden');
-  document.getElementById('analisisContent').classList.remove('hidden');
-  const ctx = document.getElementById('chartSemanal').getContext('2d');
-  if (chartSemanal) chartSemanal.destroy();
-  const semanas = [];
-  for (let i = 0; i < pesos.length; i += 7) { const s = pesos.slice(i, i + 7); semanas.push(parseFloat((s.reduce((a, p) => a + p.valor, 0) / s.length).toFixed(2))); }
-  chartSemanal = new Chart(ctx, { type: 'bar', data: { labels: semanas.map((_, i) => `Sem ${i+1}`), datasets: [{ data: semanas, backgroundColor: '#0d9488', borderRadius: 8 }] }, options: { responsive: true } });
-}
-
-// ==========================================
-// 🟢 NUEVO FASE 2: PLANIFICADOR SEMANAL
-// ==========================================
-
-// Obtener el lunes de la semana actual + offset
-function getLunesSemana(offset = 0) {
-  const hoy = new Date();
-  const diaSemana = hoy.getDay(); // 0=domingo, 1=lunes...
-  const diff = hoy.getDate() - diaSemana + (diaSemana === 0 ? -6 : 1) + (offset * 7);
-  const lunes = new Date(hoy);
-  lunes.setDate(diff);
-  lunes.setHours(0, 0, 0, 0);
-  return lunes;
-}
-
-function getDomingoSemana(offset = 0) {
-  const lunes = getLunesSemana(offset);
-  const domingo = new Date(lunes);
-  domingo.setDate(lunes.getDate() + 6);
-  return domingo;
-}
-
-function formatDateShort(date) {
-  return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
-}
-
-function isToday(date) {
-  const hoy = new Date();
-  return date.toDateString() === hoy.toDateString();
-}
-
-function navegarSemana(offset) {
-  if (offset === 0) {
-    plannerWeekOffset = 0;
-  } else {
-    plannerWeekOffset += offset;
-  }
-  renderPlanificador();
-}
-
-function cambiarVistaPlanificador(vista) {
-  plannerCurrentView = vista;
-  document.querySelectorAll('.planner-view-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.view === vista);
-  });
-  document.getElementById('vistaCalendario').classList.toggle('hidden', vista !== 'calendario');
-  document.getElementById('vistaBatch').classList.toggle('hidden', vista !== 'batch');
-}
-
-function renderPlanificador() {
-  if (!userData || !menuData) {
-    document.getElementById('planificadorNoData').classList.remove('hidden');
-    document.getElementById('planificadorContent').classList.add('hidden');
-    return;
-  }
-  document.getElementById('planificadorNoData').classList.add('hidden');
-  document.getElementById('planificadorContent').classList.remove('hidden');
-  
-  const lunes = getLunesSemana(plannerWeekOffset);
-  const domingo = getDomingoSemana(plannerWeekOffset);
-  
-  // Actualizar header
-  const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-  document.getElementById('plannerMonthYear').textContent = `${meses[lunes.getMonth()]} ${lunes.getFullYear()}`;
-  document.getElementById('plannerWeekRange').textContent = `${formatDateShort(lunes)} - ${formatDateShort(domingo)}`;
-  
-  // Renderizar grid de días
-  const grid = document.getElementById('plannerGrid');
-  grid.innerHTML = '';
-  const diasCortos = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
-  
-  let totalKcalSemana = 0;
-  let totalProteinas = 0;
-  const alimentosUsados = new Set();
-  
-  for (let i = 0; i < 7; i++) {
-    const fecha = new Date(lunes);
-    fecha.setDate(lunes.getDate() + i);
-    
-    // Usar el menú correspondiente (rotación de 4 semanas)
-    const menuIdx = i;
-    const diaMenu = menuData.menu[menuIdx];
-    const kcalDia = calcularKcalDia(diaMenu);
-    totalKcalSemana += kcalDia;
-    totalProteinas += (diaMenu.comida.prot.prot || 0) + (diaMenu.cena.prot.prot || 0);
-    
-    // Registrar alimentos usados
-    [diaMenu.desayuno, diaMenu.comida.prot, diaMenu.comida.carb, diaMenu.comida.verdura, diaMenu.comida.grasa, diaMenu.merienda, diaMenu.cena.prot, diaMenu.cena.verdura].forEach(a => {
-      if (a && a.id) alimentosUsados.add(a.id);
-    });
-    
-    const card = document.createElement('div');
-    card.className = `planner-day-card ${isToday(fecha) ? 'today' : ''}`;
-    card.onclick = () => {
-      switchTab('menu');
-      // Scroll al día correspondiente
-      setTimeout(() => {
-        const cards = document.querySelectorAll('#menuContent > div');
-        if (cards[menuIdx]) cards[menuIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
-    };
-    
-    card.innerHTML = `
-      <div class="planner-day-name">${diasCortos[i]}</div>
-      <div class="planner-day-date">${formatDateShort(fecha)}${isToday(fecha) ? ' · Hoy' : ''}</div>
-      <div class="planner-meal planner-meal-breakfast" title="${DOMPurify.sanitize(diaMenu.desayuno.nombre)}">☀️ ${diaMenu.desayuno.nombre.substring(0, 25)}${diaMenu.desayuno.nombre.length > 25 ? '...' : ''}</div>
-      <div class="planner-meal planner-meal-lunch" title="${DOMPurify.sanitize(diaMenu.comida.prot.nombre)}">🍽️ ${diaMenu.comida.prot.nombre.substring(0, 25)}${diaMenu.comida.prot.nombre.length > 25 ? '...' : ''}</div>
-      <div class="planner-meal planner-meal-dinner" title="${DOMPurify.sanitize(diaMenu.cena.prot.nombre)}">🌙 ${diaMenu.cena.prot.nombre.substring(0, 25)}${diaMenu.cena.prot.nombre.length > 25 ? '...' : ''}</div>
-      <div class="planner-kcal">🔥 ${kcalDia} kcal</div>
-    `;
-    grid.appendChild(card);
-  }
-  
-  // Actualizar resumen
-  document.getElementById('resumenKcalSemana').textContent = totalKcalSemana.toLocaleString('es-ES');
-  document.getElementById('resumenKcalDiario').textContent = Math.round(totalKcalSemana / 7).toLocaleString('es-ES');
-  document.getElementById('resumenProteinas').textContent = Math.round(totalProteinas / 7) + 'g';
-  document.getElementById('resumenVariedad').textContent = alimentosUsados.size;
-  
-  // Renderizar Batch Cooking
-  renderBatchCooking();
-}
-
-function renderBatchCooking() {
-  if (!menuData) return;
-  
-  // Agrupar tareas por tipo de preparación
-  const tareas = [
-    { tiempo: '16:00', duracion: '30 min', tarea: '🫘 Cocer legumbres (garbanzos, lentejas, alubias)', tipo: 'base' },
-    { tiempo: '16:30', duracion: '45 min', tarea: ' Cocinar arroces y pastas para la semana', tipo: 'base' },
-    { tiempo: '17:00', duracion: '40 min', tarea: ' Asar verduras (berenjenas, pimientos, calabacín)', tipo: 'verduras' },
-    { tiempo: '17:30', duracion: '45 min', tarea: '🍗 Cocinar proteínas (pollo, pescado, huevos)', tipo: 'proteinas' },
-    { tiempo: '18:00', duracion: '20 min', tarea: '🥗 Preparar ensaladas y gazpacho', tipo: 'frio' },
-    { tiempo: '18:20', duracion: '25 min', tarea: '📦 Envasar en tuppers y etiquetar', tipo: 'envasado' },
-    { tiempo: '18:45', duracion: '15 min', tarea: '🧹 Limpieza de cocina', tipo: 'limpieza' }
-  ];
-  
-  const cont = document.getElementById('batchTasks');
-  cont.innerHTML = tareas.map((t, i) => `
-    <div class="batch-task" onclick="this.classList.toggle('completed')">
-      <input type="checkbox" class="batch-check">
-      <div class="batch-time">${t.tiempo}</div>
-      <div class="flex-1">
-        <div class="font-semibold text-slate-800 dark:text-white text-sm">${t.tarea}</div>
-        <div class="text-xs text-slate-500 dark:text-slate-400">⏱️ ${t.duracion}</div>
-      </div>
-    </div>
-  `).join('');
-  
-  // Actualizar contadores
-  document.getElementById('batchTuppersComida').textContent = '7';
-  document.getElementById('batchTuppersCena').textContent = '7';
-  document.getElementById('batchDesayunos').textContent = '7';
-  document.getElementById('batchMeriendas').textContent = '7';
-}
-
-// 🟢 NUEVO FASE 2: Exportar planificador a PDF
-function exportarPlanificadorPDF() {
-  if (!menuData) { alert('Genera tu menú primero'); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF('landscape');
-  
-  doc.setFillColor(13, 148, 136);
-  doc.rect(0, 0, 297, 25, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(20);
-  doc.setFont('helvetica', 'bold');
-  doc.text('NutriPro · Planificador Semanal', 14, 17);
-  
-  doc.setTextColor(100, 100, 100);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  const lunes = getLunesSemana(plannerWeekOffset);
-  const domingo = getDomingoSemana(plannerWeekOffset);
-  doc.text(`Semana del ${formatDateShort(lunes)} al ${formatDateShort(domingo)}`, 14, 32);
-  
-  let yPos = 40;
-  const diasCortos = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-  
-  menuData.menu.forEach((dia, i) => {
-    if (yPos > 180) { doc.addPage(); yPos = 20; }
-    
-    doc.setFillColor(240, 253, 250);
-    doc.rect(14, yPos - 5, 270, 8, 'F');
-    doc.setTextColor(13, 148, 136);
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`${diasCortos[i]} - ${calcularKcalDia(dia)} kcal`, 16, yPos);
-    yPos += 8;
-    
-    doc.setTextColor(50, 50, 50);
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    const rows = [
-      ['☀️ Desayuno', dia.desayuno.nombre],
-      ['️ Comida', `${dia.comida.prot.nombre} + ${dia.comida.carb.nombre} + ${dia.comida.verdura.nombre} + ${dia.comida.grasa.nombre}`],
-      ['🍎 Merienda', dia.merienda.nombre],
-      ['🌙 Cena', `${dia.cena.prot.nombre} + ${dia.cena.verdura.nombre}`]
-    ];
-    doc.autoTable({ startY: yPos, body: rows, theme: 'plain', margin: { left: 14, right: 14 }, columnStyles: { 0: { cellWidth: 40, fontStyle: 'bold' } } });
-    yPos = doc.lastAutoTable.finalY + 6;
-  });
-  
-  doc.save(`Planificador_NutriPro.pdf`);
-  mostrarToast(' Planificador exportado');
-}
-
-// ==========================================
-// 🟢 PANEL ADMIN COMPLETO
-// ==========================================
-async function cargarPanelAdmin() {
-  if (!currentUser || currentUser.rol !== 'admin') return;
-  document.getElementById('listaUsuariosAdmin').innerHTML = '<div class="loading-spinner"></div>';
-  document.getElementById('statUsuarios').textContent = '...';
-  document.getElementById('statActivos').textContent = '...';
-  document.getElementById('statBloqueados').textContent = '...';
-  document.getElementById('statComentarios').textContent = '...';
-  try {
-    const { data: usuarios } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
-    const { count: totalComentarios } = await sb.from('comments').select('*', { count: 'exact', head: true });
-    if (usuarios) {
-      const total = usuarios.length;
-      const bloqueados = usuarios.filter(u => u.bloqueado === true).length;
-      const activos = total - bloqueados;
-      document.getElementById('statUsuarios').textContent = total;
-      document.getElementById('statActivos').textContent = activos;
-      document.getElementById('statBloqueados').textContent = bloqueados;
-      document.getElementById('statComentarios').textContent = totalComentarios || 0;
-      if (usuarios.length === 0) {
-        document.getElementById('listaUsuariosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay usuarios registrados.</p>';
-      } else {
-        document.getElementById('listaUsuariosAdmin').innerHTML = usuarios.map(u => {
-          const esAdmin = u.rol === 'admin';
-          const estaBloqueado = u.bloqueado === true;
-          const esYo = u.id === currentUser.id;
-          const idCorto = u.id.substring(0, 8) + '...';
-          return `
-            <div class="admin-user-row">
-              <div class="flex items-center gap-3 flex-1 min-w-0">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${esAdmin ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' : 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300'}">
-                  ${(u.nombre || 'U').charAt(0).toUpperCase()}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="font-semibold text-slate-800 dark:text-white text-sm truncate">${DOMPurify.sanitize(u.nombre || 'Sin nombre')}</div>
-                  <div class="text-xs text-slate-500 dark:text-slate-400 truncate">${idCorto}</div>
-                  <div class="flex gap-1 mt-1 flex-wrap">
-                    ${esAdmin ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">⚙️ Admin</span>' : '<span class="status-badge bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"> Usuario</span>'}
-                    ${estaBloqueado ? '<span class="status-badge bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">🚫 Bloqueado</span>' : '<span class="status-badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">✅ Activo</span>'}
-                    ${esYo ? '<span class="status-badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">👤 Tú</span>' : ''}
-                  </div>
-                </div>
-              </div>
-              <div class="flex gap-2 flex-shrink-0 flex-wrap">
-                ${!esYo ? `<button onclick="toggleBloqueoUsuario('${u.id}', ${!estaBloqueado})" class="admin-btn ${estaBloqueado ? 'admin-btn-success' : 'admin-btn-warning'}">${estaBloqueado ? '✅ Desbloquear' : '🚫 Bloquear'}</button>` : '<span class="text-xs text-slate-400 italic">Tu cuenta</span>'}
-                <button onclick="resetPasswordUsuario('${u.id}', '${DOMPurify.sanitize(u.email || '')}')" class="admin-btn admin-btn-primary">🔑 Resetear clave</button>
-              </div>
-            </div>
-          `;
-        }).join('');
-      }
-    }
-    document.getElementById('configUsuario').textContent = currentUser.nombre;
-    document.getElementById('configRol').textContent = currentUser.rol;
-    document.getElementById('configConexion').textContent = appIsOnline ? '🟢 Online' : ' Offline';
-    document.getElementById('configCola').textContent = getOfflineQueue().length;
-  } catch (err) {
-    console.error('Error en cargarPanelAdmin:', err);
-    document.getElementById('listaUsuariosAdmin').innerHTML = '<p class="text-red-600 text-sm">Error inesperado al cargar datos.</p>';
-  }
-}
-
-async function toggleBloqueoUsuario(userId, bloquear) {
-  if (!confirm(`¿${bloquear ? 'Bloquear' : 'Desbloquear'} este usuario?`)) return;
-  try {
-    const { error } = await sb.from('profiles').update({ bloqueado: bloquear }).eq('id', userId);
-    if (error) { mostrarToast('❌ Error al actualizar usuario'); return; }
-    mostrarToast(`✅ Usuario ${bloquear ? 'bloqueado' : 'desbloqueado'}`);
-    await cargarPanelAdmin();
-  } catch (err) { mostrarToast('❌ Error inesperado'); }
-}
-
-async function resetPasswordUsuario(userId, email) {
-  if (!email) { alert('Este usuario no tiene email registrado.'); return; }
-  if (!confirm(`¿Enviar email de reseteo a ${email}?`)) return;
-  try {
-    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + window.location.pathname });
-    if (error) { mostrarToast('❌ Error: ' + error.message); return; }
-    mostrarToast('✅ Email de reseteo enviado a ' + email);
-  } catch (err) { console.error('Error en resetPasswordUsuario:', err); mostrarToast('❌ Error inesperado'); }
-}
-
-async function cargarComentariosAdmin() {
-  try {
-    const { data: comments } = await sb.from('comments').select('*').order('created_at', { ascending: false });
-    if (!comments || comments.length === 0) {
-      document.getElementById('listaComentariosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay comentarios.</p>';
-      return;
-    }
-    document.getElementById('listaComentariosAdmin').innerHTML = comments.map(c => `
-      <div class="admin-comment-row">
-        <div class="flex justify-between items-start gap-3 mb-2">
-          <div class="flex items-center gap-2 flex-1 min-w-0">
-            <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">
-              ${DOMPurify.sanitize(c.user_name).charAt(0).toUpperCase()}
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="font-semibold text-slate-800 dark:text-white text-sm truncate">${DOMPurify.sanitize(c.user_name)}</div>
-              <div class="text-xs text-slate-400">${new Date(c.created_at).toLocaleString('es-ES')}</div>
-            </div>
-          </div>
-          <button onclick="eliminarComentarioAdmin(${c.id})" class="admin-btn admin-btn-danger flex-shrink-0">🗑️ Eliminar</button>
-        </div>
-        <p class="text-sm text-slate-700 dark:text-slate-300">${DOMPurify.sanitize(c.texto)}</p>
-        ${c.is_anonymous ? '<div class="text-xs text-slate-400 mt-2">🔒 Publicado anónimamente</div>' : ''}
-      </div>
-    `).join('');
-  } catch (err) { console.error('Error cargando comentarios admin:', err); }
-}
-
-async function eliminarComentarioAdmin(id) {
-  if (!confirm('¿Eliminar este comentario permanentemente?')) return;
-  try {
-    const { error } = await sb.from('comments').delete().eq('id', id);
-    if (error) { mostrarToast('❌ Error al eliminar'); return; }
-    mostrarToast('✅ Comentario eliminado');
-    await cargarComentariosAdmin();
-    await cargarPanelAdmin();
-  } catch (err) { console.error('Error en eliminarComentarioAdmin:', err); }
-}
-
-async function cargarAnunciosAdmin() {
-  try {
-    const { data: ads } = await sb.from('ads').select('*').order('order_index');
-    if (!ads || ads.length === 0) {
-      document.getElementById('listaAnunciosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay anuncios.</p>';
-      return;
-    }
-    const positionNames = { top: '🔝 Superior', sidebar: '📎 Lateral', inline: '📏 En línea', footer: ' Inferior' };
-    document.getElementById('listaAnunciosAdmin').innerHTML = ads.map(ad => `
-      <div class="admin-ad-row">
-        <div class="flex justify-between items-start gap-3 mb-2">
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1 flex-wrap">
-              <span class="font-bold text-slate-800 dark:text-white">${DOMPurify.sanitize(ad.title)}</span>
-              <span class="status-badge ${ad.active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400'}">${ad.active ? '✅ Activo' : '⏸️ Pausado'}</span>
-              <span class="status-badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">${positionNames[ad.position] || ad.position}</span>
-            </div>
-            ${ad.content ? `<p class="text-sm text-slate-600 dark:text-slate-400">${DOMPurify.sanitize(ad.content)}</p>` : ''}
-            ${ad.link_url && ad.link_url !== '#' ? `<p class="text-xs text-teal-600 mt-1">🔗 ${DOMPurify.sanitize(ad.link_url)}</p>` : ''}
-          </div>
-          <div class="flex gap-1 flex-shrink-0">
-            <button onclick="editarAnuncio('${ad.id}')" class="admin-btn admin-btn-primary">✏️ Editar</button>
-            <button onclick="toggleAnuncio('${ad.id}', ${!ad.active})" class="admin-btn ${ad.active ? 'admin-btn-warning' : 'admin-btn-success'}">${ad.active ? '⏸️ Pausar' : '✅ Activar'}</button>
-            <button onclick="eliminarAnuncio('${ad.id}')" class="admin-btn admin-btn-danger">🗑️</button>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  } catch (err) { console.error('Error cargando anuncios:', err); }
-}
-
-function abrirModalAnuncio(ad = null) {
-  document.getElementById('anuncioModalTitulo').textContent = ad ? 'Editar anuncio' : 'Nuevo anuncio';
-  document.getElementById('anuncioId').value = ad ? ad.id : '';
-  document.getElementById('anuncioPosition').value = ad ? ad.position : 'top';
-  document.getElementById('anuncioTitle').value = ad ? ad.title : '';
-  document.getElementById('anuncioContent').value = ad ? (ad.content || '') : '';
-  document.getElementById('anuncioImageUrl').value = ad ? (ad.image_url || '') : '';
-  document.getElementById('anuncioLinkUrl').value = ad ? (ad.link_url || '') : '';
-  document.getElementById('anuncioActive').checked = ad ? ad.active : true;
-  document.getElementById('modalAnuncio').classList.remove('hidden');
-}
-
-function cerrarModalAnuncio() { document.getElementById('modalAnuncio').classList.add('hidden'); }
-
-async function editarAnuncio(id) {
-  try {
-    const { data: ads } = await sb.from('ads').select('*').eq('id', id);
-    if (ads && ads[0]) abrirModalAnuncio(ads[0]);
-  } catch (err) { console.error('Error editando anuncio:', err); }
-}
-
-async function guardarAnuncio() {
-  const id = document.getElementById('anuncioId').value;
-  const data = {
-    position: document.getElementById('anuncioPosition').value,
-    title: document.getElementById('anuncioTitle').value.trim(),
-    content: document.getElementById('anuncioContent').value.trim(),
-    image_url: document.getElementById('anuncioImageUrl').value.trim() || null,
-    link_url: document.getElementById('anuncioLinkUrl').value.trim() || '#',
-    active: document.getElementById('anuncioActive').checked
-  };
-  if (!data.title) { alert('El título es obligatorio'); return; }
-  try {
-    let error;
-    if (id) { ({ error } = await sb.from('ads').update({ ...data, updated_at: new Date() }).eq('id', id)); }
-    else { ({ error } = await sb.from('ads').insert([data])); }
-    if (error) { mostrarToast('❌ Error: ' + error.message); return; }
-    mostrarToast(id ? '✅ Anuncio actualizado' : '✅ Anuncio creado');
-    cerrarModalAnuncio();
-    await cargarAnunciosAdmin();
-    await cargarDatosDinamicos();
-  } catch (err) { console.error('Error guardando anuncio:', err); }
-}
-
-async function toggleAnuncio(id, active) {
-  try {
-    const { error } = await sb.from('ads').update({ active, updated_at: new Date() }).eq('id', id);
-    if (error) { mostrarToast('❌ Error'); return; }
-    mostrarToast(active ? '✅ Anuncio activado' : '⏸️ Anuncio pausado');
-    await cargarAnunciosAdmin();
-    await cargarDatosDinamicos();
-  } catch (err) { console.error('Error toggling anuncio:', err); }
-}
-
-async function eliminarAnuncio(id) {
-  if (!confirm('¿Eliminar este anuncio permanentemente?')) return;
-  try {
-    const { error } = await sb.from('ads').delete().eq('id', id);
-    if (error) { mostrarToast('❌ Error'); return; }
-    mostrarToast('🗑️ Anuncio eliminado');
-    await cargarAnunciosAdmin();
-    await cargarDatosDinamicos();
-  } catch (err) { console.error('Error eliminando anuncio:', err); }
-}
-
-async function cargarAlimentosAdmin() {
-  try {
-    const { data: foods } = await sb.from('foods').select('*').order('grupo', { ascending: true }).order('nombre');
-    if (!foods || foods.length === 0) {
-      document.getElementById('listaAlimentosAdmin').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">No hay alimentos.</p>';
-      return;
-    }
-    const grupoNames = { prot: '🥩 Proteínas', carb: '🍚 Carbohidratos', verd: '🥦 Verduras', grasa: '🥑 Grasas', des: '️ Desayunos', mer: ' Meriendas' };
-    const temporadaNames = { todo_el_año: '🌍 Todo el año', primavera: '🌸 Primavera', verano: '☀️ Verano', otono: '🍂 Otoño', invierno: '❄️ Invierno' };
-    let html = '';
-    let currentGrupo = null;
-    foods.forEach(f => {
-      if (f.grupo !== currentGrupo) {
-        currentGrupo = f.grupo;
-        html += `<h4 class="font-bold text-slate-700 dark:text-slate-300 mt-4 mb-2 pb-2 border-b border-slate-200 dark:border-slate-700">${grupoNames[f.grupo] || f.grupo}</h4>`;
-      }
-      const tieneReceta = RECIPES_DB[f.id] !== undefined;
-      const badgeTemp = temporadaNames[f.temporada] || '🌍 Todo el año';
-      html += `
-        <div class="admin-food-row">
-          <div class="flex justify-between items-start gap-3">
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1 flex-wrap">
-                <span class="font-bold text-slate-800 dark:text-white">${DOMPurify.sanitize(f.nombre)}</span>
-                <span class="status-badge ${f.active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400'}">${f.active ? '✅ Activo' : '⏸️ Oculto'}</span>
-                <span class="status-badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">${badgeTemp}</span>
-                ${f.es_fruta ? '<span class="status-badge bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">🍎 Fruta</span>' : ''}
-                <span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">🔥 ${f.kcal} kcal</span>
-                ${f.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${f.prot}g</span>` : ''}
-                ${tieneReceta ? '<span class="status-badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">📖 Con receta</span>' : '<span class="status-badge bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">📄 Sin receta</span>'}
-              </div>
-              <p class="text-xs text-slate-500 dark:text-slate-400">ID: <code class="bg-slate-100 dark:bg-slate-700 px-1 rounded">${f.id}</code></p>
-            </div>
-            <div class="flex gap-1 flex-shrink-0 flex-wrap">
-              <button onclick="editarAlimento('${f.id}')" class="admin-btn admin-btn-primary">✏️ Editar</button>
-              <button onclick="toggleAlimento('${f.id}', ${!f.active})" class="admin-btn ${f.active ? 'admin-btn-warning' : 'admin-btn-success'}">${f.active ? '⏸️ Ocultar' : '✅ Mostrar'}</button>
-              <button onclick="eliminarAlimento('${f.id}')" class="admin-btn admin-btn-danger">🗑️</button>
-            </div>
-          </div>
-        </div>
-      `;
-    });
-    document.getElementById('listaAlimentosAdmin').innerHTML = html;
-  } catch (err) { console.error('Error cargando alimentos:', err); }
-}
-
-function abrirModalAlimento(food = null, recipe = null) {
-  document.getElementById('alimentoModalTitulo').textContent = food ? 'Editar alimento' : 'Nuevo alimento';
-  document.getElementById('alimentoId').value = food ? food.id : '';
-  document.getElementById('alimentoIdInput').value = food ? food.id : '';
-  document.getElementById('alimentoIdInput').disabled = !!food;
-  document.getElementById('alimentoGrupo').value = food ? food.grupo : 'prot';
-  document.getElementById('alimentoNombre').value = food ? food.nombre : '';
-  document.getElementById('alimentoKcal').value = food ? food.kcal : '';
-  document.getElementById('alimentoProt').value = food ? (food.prot || 0) : '';
-  document.getElementById('alimentoTemporada').value = food ? (food.temporada || 'todo_el_año') : 'todo_el_año';
-  document.getElementById('alimentoEsFruta').checked = food ? (food.es_fruta || false) : false;
-  document.getElementById('alimentoIng').value = food ? (Array.isArray(food.ing) ? food.ing.join(', ') : '') : '';
-  document.getElementById('alimentoActive').checked = food ? food.active : true;
-  if (recipe) {
-    document.getElementById('recetaTiempoInput').value = recipe.tiempo || '';
-    document.getElementById('recetaDificultadInput').value = recipe.dificultad || '';
-    document.getElementById('recetaPorcionesInput').value = recipe.porciones || '';
-    document.getElementById('recetaIngredientesInput').value = recipe.ingredientes ? recipe.ingredientes.map(i => `${i.nombre} | ${i.cantidad}`).join('\n') : '';
-    document.getElementById('recetaPasosInput').value = recipe.pasos ? recipe.pasos.join('\n') : '';
-    document.getElementById('recetaConsejoInput').value = recipe.consejo || '';
-  } else {
-    document.getElementById('recetaTiempoInput').value = '';
-    document.getElementById('recetaDificultadInput').value = '';
-    document.getElementById('recetaPorcionesInput').value = '';
-    document.getElementById('recetaIngredientesInput').value = '';
-    document.getElementById('recetaPasosInput').value = '';
-    document.getElementById('recetaConsejoInput').value = '';
-  }
-  document.getElementById('modalAlimento').classList.remove('hidden');
-}
-
-function cerrarModalAlimento() { document.getElementById('modalAlimento').classList.add('hidden'); }
-
-async function editarAlimento(id) {
-  try {
-    const { data: foods } = await sb.from('foods').select('*').eq('id', id);
-    const { data: recipes } = await sb.from('recipes').select('*').eq('food_id', id);
-    if (foods && foods[0]) abrirModalAlimento(foods[0], recipes && recipes[0] ? recipes[0] : null);
-  } catch (err) { console.error('Error editando alimento:', err); }
-}
-
-async function guardarAlimento() {
-  const id = document.getElementById('alimentoId').value;
-  const newId = document.getElementById('alimentoIdInput').value.trim();
-  const foodData = {
-    id: id || newId,
-    grupo: document.getElementById('alimentoGrupo').value,
-    nombre: document.getElementById('alimentoNombre').value.trim(),
-    kcal: parseInt(document.getElementById('alimentoKcal').value) || 0,
-    prot: parseInt(document.getElementById('alimentoProt').value) || 0,
-    temporada: document.getElementById('alimentoTemporada').value,
-    es_fruta: document.getElementById('alimentoEsFruta').checked,
-    ing: document.getElementById('alimentoIng').value.split(',').map(s => s.trim()).filter(s => s),
-    active: document.getElementById('alimentoActive').checked
-  };
-  if (!foodData.nombre || !foodData.id) { alert('El ID y el nombre son obligatorios'); return; }
-  try {
-    let error;
-    if (id) { ({ error } = await sb.from('foods').update(foodData).eq('id', id)); }
-    else { ({ error } = await sb.from('foods').insert([foodData])); }
-    if (error) { mostrarToast('❌ Error: ' + error.message); return; }
-    
-    const recetaIngredientesRaw = document.getElementById('recetaIngredientesInput').value.trim();
-    const recetaPasosRaw = document.getElementById('recetaPasosInput').value.trim();
-    const recetaConsejo = document.getElementById('recetaConsejoInput').value.trim();
-    const recetaTiempo = document.getElementById('recetaTiempoInput').value.trim();
-    const recetaDificultad = document.getElementById('recetaDificultadInput').value.trim();
-    const recetaPorciones = parseInt(document.getElementById('recetaPorcionesInput').value) || 2;
-    
-    if (recetaIngredientesRaw || recetaPasosRaw || recetaConsejo) {
-      const ingredientes = recetaIngredientesRaw.split('\n').filter(l => l.trim()).map(l => {
-        const [nombre, cantidad] = l.split('|').map(s => s.trim());
-        return { nombre: nombre || l, cantidad: cantidad || '' };
-      });
-      const pasos = recetaPasosRaw.split('\n').filter(l => l.trim());
-      const recipeData = { food_id: foodData.id, tiempo: recetaTiempo, dificultad: recetaDificultad, porciones: recetaPorciones, ingredientes, pasos, consejo: recetaConsejo, updated_at: new Date() };
-      const { error: recipeError } = await sb.from('recipes').upsert(recipeData, { onConflict: 'food_id' });
-      if (recipeError) console.error('Error guardando receta:', recipeError);
-    } else {
-      await sb.from('recipes').delete().eq('food_id', foodData.id);
-    }
-    
-    mostrarToast(id ? '✅ Alimento actualizado' : '✅ Alimento creado');
-    cerrarModalAlimento();
-    await cargarAlimentosAdmin();
-    await cargarDatosDinamicos();
-  } catch (err) { console.error('Error guardando alimento:', err); }
-}
-
-async function toggleAlimento(id, active) {
-  try {
-    const { error } = await sb.from('foods').update({ active }).eq('id', id);
-    if (error) { mostrarToast('❌ Error'); return; }
-    mostrarToast(active ? '✅ Alimento activado' : '️ Alimento ocultado');
-    await cargarAlimentosAdmin();
-    await cargarDatosDinamicos();
-  } catch (err) { console.error('Error toggling alimento:', err); }
-}
-
-async function eliminarAlimento(id) {
-  if (!confirm('¿Eliminar este alimento y su receta?')) return;
-  try {
-    await sb.from('recipes').delete().eq('food_id', id);
-    const { error } = await sb.from('foods').delete().eq('id', id);
-    if (error) { mostrarToast('❌ Error'); return; }
-    mostrarToast('🗑️ Alimento eliminado');
-    await cargarAlimentosAdmin();
-    await cargarDatosDinamicos();
-  } catch (err) { console.error('Error eliminando alimento:', err); }
-}
-
-async function forzarSincronizacion() {
-  if (!appIsOnline) { mostrarToast('⚠️ No hay conexión.'); return; }
-  await processOfflineQueue();
-  document.getElementById('configCola').textContent = getOfflineQueue().length;
-}
-
-function limpiarColaOffline() {
-  if (!confirm('¿Limpiar toda la cola offline?')) return;
-  clearOfflineQueue();
-  document.getElementById('configCola').textContent = '0';
-  mostrarToast('🗑️ Cola offline limpiada');
-}
-
-// ==========================================
-// NAVEGACIÓN
-// ==========================================
-document.querySelectorAll('.nav-btn').forEach(btn => { btn.addEventListener('click', () => switchTab(btn.dataset.tab)); });
-
-function switchTab(tab) {
-  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert('⛔ Acceso restringido'); return; }
-  document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-white/80'); });
-  const section = document.getElementById(tab);
-  if (section) section.classList.add('active');
-  const btn = document.querySelector(`.nav-btn[data-tab="${tab}"]`);
-  if (btn) { btn.classList.add('active'); btn.classList.remove('text-white/80'); }
-  document.getElementById('userDropdown').classList.remove('show');
-  if (tab === 'comentarios') renderComentarios();
-  if (tab === 'analisis') renderAnalisis();
-  if (tab === 'seguimiento') renderSeguimiento();
-  if (tab === 'salud') renderSalud();
-  if (tab === 'planificador') renderPlanificador();
-  if (tab === 'perfil') { renderMisFavoritos(); renderMisExcluidos(); }
-  if (tab === 'admin') { cargarPanelAdmin(); cargarComentariosAdmin(); cargarAnunciosAdmin(); cargarAlimentosAdmin(); }
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-document.querySelectorAll('.profile-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    document.querySelectorAll('.profile-panel').forEach(p => p.classList.remove('active'));
-    const panel = document.getElementById('perfil-' + tab.dataset.ptab);
-    if (panel) panel.classList.add('active');
-  });
-});
-
-document.querySelectorAll('.admin-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.admin-tab').forEach(t => { t.classList.remove('active', 'border-teal-600', 'text-teal-600'); t.classList.add('border-transparent', 'text-slate-500'); });
-    tab.classList.add('active', 'border-teal-600', 'text-teal-600');
-    tab.classList.remove('border-transparent', 'text-slate-500');
-    document.querySelectorAll('.admin-panel').forEach(p => p.classList.add('hidden'));
-    document.getElementById('admin-' + tab.dataset.atab).classList.remove('hidden');
-  });
-});
-
-document.getElementById('userBtn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('userDropdown').classList.toggle('show'); });
-document.addEventListener('click', (e) => { if (!e.target.closest('.user-menu')) document.getElementById('userDropdown').classList.remove('show'); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { cerrarModal(); cerrarModalReceta(); cerrarModalAnuncio(); cerrarModalAlimento(); } });
-
-document.getElementById('formPerfil').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const nombre = document.getElementById('perfilNombre').value.trim();
-  if (!nombre) return;
-  if (!appIsOnline) { addToOfflineQueue('update_profile', { nombre }); currentUser.nombre = nombre; updateUserUI(); mostrarToast('📴 Guardado localmente'); return; }
-  try {
-    const { error } = await sb.from('profiles').update({ nombre }).eq('id', currentUser.id);
-    if (error) { mostrarToast('❌ Error'); return; }
-    currentUser.nombre = nombre;
-    updateUserUI();
-    mostrarToast('✓ Perfil actualizado');
-  } catch (err) { mostrarToast('❌ Error'); }
-});
-
-document.getElementById('formPassword').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const nueva = document.getElementById('passNueva').value;
-  const conf = document.getElementById('passConfirm').value;
-  if (nueva !== conf) { mostrarToast('❌ Las contraseñas no coinciden'); return; }
-  if (nueva.length < 6) { mostrarToast('❌ Mínimo 6 caracteres'); return; }
-  if (!appIsOnline) { mostrarToast('️ Se requiere conexión'); return; }
-  try {
-    const { error } = await sb.auth.updateUser({ password: nueva });
-    if (error) { mostrarToast('❌ Error: ' + error.message); } 
-    else { document.getElementById('formPassword').reset(); mostrarToast('✓ Contraseña cambiada'); }
-  } catch (err) { mostrarToast('❌ Error de conexión'); }
-});
-
-initStarRating();
-checkAuth();
-</script>
 </body>
 </html>
