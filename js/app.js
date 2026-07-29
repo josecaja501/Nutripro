@@ -72,13 +72,13 @@ function addToOfflineQueue(action, data) {
   const queue = getOfflineQueue();
   queue.push({ action, data, timestamp: Date.now() });
   localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
-  mostrarToast(' Sin conexión. Guardado localmente.');
+  mostrarToast('📴 Sin conexión. Guardado localmente.');
 }
 
 function clearOfflineQueue() { localStorage.removeItem(OFFLINE_QUEUE_KEY); }
 
 async function checkRealConnection() {
-  appIsOnline = true;
+  appIsOnline = navigator.onLine;
   updateOnlineStatusUI();
 }
 
@@ -93,7 +93,7 @@ function updateOnlineStatusUI() {
 async function processOfflineQueue() {
   const queue = getOfflineQueue();
   if (queue.length === 0) return;
-  mostrarToast(' Sincronizando datos pendientes...');
+  mostrarToast('🔄 Sincronizando datos pendientes...');
   let successCount = 0;
   const newQueue = [];
   for (const item of queue) {
@@ -125,7 +125,7 @@ async function processOfflineQueue() {
   }
 }
 
-window.addEventListener('online', () => { appIsOnline = true; updateOnlineStatusUI(); checkRealConnection().then(() => { if (appIsOnline && currentUser) processOfflineQueue(); }); });
+window.addEventListener('online', () => { appIsOnline = true; updateOnlineStatusUI(); if (currentUser) processOfflineQueue(); });
 window.addEventListener('offline', () => { appIsOnline = false; mostrarToast('🔴 Sin conexión. Los datos se guardarán localmente.'); updateOnlineStatusUI(); });
 
 function saveUserDataToLocal(data) { localStorage.setItem('nutripro_user_data', JSON.stringify(data)); }
@@ -143,9 +143,9 @@ function obtenerEstacion() {
 
 function obtenerInfoEstacion(estacion) {
   const info = {
-    primavera: { emoji: '', nombre: 'Primavera', meses: 'Marzo - Mayo' },
+    primavera: { emoji: '🌸', nombre: 'Primavera', meses: 'Marzo - Mayo' },
     verano: { emoji: '☀️', nombre: 'Verano', meses: 'Junio - Agosto' },
-    otono: { emoji: '', nombre: 'Otoño', meses: 'Septiembre - Noviembre' },
+    otono: { emoji: '🍂', nombre: 'Otoño', meses: 'Septiembre - Noviembre' },
     invierno: { emoji: '❄️', nombre: 'Invierno', meses: 'Diciembre - Febrero' }
   };
   return info[estacion] || info.primavera;
@@ -159,7 +159,7 @@ function esDeTemporada(alimento) {
 
 function getBadgeTemporada(alimento) {
   if (!alimento.temporada || alimento.temporada === 'todo_el_año') {
-    return '<span class="temporada-badge temporada-todo" title="Disponible todo el año"> Todo el año</span>';
+    return '<span class="temporada-badge temporada-todo" title="Disponible todo el año">🌍 Todo el año</span>';
   }
   const info = obtenerInfoEstacion(alimento.temporada);
   const estacionActual = obtenerEstacion();
@@ -219,7 +219,7 @@ async function toggleFavorito(foodId, event) {
   const newFav = !current.is_favorite;
   const ok = await guardarValoracion(foodId, { is_favorite: newFav });
   if (ok) {
-    mostrarToast(newFav ? '❤️ Añadido a favoritos' : ' Eliminado de favoritos');
+    mostrarToast(newFav ? '❤️ Añadido a favoritos' : '💔 Eliminado de favoritos');
     if (menuData) { renderMenu(); renderPlanificador(); }
     actualizarContadoresPerfil(); renderMisFavoritos(); renderMisExcluidos();
     verificarLogros();
@@ -248,12 +248,13 @@ async function guardarRatingEstrellas(rating) {
 function renderStars(rating) {
   const stars = document.querySelectorAll('#starRating .star');
   stars.forEach((star, idx) => { star.classList.remove('filled', 'hovered'); if (idx < rating) star.classList.add('filled'); });
-  const texts = ['Sin valorar', 'Malo ', 'Regular 😐', 'Bueno 🙂', 'Muy bueno 😊', 'Excelente '];
+  const texts = ['Sin valorar', 'Malo 😕', 'Regular 😐', 'Bueno 🙂', 'Muy bueno 😊', 'Excelente 🤩'];
   document.getElementById('ratingText').textContent = texts[rating] || 'Sin valorar';
 }
 
 function initStarRating() {
   const container = document.getElementById('starRating');
+  if (!container) return;
   const stars = container.querySelectorAll('.star');
   stars.forEach(star => {
     star.addEventListener('mouseenter', () => { const val = parseInt(star.dataset.value); stars.forEach((s, idx) => { s.classList.toggle('hovered', idx < val); }); });
@@ -264,6 +265,7 @@ function initStarRating() {
 
 function renderMisFavoritos() {
   const cont = document.getElementById('listaFavoritos');
+  if (!cont) return;
   const favoritos = Object.entries(USER_RATINGS).filter(([_, r]) => r.is_favorite);
   if (favoritos.length === 0) { cont.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">Aún no tienes favoritos. Marca alimentos con ❤️ en el menú.</p>'; return; }
   cont.innerHTML = favoritos.map(([foodId, r]) => {
@@ -275,6 +277,7 @@ function renderMisFavoritos() {
 
 function renderMisExcluidos() {
   const cont = document.getElementById('listaExcluidos');
+  if (!cont) return;
   const excluidos = Object.entries(USER_RATINGS).filter(([_, r]) => r.is_excluded);
   if (excluidos.length === 0) { cont.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8">No has excluido ningún alimento.</p>'; return; }
   cont.innerHTML = excluidos.map(([foodId, r]) => {
@@ -286,8 +289,8 @@ function renderMisExcluidos() {
 function actualizarContadoresPerfil() {
   const favs = Object.values(USER_RATINGS).filter(r => r.is_favorite).length;
   const excs = Object.values(USER_RATINGS).filter(r => r.is_excluded).length;
-  document.getElementById('favCount').textContent = favs;
-  document.getElementById('excCount').textContent = excs;
+  const favEl = document.getElementById('favCount'); if (favEl) favEl.textContent = favs;
+  const excEl = document.getElementById('excCount'); if (excEl) excEl.textContent = excs;
 }
 
 // ============================================
@@ -319,7 +322,7 @@ async function desbloquearLogro(achievementId) {
 function mostrarModalLogroDesbloqueado(achievement) {
   const overlay = document.createElement('div');
   overlay.className = 'achievement-overlay';
-  overlay.onclick = () => { overlay.remove(); document.getElementById('achievementUnlockModal')?.remove(); };
+  overlay.onclick = () => { overlay.remove(); const m = document.getElementById('achievementUnlockModal'); if (m) m.remove(); };
   const modal = document.createElement('div');
   modal.id = 'achievementUnlockModal';
   modal.className = 'achievement-unlock-modal';
@@ -373,10 +376,10 @@ function renderLogros() {
   const desbloqueados = Object.keys(USER_ACHIEVEMENTS).length;
   const total = logrosArray.length;
   const progreso = total > 0 ? Math.round((desbloqueados / total) * 100) : 0;
-  document.getElementById('statLogrosDesbloqueados').textContent = desbloqueados;
-  document.getElementById('statLogrosTotales').textContent = total;
-  document.getElementById('statProgresoGeneral').textContent = progreso + '%';
-  document.getElementById('logrosCount').textContent = desbloqueados;
+  const el1 = document.getElementById('statLogrosDesbloqueados'); if (el1) el1.textContent = desbloqueados;
+  const el2 = document.getElementById('statLogrosTotales'); if (el2) el2.textContent = total;
+  const el3 = document.getElementById('statProgresoGeneral'); if (el3) el3.textContent = progreso + '%';
+  const el4 = document.getElementById('logrosCount'); if (el4) el4.textContent = desbloqueados;
   if (logrosArray.length === 0) { grid.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm text-center py-8 col-span-full">Cargando logros...</p>'; return; }
   const categorias = {};
   logrosArray.forEach(a => { if (!categorias[a.categoria]) categorias[a.categoria] = []; categorias[a.categoria].push(a); });
@@ -406,7 +409,7 @@ async function checkAuth() {
     if (error || !profile) {
       const nombre = session.user.user_metadata?.nombre || session.user.email.split('@')[0];
       const { error: insertError } = await sb.from('profiles').insert({ id: session.user.id, nombre: nombre, rol: 'user', bloqueado: false });
-      if (insertError) { await sb.auth.signOut(); showAuthScreen(); alert('️ Error al inicializar tu cuenta.'); return; }
+      if (insertError) { await sb.auth.signOut(); showAuthScreen(); alert('⚠️ Error al inicializar tu cuenta.'); return; }
       location.reload();
       return;
     }
@@ -453,7 +456,7 @@ function updateUserUI() {
   document.getElementById('dropdownEmail').textContent = currentUser.email;
   const roleEl = document.getElementById('dropdownRole');
   if (currentUser.rol === 'admin') {
-    roleEl.innerHTML = '<span class="status-badge bg-purple-100 text-purple-700">️ Administrador</span>';
+    roleEl.innerHTML = '<span class="status-badge bg-purple-100 text-purple-700">⚙️ Administrador</span>';
     document.getElementById('adminMenuItem').classList.remove('hidden');
   } else {
     roleEl.innerHTML = '<span class="status-badge bg-teal-100 text-teal-700">✓ Usuario</span>';
@@ -475,9 +478,9 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
   const err = document.getElementById('loginError');
   try {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-    if (error) { err.textContent = ' ' + error.message; err.classList.remove('hidden'); }
+    if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); }
     else { location.reload(); }
-  } catch (errCatch) { err.textContent = ' Error de conexión.'; err.classList.remove('hidden'); }
+  } catch (errCatch) { err.textContent = '❌ Error de conexión.'; err.classList.remove('hidden'); }
 });
 
 document.getElementById('formRegister').addEventListener('submit', async (e) => {
@@ -559,27 +562,29 @@ document.getElementById('formEvaluacion').addEventListener('submit', async (e) =
   const carbKcal = caloriasObjetivo - (protG * 4) - (grasasG * 9);
   const carbG = Math.round(carbKcal / 4);
   const newUserData = { edad, sexo, peso, altura, factor, objetivo, prefs, tmb: Math.round(tmb), getd: Math.round(getd), imc: imc.toFixed(1), deficit, caloriasObjetivo, protG, grasasG, carbG };
-  if (!appIsOnline) {
-    addToOfflineQueue('save_evaluation', newUserData);
-    userData = newUserData;
-    saveUserDataToLocal(userData);
-    actualizarDashboard(); generarMenu(); generarListaCompra(); generarEjercicio(); cargarDatosEnFormularioEvaluacion(); renderPlanificador();
-    switchTab('dashboard');
-    return;
-  }
+
+  // ✅ FIX #2: Siempre intentamos guardar en Supabase. Solo caemos en la cola
+  // offline si la llamada falla de verdad. Ya no dependemos del flag appIsOnline,
+  // que podía quedar en false por un evento 'offline' espurio del navegador.
   try {
     const { error } = await sb.from('user_data').upsert({ user_id: currentUser.id, ...newUserData, updated_at: new Date() });
-    if (error) { addToOfflineQueue('save_evaluation', newUserData); }
-    else {
-      userData = newUserData;
-      saveUserDataToLocal(userData);
-      actualizarDashboard(); generarMenu(); generarListaCompra(); generarEjercicio(); cargarDatosEnFormularioEvaluacion(); renderPlanificador();
-      switchTab('dashboard');
+    if (error) {
+      console.error('Error Supabase al guardar evaluación:', error);
+      addToOfflineQueue('save_evaluation', newUserData);
+    } else {
       mostrarToast('✅ Evaluación guardada');
       achievementStats.evaluaciones++;
       verificarLogros();
     }
-  } catch (err) { addToOfflineQueue('save_evaluation', newUserData); }
+  } catch (err) {
+    console.error('Error de red al guardar evaluación:', err);
+    addToOfflineQueue('save_evaluation', newUserData);
+  }
+  // Actualizamos la UI local en todos los casos (guardado en nube o en cola)
+  userData = newUserData;
+  saveUserDataToLocal(userData);
+  actualizarDashboard(); generarMenu(); generarListaCompra(); generarEjercicio(); cargarDatosEnFormularioEvaluacion(); renderPlanificador();
+  switchTab('dashboard');
 });
 
 function cargarDatosEnFormularioEvaluacion() {
@@ -602,7 +607,7 @@ function initDarkMode() {
   const html = document.documentElement;
   const savedTheme = localStorage.getItem('nutripro-theme');
   if (!savedTheme || savedTheme === 'dark') { html.classList.add('dark'); icon.textContent = '☀️'; localStorage.setItem('nutripro-theme', 'dark'); }
-  else { html.classList.remove('dark'); icon.textContent = ''; }
+  else { html.classList.remove('dark'); icon.textContent = '🌙'; }
   toggle.addEventListener('click', () => {
     html.classList.toggle('dark');
     const isDark = html.classList.contains('dark');
@@ -692,7 +697,7 @@ function filtrarPorTemporada(arr) {
 function excluirNoMeGusta(arr) { return arr.filter(a => !USER_RATINGS[a.id]?.is_excluded); }
 
 function pickRandomConFavoritos(arr) {
-  if (arr.length === 0) return null;
+  if (!arr || arr.length === 0) return null;
   const favoritos = arr.filter(a => USER_RATINGS[a.id]?.is_favorite);
   if (favoritos.length > 0 && Math.random() < 0.7) return pickRandom(favoritos);
   return pickRandom(arr);
@@ -737,7 +742,9 @@ function generarMenu() {
   document.getElementById('weekIndicator').classList.remove('hidden');
   const now = new Date();
   const dayOfMonth = now.getDate();
-  const menuIndex = Math.floor((dayOfMonth - 1) / 7);
+  // ✅ FIX #1: el índice se calcula módulo 4 para que NUNCA se salga del array
+  // (los días 29, 30 y 31 daban índice 4 y menus[4] era undefined → crash).
+  const menuIndex = Math.floor((dayOfMonth - 1) / 7) % 4;
   document.getElementById('weekText').textContent = `Semana ${menuIndex + 1} de 4`;
   const menus = [];
   for (let m = 0; m < 4; m++) {
@@ -770,7 +777,7 @@ function generarMenu() {
 }
 
 function aplicarSustitucionesGuardadas() {
-  if (!menuData) return;
+  if (!menuData || !menuData.menu) return;
   Object.keys(sustituciones).forEach(key => {
     const [diaIdx, path] = key.split('|');
     const nuevo = ALIMENTOS_DB[sustituciones[key]];
@@ -793,6 +800,7 @@ function resetSustituciones() { if (!confirm('¿Restaurar menú original?')) ret
 
 function renderMenu() {
   const cont = document.getElementById('menuContent');
+  if (!cont || !menuData || !menuData.menu) return;
   cont.innerHTML = '';
   menuData.menu.forEach((dia, diaIdx) => {
     const kcalTotales = calcularKcalDia(dia);
@@ -806,9 +814,9 @@ function renderMenu() {
       const isExc = rating?.is_excluded || false;
       const badgeTemporada = getBadgeTemporada(item);
       const ratingStars = rating?.rating ? '⭐'.repeat(rating.rating) : '';
-      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''} ${isFav ? 'is-favorite' : ''} ${isExc ? 'is-excluded' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap flex-wrap">${badgeTemporada}${ratingStars ? `<span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">${ratingStars}</span>` : ''}<span class="macro-chip bg-white/70 dark:bg-slate-700">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="flex flex-col gap-1"><button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍</button><button class="fav-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isFav ? 'fav-icon-active' : ''}" onclick="toggleFavorito('${item.id}', event)" title="${isFav ? 'Quitar de favoritos' : 'Añadir a favoritos'}">${isFav ? '❤️' : '🤍'}</button><button class="exclude-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isExc ? 'exclude-icon-active' : ''}" onclick="toggleExcluido('${item.id}', event)" title="${isExc ? 'Incluir en menú' : 'Excluir del menú'}">${isExc ? '🚫' : ''}</button></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}${isFav ? `<div class="text-xs text-red-600 dark:text-red-400 mt-1 font-semibold">❤️ Favorito</div>` : ''}${isExc ? `<div class="text-xs text-slate-500 mt-1 font-semibold"> Excluido</div>` : ''}</div>`;
+      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''} ${isFav ? 'is-favorite' : ''} ${isExc ? 'is-excluded' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap">${badgeTemporada}${ratingStars ? `<span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">${ratingStars}</span>` : ''}<span class="macro-chip bg-white/70 dark:bg-slate-700">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="flex flex-col gap-1"><button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍🍳</button><button class="fav-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isFav ? 'fav-icon-active' : ''}" onclick="toggleFavorito('${item.id}', event)" title="${isFav ? 'Quitar de favoritos' : 'Añadir a favoritos'}">${isFav ? '❤️' : '🤍'}</button><button class="exclude-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isExc ? 'exclude-icon-active' : ''}" onclick="toggleExcluido('${item.id}', event)" title="${isExc ? 'Incluir en menú' : 'Excluir del menú'}">${isExc ? '🚫' : '⊘'}</button></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}${isFav ? `<div class="text-xs text-red-600 dark:text-red-400 mt-1 font-semibold">❤️ Favorito</div>` : ''}${isExc ? `<div class="text-xs text-slate-500 mt-1 font-semibold">🚫 Excluido</div>` : ''}</div>`;
     };
-    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20', '')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20', '🥬')}</div>`;
+    card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20', '🐟')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20', '🥬')}</div>`;
     cont.appendChild(card);
   });
 }
@@ -882,7 +890,7 @@ function abrirModalSustitucion(diaIdx, path, currentId) {
     const starsHtml = rating?.rating ? '⭐'.repeat(rating.rating) : '';
     const opt = document.createElement('div');
     opt.className = `sub-option p-4 border-2 rounded-xl ${isCurrent ? 'current border-green-300' : 'border-slate-200 dark:border-slate-700'} ${isFav ? 'is-favorite-sub' : ''} ${isExc ? 'is-excluded-sub' : ''}`;
-    opt.innerHTML = `<div class="flex justify-between items-start gap-3"><div class="flex-1"><div class="flex items-center gap-2 flex-wrap mb-1"><span class="font-bold text-slate-800 dark:text-white">${alim.nombre}</span>${isCurrent ? '<span class="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">ACTUAL</span>' : ''}${isFav ? '<span class="text-xs">❤️</span>' : ''}${isExc ? '<span class="text-xs bg-slate-400 text-white px-2 py-0.5 rounded-full font-bold">EXCLUIDO</span>' : ''}</div><div class="flex gap-1.5 mt-2 flex-wrap flex-wrap">${badgeTemporada}${starsHtml ? `<span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">${starsHtml}</span>` : ''}<span class="macro-chip bg-slate-100 dark:bg-slate-700">🔥 ${alim.kcal} kcal</span>${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}</div></div>${!isCurrent && !isExc ? `<button class="flex-shrink-0 bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir</button>` : ''}</div>`;
+    opt.innerHTML = `<div class="flex justify-between items-start gap-3"><div class="flex-1"><div class="flex items-center gap-2 flex-wrap mb-1"><span class="font-bold text-slate-800 dark:text-white">${alim.nombre}</span>${isCurrent ? '<span class="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">ACTUAL</span>' : ''}${isFav ? '<span class="text-xs">❤️</span>' : ''}${isExc ? '<span class="text-xs bg-slate-400 text-white px-2 py-0.5 rounded-full font-bold">EXCLUIDO</span>' : ''}</div><div class="flex gap-1.5 mt-2 flex-wrap">${badgeTemporada}${starsHtml ? `<span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">${starsHtml}</span>` : ''}<span class="macro-chip bg-slate-100 dark:bg-slate-700">🔥 ${alim.kcal} kcal</span>${alim.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${alim.prot}g</span>` : ''}${!isCurrent ? `<span class="macro-chip ${Math.abs(diffKcal) <= 20 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${diffKcal > 0 ? '+' : ''}${diffKcal} kcal</span>` : ''}</div></div>${!isCurrent && !isExc ? `<button class="flex-shrink-0 bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-semibold">Elegir</button>` : ''}</div>`;
     if (!isCurrent && !isExc) opt.addEventListener('click', () => aplicarSustitucion(alim.id));
     cont.appendChild(opt);
   });
@@ -892,10 +900,11 @@ function abrirModalSustitucion(diaIdx, path, currentId) {
 function cerrarModal() { document.getElementById('modalSustitucion').classList.add('hidden'); currentSwap = null; }
 
 function aplicarSustitucion(nuevoId) {
-  if (!currentSwap || !menuData) return;
+  if (!currentSwap || !menuData || !menuData.menu) return;
   const { diaIdx, path } = currentSwap;
   const nuevo = ALIMENTOS_DB[nuevoId];
   const dia = menuData.menu[diaIdx];
+  if (!dia) return;
   const partes = path.split('.');
   let obj = dia;
   for (let i = 0; i < partes.length - 1; i++) obj = obj[partes[i]];
@@ -935,11 +944,11 @@ async function compartirApp() {
 // ============================================
 function categorizarIngrediente(ing) {
   const lower = ing.toLowerCase();
-  if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|lentejas|garbanzos|alubias|ternera/.test(lower)) return { cat: ' Proteínas', color: 'from-rose-500 to-pink-500' };
-  if (/arroz|quinoa|pasta|batata|avena|pan|cuscús|bulgur|boniato|tortita/.test(lower)) return { cat: ' Carbohidratos', color: 'from-amber-500 to-orange-500' };
-  if (/aceite|aguacate|almendra|nueces|pistacho|anacardo|semilla|tahini|aceituna/.test(lower)) return { cat: ' Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
+  if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|lentejas|garbanzos|alubias|ternera/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
+  if (/arroz|quinoa|pasta|batata|avena|pan|cuscús|bulgur|boniato|tortita/.test(lower)) return { cat: '🍚 Carbohidratos', color: 'from-amber-500 to-orange-500' };
+  if (/aceite|aguacate|almendra|nueces|pistacho|anacardo|semilla|tahini|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
   if (/manzana|plátano|pera|fresa|cereza|sandía|melón|melocotón|nectarina|albaricoque|higo|granada|uva|caqui|mandarina|naranja|kiwi|pomelo|lima|frutos rojos|membrillo|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
-  if (/brócoli|espinaca|tomate|calabacín|lechuga|pepino|cebolla|pimiento|berenjena|coliflor|alcachofa|espárrago|judía|acelga|col|seta|champiñón|puerro|hinojo|apio|remolacha|zanahoria|guisante|haba|calabaza|col lombarda|coles de bruselas|menestra|pisto|escalivada|gazpacho|salmorejo|hummus/.test(lower)) return { cat: ' Verduras', color: 'from-green-500 to-emerald-500' };
+  if (/brócoli|espinaca|tomate|calabacín|lechuga|pepino|cebolla|pimiento|berenjena|coliflor|alcachofa|espárrago|judía|acelga|col|seta|champiñón|puerro|hinojo|apio|remolacha|zanahoria|guisante|haba|calabaza|col lombarda|coles de bruselas|menestra|pisto|escalivada|gazpacho|salmorejo|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
   return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
 }
 
@@ -954,6 +963,7 @@ function generarListaCompra() {
 
 function obtenerIngredientes() {
   const totales = {};
+  if (!menuData || !menuData.menu) return totales;
   menuData.menu.forEach(dia => {
     const items = [dia.desayuno.ing, dia.comida.prot.ing, dia.comida.carb.ing, dia.comida.verdura.ing, dia.comida.grasa.ing, dia.merienda.ing, dia.cena.prot.ing, dia.cena.verdura.ing];
     items.forEach(lista => { if (!lista) return; lista.forEach(ing => { totales[ing] = (totales[ing] || 0) + 1; }); });
@@ -989,24 +999,16 @@ async function agregarPeso() {
   const valor = parseFloat(document.getElementById('valorPeso').value);
   if (!fecha || isNaN(valor)) { mostrarToast('⚠️ Introduce fecha y peso válido'); return; }
   const pesoData = { fecha, valor };
-  if (!appIsOnline) {
-    addToOfflineQueue('add_weight', pesoData);
-    pesos.push(pesoData);
-    pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-    document.getElementById('valorPeso').value = '';
-    renderSeguimiento();
-    return;
-  }
   try {
     const { error } = await sb.from('weight_logs').insert({ user_id: currentUser.id, fecha, valor });
-    if (error) { addToOfflineQueue('add_weight', pesoData); return; }
-    pesos.push(pesoData);
-    pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-    document.getElementById('valorPeso').value = '';
-    renderSeguimiento();
-    mostrarToast('✅ Peso registrado');
-    verificarLogros();
+    if (error) { addToOfflineQueue('add_weight', pesoData); }
+    else { mostrarToast('✅ Peso registrado'); }
   } catch (err) { addToOfflineQueue('add_weight', pesoData); }
+  pesos.push(pesoData);
+  pesos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+  document.getElementById('valorPeso').value = '';
+  renderSeguimiento();
+  verificarLogros();
 }
 
 function mediaMovil(arr, ventana = 7) {
@@ -1019,13 +1021,16 @@ function mediaMovil(arr, ventana = 7) {
 
 function renderSeguimiento() {
   const hist = document.getElementById('historialPeso');
+  if (!hist) return;
   if (pesos.length === 0) { hist.innerHTML = '<p class="text-slate-500 text-sm">Sin registros.</p>'; }
   else { hist.innerHTML = pesos.slice().reverse().slice(0, 10).map(p => `<div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"><span class="text-sm">${new Date(p.fecha).toLocaleDateString('es-ES')}</span><span class="font-bold">${p.valor} kg</span></div>`).join(''); }
   renderChartPeso();
 }
 
 function renderChartPeso() {
-  const ctx = document.getElementById('chartPeso').getContext('2d');
+  const canvas = document.getElementById('chartPeso');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
   if (chartPeso) chartPeso.destroy();
   if (pesos.length === 0) return;
   const labels = pesos.map(p => new Date(p.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
@@ -1043,7 +1048,9 @@ function renderAnalisis() {
   if (pesos.length < 4) { document.getElementById('analisisNoData').classList.remove('hidden'); document.getElementById('analisisContent').classList.add('hidden'); return; }
   document.getElementById('analisisNoData').classList.add('hidden');
   document.getElementById('analisisContent').classList.remove('hidden');
-  const ctx = document.getElementById('chartSemanal').getContext('2d');
+  const canvas = document.getElementById('chartSemanal');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
   if (chartSemanal) chartSemanal.destroy();
   const semanas = [];
   for (let i = 0; i < pesos.length; i += 7) { const s = pesos.slice(i, i + 7); semanas.push(parseFloat((s.reduce((a, p) => a + p.valor, 0) / s.length).toFixed(2))); }
@@ -1071,7 +1078,7 @@ function buscarVideo(nombre) { window.open(`https://www.youtube.com/results?sear
 // 14. SALUD Y HÁBITOS
 // ============================================
 const HABITOS_SALUD = [
-  { icon: '', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos.', videos: ['beneficios de dejar de fumar'] },
+  { icon: '🚭', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos.', videos: ['beneficios de dejar de fumar'] },
   { icon: '😴', titulo: 'Dormir 7-9 horas', texto: 'Regula hormonas del hambre y saciedad.', videos: ['higiene del sueño'] },
   { icon: '💧', titulo: 'Hidratación', texto: 'Mejora rendimiento y saciedad.', videos: ['cuánta agua beber'] },
   { icon: '🚶', titulo: 'Moverse cada día', texto: 'El NEAT suma al gasto diario.', videos: ['qué es el NEAT'] }
@@ -1094,32 +1101,25 @@ async function publicarComentario() {
   if (!texto) { mostrarToast('⚠️ Escribe un comentario'); return; }
   const anonimo = document.getElementById('comentarioAnonimo').checked;
   const commentData = { texto, anonimo };
-  if (!appIsOnline) {
-    addToOfflineQueue('add_comment', commentData);
-    document.getElementById('nuevoComentario').value = '';
-    mostrarToast('📴 Comentario guardado localmente');
-    return;
-  }
   try {
     const { error } = await sb.from('comments').insert({ user_id: currentUser.id, user_name: anonimo ? 'Anónimo' : currentUser.nombre, texto, is_anonymous: anonimo });
-    if (error) { addToOfflineQueue('add_comment', commentData); return; }
-    document.getElementById('nuevoComentario').value = '';
-    await renderComentarios();
-    mostrarToast('💬 Comentario publicado');
-    achievementStats.comentarios++;
-    verificarLogros();
+    if (error) { addToOfflineQueue('add_comment', commentData); }
+    else { mostrarToast('💬 Comentario publicado'); achievementStats.comentarios++; verificarLogros(); }
   } catch (err) { addToOfflineQueue('add_comment', commentData); }
+  document.getElementById('nuevoComentario').value = '';
+  await renderComentarios();
 }
 
 async function renderComentarios() {
   try {
     const { data: comments } = await sb.from('comments').select('*').order('created_at', { ascending: false });
     const cont = document.getElementById('listaComentarios');
+    if (!cont) return;
     if (!comments || comments.length === 0) { cont.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center border border-slate-100 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">Sé el primero en compartir tu experiencia 💬</div>'; return; }
     cont.innerHTML = comments.map(c => {
       const fecha = new Date(c.created_at).toLocaleDateString('es-ES');
       const textoSeguro = DOMPurify.sanitize(c.texto);
-      const nombreSeguro = DOMPurify.sanitize(c.user_name);
+      const nombreSeguro = DOMPurify.sanitize(c.user_name || 'Anónimo');
       return `<div class="comment-card"><div class="flex items-center gap-2 mb-2"><div class="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${nombreSeguro.charAt(0).toUpperCase()}</div><div><div class="font-semibold text-slate-800 dark:text-white text-sm">${nombreSeguro}</div><div class="text-xs text-slate-400">${fecha}</div></div></div><p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">${textoSeguro}</p></div>`;
     }).join('');
   } catch (err) { console.error('Error cargando comentarios:', err); }
@@ -1144,7 +1144,7 @@ function cambiarVistaPlanificador(vista) {
 }
 
 function renderPlanificador() {
-  if (!userData || !menuData) { document.getElementById('planificadorNoData').classList.remove('hidden'); document.getElementById('planificadorContent').classList.add('hidden'); return; }
+  if (!userData || !menuData || !menuData.menu) { document.getElementById('planificadorNoData').classList.remove('hidden'); document.getElementById('planificadorContent').classList.add('hidden'); return; }
   document.getElementById('planificadorNoData').classList.add('hidden');
   document.getElementById('planificadorContent').classList.remove('hidden');
   const lunes = getLunesSemana(plannerWeekOffset);
@@ -1163,6 +1163,7 @@ function renderPlanificador() {
     fecha.setDate(lunes.getDate() + i);
     const menuIdx = i;
     const diaMenu = menuData.menu[menuIdx];
+    if (!diaMenu) continue;
     const kcalDia = calcularKcalDia(diaMenu);
     totalKcalSemana += kcalDia;
     totalProteinas += (diaMenu.comida.prot.prot || 0) + (diaMenu.cena.prot.prot || 0);
@@ -1170,7 +1171,7 @@ function renderPlanificador() {
     const card = document.createElement('div');
     card.className = `planner-day-card ${isToday(fecha) ? 'today' : ''}`;
     card.onclick = () => { switchTab('menu'); setTimeout(() => { const cards = document.querySelectorAll('#menuContent > div'); if (cards[menuIdx]) cards[menuIdx].scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100); };
-    card.innerHTML = `<div class="planner-day-name">${diasCortos[i]}</div><div class="planner-day-date">${formatDateShort(fecha)}${isToday(fecha) ? ' · Hoy' : ''}</div><div class="planner-meal planner-meal-breakfast" title="${DOMPurify.sanitize(diaMenu.desayuno.nombre)}">☀️ ${diaMenu.desayuno.nombre.substring(0, 25)}${diaMenu.desayuno.nombre.length > 25 ? '...' : ''}</div><div class="planner-meal planner-meal-lunch" title="${DOMPurify.sanitize(diaMenu.comida.prot.nombre)}">🍽️ ${diaMenu.comida.prot.nombre.substring(0, 25)}${diaMenu.comida.prot.nombre.length > 25 ? '...' : ''}</div><div class="planner-meal planner-meal-dinner" title="${DOMPurify.sanitize(diaMenu.cena.prot.nombre)}">🌙 ${diaMenu.cena.prot.nombre.substring(0, 25)}${diaMenu.cena.prot.nombre.length > 25 ? '...' : ''}</div><div class="planner-kcal"> ${kcalDia} kcal</div>`;
+    card.innerHTML = `<div class="planner-day-name">${diasCortos[i]}</div><div class="planner-day-date">${formatDateShort(fecha)}${isToday(fecha) ? ' · Hoy' : ''}</div><div class="planner-meal planner-meal-breakfast" title="${DOMPurify.sanitize(diaMenu.desayuno.nombre)}">☀️ ${diaMenu.desayuno.nombre.substring(0, 25)}${diaMenu.desayuno.nombre.length > 25 ? '...' : ''}</div><div class="planner-meal planner-meal-lunch" title="${DOMPurify.sanitize(diaMenu.comida.prot.nombre)}">🍽️ ${diaMenu.comida.prot.nombre.substring(0, 25)}${diaMenu.comida.prot.nombre.length > 25 ? '...' : ''}</div><div class="planner-meal planner-meal-dinner" title="${DOMPurify.sanitize(diaMenu.cena.prot.nombre)}">🌙 ${diaMenu.cena.prot.nombre.substring(0, 25)}${diaMenu.cena.prot.nombre.length > 25 ? '...' : ''}</div><div class="planner-kcal">🔥 ${kcalDia} kcal</div>`;
     grid.appendChild(card);
   }
   document.getElementById('resumenKcalSemana').textContent = totalKcalSemana.toLocaleString('es-ES');
@@ -1188,11 +1189,12 @@ function renderBatchCooking() {
     { tiempo: '17:00', duracion: '40 min', tarea: '🥦 Asar verduras (berenjenas, pimientos, calabacín)', tipo: 'verduras' },
     { tiempo: '17:30', duracion: '45 min', tarea: '🍗 Cocinar proteínas (pollo, pescado, huevos)', tipo: 'proteinas' },
     { tiempo: '18:00', duracion: '20 min', tarea: '🥗 Preparar ensaladas y gazpacho', tipo: 'frio' },
-    { tiempo: '18:20', duracion: '25 min', tarea: ' Envasar en tuppers y etiquetar', tipo: 'envasado' },
-    { tiempo: '18:45', duracion: '15 min', tarea: ' Limpieza de cocina', tipo: 'limpieza' }
+    { tiempo: '18:20', duracion: '25 min', tarea: '📦 Envasar en tuppers y etiquetar', tipo: 'envasado' },
+    { tiempo: '18:45', duracion: '15 min', tarea: '🧹 Limpieza de cocina', tipo: 'limpieza' }
   ];
   const cont = document.getElementById('batchTasks');
-  cont.innerHTML = tareas.map((t, i) => `<div class="batch-task" onclick="this.classList.toggle('completed')"><input type="checkbox" class="batch-check"><div class="batch-time">${t.tiempo}</div><div class="flex-1"><div class="font-semibold text-slate-800 dark:text-white text-sm">${t.tarea}</div><div class="text-xs text-slate-500 dark:text-slate-400">️ ${t.duracion}</div></div></div>`).join('');
+  if (!cont) return;
+  cont.innerHTML = tareas.map((t, i) => `<div class="batch-task" onclick="this.classList.toggle('completed')"><input type="checkbox" class="batch-check"><div class="batch-time">${t.tiempo}</div><div class="flex-1"><div class="font-semibold text-slate-800 dark:text-white text-sm">${t.tarea}</div><div class="text-xs text-slate-500 dark:text-slate-400">⏱️ ${t.duracion}</div></div></div>`).join('');
   document.getElementById('batchTuppersComida').textContent = '7';
   document.getElementById('batchTuppersCena').textContent = '7';
   document.getElementById('batchDesayunos').textContent = '7';
@@ -1251,7 +1253,7 @@ function exportarProgresoPDF() {
     yPos += 8;
   });
   doc.save('Progreso_NutriPro.pdf');
-  mostrarToast(' Reporte exportado');
+  mostrarToast('📈 Reporte exportado');
 }
 
 function exportarInformeCompletoPDF() {
@@ -1289,12 +1291,12 @@ function exportarPlanificadorPDF() {
     doc.text(`${diasCortos[i]} - ${calcularKcalDia(dia)} kcal`, 16, yPos);
     yPos += 8;
     doc.setTextColor(50, 50, 50); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
-    const rows = [['☀️ Desayuno', dia.desayuno.nombre], ['🍽️ Comida', `${dia.comida.prot.nombre} + ${dia.comida.carb.nombre} + ${dia.comida.verdura.nombre} + ${dia.comida.grasa.nombre}`], [' Merienda', dia.merienda.nombre], ['🌙 Cena', `${dia.cena.prot.nombre} + ${dia.cena.verdura.nombre}`]];
+    const rows = [['☀️ Desayuno', dia.desayuno.nombre], ['🍽️ Comida', `${dia.comida.prot.nombre} + ${dia.comida.carb.nombre} + ${dia.comida.verdura.nombre} + ${dia.comida.grasa.nombre}`], ['🍎 Merienda', dia.merienda.nombre], ['🌙 Cena', `${dia.cena.prot.nombre} + ${dia.cena.verdura.nombre}`]];
     doc.autoTable({ startY: yPos, body: rows, theme: 'plain', margin: { left: 14, right: 14 }, columnStyles: { 0: { cellWidth: 40, fontStyle: 'bold' } } });
     yPos = doc.lastAutoTable.finalY + 6;
   });
   doc.save('Planificador_NutriPro.pdf');
-  mostrarToast(' Planificador exportado');
+  mostrarToast('📅 Planificador exportado');
 }
 
 // ============================================
@@ -1304,14 +1306,13 @@ document.getElementById('formPerfil').addEventListener('submit', async (e) => {
   e.preventDefault();
   const nombre = document.getElementById('perfilNombre').value.trim();
   if (!nombre) return;
-  if (!appIsOnline) { addToOfflineQueue('update_profile', { nombre }); currentUser.nombre = nombre; updateUserUI(); mostrarToast('📴 Guardado localmente'); return; }
   try {
     const { error } = await sb.from('profiles').update({ nombre }).eq('id', currentUser.id);
-    if (error) { mostrarToast('❌ Error'); return; }
-    currentUser.nombre = nombre;
-    updateUserUI();
-    mostrarToast('✓ Perfil actualizado');
-  } catch (err) { mostrarToast('❌ Error'); }
+    if (error) { addToOfflineQueue('update_profile', { nombre }); }
+    else { mostrarToast('✓ Perfil actualizado'); }
+  } catch (err) { addToOfflineQueue('update_profile', { nombre }); }
+  currentUser.nombre = nombre;
+  updateUserUI();
 });
 
 document.getElementById('formPassword').addEventListener('submit', async (e) => {
@@ -1320,7 +1321,6 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
   const conf = document.getElementById('passConfirm').value;
   if (nueva !== conf) { mostrarToast('❌ Las contraseñas no coinciden'); return; }
   if (nueva.length < 6) { mostrarToast('❌ Mínimo 6 caracteres'); return; }
-  if (!appIsOnline) { mostrarToast('️ Se requiere conexión'); return; }
   try {
     const { error } = await sb.auth.updateUser({ password: nueva });
     if (error) { mostrarToast('❌ Error: ' + error.message); }
@@ -1334,7 +1334,7 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
 document.querySelectorAll('.nav-btn').forEach(btn => { btn.addEventListener('click', () => switchTab(btn.dataset.tab)); });
 
 function switchTab(tab) {
-  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert(' Acceso restringido'); return; }
+  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert('⛔ Acceso restringido'); return; }
   document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-white/80'); });
   const section = document.getElementById(tab);
@@ -1348,6 +1348,7 @@ function switchTab(tab) {
   if (tab === 'salud') renderSalud();
   if (tab === 'planificador') renderPlanificador();
   if (tab === 'perfil') { renderMisFavoritos(); renderMisExcluidos(); renderLogros(); }
+  if (tab === 'admin' && typeof cargarPanelAdmin === 'function') { cargarPanelAdmin(); cargarComentariosAdmin(); cargarAnunciosAdmin(); cargarAlimentosAdmin(); }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
