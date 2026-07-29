@@ -185,3 +185,236 @@ window.obtenerAlimentosPorGrupo = obtenerAlimentosPorGrupo;
 window.obtenerAlimentosDeTemporada = obtenerAlimentosDeTemporada;
 
 console.log('[NutriPro] Datos cargados: ' + Object.keys(ALIMENTOS_DB).length + ' alimentos, ' + Object.keys(RECETAS_DB).length + ' recetas, ' + LOGROS_DB.length + ' logros');
+// ============================================================
+// 5. CONSEJOS NUTRICIONALES PERSONALIZADOS (FASE 3 · PASO 2)
+//    Banco declarativo + motor de selección puro (sin acoples).
+//    app.js construye el contexto (ctx) y llama a estas funciones.
+// ============================================================
+
+var CONSEJOS_DB = [
+  {
+    id: 'saciedad_imc', cat: 'saciedad', icono: '🥗',
+    titulo: 'Sacia sin pasar hambre',
+    texto: 'Llena la mitad del plato con verduras, un cuarto con proteína y un cuarto con carbohidrato integral. El volumen y la fibra activan los receptores de saciedad del estómago antes de que el cerebro pida más.',
+    fuente: 'Consenso clínico · plato saludable',
+    cond: { objetivo: ['perder', 'perderSuave'], imcMin: 25 }
+  },
+  {
+    id: 'proteina_cada_comida', cat: 'proteina', icono: '🥩',
+    titulo: 'Proteína en cada comida',
+    texto: 'Reparte 20‑30 g de proteína en desayuno, comida y cena. Mantener el aporte a lo largo del día protege la masa muscular durante el déficit y reduce los picos de hambre.',
+    fuente: 'Consenso clínico · distribución proteica',
+    cond: { objetivo: ['perder', 'perderSuave', 'mantener'] }
+  },
+  {
+    id: 'proteina_edad', cat: 'proteina', icono: '💪',
+    titulo: 'A partir de los 50, sube la proteína',
+    texto: 'Con la edad aumenta la resistencia anabólica: el cuerpo necesita más proteína por toma para mantener el músculo. Combínala con trabajo de fuerza 2‑3 días por semana.',
+    fuente: 'Consenso clínico · sarcopenia',
+    cond: { edadMin: 50 }
+  },
+  {
+    id: 'proteina_vegetal', cat: 'proteina', icono: '🌱',
+    titulo: 'Proteína vegetal completa',
+    texto: 'Combina legumbres con cereales (lentejas + arroz, garbanzos + pan integral) a lo largo del día: juntas aportan todos los aminoácidos esenciales sin necesidad de forzarlos en el mismo plato.',
+    fuente: 'Consenso clínico · dieta vegetal',
+    cond: { prefs: ['vegetariano', 'vegano'] }
+  },
+  {
+    id: 'hierro_mujer', cat: 'micronutrientes', icono: '🩸',
+    titulo: 'Hierro que se absorbe mejor',
+    texto: 'Si menstrúas, tus necesidades de hierro son mayores. Acompaña las fuentes de hierro (legumbres, carnes, huevo) con vitamina C (tomate, pimiento, cítricos) y evita el té o café en esa misma comida.',
+    fuente: 'EFSA · requerimientos de hierro',
+    cond: { sexo: 'mujer' }
+  },
+  {
+    id: 'hidratacion', cat: 'hidratacion', icono: '💧',
+    titulo: 'Bebe antes de tener sed',
+    texto: 'La sed ya es una señal tardía. Un vaso de agua al levantarte y otro antes de cada comida mejora el rendimiento, la digestión y ayuda a distinguir hambre real de sed.',
+    fuente: 'EFSA · ingesta de agua',
+    cond: { siempre: true }
+  },
+  {
+    id: 'sueno', cat: 'sueno', icono: '😴',
+    titulo: 'Dormir también es nutrición',
+    texto: 'Dormir menos de 7 h altera la grelina y la leptina, las hormonas del hambre y la saciedad. Priorizar 7‑9 h es tan estratégico como ajustar las calorías.',
+    fuente: 'Consenso clínico · sueño y metabolismo',
+    cond: { siempre: true }
+  },
+  {
+    id: 'neat', cat: 'movimiento', icono: '🚶',
+    titulo: 'Muévete fuera del gimnasio',
+    texto: 'El NEAT (caminar, estar de pie, las tareas diarias) puede sumar cientos de kcal al día sin "hacer ejercicio". Si tu actividad es baja, subir pasos es el cambio con mayor retorno.',
+    fuente: 'Consenso clínico · gasto energético',
+    cond: { actividadMax: 1.375 }
+  },
+  {
+    id: 'temp_verano', cat: 'temporada', icono: '☀️',
+    titulo: 'Aprovecha el verano en el plato',
+    texto: 'Tomate, pepino, sandía y melón están en su mejor momento: más sabor, más agua y mejor precio. Un gazpacho o una ensalada densa en verduras cubren volumen e hidratación de golpe.',
+    fuente: 'Productos de temporada',
+    cond: { estacion: 'verano' }
+  },
+  {
+    id: 'temp_otono', cat: 'temporada', icono: '🍂',
+    titulo: 'El otoño pide raíz y legumbre',
+    texto: 'Calabaza, boniato, setas y coles aportan fibra y saciedad en platos de cuchara. Las legumbres, estrella de la estación, combinan proteína y fibra a coste muy bajo.',
+    fuente: 'Productos de temporada',
+    cond: { estacion: 'otono' }
+  },
+  {
+    id: 'temp_invierno', cat: 'temporada', icono: '❄️',
+    titulo: 'Invierno: calor sin exceso',
+    texto: 'Cremas de verduras, potajes de legumbres y cítricos de temporada dan confort y vitamina C. Prioriza cocciones que conserven el volumen del plato para saciarte mejor.',
+    fuente: 'Productos de temporada',
+    cond: { estacion: 'invierno' }
+  },
+  {
+    id: 'temp_primavera', cat: 'temporada', icono: '🌸',
+    titulo: 'Primavera verde',
+    texto: 'Espárragos, alcachofas, habas y guisantes están en plena temporada: fibra, micronutrientes y mucha variedad. Rotarlos evita la monotonía del menú.',
+    fuente: 'Productos de temporada',
+    cond: { estacion: 'primavera' }
+  },
+  {
+    id: 'fibra', cat: 'fibra', icono: '🌾',
+    titulo: 'Meta de fibra diaria',
+    texto: 'Busca 25‑30 g de fibra al día (verduras, legumbres, fruta con piel, integrales). La fibra modera el apetito, cuida la microbiota y estabiliza la glucosa tras las comidas.',
+    fuente: 'EFSA · fibra dietética',
+    cond: { siempre: true }
+  },
+  {
+    id: 'grasas_buenas', cat: 'grasas', icono: '🥑',
+    titulo: 'Grasa no es el enemigo',
+    texto: 'Aceite de oliva virgen extra, frutos secos y aguacate aportan saciedad y ayudan a absorber vitaminas. Un puñado de frutos secos o un chorrito de AOVE cambian el plato sin dispararlo.',
+    fuente: 'Consenso clínico · grasa saludable',
+    cond: { siempre: true }
+  },
+  {
+    id: 'ultraprocesados', cat: 'calidad', icono: '🍫',
+    titulo: 'Reduce, no prohíbas',
+    texto: 'Los ultraprocesados están diseñados para superar tu saciedad. No hace falta eliminarlos: basta con que no sean la base. Aplica la regla 80/20 y gana adherencia a largo plazo.',
+    fuente: 'Consenso clínico · adherencia',
+    cond: { objetivo: ['perder', 'perderSuave'] }
+  },
+  {
+    id: 'alcohol', cat: 'calidad', icono: '🍷',
+    titulo: 'Alcohol: calorías invisibles',
+    texto: 'El alcohol aporta 7 kcal/g y frena la oxidación de grasa. Si bebes, modera y nunca lo cuentes como "inofensivo": es uno de los puntos ciegos más frecuentes en un déficit.',
+    fuente: 'OMS · consumo de alcohol',
+    cond: { siempre: true }
+  },
+  {
+    id: 'mindful', cat: 'conducta', icono: '🧘',
+    titulo: 'Come con atención',
+    texto: 'Masticar despacio y sin pantallas permite que la señal de saciedad (tarda ~20 min) llegue a tiempo. Comer consciente reduce los atracones sin cambiar una sola receta.',
+    fuente: 'Consenso clínico · conducta alimentaria',
+    cond: { siempre: true }
+  },
+  {
+    id: 'consistencia', cat: 'conducta', icono: '🎯',
+    titulo: 'Consistencia > perfección',
+    texto: 'Un día fuera del plan no arruina nada; abandonar sí. La reeducación alimentaria se gana por repetición, no por pureza. Vuelve al siguiente plato, sin castigos ni compensaciones.',
+    fuente: 'Filosofía NutriPro',
+    cond: { siempre: true }
+  },
+  {
+    id: 'batch', cat: 'organizacion', icono: '🍳',
+    titulo: 'Cocina una vez, come toda la semana',
+    texto: 'Dedicar 2‑3 h el domingo a bases (legumbres, arroces, proteínas, verduras asadas) elimina la decisión improvisada entre semana, que es donde más se descarrila un déficit.',
+    fuente: 'Estrategia de adherencia',
+    cond: { siempre: true }
+  },
+  {
+    id: 'sin_gluten', cat: 'restricciones', icono: '🌾',
+    titulo: 'Sin gluten, sin carencias',
+    texto: 'Si evitas el gluten, asegura fibra y energía con quinoa, arroz integral, boniato y legumbres. Revisa etiquetas: muchos "sin gluten" industriales son pobres en nutrientes.',
+    fuente: 'Consenso clínico · dieta sin gluten',
+    cond: { prefs: ['sinGluten'] }
+  }
+];
+
+// ---- Motor de selección (funciones puras) ----
+
+// Evalúa si un consejo aplica al contexto del usuario.
+function consejoAplica(c, ctx) {
+  ctx = ctx || {};
+  var cond = c.cond || {};
+  if (cond.siempre) return true;
+  if (cond.objetivo && cond.objetivo.indexOf(ctx.objetivo) === -1) return false;
+  if (typeof cond.imcMin === 'number' && (typeof ctx.imc !== 'number' || ctx.imc < cond.imcMin)) return false;
+  if (typeof cond.imcMax === 'number' && (typeof ctx.imc !== 'number' || ctx.imc > cond.imcMax)) return false;
+  if (typeof cond.edadMin === 'number' && (typeof ctx.edad !== 'number' || ctx.edad < cond.edadMin)) return false;
+  if (typeof cond.edadMax === 'number' && (typeof ctx.edad !== 'number' || ctx.edad > cond.edadMax)) return false;
+  if (cond.sexo && cond.sexo !== ctx.sexo) return false;
+  if (typeof cond.actividadMax === 'number' && (typeof ctx.factor !== 'number' || ctx.factor > cond.actividadMax)) return false;
+  if (cond.estacion) {
+    var est = Array.isArray(cond.estacion) ? cond.estacion : [cond.estacion];
+    if (est.indexOf(ctx.estacion) === -1) return false;
+  }
+  if (cond.prefs) {
+    var up = ctx.prefs || [];
+    var hit = cond.prefs.some(function (p) { return up.indexOf(p) !== -1; });
+    if (!hit) return false;
+  }
+  if (cond.sinPrefs) {
+    var up2 = ctx.prefs || [];
+    var bloqueado = cond.sinPrefs.some(function (p) { return up2.indexOf(p) !== -1; });
+    if (bloqueado) return false;
+  }
+  return true;
+}
+
+// Puntúa por especificidad: a más condiciones a medida, más relevante.
+function puntuarConsejo(c) {
+  var cond = c.cond || {};
+  if (cond.siempre) return 1;
+  var s = 2;
+  if (cond.objetivo) s += 2;
+  if (typeof cond.imcMin === 'number' || typeof cond.imcMax === 'number') s += 2;
+  if (cond.prefs) s += 2;
+  if (cond.estacion) s += 1;
+  if (cond.sexo) s += 1;
+  if (typeof cond.edadMin === 'number' || typeof cond.edadMax === 'number') s += 1;
+  if (typeof cond.actividadMax === 'number') s += 1;
+  return s;
+}
+
+// Devuelve los consejos aplicables, ordenados por relevancia (estable por id).
+function calcularConsejosAplicables(ctx) {
+  return CONSEJOS_DB
+    .filter(function (c) { return consejoAplica(c, ctx); })
+    .map(function (c) { return { consejo: c, score: puntuarConsejo(c) }; })
+    .sort(function (a, b) { return b.score - a.score || (a.consejo.id < b.consejo.id ? -1 : 1); })
+    .map(function (x) { return x.consejo; });
+}
+
+// Texto humano que explica POR QUÉ se personalizó un consejo.
+function razonPersonalizacion(c, ctx) {
+  var cond = c.cond || {};
+  if (cond.objetivo && ctx && ctx.objetivoLabel) return 'Porque tu objetivo es ' + ctx.objetivoLabel;
+  if (cond.prefs) return 'Adaptado a tu preferencia alimentaria';
+  if (cond.estacion) return 'Porque estás en ' + (ctx && ctx.estacionLabel ? ctx.estacionLabel : 'esta estación');
+  if (cond.sexo) return 'Ajustado a tus necesidades';
+  if (typeof cond.edadMin === 'number') return 'Por tu rango de edad';
+  if (typeof cond.actividadMax === 'number') return 'Por tu nivel de actividad actual';
+  if (typeof cond.imcMin === 'number') return 'Por tu composición corporal actual';
+  return 'Consejo general basado en evidencia';
+}
+
+// Hash determinista simple para elegir el consejo del día.
+function hashSemilla(str) {
+  var h = 0;
+  for (var i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) | 0; }
+  return Math.abs(h);
+}
+
+// Exportación global
+window.CONSEJOS_DB = CONSEJOS_DB;
+window.consejoAplica = consejoAplica;
+window.puntuarConsejo = puntuarConsejo;
+window.calcularConsejosAplicables = calcularConsejosAplicables;
+window.razonPersonalizacion = razonPersonalizacion;
+window.hashSemilla = hashSemilla;
+
+console.log('[NutriPro] Consejos cargados: ' + CONSEJOS_DB.length + ' reglas de personalización');
