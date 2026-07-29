@@ -81,14 +81,6 @@ async function checkRealConnection() {
   appIsOnline = navigator.onLine;
   updateOnlineStatusUI();
 }
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
-    await fetch('https://1.1.1.1/cdn-cgi/trace', { method: 'GET', signal: controller.signal, cache: 'no-store' });
-    clearTimeout(timeoutId);
-    appIsOnline = true;
-  } catch (error) { appIsOnline = false; }
-  updateOnlineStatusUI();
-}
 
 function updateOnlineStatusUI() {
   const statusEl = document.getElementById('connectionStatus');
@@ -101,7 +93,7 @@ function updateOnlineStatusUI() {
 async function processOfflineQueue() {
   const queue = getOfflineQueue();
   if (queue.length === 0) return;
-  mostrarToast('🔄 Sincronizando datos pendientes...');
+  mostrarToast(' Sincronizando datos pendientes...');
   let successCount = 0;
   const newQueue = [];
   for (const item of queue) {
@@ -151,7 +143,7 @@ function obtenerEstacion() {
 
 function obtenerInfoEstacion(estacion) {
   const info = {
-    primavera: { emoji: '🌸', nombre: 'Primavera', meses: 'Marzo - Mayo' },
+    primavera: { emoji: '', nombre: 'Primavera', meses: 'Marzo - Mayo' },
     verano: { emoji: '☀️', nombre: 'Verano', meses: 'Junio - Agosto' },
     otono: { emoji: '', nombre: 'Otoño', meses: 'Septiembre - Noviembre' },
     invierno: { emoji: '❄️', nombre: 'Invierno', meses: 'Diciembre - Febrero' }
@@ -167,7 +159,7 @@ function esDeTemporada(alimento) {
 
 function getBadgeTemporada(alimento) {
   if (!alimento.temporada || alimento.temporada === 'todo_el_año') {
-    return '<span class="temporada-badge temporada-todo" title="Disponible todo el año">🌍 Todo el año</span>';
+    return '<span class="temporada-badge temporada-todo" title="Disponible todo el año"> Todo el año</span>';
   }
   const info = obtenerInfoEstacion(alimento.temporada);
   const estacionActual = obtenerEstacion();
@@ -227,7 +219,7 @@ async function toggleFavorito(foodId, event) {
   const newFav = !current.is_favorite;
   const ok = await guardarValoracion(foodId, { is_favorite: newFav });
   if (ok) {
-    mostrarToast(newFav ? '❤️ Añadido a favoritos' : '💔 Eliminado de favoritos');
+    mostrarToast(newFav ? '❤️ Añadido a favoritos' : ' Eliminado de favoritos');
     if (menuData) { renderMenu(); renderPlanificador(); }
     actualizarContadoresPerfil(); renderMisFavoritos(); renderMisExcluidos();
     verificarLogros();
@@ -483,9 +475,9 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
   const err = document.getElementById('loginError');
   try {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-    if (error) { err.textContent = '❌ ' + error.message; err.classList.remove('hidden'); }
+    if (error) { err.textContent = ' ' + error.message; err.classList.remove('hidden'); }
     else { location.reload(); }
-  } catch (errCatch) { err.textContent = '❌ Error de conexión.'; err.classList.remove('hidden'); }
+  } catch (errCatch) { err.textContent = ' Error de conexión.'; err.classList.remove('hidden'); }
 });
 
 document.getElementById('formRegister').addEventListener('submit', async (e) => {
@@ -814,7 +806,7 @@ function renderMenu() {
       const isExc = rating?.is_excluded || false;
       const badgeTemporada = getBadgeTemporada(item);
       const ratingStars = rating?.rating ? '⭐'.repeat(rating.rating) : '';
-      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''} ${isFav ? 'is-favorite' : ''} ${isExc ? 'is-excluded' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap flex-wrap">${badgeTemporada}${ratingStars ? `<span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">${ratingStars}</span>` : ''}<span class="macro-chip bg-white/70 dark:bg-slate-700">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="flex flex-col gap-1"><button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍</button><button class="fav-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isFav ? 'fav-icon-active' : ''}" onclick="toggleFavorito('${item.id}', event)" title="${isFav ? 'Quitar de favoritos' : 'Añadir a favoritos'}">${isFav ? '❤️' : '🤍'}</button><button class="exclude-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isExc ? 'exclude-icon-active' : ''}" onclick="toggleExcluido('${item.id}', event)" title="${isExc ? 'Incluir en menú' : 'Excluir del menú'}">${isExc ? '🚫' : '⊘'}</button></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}${isFav ? `<div class="text-xs text-red-600 dark:text-red-400 mt-1 font-semibold">❤️ Favorito</div>` : ''}${isExc ? `<div class="text-xs text-slate-500 mt-1 font-semibold"> Excluido</div>` : ''}</div>`;
+      return `<div class="food-item p-3 ${color} rounded-lg ${isSub ? 'substituted' : ''} ${isFav ? 'is-favorite' : ''} ${isExc ? 'is-excluded' : ''}" onclick="abrirModalSustitucion(${diaIdx}, '${path}', '${item.id}')"><div class="flex justify-between items-start gap-2"><div class="flex-1 min-w-0"><div class="text-xs font-bold uppercase tracking-wide mb-1" style="opacity: 0.8">${emoji} ${label}</div><div class="text-slate-700 dark:text-slate-300 text-sm font-medium">${item.nombre}</div><div class="flex gap-1 mt-1.5 flex-wrap flex-wrap">${badgeTemporada}${ratingStars ? `<span class="macro-chip bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">${ratingStars}</span>` : ''}<span class="macro-chip bg-white/70 dark:bg-slate-700">🔥 ${item.kcal} kcal</span>${item.prot ? `<span class="macro-chip bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300">P ${item.prot}g</span>` : ''}</div></div><div class="flex flex-col gap-1"><button class="recipe-btn w-7 h-7 bg-teal-600 hover:bg-teal-700 text-white rounded-full flex items-center justify-center text-xs" onclick="event.stopPropagation(); abrirModalReceta('${item.id}')" title="Ver receta">👨‍</button><button class="fav-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isFav ? 'fav-icon-active' : ''}" onclick="toggleFavorito('${item.id}', event)" title="${isFav ? 'Quitar de favoritos' : 'Añadir a favoritos'}">${isFav ? '❤️' : '🤍'}</button><button class="exclude-btn w-7 h-7 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center text-sm border border-slate-200 dark:border-slate-600 ${isExc ? 'exclude-icon-active' : ''}" onclick="toggleExcluido('${item.id}', event)" title="${isExc ? 'Incluir en menú' : 'Excluir del menú'}">${isExc ? '🚫' : ''}</button></div></div>${isSub ? `<div class="text-xs text-amber-700 dark:text-amber-400 mt-2 font-semibold">✓ Sustituido</div>` : ''}${isFav ? `<div class="text-xs text-red-600 dark:text-red-400 mt-1 font-semibold">❤️ Favorito</div>` : ''}${isExc ? `<div class="text-xs text-slate-500 mt-1 font-semibold"> Excluido</div>` : ''}</div>`;
     };
     card.innerHTML = `<div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100 dark:border-slate-700"><div><div class="text-xs font-bold text-teal-600 uppercase">${dia.dia}</div><div class="text-lg font-bold text-slate-800 dark:text-white">Menú completo</div></div><div class="text-right"><div class="text-xs text-slate-500">Total</div><div class="text-lg font-bold text-teal-600">${kcalTotales} kcal</div></div></div><div class="space-y-2">${foodItemHTML(dia.desayuno, 'desayuno', 'Desayuno', 'bg-amber-50 dark:bg-amber-900/20', '☀️')}${foodItemHTML(dia.comida.prot, 'comida.prot', 'Comida · Proteína', 'bg-orange-50 dark:bg-orange-900/20', '🥩')}${foodItemHTML(dia.comida.carb, 'comida.carb', 'Comida · Carbohidrato', 'bg-yellow-50 dark:bg-yellow-900/20', '🍚')}${foodItemHTML(dia.comida.verdura, 'comida.verdura', 'Comida · Verdura', 'bg-green-50 dark:bg-green-900/20', '🥦')}${foodItemHTML(dia.comida.grasa, 'comida.grasa', 'Comida · Grasa', 'bg-emerald-50 dark:bg-emerald-900/20', '🥑')}${foodItemHTML(dia.merienda, 'merienda', 'Merienda', 'bg-pink-50 dark:bg-pink-900/20', '🍎')}${foodItemHTML(dia.cena.prot, 'cena.prot', 'Cena · Proteína', 'bg-indigo-50 dark:bg-indigo-900/20', '')}${foodItemHTML(dia.cena.verdura, 'cena.verdura', 'Cena · Verdura', 'bg-violet-50 dark:bg-violet-900/20', '🥬')}</div>`;
     cont.appendChild(card);
@@ -943,11 +935,11 @@ async function compartirApp() {
 // ============================================
 function categorizarIngrediente(ing) {
   const lower = ing.toLowerCase();
-  if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|lentejas|garbanzos|alubias|ternera/.test(lower)) return { cat: '🥩 Proteínas', color: 'from-rose-500 to-pink-500' };
-  if (/arroz|quinoa|pasta|batata|avena|pan|cuscús|bulgur|boniato|tortita/.test(lower)) return { cat: '🍚 Cereales y Tubérculos', color: 'from-amber-500 to-orange-500' };
-  if (/aceite|aguacate|almendra|nueces|pistacho|anacardo|semilla|tahini|aceituna/.test(lower)) return { cat: '🥑 Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
+  if (/pollo|pavo|salmón|merluza|atún|huevo|tofu|lentejas|garbanzos|alubias|ternera/.test(lower)) return { cat: ' Proteínas', color: 'from-rose-500 to-pink-500' };
+  if (/arroz|quinoa|pasta|batata|avena|pan|cuscús|bulgur|boniato|tortita/.test(lower)) return { cat: ' Carbohidratos', color: 'from-amber-500 to-orange-500' };
+  if (/aceite|aguacate|almendra|nueces|pistacho|anacardo|semilla|tahini|aceituna/.test(lower)) return { cat: ' Grasas Saludables', color: 'from-emerald-500 to-teal-500' };
   if (/manzana|plátano|pera|fresa|cereza|sandía|melón|melocotón|nectarina|albaricoque|higo|granada|uva|caqui|mandarina|naranja|kiwi|pomelo|lima|frutos rojos|membrillo|pasas/.test(lower)) return { cat: '🍎 Frutas', color: 'from-red-500 to-rose-500' };
-  if (/brócoli|espinaca|tomate|calabacín|lechuga|pepino|cebolla|pimiento|berenjena|coliflor|alcachofa|espárrago|judía|acelga|col|seta|champiñón|puerro|hinojo|apio|remolacha|zanahoria|guisante|haba|calabaza|col lombarda|coles de bruselas|menestra|pisto|escalivada|gazpacho|salmorejo|hummus/.test(lower)) return { cat: '🥦 Verduras', color: 'from-green-500 to-emerald-500' };
+  if (/brócoli|espinaca|tomate|calabacín|lechuga|pepino|cebolla|pimiento|berenjena|coliflor|alcachofa|espárrago|judía|acelga|col|seta|champiñón|puerro|hinojo|apio|remolacha|zanahoria|guisante|haba|calabaza|col lombarda|coles de bruselas|menestra|pisto|escalivada|gazpacho|salmorejo|hummus/.test(lower)) return { cat: ' Verduras', color: 'from-green-500 to-emerald-500' };
   return { cat: '🛒 Otros', color: 'from-blue-500 to-cyan-500' };
 }
 
@@ -1079,7 +1071,7 @@ function buscarVideo(nombre) { window.open(`https://www.youtube.com/results?sear
 // 14. SALUD Y HÁBITOS
 // ============================================
 const HABITOS_SALUD = [
-  { icon: '🚭', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos.', videos: ['beneficios de dejar de fumar'] },
+  { icon: '', titulo: 'Dejar de fumar', texto: 'El tabaco daña prácticamente todos los órganos.', videos: ['beneficios de dejar de fumar'] },
   { icon: '😴', titulo: 'Dormir 7-9 horas', texto: 'Regula hormonas del hambre y saciedad.', videos: ['higiene del sueño'] },
   { icon: '💧', titulo: 'Hidratación', texto: 'Mejora rendimiento y saciedad.', videos: ['cuánta agua beber'] },
   { icon: '🚶', titulo: 'Moverse cada día', texto: 'El NEAT suma al gasto diario.', videos: ['qué es el NEAT'] }
@@ -1178,7 +1170,7 @@ function renderPlanificador() {
     const card = document.createElement('div');
     card.className = `planner-day-card ${isToday(fecha) ? 'today' : ''}`;
     card.onclick = () => { switchTab('menu'); setTimeout(() => { const cards = document.querySelectorAll('#menuContent > div'); if (cards[menuIdx]) cards[menuIdx].scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100); };
-    card.innerHTML = `<div class="planner-day-name">${diasCortos[i]}</div><div class="planner-day-date">${formatDateShort(fecha)}${isToday(fecha) ? ' · Hoy' : ''}</div><div class="planner-meal planner-meal-breakfast" title="${DOMPurify.sanitize(diaMenu.desayuno.nombre)}">☀️ ${diaMenu.desayuno.nombre.substring(0, 25)}${diaMenu.desayuno.nombre.length > 25 ? '...' : ''}</div><div class="planner-meal planner-meal-lunch" title="${DOMPurify.sanitize(diaMenu.comida.prot.nombre)}">🍽️ ${diaMenu.comida.prot.nombre.substring(0, 25)}${diaMenu.comida.prot.nombre.length > 25 ? '...' : ''}</div><div class="planner-meal planner-meal-dinner" title="${DOMPurify.sanitize(diaMenu.cena.prot.nombre)}">🌙 ${diaMenu.cena.prot.nombre.substring(0, 25)}${diaMenu.cena.prot.nombre.length > 25 ? '...' : ''}</div><div class="planner-kcal">🔥 ${kcalDia} kcal</div>`;
+    card.innerHTML = `<div class="planner-day-name">${diasCortos[i]}</div><div class="planner-day-date">${formatDateShort(fecha)}${isToday(fecha) ? ' · Hoy' : ''}</div><div class="planner-meal planner-meal-breakfast" title="${DOMPurify.sanitize(diaMenu.desayuno.nombre)}">☀️ ${diaMenu.desayuno.nombre.substring(0, 25)}${diaMenu.desayuno.nombre.length > 25 ? '...' : ''}</div><div class="planner-meal planner-meal-lunch" title="${DOMPurify.sanitize(diaMenu.comida.prot.nombre)}">🍽️ ${diaMenu.comida.prot.nombre.substring(0, 25)}${diaMenu.comida.prot.nombre.length > 25 ? '...' : ''}</div><div class="planner-meal planner-meal-dinner" title="${DOMPurify.sanitize(diaMenu.cena.prot.nombre)}">🌙 ${diaMenu.cena.prot.nombre.substring(0, 25)}${diaMenu.cena.prot.nombre.length > 25 ? '...' : ''}</div><div class="planner-kcal"> ${kcalDia} kcal</div>`;
     grid.appendChild(card);
   }
   document.getElementById('resumenKcalSemana').textContent = totalKcalSemana.toLocaleString('es-ES');
@@ -1196,11 +1188,11 @@ function renderBatchCooking() {
     { tiempo: '17:00', duracion: '40 min', tarea: '🥦 Asar verduras (berenjenas, pimientos, calabacín)', tipo: 'verduras' },
     { tiempo: '17:30', duracion: '45 min', tarea: '🍗 Cocinar proteínas (pollo, pescado, huevos)', tipo: 'proteinas' },
     { tiempo: '18:00', duracion: '20 min', tarea: '🥗 Preparar ensaladas y gazpacho', tipo: 'frio' },
-    { tiempo: '18:20', duracion: '25 min', tarea: '📦 Envasar en tuppers y etiquetar', tipo: 'envasado' },
+    { tiempo: '18:20', duracion: '25 min', tarea: ' Envasar en tuppers y etiquetar', tipo: 'envasado' },
     { tiempo: '18:45', duracion: '15 min', tarea: ' Limpieza de cocina', tipo: 'limpieza' }
   ];
   const cont = document.getElementById('batchTasks');
-  cont.innerHTML = tareas.map((t, i) => `<div class="batch-task" onclick="this.classList.toggle('completed')"><input type="checkbox" class="batch-check"><div class="batch-time">${t.tiempo}</div><div class="flex-1"><div class="font-semibold text-slate-800 dark:text-white text-sm">${t.tarea}</div><div class="text-xs text-slate-500 dark:text-slate-400">⏱️ ${t.duracion}</div></div></div>`).join('');
+  cont.innerHTML = tareas.map((t, i) => `<div class="batch-task" onclick="this.classList.toggle('completed')"><input type="checkbox" class="batch-check"><div class="batch-time">${t.tiempo}</div><div class="flex-1"><div class="font-semibold text-slate-800 dark:text-white text-sm">${t.tarea}</div><div class="text-xs text-slate-500 dark:text-slate-400">️ ${t.duracion}</div></div></div>`).join('');
   document.getElementById('batchTuppersComida').textContent = '7';
   document.getElementById('batchTuppersCena').textContent = '7';
   document.getElementById('batchDesayunos').textContent = '7';
@@ -1259,7 +1251,7 @@ function exportarProgresoPDF() {
     yPos += 8;
   });
   doc.save('Progreso_NutriPro.pdf');
-  mostrarToast('📈 Reporte exportado');
+  mostrarToast(' Reporte exportado');
 }
 
 function exportarInformeCompletoPDF() {
@@ -1297,7 +1289,7 @@ function exportarPlanificadorPDF() {
     doc.text(`${diasCortos[i]} - ${calcularKcalDia(dia)} kcal`, 16, yPos);
     yPos += 8;
     doc.setTextColor(50, 50, 50); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
-    const rows = [['☀️ Desayuno', dia.desayuno.nombre], ['🍽️ Comida', `${dia.comida.prot.nombre} + ${dia.comida.carb.nombre} + ${dia.comida.verdura.nombre} + ${dia.comida.grasa.nombre}`], ['🍎 Merienda', dia.merienda.nombre], ['🌙 Cena', `${dia.cena.prot.nombre} + ${dia.cena.verdura.nombre}`]];
+    const rows = [['☀️ Desayuno', dia.desayuno.nombre], ['🍽️ Comida', `${dia.comida.prot.nombre} + ${dia.comida.carb.nombre} + ${dia.comida.verdura.nombre} + ${dia.comida.grasa.nombre}`], [' Merienda', dia.merienda.nombre], ['🌙 Cena', `${dia.cena.prot.nombre} + ${dia.cena.verdura.nombre}`]];
     doc.autoTable({ startY: yPos, body: rows, theme: 'plain', margin: { left: 14, right: 14 }, columnStyles: { 0: { cellWidth: 40, fontStyle: 'bold' } } });
     yPos = doc.lastAutoTable.finalY + 6;
   });
@@ -1342,7 +1334,7 @@ document.getElementById('formPassword').addEventListener('submit', async (e) => 
 document.querySelectorAll('.nav-btn').forEach(btn => { btn.addEventListener('click', () => switchTab(btn.dataset.tab)); });
 
 function switchTab(tab) {
-  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert('⛔ Acceso restringido'); return; }
+  if (tab === 'admin' && (!currentUser || currentUser.rol !== 'admin')) { alert(' Acceso restringido'); return; }
   document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-white/80'); });
   const section = document.getElementById(tab);
