@@ -1343,6 +1343,7 @@ function switchTab(tab) {
   if (btn) { btn.classList.add('active'); btn.classList.remove('text-white/80'); }
   document.getElementById('userDropdown').classList.remove('show');
   if (tab === 'comentarios') renderComentarios();
+   if (tab === 'dashboard') renderBrujula();
   if (tab === 'analisis') renderAnalisis();
   if (tab === 'seguimiento') renderSeguimiento();
   if (tab === 'salud') renderSalud();
