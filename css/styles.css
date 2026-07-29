@@ -1346,3 +1346,279 @@ input:checked + .toggle-slider:before {
   z-index: 999; 
   animation: fadeIn 0.3s ease; 
 }
+/* ============================================================
+   32. BRÚJULA NUTRICIONAL (FASE 3 · PASO 2)
+       Consejo del día personalizado. Componente editorial vivo:
+       acento ámbar, textura ambient, sello de día, micro-interacciones.
+   ============================================================ */
+
+.brujula {
+  position: relative;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-left: 5px solid #f59e0b;
+  border-radius: 1.25rem;
+  padding: 1.5rem 1.5rem 1.25rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 30px -18px rgba(13, 148, 136, 0.35);
+  animation: brujulaIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+.brujula:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05), 0 22px 44px -22px rgba(13, 148, 136, 0.45);
+}
+
+/* Capa ambient: brillo de esquina + cuadrícula tenue que se desvanece */
+.brujula__glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(13, 148, 136, 0.10), transparent 55%),
+    radial-gradient(2px 2px at 0 0, rgba(148, 163, 184, 0.18), transparent 60%);
+  background-size: auto, 15px 15px;
+  -webkit-mask-image: linear-gradient(135deg, #000 0%, rgba(0,0,0,0.35) 60%, transparent 100%);
+          mask-image: linear-gradient(135deg, #000 0%, rgba(0,0,0,0.35) 60%, transparent 100%);
+}
+.dark .brujula__glow {
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(45, 212, 191, 0.12), transparent 55%),
+    radial-gradient(2px 2px at 0 0, rgba(148, 163, 184, 0.10), transparent 60%);
+  background-size: auto, 15px 15px;
+}
+
+/* Sello de día tipo almanaque (decorativo, detrás del contenido) */
+.brujula__stamp {
+  position: absolute;
+  top: 0.35rem;
+  right: 1.1rem;
+  z-index: 0;
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 4.75rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: rgba(15, 23, 42, 0.05);
+  pointer-events: none;
+  user-select: none;
+}
+.dark .brujula__stamp { color: rgba(248, 250, 252, 0.06); }
+
+/* Todo el contenido por encima de las capas decorativas */
+.brujula__head,
+.brujula__body,
+.brujula__cats,
+.brujula__foot { position: relative; z-index: 1; }
+
+/* Cabecera */
+.brujula__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+.brujula__kicker {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #b45309;
+}
+.dark .brujula__kicker { color: #fbbf24; }
+.brujula__meta {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Cuerpo del consejo (zona que hace swap) */
+.brujula__body {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem 1rem;
+  align-items: start;
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+.brujula__body.is-swapping {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.brujula__icon {
+  grid-row: 1 / span 2;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  border-radius: 0.9rem;
+  background: linear-gradient(160deg, rgba(245, 158, 11, 0.16), rgba(245, 158, 11, 0.05));
+  border: 1px solid rgba(245, 158, 11, 0.28);
+}
+.brujula__titulo {
+  margin: 0.1rem 0 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--text-main);
+}
+.brujula__texto {
+  margin: 0.4rem 0 0;
+  grid-column: 2;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-main);
+  opacity: 0.92;
+}
+
+/* Etiqueta "por qué" + fuente */
+.brujula__razon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+  grid-column: 1 / -1;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.brujula__razon-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f59e0b;
+  box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5);
+  animation: brujulaPulse 2.4s ease-out infinite;
+}
+.brujula__fuente {
+  margin-left: auto;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+/* Cobertura de categorías */
+.brujula__cats {
+  margin-top: 1.1rem;
+  padding-top: 0.95rem;
+  border-top: 1px dashed var(--border-color);
+}
+.brujula__cats-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.brujula__cats-track {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.brujula__cat {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  background: transparent;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+.brujula__cat.is-on {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #b45309;
+  transform: scale(1.02);
+}
+.dark .brujula__cat.is-on {
+  background: rgba(251, 191, 36, 0.16);
+  border-color: rgba(251, 191, 36, 0.35);
+  color: #fcd34d;
+}
+
+/* Pie con acciones */
+.brujula__foot {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.1rem;
+}
+.brujula__btn {
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.55rem 1rem;
+  border-radius: 0.7rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.brujula__btn:active { transform: scale(0.97); }
+.brujula__btn--solid {
+  background: #0d9488;
+  color: #fff;
+  box-shadow: 0 6px 16px -8px rgba(13, 148, 136, 0.8);
+}
+.brujula__btn--solid:hover {
+  background: #0f766e;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px -10px rgba(13, 148, 136, 0.9);
+}
+.brujula__btn--ghost {
+  background: transparent;
+  color: var(--text-main);
+  border-color: var(--border-color);
+}
+.brujula__btn--ghost:hover {
+  background: var(--bg);
+  border-color: #0d9488;
+  color: #0d9488;
+  transform: translateY(-1px);
+}
+.brujula__count {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* Animaciones */
+@keyframes brujulaIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes brujulaPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.45); }
+  70%  { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+/* Responsive: en pantallas pequeñas el icono pasa arriba del texto */
+@media (max-width: 480px) {
+  .brujula__body { grid-template-columns: 1fr; }
+  .brujula__icon { grid-row: auto; }
+  .brujula__texto { grid-column: 1; }
+  .brujula__stamp { font-size: 3.5rem; }
+  .brujula__fuente { margin-left: 0; width: 100%; }
+}
+
+/* Accesibilidad: respetar reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .brujula,
+  .brujula__body,
+  .brujula__cat,
+  .brujula__btn,
+  .brujula__razon-dot { animation: none !important; transition: none !important; }
+  .brujula:hover { transform: none; }
+}
