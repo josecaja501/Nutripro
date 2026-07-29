@@ -418,3 +418,168 @@ window.razonPersonalizacion = razonPersonalizacion;
 window.hashSemilla = hashSemilla;
 
 console.log('[NutriPro] Consejos cargados: ' + CONSEJOS_DB.length + ' reglas de personalización');
+// ============================================================
+// 6. MODO DIABETES (FASE 4 · sub-paso 1.2)
+//    Datos glucémicos ORIENTATIVOS por plato + reglas de consejo.
+//    INERTES hasta que app.js alimente ctx.diabetes (sub-paso 1.5).
+//    hc = hidratos por ración estándar (g); 1 ración de HC = 10 g.
+//    ig = índice glucémico orientativo: 'bajo' | 'medio' | 'alto'.
+//    NO son análisis de laboratorio: el usuario con diabetes debe
+//    contrastar con su educación diabetológica / etiquetas / equipo.
+// ============================================================
+
+var GLUCEMIA_DB = {
+  // PROTEÍNAS (HC ≈ 0; legumbres como plato sí cargan HC)
+  'p1':  { hc: 0,  fibra: 0, ig: 'bajo' }, 'p2':  { hc: 0,  fibra: 0, ig: 'bajo' },
+  'p3':  { hc: 0,  fibra: 0, ig: 'bajo' }, 'p4':  { hc: 0,  fibra: 0, ig: 'bajo' },
+  'p5':  { hc: 0,  fibra: 0, ig: 'bajo' }, 'p6':  { hc: 0,  fibra: 0, ig: 'bajo' },
+  'p7':  { hc: 6,  fibra: 1, ig: 'medio' }, 'p8':  { hc: 4,  fibra: 1, ig: 'bajo' },
+  'p9':  { hc: 0,  fibra: 0, ig: 'bajo' }, 'p10': { hc: 0,  fibra: 0, ig: 'bajo' },
+  'p11': { hc: 2,  fibra: 0, ig: 'bajo' }, 'p12': { hc: 12, fibra: 2, ig: 'medio' },
+  'p13': { hc: 1,  fibra: 0, ig: 'bajo' }, 'p14': { hc: 3,  fibra: 0, ig: 'bajo' },
+  'p15': { hc: 0,  fibra: 0, ig: 'bajo' }, 'p16': { hc: 0,  fibra: 0, ig: 'bajo' },
+  'p17': { hc: 1,  fibra: 0, ig: 'bajo' }, 'p18': { hc: 1,  fibra: 0, ig: 'bajo' },
+  'p19': { hc: 3,  fibra: 1, ig: 'bajo' }, 'p20': { hc: 3,  fibra: 0, ig: 'bajo' },
+  'p21': { hc: 26, fibra: 7, ig: 'medio' }, 'p22': { hc: 28, fibra: 8, ig: 'medio' },
+  'p23': { hc: 27, fibra: 7, ig: 'medio' }, 'p24': { hc: 5,  fibra: 2, ig: 'bajo' },
+  // CARBOHIDRATOS (los que más cargan HC)
+  'c1':  { hc: 42, fibra: 4, ig: 'medio' }, 'c2':  { hc: 45, fibra: 1, ig: 'alto' },
+  'c3':  { hc: 40, fibra: 5, ig: 'medio' }, 'c4':  { hc: 41, fibra: 4, ig: 'medio' },
+  'c5':  { hc: 39, fibra: 5, ig: 'medio' }, 'c6':  { hc: 38, fibra: 6, ig: 'medio' },
+  'c7':  { hc: 24, fibra: 4, ig: 'medio' }, 'c8':  { hc: 23, fibra: 5, ig: 'medio' },
+  'c9':  { hc: 30, fibra: 3, ig: 'medio' }, 'c10': { hc: 26, fibra: 4, ig: 'medio' },
+  'c11': { hc: 25, fibra: 4, ig: 'bajo' }, 'c12': { hc: 16, fibra: 2, ig: 'medio' },
+  'c13': { hc: 8,  fibra: 2, ig: 'bajo' }, 'c14': { hc: 13, fibra: 1, ig: 'medio' },
+  'c15': { hc: 11, fibra: 4, ig: 'bajo' },
+  // VERDURAS (bajas; suben si llevan legumbre/patata/pasas)
+  'v1':  { hc: 5,  fibra: 2, ig: 'bajo' }, 'v2':  { hc: 6,  fibra: 2, ig: 'bajo' },
+  'v3':  { hc: 4,  fibra: 1, ig: 'bajo' }, 'v4':  { hc: 7,  fibra: 2, ig: 'bajo' },
+  'v5':  { hc: 9,  fibra: 4, ig: 'bajo' }, 'v6':  { hc: 15, fibra: 3, ig: 'medio' },
+  'v7':  { hc: 6,  fibra: 4, ig: 'bajo' }, 'v8':  { hc: 4,  fibra: 2, ig: 'bajo' },
+  'v9':  { hc: 6,  fibra: 3, ig: 'bajo' }, 'v10': { hc: 13, fibra: 4, ig: 'medio' },
+  'v11': { hc: 18, fibra: 6, ig: 'medio' }, 'v12': { hc: 5,  fibra: 3, ig: 'bajo' },
+  'v13': { hc: 6,  fibra: 3, ig: 'bajo' }, 'v14': { hc: 10, fibra: 3, ig: 'medio' },
+  'v15': { hc: 4,  fibra: 2, ig: 'bajo' }, 'v16': { hc: 4,  fibra: 2, ig: 'bajo' },
+  'v17': { hc: 10, fibra: 4, ig: 'bajo' }, 'v18': { hc: 11, fibra: 5, ig: 'medio' },
+  'v19': { hc: 8,  fibra: 4, ig: 'bajo' }, 'v20': { hc: 7,  fibra: 4, ig: 'bajo' },
+  'v21': { hc: 6,  fibra: 2, ig: 'bajo' }, 'v22': { hc: 6,  fibra: 3, ig: 'bajo' },
+  'v23': { hc: 3,  fibra: 2, ig: 'bajo' }, 'v24': { hc: 9,  fibra: 3, ig: 'medio' },
+  'v25': { hc: 7,  fibra: 3, ig: 'bajo' },
+  // GRASAS (HC ≈ 0-4)
+  'g1':  { hc: 0,  fibra: 0, ig: 'bajo' }, 'g2':  { hc: 1,  fibra: 1, ig: 'bajo' },
+  'g3':  { hc: 1,  fibra: 1, ig: 'bajo' }, 'g4':  { hc: 2,  fibra: 3, ig: 'bajo' },
+  'g5':  { hc: 2,  fibra: 2, ig: 'bajo' }, 'g6':  { hc: 1,  fibra: 1, ig: 'bajo' },
+  'g7':  { hc: 2,  fibra: 1, ig: 'bajo' }, 'g8':  { hc: 4,  fibra: 1, ig: 'bajo' },
+  'g9':  { hc: 2,  fibra: 2, ig: 'bajo' }, 'g10': { hc: 3,  fibra: 1, ig: 'bajo' },
+  // DESAYUNOS
+  'd1':  { hc: 20, fibra: 3, ig: 'medio' }, 'd2':  { hc: 22, fibra: 4, ig: 'medio' },
+  'd3':  { hc: 18, fibra: 1, ig: 'medio' }, 'd4':  { hc: 40, fibra: 6, ig: 'medio' },
+  'd5':  { hc: 2,  fibra: 1, ig: 'bajo' }, 'd6':  { hc: 18, fibra: 2, ig: 'medio' },
+  'd7':  { hc: 30, fibra: 1, ig: 'alto' }, 'd8':  { hc: 25, fibra: 2, ig: 'medio' },
+  'd9':  { hc: 25, fibra: 3, ig: 'medio' }, 'd10': { hc: 20, fibra: 1, ig: 'alto' },
+  'd11': { hc: 35, fibra: 5, ig: 'medio' }, 'd12': { hc: 3,  fibra: 1, ig: 'bajo' },
+  // MERIENDAS
+  'm1':  { hc: 15, fibra: 3, ig: 'medio' }, 'm2':  { hc: 14, fibra: 1, ig: 'medio' },
+  'm3':  { hc: 12, fibra: 4, ig: 'bajo' }, 'm4':  { hc: 18, fibra: 1, ig: 'medio' },
+  'm5':  { hc: 4,  fibra: 2, ig: 'bajo' }, 'm6':  { hc: 18, fibra: 2, ig: 'medio' },
+  'm7':  { hc: 25, fibra: 2, ig: 'medio' }, 'm8':  { hc: 20, fibra: 3, ig: 'medio' },
+  'm9':  { hc: 15, fibra: 2, ig: 'medio' }, 'm10': { hc: 8,  fibra: 3, ig: 'bajo' },
+  'm11': { hc: 3,  fibra: 1, ig: 'bajo' }, 'm12': { hc: 8,  fibra: 3, ig: 'bajo' }
+};
+
+// Devuelve el registro glucémico de un plato, o un fallback conservador.
+function glucemiaDe(id) {
+  return GLUCEMIA_DB[id] || { hc: 0, fibra: 0, ig: 'bajo' };
+}
+
+// Raciones de HC orientativas de un plato (1 ración = 10 g de HC).
+function racionesHCDe(id) {
+  return Math.round((glucemiaDe(id).hc / 10) * 10) / 10;
+}
+
+// ---- Reglas de consejo específicas de diabetes ----
+// cond.diabetes  -> solo si el usuario tiene el modo activo (ctx.diabetes === true)
+// cond.diabetesTipo -> además, solo para esos subtipos (v1: t2 / prediabetes / control)
+var CONSEJOS_DIABETES = [
+  { id: 'diab_raciones', cat: 'raciones', icono: '',
+    titulo: 'Cuenta raciones, no prohibas',
+    texto: 'Una ración de hidratos son 10 g. Saber cuántas lleva cada plato te deja repartirlos con calma en vez de eliminarlos: la reeducación gana a la restricción.',
+    fuente: 'Educación diabetológica · ración = 10 g HC',
+    cond: { diabetes: true } },
+  { id: 'diab_objetivo_comida', cat: 'raciones', icono: '🎯',
+    titulo: 'Un tope de HC por comida ayuda',
+    texto: 'Mantener un objetivo de hidratos por comida (el que fijes en la evaluación) evita picos grandes. No es una jaula: es una referencia para construir el plato.',
+    fuente: 'Consenso clínico · reparto de HC',
+    cond: { diabetes: true } },
+  { id: 'diab_fibra_freno', cat: 'fibra', icono: '🌾',
+    titulo: 'La fibra frena el pico',
+    texto: 'Acompañar los hidratos con fibra (verdura, legumbre, integral) enlentece la absorción y modera la glucemia tras comer. Más fibra, subida más suave.',
+    fuente: 'Consenso clínico · fibra y glucemia postprandial',
+    cond: { diabetes: true } },
+  { id: 'diab_orden_plato', cat: 'conducta', icono: '🍽️',
+    titulo: 'El orden del plato importa',
+    texto: 'Empezar por la verdura y la proteína y dejar el hidrato para el final reduce el pico de glucemia frente a comerlo todo a la vez. Un truco simple y con evidencia.',
+    fuente: 'Evidencia · orden de ingestión',
+    cond: { diabetes: true } },
+  { id: 'diab_zumos', cat: 'calidad', icono: '🧃',
+    titulo: 'Cuidado con los zumos',
+    texto: 'El zumo concentra el azúcar y pierde la fibra de la fruta: dispara la glucemia. Mejor fruta entera, que sacia más y sube menos.',
+    fuente: 'Consenso clínico · azúcares libres',
+    cond: { diabetes: true } },
+  { id: 'diab_integral', cat: 'calidad', icono: '🌾',
+    titulo: 'Integral mejor que refinado',
+    texto: 'Arroz, pasta y pan integrales tienen más fibra y una carga glucémica menor que sus versiones refinadas. Pequeño cambio, efecto real en el pico.',
+    fuente: 'Consenso clínico · índice glucémico',
+    cond: { diabetes: true } },
+  { id: 'diab_grasa_prote_freno', cat: 'grasas', icono: '🥑',
+    titulo: 'Grasa y proteína moderan la subida',
+    texto: 'Un plato mixto (hidrato + proteína + grasa saludable) sube menos y más lento que el hidrato solo. Por eso el menú combina los grupos en cada comida.',
+    fuente: 'Consenso clínico · comida mixta',
+    cond: { diabetes: true } },
+  { id: 'diab_movimiento_post', cat: 'movimiento', icono: '🚶',
+    titulo: 'Moverte tras comer ayuda',
+    texto: 'Un paseo de 10-15 minutos después de comer aprovecha la glucosa que entra y baja la glucemia postprandial. Sin sudar la camiseta: basta caminar.',
+    fuente: 'Consenso clínico · actividad postprandial',
+    cond: { diabetes: true } },
+  { id: 'diab_registro_patrones', cat: 'organizacion', icono: '📈',
+    titulo: 'Registra y mira patrones',
+    texto: 'Anotar tu glucemia (en Seguimiento) junto a lo que comiste te revela qué platos te suben más a ti. La diabetes es personal: tus datos mandan sobre las tablas.',
+    fuente: 'Autocontrol glucémico',
+    cond: { diabetes: true } },
+  { id: 'diab_predi_reversion', cat: 'conducta', icono: '🔄',
+    titulo: 'En prediabetes, peso y músculo mandan',
+    texto: 'Una pérdida de peso moderada y sostenida, sumada a trabajo de fuerza, puede frenar o revertir la prediabetes. No hace falta perfección: hace falta constancia.',
+    fuente: 'Consenso clínico · prediabetes',
+    cond: { diabetes: true, diabetesTipo: ['prediabetes'] } },
+  { id: 'diab_hba1c_brújula', cat: 'conducta', icono: '🧭',
+    titulo: 'La HbA1c es tu brújula trimestral',
+    texto: 'Si la anotas, la verás como referencia informativa. Pero quien la interpreta y fija objetivos eres tú con tu médico: la app la muestra, no la juzga.',
+    fuente: 'Control glucémico · HbA1c',
+    cond: { diabetes: true } }
+];
+
+// Añade las reglas de diabetes al banco (siguen inertes sin ctx.diabetes).
+CONSEJOS_DIABETES.forEach(function (r) { CONSEJOS_DB.push(r); });
+
+// ---- Wrapper del motor: añade la rama 'diabetes' sin tocar las 20 reglas base ----
+var _consejoAplicaBase = consejoAplica;
+consejoAplica = function (c, ctx) {
+  ctx = ctx || {};
+  var cond = c.cond || {};
+  if (cond.diabetes) {
+    if (ctx.diabetes !== true) return false;                 // seguro por defecto
+    if (cond.diabetesTipo) {
+      var tipos = Array.isArray(cond.diabetesTipo) ? cond.diabetesTipo : [cond.diabetesTipo];
+      if (tipos.indexOf(ctx.diabetesTipo) === -1) return false;
+    }
+  }
+  return _consejoAplicaBase(c, ctx);                         // delega el resto en la original
+};
+
+// Exportación global
+window.GLUCEMIA_DB = GLUCEMIA_DB;
+window.glucemiaDe = glucemiaDe;
+window.racionesHCDe = racionesHCDe;
+window.consejoAplica = consejoAplica;
+
+console.log('[NutriPro] Diabetes cargado: ' + Object.keys(GLUCEMIA_DB).length + ' platos glucémicos, ' + CONSEJOS_DIABETES.length + ' reglas (total consejos: ' + CONSEJOS_DB.length + ')');
