@@ -6,7 +6,7 @@
 // 1. BASE DE DATOS DE ALIMENTOS MEDITERRÁNEOS
 // ============================================
 
-const ALIMENTOS_DB = {
+var ALIMENTOS_DB = {
   // PROTEÍNAS (24 alimentos)
   'p1': { id: 'p1', grupo: 'prot', nombre: 'Pechuga de pollo a la plancha', kcal: 165, prot: 31, ing: ['pollo', 'aceite de oliva', 'sal', 'limón'], temporada: 'todo_el_año', es_fruta: false, active: true },
   'p2': { id: 'p2', grupo: 'prot', nombre: 'Salmón al horno con limón', kcal: 208, prot: 22, ing: ['salmón', 'aceite de oliva', 'limón', 'eneldo', 'ajo'], temporada: 'todo_el_año', es_fruta: false, active: true },
@@ -122,624 +122,66 @@ const ALIMENTOS_DB = {
 // 2. BASE DE DATOS DE RECETAS
 // ============================================
 
-const RECETAS_DB = {
-  'c13': {
-    food_id: 'c13',
-    tiempo: '15 min + 2h reposo',
-    dificultad: 'Fácil',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Tomates maduros', cantidad: '1 kg' },
-      { nombre: 'Pepino', cantidad: '1/2 unidad' },
-      { nombre: 'Pimiento verde', cantidad: '1/2 unidad' },
-      { nombre: 'Cebolla', cantidad: '1/4 unidad' },
-      { nombre: 'Ajo', cantidad: '1 diente' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '100 ml' },
-      { nombre: 'Vinagre de Jerez', cantidad: '30 ml' },
-      { nombre: 'Sal', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Lavar bien todas las verduras.',
-      'Trocear tomates, pepino, pimiento, cebolla y ajo.',
-      'Triturar todo con batidora hasta obtener textura fina.',
-      'Añadir aceite de oliva, vinagre y sal. Batir de nuevo.',
-      'Colar si se desea textura más fina.',
-      'Refrigerar mínimo 2 horas antes de servir.',
-      'Servir bien frío con tropezones de verdura por encima.'
-    ],
-    consejo: 'Se conserva 3-4 días en la nevera. Cuanto más maduros los tomates, mejor sabor.'
-  },
-  'c14': {
-    food_id: 'c14',
-    tiempo: '20 min + 1h reposo',
-    dificultad: 'Fácil',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Tomates maduros', cantidad: '1 kg' },
-      { nombre: 'Pan del día anterior', cantidad: '200 g' },
-      { nombre: 'Ajo', cantidad: '1 diente' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '150 ml' },
-      { nombre: 'Vinagre', cantidad: '30 ml' },
-      { nombre: 'Sal', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Remojar el pan en agua 10 minutos.',
-      'Trocear los tomates.',
-      'Triturar tomates, pan escurrido y ajo.',
-      'Añadir aceite en hilo mientras se tritura.',
-      'Agregar vinagre y sal. Batir hasta emulsionar.',
-      'Refrigerar 1 hora.',
-      'Servir con huevo duro y jamón picado por encima.'
-    ],
-    consejo: 'El pan debe ser del día anterior para mejor textura. El aceite debe añadirse en hilo fino.'
-  },
-  'v11': {
-    food_id: 'v11',
-    tiempo: '30 min',
-    dificultad: 'Media',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Espinacas frescas', cantidad: '500 g' },
-      { nombre: 'Garbanzos cocidos', cantidad: '400 g' },
-      { nombre: 'Ajo', cantidad: '3 dientes' },
-      { nombre: 'Comino molido', cantidad: '1 cdta' },
-      { nombre: 'Pimentón dulce', cantidad: '1 cdta' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '80 ml' },
-      { nombre: 'Sal', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Lavar bien las espinacas y escurrir.',
-      'Calentar aceite en sartén grande.',
-      'Dorar los ajos laminados.',
-      'Añadir comino y pimentón, remover 30 segundos.',
-      'Incorporar espinacas y saltear hasta que reduzcan.',
-      'Añadir garbanzos y mezclar bien.',
-      'Cocinar 5 minutos más. Rectificar de sal.'
-    ],
-    consejo: 'Tradicional sevillano. Se puede añadir taquitos de jamón para versión no vegana.'
-  },
-  'v17': {
-    food_id: 'v17',
-    tiempo: '45 min',
-    dificultad: 'Media',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Calabacín', cantidad: '2 unidades' },
-      { nombre: 'Berenjena', cantidad: '1 grande' },
-      { nombre: 'Pimiento verde', cantidad: '1 unidad' },
-      { nombre: 'Pimiento rojo', cantidad: '1 unidad' },
-      { nombre: 'Tomate maduro', cantidad: '4 unidades' },
-      { nombre: 'Cebolla', cantidad: '1 grande' },
-      { nombre: 'Ajo', cantidad: '2 dientes' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '100 ml' },
-      { nombre: 'Sal y pimienta', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Trocear todas las verduras en dados pequeños.',
-      'Calentar aceite en cazuela amplia.',
-      'Sofreír cebolla y ajo hasta dorar.',
-      'Añadir pimientos y cocinar 10 minutos.',
-      'Incorporar berenjena y calabacín. Cocinar 10 min más.',
-      'Añadir tomate triturado y salpimentar.',
-      'Cocinar a fuego lento 20-25 minutos hasta que esté bien hecho.'
-    ],
-    consejo: 'Se puede servir frío o caliente. Mejora de un día para otro. Perfecto con huevo poché encima.'
-  },
-  'p2': {
-    food_id: 'p2',
-    tiempo: '25 min',
-    dificultad: 'Fácil',
-    porciones: 2,
-    ingredientes: [
-      { nombre: 'Lomos de salmón', cantidad: '2 unidades (300 g)' },
-      { nombre: 'Limón', cantidad: '1 unidad' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '2 cdas' },
-      { nombre: 'Eneldo fresco', cantidad: '2 ramitas' },
-      { nombre: 'Ajo', cantidad: '2 dientes' },
-      { nombre: 'Sal y pimienta', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Precalentar horno a 200°C.',
-      'Colocar salmón sobre papel de aluminio.',
-      'Mezclar aceite, zumo de limón, ajo picado y eneldo.',
-      'Verter mezcla sobre el salmón. Salpimentar.',
-      'Cerrar el aluminio formando paquete.',
-      'Hornear 15-18 minutos.',
-      'Abrir con cuidado y servir con rodajas de limón.'
-    ],
-    consejo: 'El salmón está en su punto cuando se desmenuza fácil pero sigue rosado en el centro.'
-  },
-  'c2': {
-    food_id: 'c2',
-    tiempo: '50 min',
-    dificultad: 'Media',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Arroz bomba', cantidad: '320 g' },
-      { nombre: 'Alcachofas', cantidad: '6 unidades' },
-      { nombre: 'Judías verdes', cantidad: '200 g' },
-      { nombre: 'Garrofón', cantidad: '100 g' },
-      { nombre: 'Pimiento rojo', cantidad: '1/2 unidad' },
-      { nombre: 'Tomate triturado', cantidad: '200 g' },
-      { nombre: 'Azafrán', cantidad: '1 pizca' },
-      { nombre: 'Caldo de verduras', cantidad: '1 litro' },
-      { nombre: 'Aceite de oliva', cantidad: '80 ml' },
-      { nombre: 'Sal', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Calentar aceite en paellera.',
-      'Sofreír verduras troceadas 10 minutos.',
-      'Añadir tomate y cocinar 5 minutos.',
-      'Incorporar arroz y remover 2 minutos.',
-      'Añadir caldo caliente y azafrán.',
-      'Cocinar 18-20 minutos sin remover.',
-      'Dejar reposar 5 minutos antes de servir.'
-    ],
-    consejo: 'El arroz bomba absorbe mejor el caldo. No remover durante la cocción para que no suelte almidón.'
-  },
-  'p3': {
-    food_id: 'p3',
-    tiempo: '30 min',
-    dificultad: 'Media',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Lomos de merluza', cantidad: '4 unidades' },
-      { nombre: 'Cebolla', cantidad: '2 grandes' },
-      { nombre: 'Pimiento verde', cantidad: '1 unidad' },
-      { nombre: 'Tomate maduro', cantidad: '2 unidades' },
-      { nombre: 'Vino blanco', cantidad: '100 ml' },
-      { nombre: 'Aceite de oliva', cantidad: '80 ml' },
-      { nombre: 'Sal', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Salpimentar la merluza y enharinar ligeramente.',
-      'Freír en aceite caliente 2 min por lado. Reservar.',
-      'En el mismo aceite, pochar cebolla y pimiento 15 min.',
-      'Añadir tomate triturado y cocinar 10 min.',
-      'Verter vino blanco y reducir.',
-      'Colocar merluza sobre la salsa.',
-      'Cocinar 5 minutos más a fuego suave.'
-    ],
-    consejo: 'La salsa debe quedar melosa. Se puede añadir guindilla para toque picante.'
-  },
-  'c12': {
-    food_id: 'c12',
-    tiempo: '35 min',
-    dificultad: 'Media',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Patatas', cantidad: '600 g' },
-      { nombre: 'Huevos', cantidad: '6 unidades' },
-      { nombre: 'Cebolla', cantidad: '1 grande (opcional)' },
-      { nombre: 'Aceite de oliva', cantidad: '100 ml' },
-      { nombre: 'Sal', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Pelar y cortar patatas en láminas finas.',
-      'Freír en aceite a fuego medio 20 min. Escurrir.',
-      'Batir huevos con sal.',
-      'Mezclar patatas con huevo. Dejar reposar 5 min.',
-      'Cuajar en sartén antiadherente 3 min.',
-      'Dar la vuelta con ayuda de un plato.',
-      'Cuajar 2 min más. Debe quedar jugosa por dentro.'
-    ],
-    consejo: 'El truco está en el punto de cuajado: debe quedar cremosa por dentro. Se puede hacer sin cebolla.'
-  },
-  'p12': {
-    food_id: 'p12',
-    tiempo: '90 min',
-    dificultad: 'Media',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Pulpo', cantidad: '1 kg' },
-      { nombre: 'Patatas', cantidad: '4 grandes' },
-      { nombre: 'Pimentón de la Vera', cantidad: '2 cdas' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '80 ml' },
-      { nombre: 'Sal gruesa', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Congelar el pulpo 48h antes (rompe fibras).',
-      'Hervir agua con sal. Asustar el pulpo 3 veces (meter y sacar).',
-      'Cocinar 40-50 min hasta que esté tierno.',
-      'Cocer patatas en el mismo caldo.',
-      'Escurrir pulpo y cortar en rodajas.',
-      'Servir sobre patatas troceadas.',
-      'Espolvorear pimentón y regar con aceite de oliva.'
-    ],
-    consejo: 'El pimentón debe añadirse al final para que no amargue. La textura debe ser tierna pero firme.'
-  },
-  'v2': {
-    food_id: 'v2',
-    tiempo: '15 min',
-    dificultad: 'Fácil',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Tomates maduros', cantidad: '4 grandes' },
-      { nombre: 'Pepino', cantidad: '1 grande' },
-      { nombre: 'Cebolla morada', cantidad: '1/2 unidad' },
-      { nombre: 'Queso feta', cantidad: '200 g' },
-      { nombre: 'Aceitunas kalamata', cantidad: '100 g' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '80 ml' },
-      { nombre: 'Orégano', cantidad: '1 cdta' },
-      { nombre: 'Sal', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Cortar tomates en gajos grandes.',
-      'Pelar y rodajas pepino (no muy fino).',
-      'Cortar cebolla en aros finos.',
-      'Colocar todo en fuente.',
-      'Añadir aceitunas.',
-      'Poner bloque de feta encima (no desmenuzar).',
-      'Regar con aceite, orégano y sal.'
-    ],
-    consejo: 'El feta debe ser auténtico griego. Nunca mezclar, cada comensal se sirve a su gusto.'
-  },
-  'v7': {
-    food_id: 'v7',
-    tiempo: '25 min',
-    dificultad: 'Fácil',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Alcachofas frescas', cantidad: '8 unidades' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '60 ml' },
-      { nombre: 'Limón', cantidad: '1/2 unidad' },
-      { nombre: 'Ajo', cantidad: '2 dientes' },
-      { nombre: 'Sal y pimienta', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Limpiar alcachofas: quitar hojas externas duras.',
-      'Cortar tallo y puntas. Partir por la mitad.',
-      'Frotar con limón para que no se oxiden.',
-      'Calentar plancha o sartén con aceite.',
-      'Colocar alcachofas cara cortada abajo.',
-      'Cocinar 8-10 min hasta dorar.',
-      'Dar vuelta, añadir ajo laminado. 5 min más.'
-    ],
-    consejo: 'Deben quedar doradas por fuera y tiernas por dentro. El limón es clave para el sabor.'
-  },
-  'v8': {
-    food_id: 'v8',
-    tiempo: '15 min',
-    dificultad: 'Fácil',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Espárragos trigueros', cantidad: '2 manojos' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '50 ml' },
-      { nombre: 'Sal en escamas', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Lavar espárragos y secar bien.',
-      'Cortar parte dura del tallo (2-3 cm).',
-      'Calentar plancha a fuego fuerte.',
-      'Colocar espárragos en fila.',
-      'Cocinar 3-4 min por cada lado.',
-      'Retirar cuando estén tiernos pero firmes.',
-      'Aliñar con aceite y sal en escamas.'
-    ],
-    consejo: 'No cocinar en exceso, deben quedar al dente. La sal en escamas realza el sabor.'
-  },
-  'v5': {
-    food_id: 'v5',
-    tiempo: '60 min',
-    dificultad: 'Media',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Berenjenas grandes', cantidad: '4 unidades' },
-      { nombre: 'Carne picada mixta', cantidad: '400 g' },
-      { nombre: 'Cebolla', cantidad: '1 grande' },
-      { nombre: 'Tomate triturado', cantidad: '200 g' },
-      { nombre: 'Ajo', cantidad: '2 dientes' },
-      { nombre: 'Aceite de oliva', cantidad: '60 ml' },
-      { nombre: 'Sal, pimienta, orégano', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Partir berenjenas por la mitad longitudinalmente.',
-      'Vaciar con cuchara (reservar pulpa).',
-      'Salar y dejar 30 min para que suden.',
-      'Sofreír cebolla y ajo. Añadir carne.',
-      'Incorporar pulpa de berenjena picada.',
-      'Añadir tomate y especias. Cocinar 15 min.',
-      'Rellenar berenjenas. Hornear 25 min a 180°C.'
-    ],
-    consejo: 'Salar las berenjenas elimina el amargor. Se puede gratinar con queso al final.'
-  },
-  'v9': {
-    food_id: 'v9',
-    tiempo: '35 min',
-    dificultad: 'Fácil',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Judías verdes', cantidad: '600 g' },
-      { nombre: 'Jamón serrano', cantidad: '100 g' },
-      { nombre: 'Cebolla', cantidad: '1 pequeña' },
-      { nombre: 'Aceite de oliva', cantidad: '40 ml' },
-      { nombre: 'Sal', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Limpiar judías y cortar puntas.',
-      'Cocer en agua con sal 20 min. Escurrir.',
-      'Picar cebolla y jamón en taquitos.',
-      'Sofreír cebolla en aceite.',
-      'Añadir jamón y dorar.',
-      'Incorporar judías y saltear 5 min.',
-      'Rectificar de sal y servir.'
-    ],
-    consejo: 'Las judías deben quedar al dente, no pasadas. El jamón aporta umami.'
-  },
-  'v15': {
-    food_id: 'v15',
-    tiempo: '15 min',
-    dificultad: 'Fácil',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Champiñones frescos', cantidad: '500 g' },
-      { nombre: 'Ajo', cantidad: '4 dientes' },
-      { nombre: 'Perejil fresco', cantidad: '1 manojo' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '80 ml' },
-      { nombre: 'Sal y pimienta', cantidad: 'al gusto' },
-      { nombre: 'Guindilla (opcional)', cantidad: '1 unidad' }
-    ],
-    pasos: [
-      'Limpiar champiñones con paño húmedo.',
-      'Laminar o cortar en cuartos.',
-      'Laminar ajos finamente.',
-      'Calentar aceite en sartén amplia.',
-      'Dorar ajos (sin quemar).',
-      'Añadir champiñones y saltear 5-7 min.',
-      'Agregar perejil picado, sal y pimienta.'
-    ],
-    consejo: 'Los champiñones sueltan agua, cocinar hasta que se evapore. El perejil al final para que no se queme.'
-  },
-  'd1': {
-    food_id: 'd1',
-    tiempo: '5 min',
-    dificultad: 'Fácil',
-    porciones: 1,
-    ingredientes: [
-      { nombre: 'Pan integral de pueblo', cantidad: '2 rebanadas' },
-      { nombre: 'Tomate maduro', cantidad: '1 grande' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '2 cdas' },
-      { nombre: 'Sal', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Tostar el pan ligeramente.',
-      'Cortar tomate por la mitad.',
-      'Frotar tomate sobre el pan (como rallador).',
-      'Regar con aceite de oliva virgen extra.',
-      'Añadir sal al gusto.',
-      'Opcional: añadir jamón serrano o queso fresco.'
-    ],
-    consejo: 'El tomate debe estar muy maduro. El pan debe ser del día anterior para mejor textura.'
-  },
-  'm3': {
-    food_id: 'm3',
-    tiempo: '15 min + reposo',
-    dificultad: 'Fácil',
-    porciones: 4,
-    ingredientes: [
-      { nombre: 'Garbanzos cocidos', cantidad: '400 g' },
-      { nombre: 'Tahini', cantidad: '3 cdas' },
-      { nombre: 'Limón', cantidad: '1 unidad' },
-      { nombre: 'Ajo', cantidad: '1 diente' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '50 ml' },
-      { nombre: 'Comino', cantidad: '1/2 cdta' },
-      { nombre: 'Sal', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Escurrir garbanzos (reservar líquido).',
-      'Triturar garbanzos con tahini, ajo y limón.',
-      'Añadir aceite en hilo mientras se tritura.',
-      'Agregar comino y sal.',
-      'Ajustar textura con líquido de cocción.',
-      'Refrigerar 1 hora.',
-      'Servir con aceite de oliva y pimentón por encima.'
-    ],
-    consejo: 'Cuanto más tiempo repose, mejor sabor. Se conserva 5 días en nevera.'
-  },
-  'm4': {
-    food_id: 'm4',
-    tiempo: '5 min',
-    dificultad: 'Fácil',
-    porciones: 2,
-    ingredientes: [
-      { nombre: 'Queso fresco batido', cantidad: '200 g' },
-      { nombre: 'Membrillo', cantidad: '100 g' },
-      { nombre: 'Nueces (opcional)', cantidad: '20 g' }
-    ],
-    pasos: [
-      'Cortar queso fresco en rodajas gruesas.',
-      'Colocar en plato.',
-      'Añadir membrillo en trozos al lado.',
-      'Opcional: añadir nueces troceadas.',
-      'Servir inmediatamente.'
-    ],
-    consejo: 'Clásico español. El contraste dulce-salado es perfecto. Se puede añadir miel.'
-  },
-  'm7': {
-    food_id: 'm7',
-    tiempo: '5 min',
-    dificultad: 'Fácil',
-    porciones: 1,
-    ingredientes: [
-      { nombre: 'Plátano maduro', cantidad: '1 unidad' },
-      { nombre: 'Leche', cantidad: '250 ml' },
-      { nombre: 'Canela', cantidad: '1 pizca' },
-      { nombre: 'Miel (opcional)', cantidad: '1 cdta' }
-    ],
-    pasos: [
-      'Pelar plátano.',
-      'Trocear.',
-      'Añadir leche.',
-      'Batir hasta obtener textura cremosa.',
-      'Añadir canela.',
-      'Opcional: miel al gusto.',
-      'Servir inmediatamente.'
-    ],
-    consejo: 'El plátano debe estar maduro para más dulzor natural. Se puede añadir avena para más consistencia.'
-  },
-  'p4': {
-    food_id: 'p4',
-    tiempo: '15 min',
-    dificultad: 'Fácil',
-    porciones: 2,
-    ingredientes: [
-      { nombre: 'Sardinas frescas', cantidad: '8 unidades' },
-      { nombre: 'Aceite de oliva virgen extra', cantidad: '30 ml' },
-      { nombre: 'Limón', cantidad: '1/2 unidad' },
-      { nombre: 'Sal gruesa', cantidad: 'al gusto' }
-    ],
-    pasos: [
-      'Limpiar sardinas: quitar cabeza y vísceras.',
-      'Lavar y secar bien.',
-      'Salpimentar.',
-      'Calentar plancha a fuego fuerte.',
-      'Colocar sardinas 3-4 min por lado.',
-      'Retirar cuando piel esté crujiente.',
-      'Aliñar con aceite y limón.'
-    ],
-    consejo: 'Las sardinas frescas del día son clave. La piel debe quedar crujiente.'
-  }
+var RECETAS_DB = {
+  'c13': { food_id: 'c13', tiempo: '15 min + 2h reposo', dificultad: 'Fácil', porciones: 4, ingredientes: [{ nombre: 'Tomates maduros', cantidad: '1 kg' }, { nombre: 'Pepino', cantidad: '1/2 unidad' }, { nombre: 'Pimiento verde', cantidad: '1/2 unidad' }, { nombre: 'Cebolla', cantidad: '1/4 unidad' }, { nombre: 'Ajo', cantidad: '1 diente' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '100 ml' }, { nombre: 'Vinagre de Jerez', cantidad: '30 ml' }, { nombre: 'Sal', cantidad: 'al gusto' }], pasos: ['Lavar bien todas las verduras.', 'Trocear tomates, pepino, pimiento, cebolla y ajo.', 'Triturar todo con batidora hasta obtener textura fina.', 'Añadir aceite de oliva, vinagre y sal. Batir de nuevo.', 'Colar si se desea textura más fina.', 'Refrigerar mínimo 2 horas antes de servir.', 'Servir bien frío con tropezones de verdura por encima.'], consejo: 'Se conserva 3-4 días en la nevera. Cuanto más maduros los tomates, mejor sabor.' },
+  'c14': { food_id: 'c14', tiempo: '20 min + 1h reposo', dificultad: 'Fácil', porciones: 4, ingredientes: [{ nombre: 'Tomates maduros', cantidad: '1 kg' }, { nombre: 'Pan del día anterior', cantidad: '200 g' }, { nombre: 'Ajo', cantidad: '1 diente' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '150 ml' }, { nombre: 'Vinagre', cantidad: '30 ml' }, { nombre: 'Sal', cantidad: 'al gusto' }], pasos: ['Remojar el pan en agua 10 minutos.', 'Trocear los tomates.', 'Triturar tomates, pan escurrido y ajo.', 'Añadir aceite en hilo mientras se tritura.', 'Agregar vinagre y sal. Batir hasta emulsionar.', 'Refrigerar 1 hora.', 'Servir con huevo duro y jamón picado por encima.'], consejo: 'El pan debe ser del día anterior para mejor textura. El aceite debe añadirse en hilo fino.' },
+  'v11': { food_id: 'v11', tiempo: '30 min', dificultad: 'Media', porciones: 4, ingredientes: [{ nombre: 'Espinacas frescas', cantidad: '500 g' }, { nombre: 'Garbanzos cocidos', cantidad: '400 g' }, { nombre: 'Ajo', cantidad: '3 dientes' }, { nombre: 'Comino molido', cantidad: '1 cdta' }, { nombre: 'Pimentón dulce', cantidad: '1 cdta' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '80 ml' }, { nombre: 'Sal', cantidad: 'al gusto' }], pasos: ['Lavar bien las espinacas y escurrir.', 'Calentar aceite en sartén grande.', 'Dorar los ajos laminados.', 'Añadir comino y pimentón, remover 30 segundos.', 'Incorporar espinacas y saltear hasta que reduzcan.', 'Añadir garbanzos y mezclar bien.', 'Cocinar 5 minutos más. Rectificar de sal.'], consejo: 'Tradicional sevillano. Se puede añadir taquitos de jamón para versión no vegana.' },
+  'v17': { food_id: 'v17', tiempo: '45 min', dificultad: 'Media', porciones: 4, ingredientes: [{ nombre: 'Calabacín', cantidad: '2 unidades' }, { nombre: 'Berenjena', cantidad: '1 grande' }, { nombre: 'Pimiento verde', cantidad: '1 unidad' }, { nombre: 'Pimiento rojo', cantidad: '1 unidad' }, { nombre: 'Tomate maduro', cantidad: '4 unidades' }, { nombre: 'Cebolla', cantidad: '1 grande' }, { nombre: 'Ajo', cantidad: '2 dientes' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '100 ml' }, { nombre: 'Sal y pimienta', cantidad: 'al gusto' }], pasos: ['Trocear todas las verduras en dados pequeños.', 'Calentar aceite en cazuela amplia.', 'Sofreír cebolla y ajo hasta dorar.', 'Añadir pimientos y cocinar 10 minutos.', 'Incorporar berenjena y calabacín. Cocinar 10 min más.', 'Añadir tomate triturado y salpimentar.', 'Cocinar a fuego lento 20-25 minutos hasta que esté bien hecho.'], consejo: 'Se puede servir frío o caliente. Mejora de un día para otro. Perfecto con huevo poché encima.' },
+  'p2': { food_id: 'p2', tiempo: '25 min', dificultad: 'Fácil', porciones: 2, ingredientes: [{ nombre: 'Lomos de salmón', cantidad: '2 unidades (300 g)' }, { nombre: 'Limón', cantidad: '1 unidad' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '2 cdas' }, { nombre: 'Eneldo fresco', cantidad: '2 ramitas' }, { nombre: 'Ajo', cantidad: '2 dientes' }, { nombre: 'Sal y pimienta', cantidad: 'al gusto' }], pasos: ['Precalentar horno a 200°C.', 'Colocar salmón sobre papel de aluminio.', 'Mezclar aceite, zumo de limón, ajo picado y eneldo.', 'Verter mezcla sobre el salmón. Salpimentar.', 'Cerrar el aluminio formando paquete.', 'Hornear 15-18 minutos.', 'Abrir con cuidado y servir con rodajas de limón.'], consejo: 'El salmón está en su punto cuando se desmenuza fácil pero sigue rosado en el centro.' },
+  'c2': { food_id: 'c2', tiempo: '50 min', dificultad: 'Media', porciones: 4, ingredientes: [{ nombre: 'Arroz bomba', cantidad: '320 g' }, { nombre: 'Alcachofas', cantidad: '6 unidades' }, { nombre: 'Judías verdes', cantidad: '200 g' }, { nombre: 'Garrofón', cantidad: '100 g' }, { nombre: 'Pimiento rojo', cantidad: '1/2 unidad' }, { nombre: 'Tomate triturado', cantidad: '200 g' }, { nombre: 'Azafrán', cantidad: '1 pizca' }, { nombre: 'Caldo de verduras', cantidad: '1 litro' }, { nombre: 'Aceite de oliva', cantidad: '80 ml' }, { nombre: 'Sal', cantidad: 'al gusto' }], pasos: ['Calentar aceite en paellera.', 'Sofreír verduras troceadas 10 minutos.', 'Añadir tomate y cocinar 5 minutos.', 'Incorporar arroz y remover 2 minutos.', 'Añadir caldo caliente y azafrán.', 'Cocinar 18-20 minutos sin remover.', 'Dejar reposar 5 minutos antes de servir.'], consejo: 'El arroz bomba absorbe mejor el caldo. No remover durante la cocción para que no suelte almidón.' },
+  'p3': { food_id: 'p3', tiempo: '30 min', dificultad: 'Media', porciones: 4, ingredientes: [{ nombre: 'Lomos de merluza', cantidad: '4 unidades' }, { nombre: 'Cebolla', cantidad: '2 grandes' }, { nombre: 'Pimiento verde', cantidad: '1 unidad' }, { nombre: 'Tomate maduro', cantidad: '2 unidades' }, { nombre: 'Vino blanco', cantidad: '100 ml' }, { nombre: 'Aceite de oliva', cantidad: '80 ml' }, { nombre: 'Sal', cantidad: 'al gusto' }], pasos: ['Salpimentar la merluza y enharinar ligeramente.', 'Freír en aceite caliente 2 min por lado. Reservar.', 'En el mismo aceite, pochar cebolla y pimiento 15 min.', 'Añadir tomate triturado y cocinar 10 min.', 'Verter vino blanco y reducir.', 'Colocar merluza sobre la salsa.', 'Cocinar 5 minutos más a fuego suave.'], consejo: 'La salsa debe quedar melosa. Se puede añadir guindilla para toque picante.' },
+  'c12': { food_id: 'c12', tiempo: '35 min', dificultad: 'Media', porciones: 4, ingredientes: [{ nombre: 'Patatas', cantidad: '600 g' }, { nombre: 'Huevos', cantidad: '6 unidades' }, { nombre: 'Cebolla', cantidad: '1 grande (opcional)' }, { nombre: 'Aceite de oliva', cantidad: '100 ml' }, { nombre: 'Sal', cantidad: 'al gusto' }], pasos: ['Pelar y cortar patatas en láminas finas.', 'Freír en aceite a fuego medio 20 min. Escurrir.', 'Batir huevos con sal.', 'Mezclar patatas con huevo. Dejar reposar 5 min.', 'Cuajar en sartén antiadherente 3 min.', 'Dar la vuelta con ayuda de un plato.', 'Cuajar 2 min más. Debe quedar jugosa por dentro.'], consejo: 'El truco está en el punto de cuajado: debe quedar cremosa por dentro. Se puede hacer sin cebolla.' },
+  'p12': { food_id: 'p12', tiempo: '90 min', dificultad: 'Media', porciones: 4, ingredientes: [{ nombre: 'Pulpo', cantidad: '1 kg' }, { nombre: 'Patatas', cantidad: '4 grandes' }, { nombre: 'Pimentón de la Vera', cantidad: '2 cdas' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '80 ml' }, { nombre: 'Sal gruesa', cantidad: 'al gusto' }], pasos: ['Congelar el pulpo 48h antes (rompe fibras).', 'Hervir agua con sal. Asustar el pulpo 3 veces (meter y sacar).', 'Cocinar 40-50 min hasta que esté tierno.', 'Cocer patatas en el mismo caldo.', 'Escurrir pulpo y cortar en rodajas.', 'Servir sobre patatas troceadas.', 'Espolvorear pimentón y regar con aceite de oliva.'], consejo: 'El pimentón debe añadirse al final para que no amargue. La textura debe ser tierna pero firme.' },
+  'v2': { food_id: 'v2', tiempo: '15 min', dificultad: 'Fácil', porciones: 4, ingredientes: [{ nombre: 'Tomates maduros', cantidad: '4 grandes' }, { nombre: 'Pepino', cantidad: '1 grande' }, { nombre: 'Cebolla morada', cantidad: '1/2 unidad' }, { nombre: 'Queso feta', cantidad: '200 g' }, { nombre: 'Aceitunas kalamata', cantidad: '100 g' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '80 ml' }, { nombre: 'Orégano', cantidad: '1 cdta' }, { nombre: 'Sal', cantidad: 'al gusto' }], pasos: ['Cortar tomates en gajos grandes.', 'Pelar y rodajas pepino (no muy fino).', 'Cortar cebolla en aros finos.', 'Colocar todo en fuente.', 'Añadir aceitunas.', 'Poner bloque de feta encima (no desmenuzar).', 'Regar con aceite, orégano y sal.'], consejo: 'El feta debe ser auténtico griego. Nunca mezclar, cada comensal se sirve a su gusto.' },
+  'v7': { food_id: 'v7', tiempo: '25 min', dificultad: 'Fácil', porciones: 4, ingredientes: [{ nombre: 'Alcachofas frescas', cantidad: '8 unidades' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '60 ml' }, { nombre: 'Limón', cantidad: '1/2 unidad' }, { nombre: 'Ajo', cantidad: '2 dientes' }, { nombre: 'Sal y pimienta', cantidad: 'al gusto' }], pasos: ['Limpiar alcachofas: quitar hojas externas duras.', 'Cortar tallo y puntas. Partir por la mitad.', 'Frotar con limón para que no se oxiden.', 'Calentar plancha o sartén con aceite.', 'Colocar alcachofas cara cortada abajo.', 'Cocinar 8-10 min hasta dorar.', 'Dar vuelta, añadir ajo laminado. 5 min más.'], consejo: 'Deben quedar doradas por fuera y tiernas por dentro. El limón es clave para el sabor.' },
+  'v8': { food_id: 'v8', tiempo: '15 min', dificultad: 'Fácil', porciones: 4, ingredientes: [{ nombre: 'Espárragos trigueros', cantidad: '2 manojos' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '50 ml' }, { nombre: 'Sal en escamas', cantidad: 'al gusto' }], pasos: ['Lavar espárragos y secar bien.', 'Cortar parte dura del tallo (2-3 cm).', 'Calentar plancha a fuego fuerte.', 'Colocar espárragos en fila.', 'Cocinar 3-4 min por cada lado.', 'Retirar cuando estén tiernos pero firmes.', 'Aliñar con aceite y sal en escamas.'], consejo: 'No cocinar en exceso, deben quedar al dente. La sal en escamas realza el sabor.' },
+  'v5': { food_id: 'v5', tiempo: '60 min', dificultad: 'Media', porciones: 4, ingredientes: [{ nombre: 'Berenjenas grandes', cantidad: '4 unidades' }, { nombre: 'Carne picada mixta', cantidad: '400 g' }, { nombre: 'Cebolla', cantidad: '1 grande' }, { nombre: 'Tomate triturado', cantidad: '200 g' }, { nombre: 'Ajo', cantidad: '2 dientes' }, { nombre: 'Aceite de oliva', cantidad: '60 ml' }, { nombre: 'Sal, pimienta, orégano', cantidad: 'al gusto' }], pasos: ['Partir berenjenas por la mitad longitudinalmente.', 'Vaciar con cuchara (reservar pulpa).', 'Salar y dejar 30 min para que suden.', 'Sofreír cebolla y ajo. Añadir carne.', 'Incorporar pulpa de berenjena picada.', 'Añadir tomate y especias. Cocinar 15 min.', 'Rellenar berenjenas. Hornear 25 min a 180°C.'], consejo: 'Salar las berenjenas elimina el amargor. Se puede gratinar con queso al final.' },
+  'v9': { food_id: 'v9', tiempo: '35 min', dificultad: 'Fácil', porciones: 4, ingredientes: [{ nombre: 'Judías verdes', cantidad: '600 g' }, { nombre: 'Jamón serrano', cantidad: '100 g' }, { nombre: 'Cebolla', cantidad: '1 pequeña' }, { nombre: 'Aceite de oliva', cantidad: '40 ml' }, { nombre: 'Sal', cantidad: 'al gusto' }], pasos: ['Limpiar judías y cortar puntas.', 'Cocer en agua con sal 20 min. Escurrir.', 'Picar cebolla y jamón en taquitos.', 'Sofreír cebolla en aceite.', 'Añadir jamón y dorar.', 'Incorporar judías y saltear 5 min.', 'Rectificar de sal y servir.'], consejo: 'Las judías deben quedar al dente, no pasadas. El jamón aporta umami.' },
+  'v15': { food_id: 'v15', tiempo: '15 min', dificultad: 'Fácil', porciones: 4, ingredientes: [{ nombre: 'Champiñones frescos', cantidad: '500 g' }, { nombre: 'Ajo', cantidad: '4 dientes' }, { nombre: 'Perejil fresco', cantidad: '1 manojo' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '80 ml' }, { nombre: 'Sal y pimienta', cantidad: 'al gusto' }, { nombre: 'Guindilla (opcional)', cantidad: '1 unidad' }], pasos: ['Limpiar champiñones con paño húmedo.', 'Laminar o cortar en cuartos.', 'Laminar ajos finamente.', 'Calentar aceite en sartén amplia.', 'Dorar ajos (sin quemar).', 'Añadir champiñones y saltear 5-7 min.', 'Agregar perejil picado, sal y pimienta.'], consejo: 'Los champiñones sueltan agua, cocinar hasta que se evapore. El perejil al final para que no se queme.' },
+  'd1': { food_id: 'd1', tiempo: '5 min', dificultad: 'Fácil', porciones: 1, ingredientes: [{ nombre: 'Pan integral de pueblo', cantidad: '2 rebanadas' }, { nombre: 'Tomate maduro', cantidad: '1 grande' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '2 cdas' }, { nombre: 'Sal', cantidad: 'al gusto' }], pasos: ['Tostar el pan ligeramente.', 'Cortar tomate por la mitad.', 'Frotar tomate sobre el pan (como rallador).', 'Regar con aceite de oliva virgen extra.', 'Añadir sal al gusto.', 'Opcional: añadir jamón serrano o queso fresco.'], consejo: 'El tomate debe estar muy maduro. El pan debe ser del día anterior para mejor textura.' },
+  'm3': { food_id: 'm3', tiempo: '15 min + reposo', dificultad: 'Fácil', porciones: 4, ingredientes: [{ nombre: 'Garbanzos cocidos', cantidad: '400 g' }, { nombre: 'Tahini', cantidad: '3 cdas' }, { nombre: 'Limón', cantidad: '1 unidad' }, { nombre: 'Ajo', cantidad: '1 diente' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '50 ml' }, { nombre: 'Comino', cantidad: '1/2 cdta' }, { nombre: 'Sal', cantidad: 'al gusto' }], pasos: ['Escurrir garbanzos (reservar líquido).', 'Triturar garbanzos con tahini, ajo y limón.', 'Añadir aceite en hilo mientras se tritura.', 'Agregar comino y sal.', 'Ajustar textura con líquido de cocción.', 'Refrigerar 1 hora.', 'Servir con aceite de oliva y pimentón por encima.'], consejo: 'Cuanto más tiempo repose, mejor sabor. Se conserva 5 días en nevera.' },
+  'm4': { food_id: 'm4', tiempo: '5 min', dificultad: 'Fácil', porciones: 2, ingredientes: [{ nombre: 'Queso fresco batido', cantidad: '200 g' }, { nombre: 'Membrillo', cantidad: '100 g' }, { nombre: 'Nueces (opcional)', cantidad: '20 g' }], pasos: ['Cortar queso fresco en rodajas gruesas.', 'Colocar en plato.', 'Añadir membrillo en trozos al lado.', 'Opcional: añadir nueces troceadas.', 'Servir inmediatamente.'], consejo: 'Clásico español. El contraste dulce-salado es perfecto. Se puede añadir miel.' },
+  'm7': { food_id: 'm7', tiempo: '5 min', dificultad: 'Fácil', porciones: 1, ingredientes: [{ nombre: 'Plátano maduro', cantidad: '1 unidad' }, { nombre: 'Leche', cantidad: '250 ml' }, { nombre: 'Canela', cantidad: '1 pizca' }, { nombre: 'Miel (opcional)', cantidad: '1 cdta' }], pasos: ['Pelar plátano.', 'Trocear.', 'Añadir leche.', 'Batir hasta obtener textura cremosa.', 'Añadir canela.', 'Opcional: miel al gusto.', 'Servir inmediatamente.'], consejo: 'El plátano debe estar maduro para más dulzor natural. Se puede añadir avena para más consistencia.' },
+  'p4': { food_id: 'p4', tiempo: '15 min', dificultad: 'Fácil', porciones: 2, ingredientes: [{ nombre: 'Sardinas frescas', cantidad: '8 unidades' }, { nombre: 'Aceite de oliva virgen extra', cantidad: '30 ml' }, { nombre: 'Limón', cantidad: '1/2 unidad' }, { nombre: 'Sal gruesa', cantidad: 'al gusto' }], pasos: ['Limpiar sardinas: quitar cabeza y vísceras.', 'Lavar y secar bien.', 'Salpimentar.', 'Calentar plancha a fuego fuerte.', 'Colocar sardinas 3-4 min por lado.', 'Retirar cuando piel esté crujiente.', 'Aliñar con aceite y limón.'], consejo: 'Las sardinas frescas del día son clave. La piel debe quedar crujiente.' }
 };
 
 // ============================================
 // 3. SISTEMA DE LOGROS (FASE 3)
 // ============================================
 
-const LOGROS_DB = [
-  {
-    id: 'primera_evaluacion',
-    nombre: 'Primera Evaluación',
-    descripcion: 'Completaste tu primera evaluación nutricional',
-    icono: '📋',
-    categoria: 'básico',
-    requisito: 1
-  },
-  {
-    id: 'primera_lista_compra',
-    nombre: 'Comprador Organizado',
-    descripcion: 'Generaste tu primera lista de la compra',
-    icono: '🛒',
-    categoria: 'básico',
-    requisito: 1
-  },
-  {
-    id: 'primer_comentario',
-    nombre: 'Voz de la Comunidad',
-    descripcion: 'Publicaste tu primer comentario',
-    icono: '💬',
-    categoria: 'básico',
-    requisito: 1
-  },
-  {
-    id: 'primer_batch_cooking',
-    nombre: 'Chef Organizado',
-    descripcion: 'Visitaste el modo Batch Cooking',
-    icono: '',
-    categoria: 'básico',
-    requisito: 1
-  },
-  {
-    id: 'primera_semana',
-    nombre: 'Primera Semana',
-    descripcion: 'Registraste peso durante 7 días',
-    icono: '📅',
-    categoria: 'seguimiento',
-    requisito: 7
-  },
-  {
-    id: 'un_mes',
-    nombre: 'Un Mes Constante',
-    descripcion: '30 días desde tu evaluación',
-    icono: '🥈',
-    categoria: 'seguimiento',
-    requisito: 30
-  },
-  {
-    id: 'tres_meses',
-    nombre: 'Trayectoria Ejemplar',
-    descripcion: '90 días usando NutriPro',
-    icono: '🥇',
-    categoria: 'seguimiento',
-    requisito: 90
-  },
-  {
-    id: 'diez_favoritos',
-    nombre: 'Coleccionista',
-    descripcion: 'Guardaste 10 alimentos favoritos',
-    icono: '❤️',
-    categoria: 'interacción',
-    requisito: 10
-  },
-  {
-    id: 'cincuenta_valoraciones',
-    nombre: 'Crítico Gastronómico',
-    descripcion: 'Valoraste 50 platos',
-    icono: '⭐',
-    categoria: 'interacción',
-    requisito: 50
-  },
-  {
-    id: 'veinticinco_sustituciones',
-    nombre: 'Explorador Culinario',
-    descripcion: 'Hiciste 25 sustituciones de alimentos',
-    icono: '🔄',
-    categoria: 'interacción',
-    requisito: 25
-  },
-  {
-    id: 'siete_dias_consecutivos',
-    nombre: 'Racha Semanal',
-    descripcion: '7 días consecutivos registrando peso',
-    icono: '💪',
-    categoria: 'consistencia',
-    requisito: 7
-  },
-  {
-    id: 'treinta_dias_consecutivos',
-    nombre: 'Racha Mensual',
-    descripcion: '30 días consecutivos registrando peso',
-    icono: '🔥',
-    categoria: 'consistencia',
-    requisito: 30
-  }
+var LOGROS_DB = [
+  { id: 'primera_evaluacion', nombre: 'Primera Evaluación', descripcion: 'Completaste tu primera evaluación nutricional', icono: '📋', categoria: 'básico', requisito: 1 },
+  { id: 'primera_lista_compra', nombre: 'Comprador Organizado', descripcion: 'Generaste tu primera lista de la compra', icono: '🛒', categoria: 'básico', requisito: 1 },
+  { id: 'primer_comentario', nombre: 'Voz de la Comunidad', descripcion: 'Publicaste tu primer comentario', icono: '💬', categoria: 'básico', requisito: 1 },
+  { id: 'primer_batch_cooking', nombre: 'Chef Organizado', descripcion: 'Visitaste el modo Batch Cooking', icono: '🍳', categoria: 'básico', requisito: 1 },
+  { id: 'primera_semana', nombre: 'Primera Semana', descripcion: 'Registraste peso durante 7 días', icono: '📅', categoria: 'seguimiento', requisito: 7 },
+  { id: 'un_mes', nombre: 'Un Mes Constante', descripcion: '30 días desde tu evaluación', icono: '🥈', categoria: 'seguimiento', requisito: 30 },
+  { id: 'tres_meses', nombre: 'Trayectoria Ejemplar', descripcion: '90 días usando NutriPro', icono: '🥇', categoria: 'seguimiento', requisito: 90 },
+  { id: 'diez_favoritos', nombre: 'Coleccionista', descripcion: 'Guardaste 10 alimentos favoritos', icono: '❤️', categoria: 'interacción', requisito: 10 },
+  { id: 'cincuenta_valoraciones', nombre: 'Crítico Gastronómico', descripcion: 'Valoraste 50 platos', icono: '⭐', categoria: 'interacción', requisito: 50 },
+  { id: 'veinticinco_sustituciones', nombre: 'Explorador Culinario', descripcion: 'Hiciste 25 sustituciones de alimentos', icono: '🔄', categoria: 'interacción', requisito: 25 },
+  { id: 'siete_dias_consecutivos', nombre: 'Racha Semanal', descripcion: '7 días consecutivos registrando peso', icono: '💪', categoria: 'consistencia', requisito: 7 },
+  { id: 'treinta_dias_consecutivos', nombre: 'Racha Mensual', descripcion: '30 días consecutivos registrando peso', icono: '🔥', categoria: 'consistencia', requisito: 30 }
 ];
 
 // ============================================
 // 4. FUNCIONES DE UTILIDAD PARA DATOS
 // ============================================
 
-function obtenerAlimento(id) {
-  return ALIMENTOS_DB[id] || null;
-}
-
-function obtenerReceta(foodId) {
-  return RECETAS_DB[foodId] || null;
-}
-
-function obtenerLogro(id) {
-  return LOGROS_DB.find(l => l.id === id) || null;
-}
-
-function obtenerAlimentosPorGrupo(grupo) {
-  return Object.values(ALIMENTOS_DB).filter(a => a.grupo === grupo && a.active);
-}
-
-function obtenerAlimentosDeTemporada(estacion) {
-  return Object.values(ALIMENTOS_DB).filter(a => 
-    a.active && (a.temporada === estacion || a.temporada === 'todo_el_año')
-  );
-}
+function obtenerAlimento(id) { return ALIMENTOS_DB[id] || null; }
+function obtenerReceta(foodId) { return RECETAS_DB[foodId] || null; }
+function obtenerLogro(id) { return LOGROS_DB.find(l => l.id === id) || null; }
+function obtenerAlimentosPorGrupo(grupo) { return Object.values(ALIMENTOS_DB).filter(a => a.grupo === grupo && a.active); }
+function obtenerAlimentosDeTemporada(estacion) { return Object.values(ALIMENTOS_DB).filter(a => a.active && (a.temporada === estacion || a.temporada === 'todo_el_año')); }
 
 // Exportar para uso global
-if (typeof window !== 'undefined') {
-  window.ALIMENTOS_DB = ALIMENTOS_DB;
-  window.RECETAS_DB = RECETAS_DB;
-  window.LOGROS_DB = LOGROS_DB;
-  window.obtenerAlimento = obtenerAlimento;
-  window.obtenerReceta = obtenerReceta;
-  window.obtenerLogro = obtenerLogro;
-  window.obtenerAlimentosPorGrupo = obtenerAlimentosPorGrupo;
-  window.obtenerAlimentosDeTemporada = obtenerAlimentosDeTemporada;
-}
+window.ALIMENTOS_DB = ALIMENTOS_DB;
+window.RECETAS_DB = RECETAS_DB;
+window.LOGROS_DB = LOGROS_DB;
+window.obtenerAlimento = obtenerAlimento;
+window.obtenerReceta = obtenerReceta;
+window.obtenerLogro = obtenerLogro;
+window.obtenerAlimentosPorGrupo = obtenerAlimentosPorGrupo;
+window.obtenerAlimentosDeTemporada = obtenerAlimentosDeTemporada;
 
-console.log(`[NutriPro] Datos cargados: ${Object.keys(ALIMENTOS_DB).length} alimentos, ${Object.keys(RECETAS_DB).length} recetas, ${LOGROS_DB.length} logros`);
+console.log('[NutriPro] Datos cargados: ' + Object.keys(ALIMENTOS_DB).length + ' alimentos, ' + Object.keys(RECETAS_DB).length + ' recetas, ' + LOGROS_DB.length + ' logros');
