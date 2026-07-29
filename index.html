@@ -112,7 +112,7 @@
         <button onclick="compartirApp()" class="md:hidden w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all">📤</button>
         <button id="darkModeToggle" class="w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all"><span id="darkModeIcon">☀️</span></button>
         <div class="hidden md:flex items-center gap-2 text-xs">
-          <span class="px-3 py-1 bg-white/15 rounded-full"> Evidencia</span>
+          <span class="px-3 py-1 bg-white/15 rounded-full">🔬 Evidencia</span>
           <span class="px-3 py-1 bg-white/15 rounded-full">☁️ Cloud Sync</span>
         </div>
         <div class="user-menu">
@@ -298,7 +298,7 @@
 
       <footer class="brujula__foot">
         <button type="button" class="brujula__btn brujula__btn--solid" id="brujulaOtro">↻ Otro consejo</button>
-        <button type="button" class="brujula__btn brujula__btn--ghost" id="brujulaCopiar"> Copiar</button>
+        <button type="button" class="brujula__btn brujula__btn--ghost" id="brujulaCopiar">📋 Copiar</button>
         <span class="brujula__count" id="brujulaCount"></span>
       </footer>
     </aside>
@@ -464,7 +464,7 @@
           <div class="flex items-center gap-2 mb-2"><span class="text-lg">⏱️</span><span class="font-bold text-slate-800 dark:text-white">Tiempo total estimado:</span><span class="text-teal-600 font-bold" id="batchTiempoTotal">2h 30min</span></div>
           <p class="text-xs text-slate-600 dark:text-slate-400">Recomendamos empezar a las <strong>16:00</strong> para tener todo listo antes de la cena</p>
         </div>
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span></span> Lista de tareas por bloques de tiempo</h4>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span>📋</span> Lista de tareas por bloques de tiempo</h4>
         <div id="batchTasks"></div>
         <div class="batch-summary">
           <div class="batch-stat"><div class="batch-stat-value" id="batchTuppersComida">7</div><div class="batch-stat-label">Tuppers comida</div></div>
@@ -678,7 +678,7 @@
     <button class="profile-tab active" data-ptab="datos">👤 Datos personales</button>
     <button class="profile-tab" data-ptab="favoritos">❤️ Mis favoritos <span id="favCount" class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full ml-1">0</span></button>
     <button class="profile-tab" data-ptab="excluidos">🚫 Excluidos <span id="excCount" class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full ml-1">0</span></button>
-    <button class="profile-tab" data-ptab="logros"> Mis Logros <span id="logrosCount" class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ml-1">0</span></button>
+    <button class="profile-tab" data-ptab="logros">🏆 Mis Logros <span id="logrosCount" class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ml-1">0</span></button>
     <button class="profile-tab" data-ptab="password">🔒 Contraseña</button>
   </div>
   
@@ -795,7 +795,7 @@
 
 <footer class="max-w-7xl mx-auto px-6 py-8 mt-4 border-t border-slate-200 dark:border-slate-700">
   <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-    <div> NutriPro · Nutrición basada en evidencia científica</div>
+    <div>© NutriPro · Nutrición basada en evidencia científica</div>
     <div>⚕️ Esta herramienta no sustituye la consulta médica profesional</div>
   </div>
 </footer>
@@ -840,7 +840,7 @@
     </div>
     <div class="p-6">
       <div class="mb-6">
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg"></span> Ingredientes</h4>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">🧺 Ingredientes</h4>
         <div id="recetaIngredientes"></div>
       </div>
       <div class="mb-6">
@@ -920,14 +920,14 @@
     <div class="p-6">
       <input type="hidden" id="alimentoId">
       <div class="admin-form-group"><label>ID único (ej: p1, c2, v3)</label><input type="text" id="alimentoIdInput" class="admin-input" placeholder="p1"><p class="text-xs text-slate-500 mt-1">Formato: p=proteína, c=carbohidrato, v=verdura, g=grasa, d=desayuno, m=merienda, f=fruta + número</p></div>
-      <div class="admin-form-group"><label>Grupo</label><select id="alimentoGrupo" class="admin-select"><option value="prot">🥩 Proteínas</option><option value="carb"> Carbohidratos</option><option value="verd">🥦 Verduras</option><option value="grasa">🥑 Grasas</option><option value="des">☀️ Desayunos</option><option value="mer"> Meriendas</option></select></div>
+      <div class="admin-form-group"><label>Grupo</label><select id="alimentoGrupo" class="admin-select"><option value="prot">🥩 Proteínas</option><option value="carb">🍚 Carbohidratos</option><option value="verd">🥦 Verduras</option><option value="grasa">🥑 Grasas</option><option value="des">☀️ Desayunos</option><option value="mer">🍎 Meriendas</option></select></div>
       <div class="admin-form-group"><label>Nombre del alimento</label><input type="text" id="alimentoNombre" class="admin-input" placeholder="Pechuga de pollo a la plancha"></div>
       <div class="grid grid-cols-2 gap-3">
         <div class="admin-form-group"><label>Calorías (kcal)</label><input type="number" id="alimentoKcal" class="admin-input" placeholder="165"></div>
         <div class="admin-form-group"><label>Proteínas (g)</label><input type="number" id="alimentoProt" class="admin-input" placeholder="31"></div>
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div class="admin-form-group"><label>Temporada</label><select id="alimentoTemporada" class="admin-select"><option value="todo_el_año"> Todo el año</option><option value="primavera">🌸 Primavera</option><option value="verano">☀️ Verano</option><option value="otono">🍂 Otoño</option><option value="invierno">❄️ Invierno</option></select></div>
+        <div class="admin-form-group"><label>Temporada</label><select id="alimentoTemporada" class="admin-select"><option value="todo_el_año">🌍 Todo el año</option><option value="primavera">🌸 Primavera</option><option value="verano">☀️ Verano</option><option value="otono">🍂 Otoño</option><option value="invierno">❄️ Invierno</option></select></div>
         <div class="admin-form-group"><label class="flex items-center gap-2 h-full pt-6"><input type="checkbox" id="alimentoEsFruta" class="w-4 h-4 accent-teal-600"><span>🍎 Es fruta</span></label></div>
       </div>
       <div class="admin-form-group"><label>Ingredientes (separados por comas)</label><input type="text" id="alimentoIng" class="admin-input" placeholder="pollo, aceite, sal"></div>
