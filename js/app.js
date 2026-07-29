@@ -78,7 +78,7 @@ function addToOfflineQueue(action, data) {
 function clearOfflineQueue() { localStorage.removeItem(OFFLINE_QUEUE_KEY); }
 
 async function checkRealConnection() {
-  appIsOnline = navigator.onLine;
+  appIsOnline = true;
   updateOnlineStatusUI();
 }
 
