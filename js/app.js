@@ -1374,3 +1374,173 @@ initStarRating();
 checkAuth();
 
 console.log('[NutriPro] app.js cargado correctamente');
+// ============================================================
+// 21. BRÚJULA NUTRICIONAL (FASE 3 · PASO 2)
+//     Consejo del día personalizado: motor + render + interacciones.
+//     Usa CONSEJOS_DB y el motor de data.js; contexto desde userData.
+// ============================================================
+
+let brujulaCtx = null;
+let brujulaAplicables = [];
+let brujulaOffset = 0;
+let brujulaVistos = [];
+let brujulaFechaHoy = null;
+
+const BRUJULA_CAT_LABELS = {
+  saciedad: 'Saciedad', proteina: 'Proteína', micronutrientes: 'Micronutrientes',
+  hidratacion: 'Hidratación', sueno: 'Sueño', movimiento: 'Movimiento',
+  temporada: 'Temporada', fibra: 'Fibra', grasas: 'Grasas buenas',
+  calidad: 'Calidad', conducta: 'Conducta', organizacion: 'Organización',
+  restricciones: 'Restricciones'
+};
+
+const BRUJULA_OBJETIVO_LABELS = {
+  perder: 'perder grasa', perderSuave: 'perder grasa gradual',
+  mantener: 'mantener peso', ganar: 'ganar masa muscular'
+};
+
+function brujulaStorageKey() {
+  return 'nutripro_brujula_' + (currentUser ? currentUser.id : 'anon');
+}
+
+function brujulaHoy() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function construirCtxBrujula() {
+  if (!userData) return null;
+  const estacion = obtenerEstacion();
+  return {
+    objetivo: userData.objetivo,
+    objetivoLabel: BRUJULA_OBJETIVO_LABELS[userData.objetivo] || 'tu objetivo',
+    imc: parseFloat(userData.imc),
+    prefs: userData.prefs || [],
+    estacion: estacion,
+    estacionLabel: obtenerInfoEstacion(estacion).nombre,
+    sexo: userData.sexo,
+    edad: userData.edad,
+    factor: userData.factor
+  };
+}
+
+function cargarEstadoBrujula() {
+  try {
+    const raw = localStorage.getItem(brujulaStorageKey());
+    if (!raw) return { fecha: null, offset: 0, vistos: [] };
+    const parsed = JSON.parse(raw);
+    return {
+      fecha: parsed.fecha || null,
+      offset: typeof parsed.offset === 'number' ? parsed.offset : 0,
+      vistos: Array.isArray(parsed.vistos) ? parsed.vistos : []
+    };
+  } catch (e) { return { fecha: null, offset: 0, vistos: [] }; }
+}
+
+function guardarEstadoBrujula() {
+  try {
+    localStorage.setItem(brujulaStorageKey(), JSON.stringify({
+      fecha: brujulaFechaHoy, offset: brujulaOffset, vistos: brujulaVistos
+    }));
+  } catch (e) { /* sin almacenamiento disponible: seguimos sin persistir */ }
+}
+
+function pintarConsejoBrujula(consejo) {
+  const $ = (id) => document.getElementById(id);
+  $('brujulaStamp').textContent = new Date().getDate();
+  $('brujulaMeta').textContent = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+  $('brujulaIcon').textContent = consejo.icono;
+  $('brujulaTitulo').textContent = consejo.titulo;
+  $('brujulaTexto').textContent = consejo.texto;
+  $('brujulaRazon').textContent = razonPersonalizacion(consejo, brujulaCtx);
+  $('brujulaFuente').textContent = consejo.fuente || '';
+}
+
+function pintarCategoriasBrujula() {
+  const track = document.getElementById('brujulaCats');
+  if (!track) return;
+  const cats = [];
+  brujulaAplicables.forEach(c => { if (cats.indexOf(c.cat) === -1) cats.push(c.cat); });
+  track.innerHTML = cats.map(cat => {
+    const on = brujulaVistos.indexOf(cat) !== -1;
+    const label = BRUJULA_CAT_LABELS[cat] || cat;
+    return '<span class="brujula__cat' + (on ? ' is-on' : '') + '">' + label + '</span>';
+  }).join('');
+}
+
+function actualizarContadorBrujula() {
+  const el = document.getElementById('brujulaCount');
+  if (el && brujulaAplicables.length) {
+    el.textContent = (brujulaOffset + 1) + ' / ' + brujulaAplicables.length + ' hoy';
+  }
+}
+
+function consejoBrujulaActual() {
+  if (!brujulaAplicables.length) return null;
+  const base = hashSemilla((currentUser ? currentUser.id : 'anon') + brujulaFechaHoy) % brujulaAplicables.length;
+  const idx = (base + brujulaOffset) % brujulaAplicables.length;
+  return brujulaAplicables[idx];
+}
+
+function renderBrujula() {
+  const card = document.getElementById('brujulaCard');
+  if (!card) return;
+  if (!userData) { card.style.display = 'none'; return; }
+
+  brujulaCtx = construirCtxBrujula();
+  brujulaAplicables = calcularConsejosAplicables(brujulaCtx);
+  if (!brujulaAplicables.length) { card.style.display = 'none'; return; }
+  card.style.display = '';
+
+  const hoy = brujulaHoy();
+  const estado = cargarEstadoBrujula();
+  brujulaFechaHoy = hoy;
+  brujulaVistos = estado.vistos;
+  brujulaOffset = (estado.fecha === hoy) ? (estado.offset % brujulaAplicables.length) : 0;
+
+  const consejo = consejoBrujulaActual();
+  if (brujulaVistos.indexOf(consejo.cat) === -1) brujulaVistos.push(consejo.cat);
+  guardarEstadoBrujula();
+
+  pintarConsejoBrujula(consejo);
+  pintarCategoriasBrujula();
+  actualizarContadorBrujula();
+}
+
+function cambiarConsejoBrujula() {
+  if (!brujulaAplicables.length) return;
+  const body = document.getElementById('brujulaBody');
+  if (!body) return;
+  body.classList.add('is-swapping');
+  setTimeout(() => {
+    brujulaOffset = (brujulaOffset + 1) % brujulaAplicables.length;
+    const consejo = consejoBrujulaActual();
+    if (brujulaVistos.indexOf(consejo.cat) === -1) brujulaVistos.push(consejo.cat);
+    guardarEstadoBrujula();
+    pintarConsejoBrujula(consejo);
+    pintarCategoriasBrujula();
+    actualizarContadorBrujula();
+    body.classList.remove('is-swapping');
+  }, 280);
+}
+
+function copiarConsejoBrujula() {
+  const consejo = consejoBrujulaActual();
+  if (!consejo) return;
+  const texto = consejo.icono + ' ' + consejo.titulo + '\n\n' + consejo.texto + '\n\n— ' + (consejo.fuente || 'NutriPro');
+  const fallback = () => mostrarToast('🧭 ' + consejo.titulo);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(texto)
+      .then(() => mostrarToast('📋 Consejo copiado al portapapeles'))
+      .catch(fallback);
+  } else { fallback(); }
+}
+
+function initBrujula() {
+  const btnOtro = document.getElementById('brujulaOtro');
+  const btnCopiar = document.getElementById('brujulaCopiar');
+  if (btnOtro) btnOtro.addEventListener('click', cambiarConsejoBrujula);
+  if (btnCopiar) btnCopiar.addEventListener('click', copiarConsejoBrujula);
+}
+
+initBrujula();
