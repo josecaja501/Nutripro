@@ -78,8 +78,9 @@ function addToOfflineQueue(action, data) {
 function clearOfflineQueue() { localStorage.removeItem(OFFLINE_QUEUE_KEY); }
 
 async function checkRealConnection() {
-  if (!navigator.onLine) { appIsOnline = false; updateOnlineStatusUI(); return; }
-  try {
+  appIsOnline = navigator.onLine;
+  updateOnlineStatusUI();
+}
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
     await fetch('https://1.1.1.1/cdn-cgi/trace', { method: 'GET', signal: controller.signal, cache: 'no-store' });
