@@ -230,6 +230,46 @@
             <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700"><input type="checkbox" class="pref" value="vegano"> <span class="text-sm">Vegano</span></label>
           </div>
         </div>
+        <!-- 🩸 MODO DIABETES (FASE 4 · sub-paso 1.3) · toggle + campos condicionales -->
+        <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
+          <label class="flex items-center gap-3 bg-white dark:bg-slate-800 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer">
+            <div class="toggle-switch">
+              <input type="checkbox" id="diabetesModo" onchange="document.getElementById('diabetesCampos').classList.toggle('hidden', !this.checked)">
+              <span class="toggle-slider"></span>
+            </div>
+            <div>
+              <div class="text-sm font-semibold text-slate-700 dark:text-slate-300">🩸 Modo Diabetes / Control glucémico</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400">Consejos y datos de hidratos orientados a diabetes tipo 2, prediabetes o control glucémico.</div>
+            </div>
+          </label>
+
+          <div id="diabetesCampos" class="hidden mt-4 space-y-4 p-4 rounded-xl border border-amber-200 dark:border-amber-800/50 bg-amber-50/60 dark:bg-amber-900/10">
+            <div class="alert-warning rounded-lg p-3">
+              <p class="text-xs"><strong>⚕️ Importante:</strong> NutriPro <strong>informa y educa</strong>; muestra hidratos y consejos orientativos. <strong>No calcula dosis de insulina ni sustituye</strong> a tu equipo médico. Contrasta siempre con tu educación diabetológica y tus etiquetas.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Situación</label>
+                <select id="diabetesTipo" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+                  <option value="t2">Diabetes tipo 2</option>
+                  <option value="prediabetes">Prediabetes</option>
+                  <option value="control">Control glucémico (sin diagnóstico)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Objetivo de hidratos por comida (g)</label>
+                <input type="number" id="diabetesHcComida" min="20" max="120" step="5" value="50" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Referencia para construir el plato. 1 ración = 10 g de HC.</p>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Última HbA1c (%) · opcional</label>
+              <input type="number" id="diabetesHba1c" min="3" max="15" step="0.1" placeholder="Ej: 6.5" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Solo informativa, como brújula trimestral. La interpreta tu médico, no la app.</p>
+            </div>
+          </div>
+        </div>
+
         <button type="submit" class="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-bold py-4 rounded-xl hover:shadow-lg transition-all">Guardar y actualizar mi plan →</button>
       </form>
     </div>
@@ -840,7 +880,7 @@
     </div>
     <div class="p-6">
       <div class="mb-6">
-        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">🧺 Ingredientes</h4>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2"><span class="text-lg">🧺</span> Ingredientes</h4>
         <div id="recetaIngredientes"></div>
       </div>
       <div class="mb-6">
