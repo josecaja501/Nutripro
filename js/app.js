@@ -1545,3 +1545,110 @@ function initBrujula() {
 }
 
 initBrujula();
+
+// ============================================================
+// 22. MODO DIABETES (FASE 4 · sub-paso 1.5a)
+//     Persistencia del modo + hidratos / índice glucémico en el menú.
+//     Un listener propio persiste los 4 campos con su propia escritura
+//     (robusta y directa), sin parchear el SDK ni tocar el handler.
+// ============================================================
+
+var diabetesActivo = false;
+
+// Lee el estado del modo diabetes directamente del formulario.
+function leerDiabetesDelDOM() {
+  var tgl = document.getElementById('diabetesModo');
+  var on = !!(tgl && tgl.checked);
+  var tip = document.getElementById('diabetesTipo');
+  var hc  = document.getElementById('diabetesHcComida');
+  var hb  = document.getElementById('diabetesHba1c');
+  return {
+    diabetes_modo: on,
+    diabetes_tipo: (on && tip) ? tip.value : null,
+    diabetes_hc_comida: (on && hc) ? (parseInt(hc.value, 10) || 50) : null,
+    diabetes_hba1c: (on && hb && hb.value !== '') ? parseFloat(hb.value) : null
+  };
+}
+
+// Rellena el toggle y sus campos al cargar una evaluación guardada.
+var _cargarDatosBase = cargarDatosEnFormularioEvaluacion;
+cargarDatosEnFormularioEvaluacion = function () {
+  _cargarDatosBase();
+  if (!userData) return;
+  var on = !!userData.diabetes_modo;
+  diabetesActivo = on;
+  var tgl = document.getElementById('diabetesModo');   if (tgl) tgl.checked = on;
+  var pan = document.getElementById('diabetesCampos'); if (pan) pan.classList.toggle('hidden', !on);
+  var tip = document.getElementById('diabetesTipo');   if (tip && userData.diabetes_tipo) tip.value = userData.diabetes_tipo;
+  var hc  = document.getElementById('diabetesHcComida'); if (hc && userData.diabetes_hc_comida) hc.value = userData.diabetes_hc_comida;
+  var hb  = document.getElementById('diabetesHba1c');  if (hb && userData.diabetes_hba1c != null) hb.value = userData.diabetes_hba1c;
+};
+
+// Listener propio que persiste SOLO los campos de diabetes en el submit.
+// Se registra después del handler original, así corre en el mismo envío;
+// lee el DOM (estado correcto) y hace un upsert que solo toca estas 4
+// columnas (no pisa peso/edad/objetivo). Robusto, sin parchear el SDK.
+var _formEvDiab = document.getElementById('formEvaluacion');
+if (_formEvDiab) {
+  _formEvDiab.addEventListener('submit', function () {
+    if (!sb || !currentUser) return;
+    var d = leerDiabetesDelDOM();
+    diabetesActivo = d.diabetes_modo;
+    var payload = Object.assign({ user_id: currentUser.id, updated_at: new Date() }, d);
+    sb.from('user_data').upsert(payload, { onConflict: 'user_id' }).then(function (res) {
+      if (res && res.error) console.error('Error guardando modo diabetes:', res.error);
+    }).catch(function (e) { console.error('Excepción guardando modo diabetes:', e); });
+  });
+}
+
+// Fila de chips glucémicos para un plato (HC, raciones, semáforo IG).
+function glucRowHTML(id) {
+  var g = (window.glucemiaDe) ? window.glucemiaDe(id) : { hc: 0, fibra: 0, ig: 'bajo' };
+  var rac = (window.racionesHCDe) ? window.racionesHCDe(id) : 0;
+  var igMap = {
+    bajo:  ['ig-badge--bajo',  'IG bajo'],
+    medio: ['ig-badge--medio', 'IG medio'],
+    alto:  ['ig-badge--alto',  'IG alto']
+  };
+  var ig = igMap[g.ig] || igMap.bajo;
+  var chips = '<span class="hc-chip"><span class="hc-chip__icon">🍞</span>' +
+              '<span class="hc-chip__value">' + g.hc + '</span>' +
+              '<span class="hc-chip__label">g HC</span></span>';
+  if (g.hc > 0) {
+    chips += '<span class="hc-chip"><span class="hc-chip__value">' + rac + '</span>' +
+             '<span class="hc-chip__label">rac</span></span>';
+  }
+  var badge = (g.hc > 0)
+    ? '<span class="ig-badge ' + ig[0] + '"><span class="ig-badge__dot"></span>' + ig[1] + '</span>'
+    : '';
+  return '<div class="flex gap-1.5 mt-2 flex-wrap items-center">' + chips + badge + '</div>';
+}
+
+// Inyecta los chips en cada plato del menú ya renderizado.
+function pintarGlucemiaEnMenu() {
+  var cont = document.getElementById('menuContent');
+  if (!cont) return;
+  var items = cont.querySelectorAll('.food-item');
+  items.forEach(function (el) {
+    var oc = el.getAttribute('onclick') || '';
+    var m = oc.match(/abrirModalSustitucion\(\s*\d+\s*,\s*'[^']*'\s*,\s*'([^']+)'\s*\)/);
+    if (!m) return;
+    el.insertAdjacentHTML('beforeend', glucRowHTML(m[1]));
+  });
+}
+
+// El menú muestra los chips solo con el modo activo (render síncrono: sin parpadeo).
+var _renderMenuBase = renderMenu;
+renderMenu = function () {
+  _renderMenuBase();
+  if (diabetesActivo) pintarGlucemiaEnMenu();
+};
+
+// Cambiar el toggle actualiza el menú al instante, sin recargar.
+var _tglDiab = document.getElementById('diabetesModo');
+if (_tglDiab) {
+  _tglDiab.addEventListener('change', function () {
+    diabetesActivo = this.checked;
+    if (menuData) renderMenu();
+  });
+}
