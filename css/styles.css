@@ -1776,3 +1776,101 @@ input:checked + .toggle-slider:before {
   .hc-chip,
   .hc-summary__fill { animation: none !important; transition: none !important; }
 }
+/* ============================================================
+   34. RESPONSIVE MÓVIL (ajustes táctiles y pantallas estrechas)
+       Todo aditivo: media queries que sobrescriben sin tocar
+       las reglas base. Ganan por especificidad (dos clases >
+       una clase de Tailwind) o por ir al final del archivo.
+   ============================================================ */
+
+/* --- (1) Dispositivos táctiles: botones de plato SIEMPRE visibles
+       y con área de toque cómoda (≈36 px). En escritorio siguen
+       revelándose solo al pasar el ratón, como antes. --- */
+@media (hover: none), (pointer: coarse) {
+  .food-item .swap-icon,
+  .food-item .recipe-btn,
+  .food-item .fav-btn,
+  .food-item .exclude-btn {
+    opacity: 1;
+    transform: none;
+  }
+  .food-item .recipe-btn,
+  .food-item .fav-btn,
+  .food-item .exclude-btn {
+    width: 2.25rem;   /* 36 px, tactil-friendly */
+    height: 2.25rem;
+  }
+}
+
+/* --- (2) Neutraliza el "hover pegajoso" en táctil: sin transforms
+       que se queden aplicados tras un toque. --- */
+@media (hover: none) {
+  .metric-card:hover,
+  .meal-card:hover,
+  .habit-card:hover,
+  .achievement-card:hover,
+  .planner-day-card:hover,
+  .food-item:hover,
+  .sub-option:hover,
+  .comment-card:hover { transform: none; }
+}
+
+/* --- (3) Pantallas ≤ 640 px: más ancho útil, cabecera limpia
+       y navegación horizontal sin barra de scroll fea. --- */
+@media (max-width: 640px) {
+  /* Reduce el padding lateral del header y del main (px-6 → 16 px).
+     La especificidad (tipo + clase) vence a la clase px-6 de Tailwind. */
+  header > .max-w-7xl,
+  main.max-w-7xl {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  /* El anuncio superior vive en la cabecera fija: en móvil se come
+     altura de scroll. Lo ocultamos (reversible quitando esta regla). */
+  #adTop { display: none; }
+  /* Navegación por pestañas: scroll horizontal sin scrollbar visible. */
+  nav > .overflow-x-auto {
+    scrollbar-width: none;          /* Firefox */
+    -ms-overflow-style: none;       /* IE/Edge */
+  }
+  nav > .overflow-x-auto::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+  /* Títulos de sección un pelo más contenidos en móvil. */
+  h2.text-3xl { font-size: 1.6rem; }
+}
+
+/* --- (4) Brújula en pantallas ≤ 480 px: cabecera y pie que no
+       se aplastan. (Complementa la media de la sección 32.) --- */
+@media (max-width: 480px) {
+  .brujula { padding: 1.15rem 1.1rem 1rem; }
+  .brujula__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+  .brujula__meta { white-space: normal; }
+  .brujula__foot { flex-wrap: wrap; }
+  .brujula__count {
+    margin-left: 0;
+    width: 100%;
+    text-align: right;
+  }
+  /* Los chips de HC y el resumen por día: que no desborden. */
+  .hc-summary__head { flex-wrap: wrap; }
+}
+
+/* --- (5) Modales en móvil: pegados a los bordes con margen justo,
+       sin esquinas redondas enormes que resten ancho. --- */
+@media (max-width: 480px) {
+  .modal-overlay { padding: 0.5rem; align-items: flex-end; }
+  .modal-content {
+    max-height: 92vh;
+    border-radius: 1rem 1rem 0 0;   /* estilo "sheet" desde abajo */
+  }
+}
+
+/* --- Respeta reducción de movimiento también en estos ajustes --- */
+@media (prefers-reduced-motion: reduce) {
+  .food-item .recipe-btn,
+  .food-item .fav-btn,
+  .food-item .exclude-btn { transition: none; }
+}
