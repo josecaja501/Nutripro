@@ -1732,3 +1732,77 @@ if (_tglDiab2) {
     if (typeof renderBrujula === 'function') renderBrujula();
   });
 }
+
+// ============================================================
+// 24. MODO DIABETES (FASE 4 · sub-paso 1.5c)
+//     Registro manual de glucemia en Seguimiento.
+//     Guarda en glucose_logs (creada en el 1.1). Solo visible
+//     con el modo diabetes activo.
+// ============================================================
+
+var glucemias = [];
+
+async function cargarGlucemias() {
+  if (!currentUser) return;
+  try {
+    const { data, error } = await sb.from('glucose_logs').select('*').eq('user_id', currentUser.id).order('fecha', { ascending: false });
+    if (error) { console.error('Error cargando glucemias:', error); return; }
+    glucemias = data || [];
+    renderGlucemias();
+  } catch (err) { console.error('Error en cargarGlucemias:', err); }
+}
+
+async function agregarGlucemia() {
+  const fecha = document.getElementById('glucemiaFecha').value;
+  const momento = document.getElementById('glucemiaMomento').value;
+  const valor = parseFloat(document.getElementById('glucemiaValor').value);
+  const notas = document.getElementById('glucemiaNotas').value.trim();
+  if (!fecha || isNaN(valor)) { mostrarToast('⚠️ Introduce fecha y glucemia válida'); return; }
+  try {
+    const { error } = await sb.from('glucose_logs').insert({ user_id: currentUser.id, fecha, momento, valor, notas: notas || null });
+    if (error) { console.error('Error guardando glucemia:', error); mostrarToast('❌ Error al guardar glucemia'); return; }
+    mostrarToast('✅ Glucemia registrada');
+    document.getElementById('glucemiaValor').value = '';
+    document.getElementById('glucemiaNotas').value = '';
+    await cargarGlucemias();
+  } catch (err) { console.error('Error en agregarGlucemia:', err); }
+}
+
+function renderGlucemias() {
+  const hist = document.getElementById('historialGlucemia');
+  if (!hist) return;
+  if (glucemias.length === 0) { hist.innerHTML = '<p class="text-slate-500 dark:text-slate-400 text-sm">Sin registros aún.</p>'; return; }
+  const momentoLabels = { ayunas: 'Ayunas', antes_comida: 'Antes de comer', despues_comida: 'Después de comer', antes_dormir: 'Antes de dormir', otro: 'Otro' };
+  hist.innerHTML = glucemias.slice(0, 15).map(g => {
+    const fechaStr = new Date(g.fecha).toLocaleDateString('es-ES');
+    const momentoStr = momentoLabels[g.momento] || g.momento;
+    const color = g.valor < 70 ? 'text-blue-600' : (g.valor <= 140 ? 'text-green-600' : (g.valor <= 180 ? 'text-amber-600' : 'text-red-600'));
+    const notaSegura = g.notas ? ' · ' + DOMPurify.sanitize(g.notas) : '';
+    return '<div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">' +
+      '<div><span class="text-sm font-semibold">' + fechaStr + '</span>' +
+      ' <span class="text-xs text-slate-500 dark:text-slate-400">· ' + momentoStr + '</span>' +
+      ' <span class="text-xs text-slate-400">' + notaSegura + '</span></div>' +
+      '<span class="font-bold ' + color + '">' + g.valor + ' mg/dL</span></div>';
+  }).join('');
+}
+
+// Muestra/oculta la sección de glucemia según el modo diabetes.
+function actualizarSeccionGlucemia() {
+  const sec = document.getElementById('glucemiaSection');
+  if (!sec) return;
+  if (diabetesActivo) { sec.classList.remove('hidden'); cargarGlucemias(); }
+  else { sec.classList.add('hidden'); }
+}
+
+// Se actualiza cada vez que se renderiza Seguimiento.
+var _renderSeguimientoBase = renderSeguimiento;
+renderSeguimiento = function () {
+  _renderSeguimientoBase();
+  actualizarSeccionGlucemia();
+};
+
+// Y también al cambiar el toggle del modo diabetes.
+var _tglDiab3 = document.getElementById('diabetesModo');
+if (_tglDiab3) {
+  _tglDiab3.addEventListener('change', function () { actualizarSeccionGlucemia(); });
+}
