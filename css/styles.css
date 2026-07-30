@@ -1622,3 +1622,157 @@ input:checked + .toggle-slider:before {
   .brujula__razon-dot { animation: none !important; transition: none !important; }
   .brujula:hover { transform: none; }
 }
+/* ============================================================
+   33. MODO DIABETES (FASE 4 · sub-paso 1.4)
+       Estilos de hidratos de carbono e índice glucémico.
+       Acento ámbar (coherente con la Brújula). Las clases
+       hc-* / ig-* / hc-summary-* las consume app.js en el 1.5.
+   ============================================================ */
+
+/* --- Reveal suave del panel de campos al activar el modo --- */
+#diabetesCampos:not(.hidden) {
+  animation: diabReveal 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes diabReveal {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- El toggle del modo diabetes se tiñe de ámbar al activarse --- */
+#diabetesModo:checked + .toggle-slider {
+  background: #f59e0b;
+  border-color: #f59e0b;
+}
+
+/* --- Chip de hidratos por plato (ej. "🍞 42 g · 4.2 rac") --- */
+.hc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.2;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #b45309;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.dark .hc-chip {
+  background: rgba(251, 191, 36, 0.14);
+  border-color: rgba(251, 191, 36, 0.3);
+  color: #fcd34d;
+}
+.hc-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px -6px rgba(245, 158, 11, 0.6);
+}
+.hc-chip__icon { font-size: 0.72rem; }
+.hc-chip__value { font-weight: 800; }
+.hc-chip__label {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.6rem;
+  opacity: 0.8;
+}
+
+/* --- Badge de índice glucémico (bajo / medio / alto) --- */
+.ig-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.16rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  border: 1px solid transparent;
+}
+.ig-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ig-badge--bajo  { background: rgba(34, 197, 94, 0.12);  border-color: rgba(34, 197, 94, 0.32);  color: #15803d; }
+.ig-badge--medio { background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.32); color: #b45309; }
+.ig-badge--alto  { background: rgba(244, 63, 94, 0.12);  border-color: rgba(244, 63, 94, 0.32);  color: #be123c; }
+.ig-badge--bajo .ig-badge__dot  { background: #22c55e; }
+.ig-badge--medio .ig-badge__dot { background: #f59e0b; }
+.ig-badge--alto .ig-badge__dot  { background: #f43f5e; }
+.dark .ig-badge--bajo  { color: #86efac; }
+.dark .ig-badge--medio { color: #fcd34d; }
+.dark .ig-badge--alto  { color: #fda4af; }
+
+/* --- Resumen de HC por comida (total vs objetivo) --- */
+.hc-summary {
+  margin-top: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+}
+.hc-summary__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+}
+.hc-summary__title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.hc-summary__figure { font-size: 0.85rem; font-weight: 800; color: var(--text-main); }
+.hc-summary__figure small { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); }
+.hc-summary__bar {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.25);
+  overflow: hidden;
+}
+.hc-summary__fill {
+  height: 100%;
+  border-radius: 999px;
+  width: 0%;
+  background: #22c55e;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+}
+.hc-summary--ok .hc-summary__fill   { background: #22c55e; }
+.hc-summary--near .hc-summary__fill { background: #f59e0b; }
+.hc-summary--over .hc-summary__fill { background: #f43f5e; }
+.hc-summary__hint { margin-top: 0.4rem; font-size: 0.68rem; font-weight: 600; }
+.hc-summary--ok .hc-summary__hint   { color: #15803d; }
+.hc-summary--near .hc-summary__hint { color: #b45309; }
+.hc-summary--over .hc-summary__hint { color: #be123c; }
+.dark .hc-summary--ok .hc-summary__hint   { color: #86efac; }
+.dark .hc-summary--near .hc-summary__hint { color: #fcd34d; }
+.dark .hc-summary--over .hc-summary__hint { color: #fda4af; }
+
+/* --- Nota orientativa reutilizable ("valor orientativo, no dosifica") --- */
+.diab-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.6rem;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+  background: rgba(148, 163, 184, 0.1);
+  border: 1px dashed var(--border-color);
+}
+
+/* --- Accesibilidad: respetar reducción de movimiento --- */
+@media (prefers-reduced-motion: reduce) {
+  #diabetesCampos:not(.hidden),
+  .hc-chip,
+  .hc-summary__fill { animation: none !important; transition: none !important; }
+}
