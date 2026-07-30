@@ -234,7 +234,7 @@
         <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
           <label class="flex items-center gap-3 bg-white dark:bg-slate-800 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer">
             <div class="toggle-switch">
-              <input type="checkbox" id="diabetesModo" onchange="document.getElementById('diabetesCampos').classList.toggle('hidden', !this.checked)">
+                            <input type="checkbox" id="diabetesModo" onchange="var el=document.getElementById('diabetesCampos'); if(this.checked){ el.classList.remove('hidden'); el.style.animation='none'; void el.offsetWidth; el.style.animation=''; } else { el.classList.add('hidden'); }">
               <span class="toggle-slider"></span>
             </div>
             <div>
