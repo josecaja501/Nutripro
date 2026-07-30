@@ -603,6 +603,38 @@
     <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Historial de registros</h3>
     <div id="historialPeso" class="space-y-2"><p class="text-slate-500 dark:text-slate-400 text-sm">Sin registros aún.</p></div>
   </div>
+  
+  <!-- 🩸 REGISTRO DE GLUCEMIA (FASE 4 · sub-paso 1.5c) -->
+  <div id="glucemiaSection" class="hidden mt-6 bg-white rounded-2xl p-6 border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
+    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">🩸 Registro de glucemia</h3>
+    <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Anotación manual orientativa. No sustituye a tu glucómetro ni a tu equipo médico.</p>
+    <div class="grid md:grid-cols-4 gap-3 mb-4">
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Fecha</label>
+        <input type="date" id="glucemiaFecha" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Momento</label>
+        <select id="glucemiaMomento" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+          <option value="ayunas">Ayunas</option>
+          <option value="antes_comida">Antes de comer</option>
+          <option value="despues_comida">Después de comer</option>
+          <option value="antes_dormir">Antes de dormir</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Glucemia (mg/dL)</label>
+        <input type="number" id="glucemiaValor" step="1" min="20" max="600" placeholder="100" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Notas (opcional)</label>
+        <input type="text" id="glucemiaNotas" placeholder="Ej. tras paseo" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500">
+      </div>
+    </div>
+    <button onclick="agregarGlucemia()" class="bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-teal-700">+ Añadir registro</button>
+    <div id="historialGlucemia" class="mt-4 space-y-2"><p class="text-slate-500 dark:text-slate-400 text-sm">Sin registros aún.</p></div>
+  </div>
 </section>
 
 <!-- EJERCICIO -->
