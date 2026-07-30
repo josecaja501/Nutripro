@@ -1652,3 +1652,83 @@ if (_tglDiab) {
     if (menuData) renderMenu();
   });
 }
+
+// ============================================================
+// 23. MODO DIABETES (FASE 4 · sub-paso 1.5b)
+//     Consejos de diabetes en la Brújula (priorizados) + resumen HC por día.
+//     Todo aditivo: wrappers al final, sin tocar el cuerpo de funciones.
+// ============================================================
+
+// (A) Añade el estado de diabetes al contexto de la Brújula.
+var _construirCtxBase = construirCtxBrujula;
+construirCtxBrujula = function () {
+  var ctx = _construirCtxBase();
+  if (!ctx) return ctx;
+  ctx.diabetes = !!diabetesActivo;
+  ctx.diabetesTipo = (userData && userData.diabetes_tipo) ? userData.diabetes_tipo : null;
+  return ctx;
+};
+
+// (B) Prioriza los consejos de diabetes cuando el modo está activo.
+var _calcularConsejosBase = calcularConsejosAplicables;
+calcularConsejosAplicables = function (ctx) {
+  var arr = _calcularConsejosBase(ctx);
+  if (ctx && ctx.diabetes) {
+    arr = arr.slice();
+    arr.sort(function (a, b) {
+      var aD = (a.cond && a.cond.diabetes) ? 0 : 1;
+      var bD = (b.cond && b.cond.diabetes) ? 0 : 1;
+      return aD - bD;
+    });
+  }
+  return arr;
+};
+
+// (C) Resumen de HC por día: total vs objetivo diario aproximado (por comida × 3).
+function pintarResumenHCDias() {
+  var cont = document.getElementById('menuContent');
+  if (!cont || !menuData || !menuData.menu) return;
+  var objetivoComida = (userData && userData.diabetes_hc_comida) ? userData.diabetes_hc_comida : 50;
+  var objetivoDia = objetivoComida * 3;
+  var cards = cont.querySelectorAll('.meal-card');
+  cards.forEach(function (card, diaIdx) {
+    if (card.querySelector('.hc-summary')) return;
+    var dia = menuData.menu[diaIdx];
+    if (!dia) return;
+    var ids = [
+      dia.desayuno.id,
+      dia.comida.prot.id, dia.comida.carb.id, dia.comida.verdura.id, dia.comida.grasa.id,
+      dia.merienda.id,
+      dia.cena.prot.id, dia.cena.verdura.id
+    ];
+    var totalHC = 0;
+    ids.forEach(function (id) { totalHC += (window.glucemiaDe ? window.glucemiaDe(id).hc : 0); });
+    var pct = Math.min(100, Math.round((totalHC / objetivoDia) * 100));
+    var estado = (totalHC <= objetivoDia) ? 'ok' : (totalHC <= objetivoDia * 1.15) ? 'near' : 'over';
+    var hint = (estado === 'ok') ? 'Dentro del objetivo' : (estado === 'near') ? 'Cerca del objetivo' : 'Por encima del objetivo';
+    var html = '<div class="hc-summary hc-summary--' + estado + '">' +
+      '<div class="hc-summary__head">' +
+        '<span class="hc-summary__title">Hidratos del día</span>' +
+        '<span class="hc-summary__figure">' + totalHC + ' g <small>/ ~' + objetivoDia + ' g</small></span>' +
+      '</div>' +
+      '<div class="hc-summary__bar"><div class="hc-summary__fill" style="width:' + pct + '%"></div></div>' +
+      '<div class="hc-summary__hint">' + hint + '</div>' +
+    '</div>';
+    card.insertAdjacentHTML('beforeend', html);
+  });
+}
+
+// Encadena el resumen al render del menú (tras los chips del 1.5a).
+var _renderMenuBase2 = renderMenu;
+renderMenu = function () {
+  _renderMenuBase2();
+  if (diabetesActivo) pintarResumenHCDias();
+};
+
+// Actualiza la Brújula al cambiar el toggle (los consejos de diabetes entran/salen).
+var _tglDiab2 = document.getElementById('diabetesModo');
+if (_tglDiab2) {
+  _tglDiab2.addEventListener('change', function () {
+    if (typeof renderBrujula === 'function') renderBrujula();
+  });
+}
