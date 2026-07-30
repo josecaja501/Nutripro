@@ -1874,3 +1874,27 @@ input:checked + .toggle-slider:before {
   .food-item .fav-btn,
   .food-item .exclude-btn { transition: none; }
 }
+/* ============================================================
+   35. FIX MÓVIL · toggle del Modo Diabetes
+       En pantallas estrechas el texto largo del label descentraba
+       el interruptor y lo hacía rozar el párrafo.
+       · El toggle nunca se encoge dentro de un flex (flex-shrink:0).
+       · En móvil el label alinea el toggle arriba (items-start) y
+         el texto ocupa su propia columna sin desbordar (min-width:0).
+       En escritorio no cambia nada: la media es ≤640 y el flex-shrink
+       es inocuo cuando hay ancho de sobra.
+   ============================================================ */
+.toggle-switch { flex-shrink: 0; }
+
+@media (max-width: 640px) {
+  label:has(#diabetesModo) {
+    align-items: flex-start;
+  }
+  label:has(#diabetesModo) .toggle-switch {
+    margin-top: 0.1rem;            /* centra el toggle con la 1ª línea del título */
+  }
+  label:has(#diabetesModo) > div:not(.toggle-switch) {
+    min-width: 0;                  /* deja que el texto haga wrap dentro de su columna */
+    flex: 1 1 auto;
+  }
+}
