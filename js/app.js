@@ -1881,3 +1881,26 @@ if (_modalSyncEl) {
   _modalSyncEl.addEventListener('click', function (e) { if (e.target.id === 'modalSync') cerrarModalSync(); });
 }
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrarModalSync(); });
+
+// ============================================================
+// 26. EVIDENCIA VISIBLE (transparencia)
+//     Convierte el chip "🔬 Evidencia" en un botón que abre un
+//     modal consultable con las fórmulas reales y las fuentes.
+//     Contenido estático: solo abre/cierra (clic en fondo y Escape).
+// ============================================================
+
+function abrirModalEvidencia() {
+  var m = document.getElementById('modalEvidencia');
+  if (m) m.classList.remove('hidden');
+}
+
+function cerrarModalEvidencia() {
+  var m = document.getElementById('modalEvidencia');
+  if (m) m.classList.add('hidden');
+}
+
+var _modalEvidEl = document.getElementById('modalEvidencia');
+if (_modalEvidEl) {
+  _modalEvidEl.addEventListener('click', function (e) { if (e.target.id === 'modalEvidencia') cerrarModalEvidencia(); });
+}
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrarModalEvidencia(); });
