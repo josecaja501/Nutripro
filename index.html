@@ -112,9 +112,8 @@
         <button onclick="compartirApp()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold">📤 Compartir</button>
         <button onclick="compartirApp()" class="md:hidden w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all">📤</button>
         <button id="darkModeToggle" class="w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all"><span id="darkModeIcon">☀️</span></button>
-                <div class="hidden md:flex items-center gap-2 text-xs">
-          <span class="px-3 py-1 bg-white/15 rounded-full">🔬 Evidencia</span>
-        </div>
+                        <button onclick="abrirModalEvidencia()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold" title="Cómo calculamos tus cifras y en qué nos basamos">🔬 Evidencia</button>
+        <button onclick="abrirModalEvidencia()" class="md:hidden w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Cómo calculamos tus cifras y en qué nos basamos">🔬</button>
         <button onclick="abrirModalSync()" class="hidden md:flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-lg transition-all text-sm font-semibold" title="Estado real de tu sincronización en la nube">☁️ Cloud Sync</button>
         <button onclick="abrirModalSync()" class="md:hidden w-10 h-10 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all" title="Estado real de tu sincronización en la nube">☁️</button>
         <div class="user-menu">
@@ -1062,6 +1061,70 @@
     </div>
     <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-3xl dark:bg-slate-900 dark:border-slate-700">
       <button onclick="cerrarModalSync()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-semibold dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white">Cerrar</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL EVIDENCIA (transparencia · base científica consultable) -->
+<div id="modalEvidencia" class="modal-overlay hidden">
+  <div class="modal-content">
+    <div class="p-6 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10 dark:bg-slate-800 dark:border-slate-700">
+      <div class="flex justify-between items-start">
+        <div>
+          <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">Transparencia · base científica</div>
+          <h3 class="text-xl font-bold text-slate-800 dark:text-white">🔬 Evidencia y método</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Cómo calculamos tus cifras y en qué nos basamos. Sin letra pequeña.</p>
+        </div>
+        <button onclick="cerrarModalEvidencia()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300">✕</button>
+      </div>
+    </div>
+    <div class="p-6 space-y-6 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+
+      <div>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-2 flex items-center gap-2"><span>🧮</span> Tus números, al descubierto</h4>
+        <p class="text-slate-600 dark:text-slate-400 mb-3">Estas son las fórmulas reales que usa la app, tal cual. Puedes comprobarlas con una calculadora.</p>
+        <ul class="space-y-2 list-disc list-inside marker:text-teal-500">
+          <li><strong class="text-slate-800 dark:text-white">TMB</strong> (energía en reposo) — ecuación de Mifflin–St Jeor. Hombre: 10 × peso + 6,25 × altura − 5 × edad + 5. Mujer: 10 × peso + 6,25 × altura − 5 × edad − 161 (peso en kg, altura en cm).</li>
+          <li><strong class="text-slate-800 dark:text-white">Gasto total (GETD)</strong> = TMB × factor de actividad (1,2 sedentario → 1,9 muy activo).</li>
+          <li><strong class="text-slate-800 dark:text-white">Objetivo diario</strong> = GETD − déficit (300 o 500 kcal), o + 300 en superávit. Un déficit de 500 kcal/día equivale a ≈ 0,5 kg de grasa a la semana.</li>
+          <li><strong class="text-slate-800 dark:text-white">IMC</strong> = peso ÷ altura²; categorías según la OMS (bajo peso, normopeso, sobrepeso, obesidad).</li>
+          <li><strong class="text-slate-800 dark:text-white">Macronutrientes</strong>: proteína ≈ 1,8 g/kg (para conservar masa muscular en déficit), grasas ≈ 0,9 g/kg con un mínimo de 50 g (salud hormonal), y carbohidratos = las calorías que quedan.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-2 flex items-center gap-2"><span>🧭</span> Principios que defendemos</h4>
+        <ul class="space-y-2 list-disc list-inside marker:text-teal-500">
+          <li>Déficit sostenible: comer menos de lo que gastas, sin hambre ni dietas milagro.</li>
+          <li>Reeducación alimentaria: alimentos reales y de temporada, sin listas de "prohibidos".</li>
+          <li>El progreso no es lineal: por eso el seguimiento usa la media móvil de 7 días, que quita el ruido de la retención de líquidos.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-2 flex items-center gap-2"><span>📚</span> En qué nos apoyamos</h4>
+        <ul class="space-y-2 list-disc list-inside marker:text-teal-500">
+          <li><strong class="text-slate-800 dark:text-white">OMS / WHO</strong> — IMC, actividad física y hábitos de salud · <a href="https://www.who.int/" target="_blank" rel="noopener" class="text-teal-600 dark:text-teal-400 underline font-semibold">who.int</a></li>
+          <li><strong class="text-slate-800 dark:text-white">Mifflin, St Jeor et al. (1990)</strong> — ecuación de gasto energético en reposo.</li>
+          <li><strong class="text-slate-800 dark:text-white">American Diabetes Association (ADA)</strong> — manejo de hidratos e índice glucémico (modo diabetes) · <a href="https://diabetes.org/" target="_blank" rel="noopener" class="text-teal-600 dark:text-teal-400 underline font-semibold">diabetes.org</a></li>
+          <li><strong class="text-slate-800 dark:text-white">Consenso sobre proteína y entrenamiento</strong> (p. ej. International Society of Sports Nutrition).</li>
+          <li><strong class="text-slate-800 dark:text-white">Recomendaciones de sueño en adultos</strong> (7–9 h).</li>
+        </ul>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-3 p-3 rounded-lg border border-dashed border-slate-200 dark:border-slate-600">Citamos organismos y consensos, no estudios sueltos sacados de contexto. Si quieres la referencia primaria de algún punto concreto, escríbenos y te la facilitamos.</p>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-slate-800 dark:text-white mb-2 flex items-center gap-2"><span>🚫</span> Lo que NO hacemos</h4>
+        <ul class="space-y-2 list-disc list-inside marker:text-rose-400">
+          <li>No diagnosticamos ni tratamos ninguna condición.</li>
+          <li>No calculamos dosis de insulina ni de medicación.</li>
+          <li>No sustituimos a tu médico o nutricionista clínico.</li>
+          <li>Cada consejo de la Brújula muestra su fuente y es orientativo.</li>
+        </ul>
+      </div>
+
+    </div>
+    <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-3xl dark:bg-slate-900 dark:border-slate-700">
+      <button onclick="cerrarModalEvidencia()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-semibold dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white">Cerrar</button>
     </div>
   </div>
 </div>
