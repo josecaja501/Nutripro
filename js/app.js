@@ -1806,3 +1806,78 @@ var _tglDiab3 = document.getElementById('diabetesModo');
 if (_tglDiab3) {
   _tglDiab3.addEventListener('change', function () { actualizarSeccionGlucemia(); });
 }
+
+// ============================================================
+// 25. CLOUD SYNC VISIBLE (transparencia)
+//     Convierte el chip "☁️ Cloud Sync" en un botón que muestra el
+//     estado REAL de la sincronización y deja comprobarla / forzarla.
+//     SOLO LEE funciones y variables que ya existen (appIsOnline,
+//     checkRealConnection, getOfflineQueue, processOfflineQueue):
+//     no inventa ningún dato ni toca el guardado ni la sync.
+// ============================================================
+
+function _syncHoraAhora() {
+  var d = new Date();
+  var p = function (n) { return String(n).padStart(2, '0'); };
+  return p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+}
+
+function pintarEstadoSync() {
+  var dot = document.getElementById('syncStatusDot');
+  var txt = document.getElementById('syncStatusText');
+  var cola = document.getElementById('syncCola');
+  var ult = document.getElementById('syncUltima');
+  var btnPend = document.getElementById('syncBtnPendientes');
+  if (!dot) return;
+  var online = !!appIsOnline;
+  dot.textContent = online ? '🟢' : '🔴';
+  if (txt) txt.textContent = online
+    ? 'Conectado a internet · guardando en la nube'
+    : 'Sin conexión · guardando en este dispositivo';
+  var n = 0;
+  try { n = (typeof getOfflineQueue === 'function') ? getOfflineQueue().length : 0; } catch (e) { n = 0; }
+  if (cola) cola.textContent = n;
+  if (ult) ult.textContent = _syncHoraAhora();
+  // "Sincronizar pendientes" solo tiene sentido si hay cola Y hay red.
+  if (btnPend) btnPend.classList.toggle('hidden', !(online && n > 0));
+}
+
+function abrirModalSync() {
+  var m = document.getElementById('modalSync');
+  if (!m) return;
+  pintarEstadoSync(); // pinta con el valor actual…
+  m.classList.remove('hidden');
+  // …y repinta cuando termine la comprobación de red real.
+  if (typeof checkRealConnection === 'function') {
+    Promise.resolve(checkRealConnection()).then(pintarEstadoSync).catch(pintarEstadoSync);
+  }
+}
+
+function cerrarModalSync() {
+  var m = document.getElementById('modalSync');
+  if (m) m.classList.add('hidden');
+}
+
+function comprobarSyncAhora() {
+  var txt = document.getElementById('syncStatusText');
+  if (txt) txt.textContent = 'Comprobando conexión…';
+  Promise.resolve(typeof checkRealConnection === 'function' ? checkRealConnection() : null)
+    .then(function () { pintarEstadoSync(); mostrarToast('🔎 Conexión comprobada'); })
+    .catch(function () { pintarEstadoSync(); });
+}
+
+function sincronizarPendientesAhora() {
+  var btn = document.getElementById('syncBtnPendientes');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sincronizando…'; }
+  Promise.resolve(typeof processOfflineQueue === 'function' ? processOfflineQueue() : null)
+    .then(function () { pintarEstadoSync(); if (btn) { btn.disabled = false; btn.textContent = '🔄 Sincronizar pendientes'; } })
+    .catch(function () { pintarEstadoSync(); if (btn) { btn.disabled = false; btn.textContent = '🔄 Sincronizar pendientes'; } });
+}
+
+// Cierre del modal: clic en el fondo y tecla Escape (aditivo, no toca
+// el keydown general existente; si el modal está oculto, no hace nada).
+var _modalSyncEl = document.getElementById('modalSync');
+if (_modalSyncEl) {
+  _modalSyncEl.addEventListener('click', function (e) { if (e.target.id === 'modalSync') cerrarModalSync(); });
+}
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrarModalSync(); });
